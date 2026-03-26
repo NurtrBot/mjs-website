@@ -1,0 +1,279 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  X,
+  Package,
+  MapPin,
+  Phone,
+} from "lucide-react";
+import { LogOut } from "lucide-react";
+import { products as allProducts } from "@/data/products";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { itemCount, toggleCart } = useCart();
+  const { user, isLoggedIn, logout } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [locationInput, setLocationInput] = useState("");
+  const [deliveryLocation, setDeliveryLocation] = useState("Anaheim, CA");
+
+  const filteredProducts = searchQuery.length > 0
+    ? allProducts.filter((p) =>
+        p.cardTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5)
+    : [];
+
+  const showSuggestions = searchFocused && filteredProducts.length > 0;
+
+  return (
+    <header className="bg-white sticky top-0 z-50 shadow-sm">
+      {/* Main Header Row */}
+      <div className="max-w-[1400px] mx-auto px-4">
+        <div className="flex items-center h-[60px] gap-4">
+          {/* Mobile Menu */}
+          <button
+            className="lg:hidden p-1.5 -ml-1 hover:bg-gray-100 rounded-lg"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+
+          {/* Logo */}
+          <a href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <img
+              src="/images/mjs-logo.png"
+              alt="Mobile Janitorial Supply"
+              className="h-10 w-auto"
+            />
+            <div className="hidden md:block">
+              <div className="text-[14px] font-black tracking-tight text-mjs-dark leading-none whitespace-nowrap">
+                MOBILE JANITORIAL SUPPLY
+              </div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-2.5 h-2.5 text-mjs-gold" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-[9px] font-bold text-mjs-gray-400 uppercase tracking-wide">
+                  #1 Rated
+                </span>
+              </div>
+            </div>
+          </a>
+
+          {/* Location */}
+          <div className="hidden lg:flex items-center gap-1.5 flex-shrink-0 ml-2 relative">
+            <button
+              onClick={() => { setLocationOpen(!locationOpen); setLocationInput(""); }}
+              className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
+            >
+              <MapPin className="w-4 h-4 text-mjs-red" />
+              <div className="text-left">
+                <div className="text-[10px] text-mjs-gray-400 leading-none">{deliveryLocation}</div>
+                <div className="text-[11px] font-semibold text-mjs-blue leading-none mt-0.5">Set delivery location</div>
+              </div>
+            </button>
+            {locationOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 w-64 z-50">
+                <div className="text-xs font-semibold text-mjs-gray-700 mb-2">Enter zip code or city</div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (locationInput.trim()) {
+                      setDeliveryLocation(locationInput.trim());
+                      setLocationOpen(false);
+                    }
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={locationInput}
+                    onChange={(e) => setLocationInput(e.target.value)}
+                    placeholder="e.g. 92801 or Los Angeles, CA"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-mjs-red/30 focus:border-mjs-red"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="mt-2 w-full bg-mjs-red text-white text-sm font-semibold py-2 rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Update Location
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+
+          {/* Search Bar — centered */}
+          <div className="hidden md:block flex-1 mx-4 relative z-50">
+            <div className="max-w-2xl mx-auto">
+              <div
+                className={`flex w-full rounded-lg transition-all ${
+                  searchFocused ? "ring-2 ring-mjs-red/30" : ""
+                } border border-gray-300 hover:border-gray-400 bg-white`}
+              >
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search Product, Category, Brand..."
+                  className="flex-1 px-4 py-2.5 text-sm rounded-l-lg outline-none bg-transparent"
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                />
+                <button className="bg-mjs-red hover:bg-mjs-red-dark text-white px-5 rounded-r-md transition-colors">
+                  <Search className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Search Suggestions */}
+              {showSuggestions && (
+                <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden z-50 max-w-2xl mx-auto">
+                  {filteredProducts.map((p) => (
+                    <a
+                      key={p.slug}
+                      href={`/product/${p.slug}`}
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-mjs-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="w-12 h-12 bg-mjs-gray-50 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src={p.images[0]} alt={p.cardTitle} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-mjs-gray-800 truncate">{p.cardTitle}</div>
+                        <div className="text-xs text-mjs-gray-400">{p.brand} &middot; {p.pack}</div>
+                      </div>
+                      <div className="text-sm font-bold text-mjs-dark flex-shrink-0">${p.price.toFixed(2)}</div>
+                    </a>
+                  ))}
+                  <div className="px-4 py-2 bg-mjs-gray-50 text-center">
+                    <span className="text-xs text-mjs-gray-500">
+                      Press Enter to see all results for &ldquo;<span className="font-semibold text-mjs-gray-700">{searchQuery}</span>&rdquo;
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-1 ml-auto flex-shrink-0">
+            {isLoggedIn ? (
+              <div className="hidden lg:block relative">
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-full bg-mjs-red text-white flex items-center justify-center text-xs font-bold">
+                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  </div>
+                  <span className="text-sm font-medium text-mjs-gray-600">Hi, {user?.firstName}</span>
+                </button>
+                {profileOpen && (
+                  <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg w-56 z-50 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <div className="text-sm font-semibold text-mjs-dark">{user?.firstName} {user?.lastName}</div>
+                      <div className="text-xs text-mjs-gray-400 mt-0.5">{user?.email}</div>
+                      {user?.company && (
+                        <div className="text-xs text-mjs-gray-400">{user.company}</div>
+                      )}
+                    </div>
+                    <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
+                      <User className="w-4 h-4" />
+                      My Account
+                    </a>
+                    <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
+                      <Package className="w-4 h-4" />
+                      My Orders
+                    </a>
+                    <button
+                      onClick={() => { logout(); setProfileOpen(false); }}
+                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-red hover:bg-red-50 transition-colors border-t border-gray-100"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a href="/auth" className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-50 rounded-lg transition-colors">
+                <User className="w-[18px] h-[18px] text-mjs-gray-500" />
+                <span className="text-sm font-medium text-mjs-gray-600">Login Now</span>
+              </a>
+            )}
+            <a href="tel:7147792640" className="hidden lg:flex items-center gap-1.5 bg-mjs-red hover:bg-red-700 text-white px-4 py-1.5 rounded-lg transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="text-sm font-semibold">(714) 779-2640</span>
+            </a>
+            <button onClick={toggleCart} className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-50 rounded-lg transition-colors relative">
+              <div className="relative">
+                <ShoppingCart className="w-[18px] h-[18px] text-mjs-gray-500" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-mjs-red text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden lg:inline text-sm font-medium text-mjs-gray-600">Cart</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search */}
+        <div className="md:hidden pb-3">
+          <div className="flex rounded-lg border border-gray-300">
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="flex-1 px-4 py-2 text-sm rounded-l-lg outline-none"
+            />
+            <button className="bg-mjs-red text-white px-4 rounded-r-md">
+              <Search className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t shadow-xl max-h-[70vh] overflow-y-auto">
+          <div className="py-2">
+            {[
+              "Paper & Restroom",
+              "Cleaning Chemicals",
+              "Tools & Equipment",
+              "Gloves & Safety",
+              "Packaging & Shipping",
+              "Breakroom",
+              "Deals & Specials",
+            ].map((cat) => (
+              <a
+                key={cat}
+                href="#"
+                className="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 border-b border-gray-100"
+              >
+                {cat}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
