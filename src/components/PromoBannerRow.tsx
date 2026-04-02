@@ -7,7 +7,7 @@ export default function PromoBannerRow() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Bulk Savings */}
           <a
-            href="#"
+            href="/quote"
             className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
           >
             <div className="w-12 h-12 bg-mjs-red/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -24,7 +24,7 @@ export default function PromoBannerRow() {
 
           {/* Business Account */}
           <a
-            href="#"
+            href="/contact"
             className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
           >
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -41,7 +41,7 @@ export default function PromoBannerRow() {
 
           {/* Track Order */}
           <a
-            href="#"
+            href="/account"
             className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
           >
             <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">

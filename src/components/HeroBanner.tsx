@@ -9,6 +9,7 @@ const slides: {
   headline: string;
   sub: string;
   cta: string;
+  href: string;
   gradient: string;
   accent: string;
   image: string;
@@ -19,6 +20,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
+    href: "/shop/paper-restroom",
     gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-mjs-gold",
     image: "/banner.jpg",
@@ -29,6 +31,7 @@ const slides: {
     headline: "Paper Products at Wholesale Prices",
     sub: "Bulk pricing that beats the big box stores every time",
     cta: "Shop Paper",
+    href: "/shop/paper-restroom",
     gradient: "from-[#3e3400] via-[#504a00] to-[#3e3400]",
     accent: "bg-mjs-gold",
     image: "/images/mjs-storefront.jpg",
@@ -38,6 +41,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
+    href: "/shop/cleaning-chemicals",
     gradient: "from-[#87CEEB] via-[#87CEEB] to-[#87CEEB]",
     accent: "bg-blue-600",
     image: "/banner-tossins.png",
@@ -47,11 +51,11 @@ const slides: {
 
 /* ── Deal Tabs (below carousel) ── */
 const dealTabs = [
-  { label: "PAPER PRODUCTS", sub: "Upto 25% OFF", active: false },
-  { label: "CHEMICALS", sub: "Best Prices", active: false },
-  { label: "GLOVES", sub: "Upto 30% OFF", active: false },
-  { label: "PACKAGING", sub: "Upto 20% OFF", active: false },
-  { label: "WEEKLY DEALS", sub: "Limited Time", active: true },
+  { label: "PAPER PRODUCTS", sub: "Upto 25% OFF", active: false, href: "/shop/paper-restroom" },
+  { label: "CHEMICALS", sub: "Best Prices", active: false, href: "/shop/cleaning-chemicals" },
+  { label: "GLOVES", sub: "Upto 30% OFF", active: false, href: "/shop/gloves-safety" },
+  { label: "PACKAGING", sub: "Upto 20% OFF", active: false, href: "/category/packaging-film" },
+  { label: "WEEKLY DEALS", sub: "Limited Time", active: true, href: "/search?q=deals" },
 ];
 
 
@@ -107,7 +111,7 @@ export default function HeroBanner() {
                     {slide.sub}
                   </p>
                   <a
-                    href="#"
+                    href={slide.href}
                     className={`inline-flex items-center gap-2 ${slide.accent} hover:opacity-90 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-all shadow-lg pointer-events-auto`}
                   >
                     {slide.cta}
@@ -172,7 +176,7 @@ export default function HeroBanner() {
           {dealTabs.map((tab, i) => (
             <a
               key={tab.label}
-              href="#"
+              href={tab.href}
               className={`flex-1 text-center py-2.5 px-2 transition-all hover:bg-gray-50 ${
                 i < dealTabs.length - 1 ? "border-r border-gray-200" : ""
               } ${tab.active ? "bg-red-50" : ""}`}

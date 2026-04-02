@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
-import { products } from "@/data/products";
+import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
-function ArrivalCard({ product }: { product: (typeof products)[0] }) {
+function ArrivalCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
   const discount = product.originalPrice
@@ -61,10 +61,43 @@ function ArrivalCard({ product }: { product: (typeof products)[0] }) {
 
 export default function NewArrivals() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<ProductData[]>([]);
   const scroll = (dir: "left" | "right") => {
     scrollRef.current?.scrollBy({ left: dir === "left" ? -400 : 400, behavior: "smooth" });
   };
-  const shuffled = products.filter((_, i) => i % 2 === 1);
+
+  useEffect(() => {
+    // Showcase name-brand products — Clorox, Simple Green, 3M, Rubbermaid, etc.
+    const brandSearches = ["clorox", "simple green", "3M", "rubbermaid", "genuine joe", "ettore", "procell", "chase products", "sunnycare"];
+    Promise.all(
+      brandSearches.map(b =>
+        fetch(`/api/products/search?q=${encodeURIComponent(b)}&limit=5`).then(r => r.json()).catch(() => ({ products: [] }))
+      )
+    ).then(results => {
+      const picks: ProductData[] = [];
+      const seen = new Set<string>();
+      for (const r of results) {
+        const products = ((r.products || []) as ProductData[])
+          .filter((p: ProductData) => p.images?.[0] && !p.images[0].includes("placeholder"));
+        for (const p of products) {
+          if (!seen.has(p.sku)) {
+            seen.add(p.sku);
+            picks.push(p);
+            if (picks.length >= 20) break;
+          }
+        }
+        if (picks.length >= 20) break;
+      }
+      // Shuffle for a fresh look each visit
+      for (let i = picks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [picks[i], picks[j]] = [picks[j], picks[i]];
+      }
+      setItems(picks);
+    });
+  }, []);
+
+  if (items.length === 0) return null;
 
   return (
     <section className="bg-white py-6 border-t border-gray-100">
@@ -75,7 +108,7 @@ export default function NewArrivals() {
             <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">JUST IN</span>
           </div>
           <div className="flex items-center gap-2">
-            <a href="#" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
+            <a href="/search?q=new+arrivals" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
             <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
             </button>
@@ -85,7 +118,7 @@ export default function NewArrivals() {
           </div>
         </div>
         <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-          {shuffled.map((product) => (
+          {items.map((product) => (
             <ArrivalCard key={product.slug} product={product} />
           ))}
         </div>

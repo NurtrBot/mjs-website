@@ -8,13 +8,13 @@ interface Industry {
   image: string;
 }
 
-const industries: Industry[] = [
-  { name: "Commercial Offices", products: "2,400+", image: "/images/industry-commercial-offices.png" },
-  { name: "Schools & Education", products: "1,800+", image: "/images/industry-schools.png" },
-  { name: "Hospitality", products: "2,100+", image: "/images/industry-hospitality.png" },
-  { name: "Healthcare", products: "1,200+", image: "/images/industry-healthcare.png" },
-  { name: "Industrial", products: "1,600+", image: "/images/industry-industrial.png" },
-  { name: "Food Service", products: "900+", image: "/images/industry-food-service.png" },
+const industries: (Industry & { href: string })[] = [
+  { name: "Commercial Offices", products: "2,400+", image: "/images/industry-commercial-offices.png", href: "/search?q=office+supplies" },
+  { name: "Schools & Education", products: "1,800+", image: "/images/industry-schools.png", href: "/search?q=school+supplies" },
+  { name: "Hospitality", products: "2,100+", image: "/images/industry-hospitality.png", href: "/search?q=hospitality" },
+  { name: "Healthcare", products: "1,200+", image: "/images/industry-healthcare.png", href: "/search?q=healthcare+supplies" },
+  { name: "Industrial", products: "1,600+", image: "/images/industry-industrial.png", href: "/search?q=industrial+cleaning" },
+  { name: "Food Service", products: "900+", image: "/images/industry-food-service.png", href: "/search?q=food+service" },
 ];
 
 export default function IndustrySection() {
@@ -31,7 +31,7 @@ export default function IndustrySection() {
           {industries.map((ind) => (
             <a
               key={ind.name}
-              href="#"
+              href={ind.href}
               className="rounded-xl overflow-hidden relative group aspect-[4/3]"
             >
               {/* Background Image */}

@@ -24,30 +24,78 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
     { label: "Roll Towels", subcategories: ["Roll Towels"] },
     { label: "Multifolds", subcategories: ["Multifolds"] },
     { label: "Toilet Tissue", subcategories: ["Toilet Tissue"] },
+    { label: "Center-Pull", subcategories: ["Center-Pull Towels"] },
     { label: "Facial Tissue", subcategories: ["Facial Tissue"] },
+    { label: "Napkins", subcategories: ["Napkins"] },
+    { label: "Copy Paper", subcategories: ["Copy Paper"] },
   ],
   "cleaning-chemicals": [
-    { label: "Cleaners & Degreasers", subcategories: ["Degreasers", "General", "Glass Cleaners"] },
-    { label: "Disinfectants & Wipes", subcategories: ["Disinfectants", "Wipes", "Bleach"] },
+    { label: "Degreasers", subcategories: ["Degreasers"] },
+    { label: "All Purpose", subcategories: ["All Purpose Cleaners", "Bathroom Cleaners", "Oven Cleaners"] },
+    { label: "Specialty", subcategories: ["Specialty Cleaners", "Polishes"] },
+    { label: "Disinfectants", subcategories: ["Disinfectants", "Wipes", "Bleach"] },
     { label: "Hand Soap", subcategories: ["Hand Soap & Sanitizer"] },
-    { label: "Air Fresheners", subcategories: ["Air Fresheners"] },
+    { label: "Glass Cleaners", subcategories: ["Glass Cleaners"] },
+    { label: "Air Fresheners", subcategories: ["Air Fresheners", "Restroom Deodorizers"] },
+    { label: "Floor Care", subcategories: ["Floor Care", "Floor Strippers", "Floor Finishes"] },
+    { label: "Carpet Care", subcategories: ["Carpet Care"] },
+    { label: "Dish & Laundry", subcategories: ["Dish Soap", "Laundry"] },
+    { label: "Drain Cleaners", subcategories: ["Drain Cleaners"] },
   ],
   "trash-liners": [
-    { label: "High Density", subcategories: ["High Density Liners", "Hi-Density"] },
-    { label: "Low Density", subcategories: ["Low Density Liners"] },
     { label: "Can Liners", subcategories: ["Can Liners"] },
   ],
   "gloves-safety": [
     { label: "Nitrile", subcategories: ["Nitrile Gloves"] },
     { label: "Latex", subcategories: ["Latex Gloves"] },
     { label: "Vinyl", subcategories: ["Vinyl Gloves"] },
+    { label: "Face Masks", subcategories: ["Face Masks"] },
+    { label: "Hair & Beard", subcategories: ["Hair Protection", "Beard Covers"] },
+    { label: "Aprons & Sleeves", subcategories: ["Aprons", "Arm Sleeves"] },
+    { label: "Eye & Ear", subcategories: ["Eye Protection", "Ear Plugs"] },
+  ],
+  "packaging-film": [
+    { label: "Stretch Film", subcategories: ["Stretch Film"] },
+    { label: "Tape", subcategories: ["Tape"] },
+    { label: "Tape Guns", subcategories: ["Tape Dispensers"] },
+    { label: "Bubble Wrap", subcategories: ["Bubble Wrap"] },
+    { label: "Packing Peanuts", subcategories: ["Packing Peanuts"] },
+    { label: "Steel Strapping", subcategories: ["Steel Strapping"] },
+    { label: "Cable Ties", subcategories: ["Cable Ties"] },
+    { label: "Labels", subcategories: ["Labels"] },
+  ],
+  "breakroom": [
+    { label: "Cups & Lids", subcategories: ["Cups & Lids"] },
+    { label: "Plates & Bowls", subcategories: ["Plates & Bowls"] },
+    { label: "Cutlery", subcategories: ["Cutlery"] },
+    { label: "Napkins", subcategories: ["Napkins"] },
+    { label: "Batteries", subcategories: ["Batteries"] },
+    { label: "Beverages", subcategories: ["Beverages"] },
+    { label: "Food Storage", subcategories: ["Food Storage"] },
+    { label: "Coffee", subcategories: ["Coffee & Supplies"] },
   ],
   "equipment": [
     { label: "Dispensers", subcategories: ["Dispensers"] },
-    { label: "Mops & Brooms", subcategories: ["Mops & Handles", "Brooms & Dustpans", "Buckets & Wringers"] },
+    { label: "Mops", subcategories: ["Mops & Handles", "Dust Mops"] },
+    { label: "Brooms", subcategories: ["Brooms & Dustpans"] },
+    { label: "Buckets", subcategories: ["Buckets & Wringers"] },
     { label: "Vacuums", subcategories: ["Vacuums"] },
+    { label: "Trash Cans", subcategories: ["Trash Cans", "Carts & Dollies"] },
+    { label: "Window", subcategories: ["Window Equipment"] },
+    { label: "Sprayers", subcategories: ["Sprayers & Bottles"] },
+    { label: "Microfiber", subcategories: ["Microfiber"] },
+    { label: "Rags & Wipers", subcategories: ["Rags & Wipers"] },
+    { label: "Brushes & Pads", subcategories: ["Brushes & Pads", "Pad Drivers"] },
+    { label: "Dusters", subcategories: ["Dusters"] },
+    { label: "Floor Machines", subcategories: ["Floor Machines", "Air Movers"] },
+  ],
+  "floor-care": [
+    { label: "Floor Pads", subcategories: ["Floor Pads", "Stripping Pads", "Buffing Pads", "Polishing Pads", "Scrubbing Pads"] },
+    { label: "Bonnets", subcategories: ["Bonnets"] },
+    { label: "Carpet Care", subcategories: ["Carpet Care"] },
   ],
   "car-detailing": [
+    { label: "Air Fresheners", subcategories: ["Air Fresheners"] },
     { label: "Wash & Foam", subcategories: ["Wash"] },
     { label: "Glass Care", subcategories: ["Glass"] },
     { label: "Wax & Protection", subcategories: ["Wax & Protection"] },
@@ -64,7 +112,7 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/products/category?slug=${slug}&limit=100`)
+    fetch(`/api/products/category?slug=${slug}&limit=250`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products || []);

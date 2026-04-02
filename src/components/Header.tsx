@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   Search,
   ShoppingCart,
@@ -17,11 +18,20 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const { itemCount, toggleCart } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
+
+  const handleSearch = (query: string) => {
+    if (query.trim().length > 0) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      setSearchFocused(false);
+    }
+  };
   const [profileOpen, setProfileOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
   const [locationInput, setLocationInput] = useState("");
@@ -215,12 +225,13 @@ export default function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleSearch(searchQuery); }}
                   placeholder="Search Product, Category, Brand..."
                   className="flex-1 px-4 py-2.5 text-sm rounded-l-lg outline-none bg-transparent"
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 />
-                <button className="bg-mjs-red hover:bg-mjs-red-dark text-white px-5 rounded-r-md transition-colors">
+                <button onClick={() => handleSearch(searchQuery)} className="bg-mjs-red hover:bg-mjs-red-dark text-white px-5 rounded-r-md transition-colors">
                   <Search className="w-5 h-5" />
                 </button>
               </div>
@@ -244,11 +255,14 @@ export default function Header() {
                       <div className="text-sm font-bold text-mjs-dark flex-shrink-0">${p.price.toFixed(2)}</div>
                     </a>
                   ))}
-                  <div className="px-4 py-2 bg-mjs-gray-50 text-center">
+                  <a
+                    href={`/search?q=${encodeURIComponent(searchQuery)}`}
+                    className="block px-4 py-2 bg-mjs-gray-50 text-center hover:bg-gray-100 transition-colors"
+                  >
                     <span className="text-xs text-mjs-gray-500">
                       Press Enter to see all results for &ldquo;<span className="font-semibold text-mjs-gray-700">{searchQuery}</span>&rdquo;
                     </span>
-                  </div>
+                  </a>
                 </div>
               )}
             </div>
@@ -276,11 +290,11 @@ export default function Header() {
                         <div className="text-xs text-mjs-gray-400">{user.company}</div>
                       )}
                     </div>
-                    <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
+                    <a href="/account" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
                       <User className="w-4 h-4" />
                       My Account
                     </a>
-                    <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
+                    <a href="/account" className="flex items-center gap-2 px-4 py-2.5 text-sm text-mjs-gray-600 hover:bg-gray-50 transition-colors">
                       <Package className="w-4 h-4" />
                       My Orders
                     </a>
@@ -323,10 +337,13 @@ export default function Header() {
           <div className="flex rounded-lg border border-gray-300">
             <input
               type="text"
+              value={mobileSearchQuery}
+              onChange={(e) => setMobileSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch(mobileSearchQuery); }}
               placeholder="Search products..."
               className="flex-1 px-4 py-2 text-sm rounded-l-lg outline-none"
             />
-            <button className="bg-mjs-red text-white px-4 rounded-r-md">
+            <button onClick={() => handleSearch(mobileSearchQuery)} className="bg-mjs-red text-white px-4 rounded-r-md">
               <Search className="w-4 h-4" />
             </button>
           </div>
@@ -338,20 +355,20 @@ export default function Header() {
         <div className="lg:hidden bg-white border-t shadow-xl max-h-[70vh] overflow-y-auto">
           <div className="py-2">
             {[
-              "Paper & Restroom",
-              "Cleaning Chemicals",
-              "Tools & Equipment",
-              "Gloves & Safety",
-              "Packaging & Shipping",
-              "Breakroom",
-              "Deals & Specials",
+              { label: "Paper & Restroom", href: "/shop/paper-restroom" },
+              { label: "Cleaning Chemicals", href: "/shop/cleaning-chemicals" },
+              { label: "Tools & Equipment", href: "/shop/equipment-tools" },
+              { label: "Gloves & Safety", href: "/shop/gloves-safety" },
+              { label: "Packaging & Film", href: "/category/packaging-film" },
+              { label: "Breakroom", href: "/category/breakroom" },
+              { label: "Car Detailing", href: "/category/car-detailing" },
             ].map((cat) => (
               <a
-                key={cat}
-                href="#"
+                key={cat.label}
+                href={cat.href}
                 className="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 border-b border-gray-100"
               >
-                {cat}
+                {cat.label}
               </a>
             ))}
           </div>

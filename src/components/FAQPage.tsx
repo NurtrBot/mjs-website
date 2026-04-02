@@ -198,6 +198,25 @@ export default function FAQPage() {
         </div>
       </div>
 
+      {/* Fuel Surcharge Policy */}
+      <div className="max-w-[900px] mx-auto px-4 pb-8">
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="px-8 pt-7 pb-6">
+            <div className="flex items-center gap-2.5 mb-4">
+              <Truck className="w-5 h-5 text-mjs-red" />
+              <h2 className="text-lg font-bold text-mjs-dark">Fuel Surcharge Policy <span className="text-mjs-gray-400 font-medium text-sm">(California Deliveries)</span></h2>
+            </div>
+            <div className="space-y-3 text-sm text-mjs-gray-600 leading-relaxed">
+              <p>Mobile Janitorial Supply is committed to transparent and fair delivery pricing throughout California. Due to the volatility of fuel costs within the state, particularly in Southern California, a fuel surcharge may be applied to delivery orders when necessary.</p>
+              <p>If the California On-Highway Diesel Fuel Price, as published by the U.S. Energy Information Administration (EIA), exceeds <span className="font-semibold text-mjs-dark">$5.00 per gallon</span>, a fuel surcharge of <span className="font-semibold text-mjs-dark">$6.95</span> will be applied per delivery.</p>
+              <p>This surcharge will be clearly itemized on the customer&apos;s invoice as a separate line item labeled &ldquo;Fuel Surcharge.&rdquo;</p>
+              <p>If the published California diesel fuel price falls below $5.00 per gallon, the fuel surcharge will be removed accordingly.</p>
+              <p className="text-xs text-mjs-gray-400">Mobile Janitorial Supply reserves the right to modify, adjust, or discontinue this policy at any time without prior notice based on changes in fuel costs, operating expenses, or market conditions within California.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Still Have Questions CTA */}
       <div className="max-w-[900px] mx-auto px-4 pb-16">
         <div className="bg-white rounded-2xl border border-gray-100 p-8 md:p-10 text-center">

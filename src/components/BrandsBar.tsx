@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
-import { products } from "@/data/products";
+import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
-function ReadyCard({ product }: { product: (typeof products)[0] }) {
+function ReadyCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
   const discount = product.originalPrice
@@ -61,13 +61,31 @@ function ReadyCard({ product }: { product: (typeof products)[0] }) {
 
 export default function BrandsBar() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<ProductData[]>([]);
   const scroll = (dir: "left" | "right") => {
     scrollRef.current?.scrollBy({ left: dir === "left" ? -400 : 400, behavior: "smooth" });
   };
 
-  const readyToShip = products.filter(
-    (p) => p.brand === "Janitors Finest" && (p.category === "Cleaning Chemicals" || p.category === "Paper & Restroom")
-  );
+  useEffect(() => {
+    // Fetch Janitors Finest products — the house brand, always ready to ship
+    fetch("/api/products/search?q=janitors+finest&limit=30")
+      .then(r => r.json())
+      .then(data => {
+        const products = (data.products || []) as ProductData[];
+        // Only products with real images, sorted by popularity
+        const filtered = products
+          .filter((p: ProductData) => p.images?.[0] && !p.images[0].includes("placeholder"));
+        // Shuffle for a fresh look each visit
+        for (let i = filtered.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+        }
+        setItems(filtered.slice(0, 20));
+      })
+      .catch(() => {});
+  }, []);
+
+  if (items.length === 0) return null;
 
   return (
     <section className="bg-white py-6 border-t border-gray-100">
@@ -78,7 +96,7 @@ export default function BrandsBar() {
             <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">SHIPS IN 24 HRS</span>
           </div>
           <div className="flex items-center gap-2">
-            <a href="#" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
+            <a href="/search?q=janitors+finest" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
             <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
             </button>
@@ -88,7 +106,7 @@ export default function BrandsBar() {
           </div>
         </div>
         <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-          {readyToShip.map((product) => (
+          {items.map((product) => (
             <ReadyCard key={product.slug} product={product} />
           ))}
         </div>

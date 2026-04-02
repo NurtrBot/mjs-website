@@ -1,5 +1,3 @@
-import { importedProducts } from './imported-products';
-
 export interface ProductData {
   slug: string;
   sku: string;
@@ -911,7 +909,7 @@ export const products: ProductData[] = [
   },
 ];
 
-const allProducts = [...products, ...importedProducts];
+const allProducts = [...products];
 
 export function getProductBySlug(slug: string): ProductData | undefined {
   return allProducts.find((p) => p.slug === slug);

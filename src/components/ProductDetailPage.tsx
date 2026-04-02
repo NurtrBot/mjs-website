@@ -91,27 +91,27 @@ function QuantitySelector({
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
   const localProduct = getProductBySlug(slug);
-  const [product, setProduct] = useState<ProductData>(
-    localProduct || getProductBySlug("stretch-film-clear-18-55ga-1500")!
-  );
-  const [bcLoaded, setBcLoaded] = useState(false);
+  const [product, setProduct] = useState<ProductData | null>(localProduct || null);
+  const [loading, setLoading] = useState(!localProduct);
   const relatedProducts = getRelatedProducts(slug, 6);
   const { addItem } = useCart();
 
-  // Try to fetch from BigCommerce
+  // Fetch from BigCommerce if not found locally (or to get fresher data)
   useEffect(() => {
+    if (!localProduct) setLoading(true);
     fetch(`/api/products/slug?slug=${encodeURIComponent(slug)}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.product) {
           setProduct(data.product);
-          setBcLoaded(true);
         }
+        setLoading(false);
       })
-      .catch(() => {});
+      .catch(() => setLoading(false));
   }, [slug]);
 
   const handleAddToCart = () => {
+    if (!product) return;
     addItem({
       slug: product.slug,
       name: product.cardTitle,
@@ -172,6 +172,34 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
     }, 500);
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="bg-white min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-mjs-red animate-spin mx-auto" />
+          <p className="text-sm text-mjs-gray-400 mt-3">Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found
+  if (!product) {
+    return (
+      <div className="bg-white min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-lg font-bold text-mjs-dark mb-2">Product Not Found</h2>
+          <p className="text-sm text-mjs-gray-400 mb-6">The product you&apos;re looking for couldn&apos;t be found.</p>
+          <a href="/" className="bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
+            Back to Home
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -188,11 +216,11 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               Home
             </a>
             <ChevronRight className="w-3.5 h-3.5" />
-            <a href="#" className="hover:text-mjs-red transition-colors">
+            <a href={`/search?q=${encodeURIComponent(product.category)}`} className="hover:text-mjs-red transition-colors">
               {product.category}
             </a>
             <ChevronRight className="w-3.5 h-3.5" />
-            <a href="#" className="hover:text-mjs-red transition-colors">
+            <a href={`/search?q=${encodeURIComponent(product.subcategory)}`} className="hover:text-mjs-red transition-colors">
               {product.subcategory}
             </a>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -593,17 +621,13 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 </p>
               </div>
               {product.sdsSheet && (
-                <p className="text-sm text-mjs-gray-500 mt-3">
-                  Download the Safety Data Sheet here:{" "}
-                  <a
-                    href={product.sdsSheet}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-mjs-red font-semibold hover:underline"
-                  >
-                    Click Here
+                <div className="flex items-center gap-2 mt-3 text-sm text-mjs-gray-500">
+                  <FileText className="w-4 h-4 text-mjs-gray-400" />
+                  <span>Safety Data Sheet</span>
+                  <a href={product.sdsSheet} target="_blank" rel="noopener noreferrer" className="text-mjs-red font-semibold hover:underline">
+                    Download PDF
                   </a>
-                </p>
+                </div>
               )}
             </div>
 

@@ -21,6 +21,7 @@ const categories = [
     startingFrom: "$36.99",
     color: "from-sky-400 to-sky-600",
     bg: "bg-sky-50",
+    href: "/search?q=toilet+tissue",
   },
   {
     name: "Paper Towels",
@@ -28,6 +29,7 @@ const categories = [
     startingFrom: "$28.99",
     color: "from-blue-400 to-blue-600",
     bg: "bg-blue-50",
+    href: "/search?q=paper+towels",
   },
   {
     name: "Chemicals",
@@ -35,6 +37,7 @@ const categories = [
     startingFrom: "$11.50",
     color: "from-emerald-400 to-emerald-600",
     bg: "bg-emerald-50",
+    href: "/shop/cleaning-chemicals",
   },
   {
     name: "Nitrile Gloves",
@@ -42,6 +45,7 @@ const categories = [
     startingFrom: "$5.99",
     color: "from-violet-400 to-violet-600",
     bg: "bg-violet-50",
+    href: "/search?q=nitrile+gloves",
   },
   {
     name: "Stretch Film",
@@ -49,6 +53,7 @@ const categories = [
     startingFrom: "$39.99",
     color: "from-amber-400 to-amber-600",
     bg: "bg-amber-50",
+    href: "/search?q=stretch+film",
   },
   {
     name: "Floor Care",
@@ -56,6 +61,7 @@ const categories = [
     startingFrom: "$18.95",
     color: "from-teal-400 to-teal-600",
     bg: "bg-teal-50",
+    href: "/category/floor-care",
   },
   {
     name: "Cleaning Tools",
@@ -63,6 +69,7 @@ const categories = [
     startingFrom: "$12.50",
     color: "from-cyan-400 to-cyan-600",
     bg: "bg-cyan-50",
+    href: "/search?q=cleaning+tools",
   },
   {
     name: "Equipment",
@@ -70,6 +77,7 @@ const categories = [
     startingFrom: "$149.00",
     color: "from-gray-400 to-gray-600",
     bg: "bg-gray-50",
+    href: "/shop/equipment-tools",
   },
   {
     name: "Breakroom",
@@ -77,6 +85,7 @@ const categories = [
     startingFrom: "$8.99",
     color: "from-rose-400 to-rose-600",
     bg: "bg-rose-50",
+    href: "/category/breakroom",
   },
 ];
 
@@ -124,7 +133,7 @@ export default function CategoryGrid() {
           {categories.map((cat) => (
             <a
               key={cat.name}
-              href="#"
+              href={cat.href}
               className={`flex-shrink-0 w-[140px] ${cat.bg} rounded-xl p-4 text-center group hover:shadow-lg transition-all border border-transparent hover:border-gray-200`}
             >
               <div

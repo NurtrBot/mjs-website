@@ -555,7 +555,7 @@ export default function AccountDashboard() {
             <div className="px-8 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-mjs-dark">Place an Order</h2>
-                <p className="text-sm text-mjs-gray-400 mt-0.5">Step {orderStep} of 2</p>
+                <p className="text-sm text-mjs-gray-500 mt-0.5">Step {orderStep} of 2</p>
               </div>
               <button onClick={() => setShowOrderModal(false)} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
                 <X className="w-5 h-5 text-mjs-gray-400" />
@@ -569,7 +569,7 @@ export default function AccountDashboard() {
                   {/* Bill To */}
                   <div className="bg-mjs-gray-50 rounded-xl p-4 mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xs font-bold text-mjs-gray-400 uppercase tracking-wider">Bill To</h3>
+                      <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider">Bill To</h3>
                       <button onClick={() => setEditBillTo(!editBillTo)} className="text-[10px] text-mjs-red font-semibold hover:underline">
                         {editBillTo ? "Done" : "Edit"}
                       </button>
@@ -604,7 +604,7 @@ export default function AccountDashboard() {
                   </div>
 
                   {/* Payment Method */}
-                  <h3 className="text-xs font-bold text-mjs-gray-400 uppercase tracking-wider mb-3">Payment Method</h3>
+                  <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider mb-3">Payment Method</h3>
                   <div className="grid grid-cols-3 gap-3 mb-6">
                     {[
                       { id: "bill", label: "Bill to Company", icon: Building2, sub: "Net 30 Terms" },
@@ -622,13 +622,13 @@ export default function AccountDashboard() {
                       >
                         <opt.icon className={`w-6 h-6 mx-auto mb-2 ${paymentMethod === opt.id ? "text-mjs-red" : "text-mjs-gray-400"}`} />
                         <div className="text-xs font-semibold text-mjs-dark">{opt.label}</div>
-                        <div className="text-[10px] text-mjs-gray-400">{opt.sub}</div>
+                        <div className="text-[10px] text-mjs-gray-500">{opt.sub}</div>
                       </button>
                     ))}
                   </div>
 
                   {/* Fulfillment */}
-                  <h3 className="text-xs font-bold text-mjs-gray-400 uppercase tracking-wider mb-3">Fulfillment</h3>
+                  <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider mb-3">Fulfillment</h3>
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[
                       { id: "delivery", label: "Delivery", icon: Truck, sub: "1-3 Business Days" },
@@ -645,7 +645,7 @@ export default function AccountDashboard() {
                       >
                         <opt.icon className={`w-6 h-6 mx-auto mb-2 ${fulfillment === opt.id ? "text-mjs-red" : "text-mjs-gray-400"}`} />
                         <div className="text-xs font-semibold text-mjs-dark">{opt.label}</div>
-                        <div className="text-[10px] text-mjs-gray-400">{opt.sub}</div>
+                        <div className="text-[10px] text-mjs-gray-500">{opt.sub}</div>
                       </button>
                     ))}
                   </div>
