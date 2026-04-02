@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Star,
   ShoppingCart,
@@ -24,6 +24,7 @@ import {
   MapPin,
   Loader2,
   Headphones,
+  FileText,
 } from "lucide-react";
 
 import { getProductBySlug, getRelatedProducts, type ProductData } from "@/data/products";
@@ -89,9 +90,26 @@ function QuantitySelector({
 /* ───────── main component ───────── */
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
-  const product = getProductBySlug(slug) || getProductBySlug("stretch-film-clear-18-55ga-1500")!;
+  const localProduct = getProductBySlug(slug);
+  const [product, setProduct] = useState<ProductData>(
+    localProduct || getProductBySlug("stretch-film-clear-18-55ga-1500")!
+  );
+  const [bcLoaded, setBcLoaded] = useState(false);
   const relatedProducts = getRelatedProducts(slug, 6);
   const { addItem } = useCart();
+
+  // Try to fetch from BigCommerce
+  useEffect(() => {
+    fetch(`/api/products/slug?slug=${encodeURIComponent(slug)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.product) {
+          setProduct(data.product);
+          setBcLoaded(true);
+        }
+      })
+      .catch(() => {});
+  }, [slug]);
 
   const handleAddToCart = () => {
     addItem({
@@ -107,45 +125,49 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const [qty, setQty] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [shipZip, setShipZip] = useState("");
-  const [shipResult, setShipResult] = useState<{
-    cost: string;
-    days: string;
-    type: string;
-  } | null>(null);
+  const [shipOption, setShipOption] = useState<"pickup" | "delivery">("delivery");
+  const [shipChecked, setShipChecked] = useState(false);
   const [shipChecking, setShipChecking] = useState(false);
+  const [shipPrice, setShipPrice] = useState("");
+  const [shipArea, setShipArea] = useState("");
+  const [freeMinimum, setFreeMinimum] = useState("");
 
   const checkShipping = () => {
     if (shipZip.length < 5) return;
     setShipChecking(true);
     setTimeout(() => {
       const prefix = shipZip.slice(0, 3);
-      const freeZips = [
-        "900","901","902","903","904","905","906","907","908","909",
-        "910","911","912","913","914","915","916","917","918",
-        "920","921","926","927","928",
-      ];
-      const nearZips = [
-        "922","923","924","925","930","931","932","933","934","935",
-      ];
-      if (freeZips.includes(prefix)) {
-        setShipResult({
-          cost: "FREE",
-          days: "1-2 business days",
-          type: "free",
-        });
-      } else if (nearZips.includes(prefix)) {
-        setShipResult({
-          cost: "$12.95",
-          days: "2-3 business days",
-          type: "paid",
-        });
+      // Orange County
+      const ocZips = ["926","927","928","906","907"];
+      // Los Angeles
+      const laZips = ["900","901","902","903","904","905","908","909","910","911","912","913","914","915","916","917","918"];
+      // Inland Empire (Riverside / San Bernardino)
+      const ieZips = ["920","921","922","923","924","925"];
+      // San Diego
+      const sdZips = ["919","930","931","932","933","934","935"];
+
+      if (ocZips.includes(prefix)) {
+        setShipArea("Orange County");
+        setFreeMinimum("$399");
+        setShipPrice("$35.00");
+      } else if (laZips.includes(prefix)) {
+        setShipArea("Los Angeles");
+        setFreeMinimum("$399");
+        setShipPrice("$35.00");
+      } else if (ieZips.includes(prefix)) {
+        setShipArea("Inland Empire");
+        setFreeMinimum("$399");
+        setShipPrice("$35.00");
+      } else if (sdZips.includes(prefix)) {
+        setShipArea("San Diego");
+        setFreeMinimum("$699");
+        setShipPrice("$45.00");
       } else {
-        setShipResult({
-          cost: "$24.95",
-          days: "3-5 business days",
-          type: "paid",
-        });
+        setShipArea("UPS Ground");
+        setFreeMinimum("");
+        setShipPrice("$35.00");
       }
+      setShipChecked(true);
       setShipChecking(false);
     }, 500);
   };
@@ -250,7 +272,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 {product.reviewCount} Reviews
               </a>
               <span className="text-mjs-gray-300">|</span>
-              <span className="text-sm text-mjs-gray-400">
+              <span className="text-sm text-mjs-gray-600">
                 SKU: {product.sku}
               </span>
             </div>
@@ -276,7 +298,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   </>
                 )}
               </div>
-              <p className="text-xs text-mjs-gray-400 mt-1">
+              <p className="text-xs text-mjs-gray-600 mt-1">
                 Price per carton &middot; Bulk pricing available
               </p>
             </div>
@@ -287,7 +309,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 <Check className="w-4 h-4" />
                 In Stock
               </div>
-              <span className="text-sm text-mjs-gray-400">
+              <span className="text-xs text-mjs-gray-600">
                 {product.stockQty}&nbsp;available &nbsp;&middot;&nbsp; Usually ships in 1-2 days
               </span>
             </div>
@@ -348,68 +370,130 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               </button>
             </div>
 
-            {/* Shipping Estimate */}
-            <div className="bg-mjs-gray-50 border border-gray-200 rounded-xl p-3.5 mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Truck className="w-4 h-4 text-mjs-gray-600" />
-                <span className="text-sm font-semibold text-mjs-gray-800">
-                  Estimate Shipping
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mjs-gray-400" />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={5}
-                    value={shipZip}
-                    onChange={(e) => {
-                      setShipZip(e.target.value.replace(/\D/g, ""));
-                      setShipResult(null);
-                    }}
-                    onKeyDown={(e) => e.key === "Enter" && checkShipping()}
-                    placeholder="Enter zip code"
-                    className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-mjs-red focus:ring-1 focus:ring-mjs-red/20 outline-none transition-all bg-white"
-                  />
-                </div>
+            {/* Shipping & Pickup Options */}
+            <div className="border border-gray-200 rounded-xl mb-4 overflow-hidden">
+              {/* Option Cards */}
+              <div className="grid grid-cols-2 gap-3 p-4">
+                {/* Ship */}
                 <button
-                  onClick={checkShipping}
-                  disabled={shipZip.length < 5 || shipChecking}
-                  className="px-4 py-2 text-sm font-semibold bg-mjs-dark text-white rounded-lg hover:bg-mjs-charcoal transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                  onClick={() => { setShipOption("delivery"); if (!shipChecked) setShipChecked(false); }}
+                  className={`rounded-xl border-2 py-5 px-4 text-center transition-all ${
+                    shipOption === "delivery"
+                      ? "border-mjs-red bg-red-50/30"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
                 >
-                  {shipChecking ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Truck className="w-5 h-5 text-mjs-dark" />
+                    <span className="text-base font-bold text-mjs-dark">Ship</span>
+                    {shipOption === "delivery" && (
+                      <div className="w-5 h-5 rounded-full bg-mjs-red flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  {shipChecked && shipZip ? (
+                    <>
+                      <div className="text-sm font-semibold text-mjs-dark">Ships UPS Ground</div>
+                      <div className="text-xs text-mjs-gray-600 mt-1">
+                        {product.inStock ? `${product.stockQty.toLocaleString()} available` : "Check availability"}
+                      </div>
+                      <div className="text-sm font-bold text-mjs-green mt-2">{shipPrice}</div>
+                    </>
                   ) : (
-                    "Get Estimate"
+                    <>
+                      <div className="text-sm font-semibold text-mjs-dark">Ships UPS Ground</div>
+                      <div className="text-xs text-mjs-gray-600 mt-1">Enter zip for rate</div>
+                      <div className="text-sm font-bold text-mjs-gray-400 mt-2">—</div>
+                    </>
                   )}
                 </button>
-              </div>
-              {shipResult && (
-                <div className="mt-2.5 flex items-center justify-between bg-white rounded-lg border border-gray-100 px-3.5 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-2 h-2 rounded-full ${
-                        shipResult.type === "free"
-                          ? "bg-mjs-green"
-                          : "bg-mjs-blue"
-                      }`}
-                    />
-                    <span className="text-sm text-mjs-gray-600">
-                      Est. delivery: <span className="font-medium text-mjs-gray-800">{shipResult.days}</span>
-                    </span>
+
+                {/* Pick Up */}
+                <button
+                  onClick={() => setShipOption("pickup")}
+                  className={`rounded-xl border-2 py-5 px-4 text-center transition-all ${
+                    shipOption === "pickup"
+                      ? "border-mjs-red bg-red-50/30"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Package className="w-5 h-5 text-mjs-dark" />
+                    <span className="text-base font-bold text-mjs-dark">Pick Up</span>
+                    {shipOption === "pickup" && (
+                      <div className="w-5 h-5 rounded-full bg-mjs-red flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
                   </div>
-                  <span
-                    className={`text-sm font-bold ${
-                      shipResult.type === "free"
-                        ? "text-mjs-green"
-                        : "text-mjs-gray-800"
-                    }`}
-                  >
-                    {shipResult.cost}
-                  </span>
+                  <div className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-wider">Anaheim Warehouse</div>
+                  <div className="text-sm font-semibold text-mjs-dark mt-1">Ready: Today (6:30AM-3PM)</div>
+                  <div className="text-sm font-bold text-mjs-green mt-2">FREE</div>
+                </button>
+              </div>
+
+              {/* Zip code input — shows when Ship is selected */}
+              {shipOption === "delivery" && (
+                <div className="px-4 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mjs-gray-400" />
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={5}
+                        value={shipZip}
+                        onChange={(e) => { setShipZip(e.target.value.replace(/\D/g, "")); setShipChecked(false); }}
+                        onKeyDown={(e) => e.key === "Enter" && checkShipping()}
+                        placeholder="Enter zip code"
+                        className="w-full pl-8 pr-3 py-2.5 text-sm rounded-lg border border-gray-300 focus:border-mjs-red focus:ring-1 focus:ring-mjs-red/20 outline-none transition-all bg-white"
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      onClick={checkShipping}
+                      disabled={shipZip.length < 5 || shipChecking}
+                      className="px-5 py-2.5 text-sm font-semibold bg-mjs-dark text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      {shipChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : "Check Rate"}
+                    </button>
+                  </div>
                 </div>
               )}
+
+              {/* Bottom info — dynamic based on area */}
+              <div className="bg-mjs-gray-50 border-t border-gray-200 py-3 px-4">
+                {shipOption === "pickup" ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className="w-4 h-4 text-mjs-red flex-shrink-0" />
+                    <span className="text-xs font-semibold text-mjs-gray-600 text-center">
+                      Pick up at 3066 E. La Palma Ave, Anaheim &middot; Mon-Fri 6:30 AM - 2:45 PM
+                    </span>
+                  </div>
+                ) : shipChecked && freeMinimum ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Truck className="w-4 h-4 text-mjs-green flex-shrink-0" />
+                    <span className="text-xs font-semibold text-mjs-green text-center">
+                      Free Delivery to {shipArea} on orders {freeMinimum}+
+                    </span>
+                  </div>
+                ) : shipChecked && !freeMinimum ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Truck className="w-4 h-4 text-mjs-gray-500 flex-shrink-0" />
+                    <span className="text-xs font-semibold text-mjs-gray-600 text-center">
+                      Ships UPS Ground &middot; Rates calculated at checkout
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    <Truck className="w-4 h-4 text-mjs-red flex-shrink-0" />
+                    <span className="text-xs font-semibold text-mjs-gray-600 text-center">
+                      Free Delivery on qualifying orders &middot; Enter zip for your rate
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Secondary actions */}
@@ -435,49 +519,6 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 <Printer className="w-4 h-4" />
                 Print
               </button>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gray-200 mb-5" />
-
-            {/* Delivery & Trust Signals */}
-            <div className="space-y-3 mb-6">
-              <div className="flex items-start gap-3 p-3 bg-mjs-gray-50 rounded-xl">
-                <Truck className="w-5 h-5 text-mjs-green mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-semibold text-mjs-gray-800">
-                    Free Delivery on orders $399+
-                  </div>
-                  <div className="text-xs text-mjs-gray-400 mt-0.5">
-                    1-3 days shipping &middot; SoCal delivery zone
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 bg-mjs-gray-50 rounded-xl">
-                <Clock className="w-5 h-5 text-mjs-blue mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-semibold text-mjs-gray-800">
-                    Will-Call Available
-                  </div>
-                  <div className="text-xs text-mjs-gray-400 mt-0.5">
-                    Pick up at our Anaheim location &middot; Mon-Fri 6:30am - 3:00pm
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2.5 p-3 bg-mjs-gray-50 rounded-xl">
-                  <ShieldCheck className="w-5 h-5 text-mjs-gold-dark flex-shrink-0" />
-                  <span className="text-xs font-semibold text-mjs-gray-600">
-                    Quality Guaranteed
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5 p-3 bg-mjs-gray-50 rounded-xl">
-                  <RotateCcw className="w-5 h-5 text-mjs-gold-dark flex-shrink-0" />
-                  <span className="text-xs font-semibold text-mjs-gray-600">
-                    Easy Returns
-                  </span>
-                </div>
-              </div>
             </div>
 
           </div>
@@ -551,6 +592,19 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   {product.description}
                 </p>
               </div>
+              {product.sdsSheet && (
+                <p className="text-sm text-mjs-gray-500 mt-3">
+                  Download the Safety Data Sheet here:{" "}
+                  <a
+                    href={product.sdsSheet}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-mjs-red font-semibold hover:underline"
+                  >
+                    Click Here
+                  </a>
+                </p>
+              )}
             </div>
 
             {/* Features — right 2 cols */}

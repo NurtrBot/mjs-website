@@ -1,3 +1,5 @@
+import { importedProducts } from './imported-products';
+
 export interface ProductData {
   slug: string;
   sku: string;
@@ -23,6 +25,8 @@ export interface ProductData {
   imageFit?: "contain" | "cover";
   // Quick buy options
   quickBuy: { label: string; qty: number; savings?: string }[];
+  // SDS sheet (chemicals only)
+  sdsSheet?: string;
 }
 
 export const products: ProductData[] = [
@@ -169,6 +173,7 @@ export const products: ProductData[] = [
     },
     category: "Cleaning Chemicals",
     subcategory: "Degreasers",
+    sdsSheet: "/sds/3180EA.PDF",
     quickBuy: [
       { label: "1 Gallon", qty: 1 },
       { label: "4 Gallons (Case)", qty: 4, savings: "Save 8%" },
@@ -462,6 +467,7 @@ export const products: ProductData[] = [
     },
     category: "Cleaning Chemicals",
     subcategory: "Air Fresheners",
+    sdsSheet: "/sds/4385370.PDF",
     quickBuy: [
       { label: "1 Carton (12)", qty: 1 },
       { label: "2 Cartons", qty: 2, savings: "Save 5%" },
@@ -534,6 +540,7 @@ export const products: ProductData[] = [
     },
     category: "Cleaning Chemicals",
     subcategory: "All-Purpose Cleaners",
+    sdsSheet: "/sds/3162EA.PDF",
     quickBuy: [
       { label: "1 Gallon", qty: 1 },
       { label: "4 Gallons (Case)", qty: 4, savings: "Save 8%" },
@@ -677,6 +684,7 @@ export const products: ProductData[] = [
     },
     category: "Cleaning Chemicals",
     subcategory: "Wipes",
+    sdsSheet: "/sds/NICM30472.PDF",
     quickBuy: [
       { label: "1 Carton (12 Packs)", qty: 1 },
       { label: "2 Cartons", qty: 2, savings: "Save 5%" },
@@ -719,19 +727,205 @@ export const products: ProductData[] = [
       { label: "5 Cartons", qty: 5, savings: "Save 10%" },
     ],
   },
+  {
+    slug: "platinum-knight-wash-foam",
+    sku: "PK-WF500",
+    name: "Wash & Foam, 500ml / 16.9 fl oz",
+    cardTitle: "Wash & Foam",
+    pack: "500ml Bottle",
+    brand: "Platinum Knight",
+    price: 18.99,
+    rating: 4.9,
+    reviewCount: 67,
+    images: ["/images/product-pk-wash-foam.jpg", "/images/product-pk-wash-foam.jpg", "/images/product-pk-wash-foam.jpg"],
+    imageFit: "contain",
+    inStock: true,
+    stockQty: 150,
+    description: "Platinum Knight Wash & Foam is a premium car wash soap that produces rich, thick foam for a scratch-free clean. Its pH-balanced formula safely lifts dirt, grime, and road film without stripping wax or ceramic coatings. Use with a foam cannon or traditional wash bucket for showroom results.",
+    highlights: [
+      "Rich, thick foam formula",
+      "pH-balanced & coating safe",
+      "500ml / 16.9 fl oz bottle",
+      "Works with foam cannons & buckets",
+    ],
+    specs: {
+      SKU: "PK-WF500",
+      Brand: "Platinum Knight",
+      Size: "500ml / 16.9 fl oz",
+      Type: "Car Wash Soap",
+      "pH Balanced": "Yes",
+      "Coating Safe": "Yes",
+    },
+    category: "Car Detailing",
+    subcategory: "Wash",
+    quickBuy: [
+      { label: "1 Bottle", qty: 1 },
+      { label: "3 Bottles", qty: 3, savings: "Save 10%" },
+    ],
+  },
+  {
+    slug: "platinum-knight-detailing-bucket",
+    sku: "PK-BKT5G",
+    name: "Detailing Bucket with Grit Guard & Lid, 5 Gallon, Black",
+    cardTitle: "Detailing Bucket Kit",
+    pack: "Each",
+    brand: "Platinum Knight",
+    price: 29.99,
+    rating: 4.8,
+    reviewCount: 43,
+    images: ["/images/product-pk-bucket.jpg", "/images/product-pk-bucket.jpg", "/images/product-pk-bucket.jpg"],
+    imageFit: "contain",
+    inStock: true,
+    stockQty: 85,
+    description: "Platinum Knight 5 Gallon Detailing Bucket comes complete with a grit guard insert and snap-on lid. The grit guard traps dirt and debris at the bottom of the bucket, preventing swirl marks during washing. Heavy-duty construction with the Platinum Knight logo.",
+    highlights: [
+      "5 gallon heavy-duty bucket",
+      "Includes grit guard insert",
+      "Snap-on lid included",
+      "Prevents swirl marks",
+    ],
+    specs: {
+      SKU: "PK-BKT5G",
+      Brand: "Platinum Knight",
+      Capacity: "5 Gallon",
+      Color: "Black",
+      "Includes": "Grit Guard + Lid",
+      Material: "Heavy-duty plastic",
+    },
+    category: "Car Detailing",
+    subcategory: "Accessories",
+    quickBuy: [
+      { label: "1 Bucket", qty: 1 },
+      { label: "2 Buckets", qty: 2, savings: "Save 5%" },
+    ],
+  },
+  {
+    slug: "platinum-knight-ceramic-glass-cleaner",
+    sku: "PK-CGC500",
+    name: "Ceramic Glass Cleaner, 500ml / 16.9 fl oz",
+    cardTitle: "Ceramic Glass Cleaner",
+    pack: "500ml Bottle",
+    brand: "Platinum Knight",
+    price: 16.99,
+    rating: 4.7,
+    reviewCount: 58,
+    images: ["/images/product-pk-glass-cleaner.jpg", "/images/product-pk-glass-cleaner.jpg", "/images/product-pk-glass-cleaner.jpg"],
+    imageFit: "contain",
+    inStock: true,
+    stockQty: 200,
+    description: "Platinum Knight Ceramic Glass Cleaner delivers a streak-free, crystal-clear finish on all automotive glass surfaces. Infused with ceramic technology for added hydrophobic protection that repels water and improves visibility in rain. Safe on tinted windows.",
+    highlights: [
+      "Streak-free formula",
+      "Ceramic hydrophobic protection",
+      "Safe on tinted windows",
+      "500ml / 16.9 fl oz spray bottle",
+    ],
+    specs: {
+      SKU: "PK-CGC500",
+      Brand: "Platinum Knight",
+      Size: "500ml / 16.9 fl oz",
+      Type: "Glass Cleaner",
+      "Ceramic Infused": "Yes",
+      "Tint Safe": "Yes",
+    },
+    category: "Car Detailing",
+    subcategory: "Glass",
+    quickBuy: [
+      { label: "1 Bottle", qty: 1 },
+      { label: "3 Bottles", qty: 3, savings: "Save 10%" },
+    ],
+  },
+  {
+    slug: "platinum-knight-wax-shield",
+    sku: "PK-WS200",
+    name: "Nature's Wax Shield, Premium Carnauba Wax Paste, 200g / 7 oz",
+    cardTitle: "Wax Shield Paste",
+    pack: "200g Tin",
+    brand: "Platinum Knight",
+    price: 24.99,
+    rating: 4.9,
+    reviewCount: 91,
+    images: ["/images/product-pk-wax-shield.jpg", "/images/product-pk-wax-shield.jpg", "/images/product-pk-wax-shield.jpg"],
+    imageFit: "contain",
+    inStock: true,
+    stockQty: 120,
+    description: "Platinum Knight Nature's Wax Shield is a premium carnauba wax paste that delivers deep, wet-look shine and long-lasting paint protection. Easy to apply and buff off, it leaves a hydrophobic barrier that beads water and repels contaminants. Suitable for all paint colors.",
+    highlights: [
+      "Premium carnauba wax",
+      "Deep wet-look shine",
+      "Hydrophobic protection",
+      "200g / 7 oz tin",
+    ],
+    specs: {
+      SKU: "PK-WS200",
+      Brand: "Platinum Knight",
+      Size: "200g / 7 oz",
+      Type: "Carnauba Wax Paste",
+      Finish: "High Gloss",
+      "All Colors": "Yes",
+    },
+    category: "Car Detailing",
+    subcategory: "Wax & Protection",
+    badge: "BEST SELLER",
+    badgeColor: "bg-mjs-red",
+    quickBuy: [
+      { label: "1 Tin", qty: 1 },
+      { label: "2 Tins", qty: 2, savings: "Save 8%" },
+    ],
+  },
+  {
+    slug: "platinum-knight-ceramic-shampoo",
+    sku: "PK-CS500",
+    name: "Ceramic Shampoo, 500ml / 16.9 fl oz",
+    cardTitle: "Ceramic Shampoo",
+    pack: "500ml Bottle",
+    brand: "Platinum Knight",
+    price: 19.99,
+    rating: 4.8,
+    reviewCount: 74,
+    images: ["/images/product-pk-ceramic-shampoo.jpg", "/images/product-pk-ceramic-shampoo.jpg", "/images/product-pk-ceramic-shampoo.jpg"],
+    imageFit: "contain",
+    inStock: true,
+    stockQty: 165,
+    description: "Platinum Knight Ceramic Shampoo is a SiO2-infused car wash that cleans while adding a layer of ceramic protection with every wash. The slick formula provides excellent lubrication to prevent swirl marks and leaves behind a hydrophobic, glossy finish that lasts for weeks.",
+    highlights: [
+      "SiO2 ceramic infused",
+      "Adds protection with every wash",
+      "Anti-swirl lubrication",
+      "500ml / 16.9 fl oz bottle",
+    ],
+    specs: {
+      SKU: "PK-CS500",
+      Brand: "Platinum Knight",
+      Size: "500ml / 16.9 fl oz",
+      Type: "Ceramic Car Shampoo",
+      "SiO2 Infused": "Yes",
+      "Coating Safe": "Yes",
+    },
+    category: "Car Detailing",
+    subcategory: "Wash",
+    quickBuy: [
+      { label: "1 Bottle", qty: 1 },
+      { label: "3 Bottles", qty: 3, savings: "Save 10%" },
+    ],
+  },
 ];
 
+const allProducts = [...products, ...importedProducts];
+
 export function getProductBySlug(slug: string): ProductData | undefined {
-  return products.find((p) => p.slug === slug);
+  return allProducts.find((p) => p.slug === slug);
 }
 
 export function getRelatedProducts(currentSlug: string, count = 6): ProductData[] {
-  return products.filter((p) => p.slug !== currentSlug).slice(0, count);
+  return allProducts.filter((p) => p.slug !== currentSlug).slice(0, count);
 }
 
 export function getProductsByCategory(category: string): ProductData[] {
-  return products.filter((p) => p.category === category);
+  return allProducts.filter((p) => p.category === category);
 }
+
+export { allProducts };
 
 export const categoryMap: Record<string, string> = {
   "paper-products": "Paper & Restroom",
@@ -742,6 +936,7 @@ export const categoryMap: Record<string, string> = {
   "breakroom": "Breakroom",
   "equipment": "Equipment & Tools",
   "floor-care": "Floor Care",
+  "car-detailing": "Car Detailing",
 };
 
 export function getCategorySlug(categoryName: string): string {

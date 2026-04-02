@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   ShoppingCart,
@@ -12,7 +12,7 @@ import {
   Phone,
 } from "lucide-react";
 import { LogOut } from "lucide-react";
-import { products as allProducts } from "@/data/products";
+import { allProducts, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -27,14 +27,97 @@ export default function Header() {
   const [locationInput, setLocationInput] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("Anaheim, CA");
 
-  const filteredProducts = searchQuery.length > 0
-    ? allProducts.filter((p) =>
-        p.cardTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5)
+  const [bcSearchResults, setBcSearchResults] = useState<ProductData[]>([]);
+  const searchTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Only show products with a real image (not the placeholder)
+  const hasRealImage = (p: ProductData) =>
+    p.images.length > 0 && !p.images[0].includes("placeholder");
+
+  // Score a product against the search query — higher = better match
+  const scoreProduct = (p: ProductData, query: string): number => {
+    const q = query.toLowerCase().trim();
+    const tokens = q.split(/\s+/).filter(Boolean);
+    const sku = p.sku.toLowerCase();
+    const name = p.name.toLowerCase();
+    const cardTitle = p.cardTitle.toLowerCase();
+    const brand = p.brand.toLowerCase();
+    const category = p.category.toLowerCase();
+    const subcategory = p.subcategory.toLowerCase();
+    const searchable = `${name} ${cardTitle} ${brand} ${category} ${subcategory} ${sku}`;
+
+    let score = 0;
+
+    // Exact SKU match is top priority
+    if (sku === q) return 1000;
+    // SKU starts with query
+    if (sku.startsWith(q)) score += 200;
+    // SKU contains query
+    else if (sku.includes(q)) score += 150;
+
+    // Full query appears in name/title
+    if (cardTitle.includes(q)) score += 100;
+    if (name.includes(q)) score += 80;
+    if (brand.includes(q)) score += 60;
+
+    // Tokenized matching — each word that matches adds points
+    for (const token of tokens) {
+      if (searchable.includes(token)) score += 20;
+      // Bonus for matching in key fields
+      if (cardTitle.includes(token)) score += 10;
+      if (brand.includes(token)) score += 5;
+      if (subcategory.includes(token)) score += 5;
+    }
+
+    // Penalize if not all tokens match
+    const matchedTokens = tokens.filter(t => searchable.includes(t)).length;
+    if (tokens.length > 1 && matchedTokens < tokens.length) {
+      score -= (tokens.length - matchedTokens) * 30;
+    }
+
+    return score;
+  };
+
+  // Local instant filter — only products with real photos, scored and sorted
+  const localResults = searchQuery.length > 1
+    ? allProducts
+        .filter(hasRealImage)
+        .map(p => ({ product: p, score: scoreProduct(p, searchQuery) }))
+        .filter(r => r.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 6)
+        .map(r => r.product)
     : [];
+
+  // BigCommerce search with debounce
+  useEffect(() => {
+    if (searchQuery.length < 2) { setBcSearchResults([]); return; }
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}&limit=10`)
+        .then(res => res.json())
+        .then(data => {
+          const results = (data.products || []) as ProductData[];
+          setBcSearchResults(results.filter(hasRealImage));
+        })
+        .catch(() => {});
+    }, 300);
+    return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+  }, [searchQuery]);
+
+  // Merge local + BC results, deduplicate by slug AND sku
+  const seenSlugs = new Set<string>();
+  const seenSkus = new Set<string>();
+  const filteredProducts: ProductData[] = [];
+  // Local results first (curated, higher quality)
+  for (const p of [...localResults, ...bcSearchResults]) {
+    const skuKey = p.sku.toLowerCase();
+    if (seenSlugs.has(p.slug) || seenSkus.has(skuKey)) continue;
+    seenSlugs.add(p.slug);
+    seenSkus.add(skuKey);
+    filteredProducts.push(p);
+    if (filteredProducts.length >= 6) break;
+  }
 
   const showSuggestions = searchFocused && filteredProducts.length > 0;
 

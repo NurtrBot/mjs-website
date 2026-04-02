@@ -1,8 +1,9 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,6 +17,7 @@ import {
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount } = useCart();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [showOrderSummary, setShowOrderSummary] = useState(false);
 
@@ -27,10 +29,10 @@ export default function CheckoutPage() {
   const total = subtotal + tax + shipping;
 
   const [form, setForm] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    company: "",
+    email: user?.email || "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    company: user?.company || "",
     address: "",
     apt: "",
     city: "",
@@ -38,9 +40,9 @@ export default function CheckoutPage() {
     zip: "",
     phone: "",
     sameAsBilling: true,
-    billingFirstName: "",
-    billingLastName: "",
-    billingCompany: "",
+    billingFirstName: user?.firstName || "",
+    billingLastName: user?.lastName || "",
+    billingCompany: user?.company || "",
     billingAddress: "",
     billingApt: "",
     billingCity: "",
@@ -55,6 +57,18 @@ export default function CheckoutPage() {
 
   const update = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  const [editBillTo, setEditBillTo] = useState(false);
+  const [billTo, setBillTo] = useState({
+    company: user?.company || "",
+    name: user ? `${user.firstName} ${user.lastName}` : "",
+    email: user?.email || "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "CA",
+    zip: "",
+  });
 
   const inputClass =
     "w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40 transition-colors bg-white";
@@ -142,31 +156,70 @@ export default function CheckoutPage() {
                 Back to Cart
               </Link>
 
-              {/* Contact */}
+              {/* Bill To */}
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-                <h2 className="text-base font-bold text-mjs-dark mb-4">
-                  Contact Information
-                </h2>
-                <div>
-                  <label className={labelClass}>Email Address</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => update("email", e.target.value)}
-                    placeholder="your@email.com"
-                    className={inputClass}
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-bold text-mjs-dark">Bill To</h2>
+                  <button
+                    onClick={() => setEditBillTo(!editBillTo)}
+                    className="text-xs text-mjs-red font-semibold hover:underline"
+                  >
+                    {editBillTo ? "Done" : "Edit"}
+                  </button>
                 </div>
-                <div className="mt-3">
-                  <label className={labelClass}>Phone Number</label>
-                  <input
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => update("phone", e.target.value)}
-                    placeholder="(555) 555-5555"
-                    className={inputClass}
-                  />
-                </div>
+
+                {!editBillTo ? (
+                  <div className="bg-mjs-gray-50 rounded-xl p-4">
+                    <div className="text-sm font-bold text-mjs-dark">{billTo.company || "Company Name"}</div>
+                    <div className="text-xs text-mjs-gray-600 mt-1">{billTo.name || "Contact Name"}</div>
+                    <div className="text-xs text-mjs-gray-500 mt-0.5">{billTo.email || "Email"}</div>
+                    {billTo.phone && <div className="text-xs text-mjs-gray-500 mt-0.5">{billTo.phone}</div>}
+                    {billTo.address && (
+                      <div className="text-xs text-mjs-gray-500 mt-0.5">
+                        {billTo.address}, {billTo.city}, {billTo.state} {billTo.zip}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className={labelClass}>Company Name</label>
+                      <input type="text" value={billTo.company} onChange={(e) => setBillTo({ ...billTo, company: e.target.value })} className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Contact Name</label>
+                      <input type="text" value={billTo.name} onChange={(e) => setBillTo({ ...billTo, name: e.target.value })} className={inputClass} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={labelClass}>Email</label>
+                        <input type="email" value={billTo.email} onChange={(e) => setBillTo({ ...billTo, email: e.target.value })} className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Phone Number</label>
+                        <input type="tel" value={billTo.phone} onChange={(e) => setBillTo({ ...billTo, phone: e.target.value })} placeholder="(555) 555-5555" className={inputClass} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Billing Address</label>
+                      <input type="text" value={billTo.address} onChange={(e) => setBillTo({ ...billTo, address: e.target.value })} placeholder="Street address" className={inputClass} />
+                    </div>
+                    <div className="grid grid-cols-6 gap-3">
+                      <div className="col-span-3">
+                        <label className={labelClass}>City</label>
+                        <input type="text" value={billTo.city} onChange={(e) => setBillTo({ ...billTo, city: e.target.value })} className={inputClass} />
+                      </div>
+                      <div className="col-span-1">
+                        <label className={labelClass}>State</label>
+                        <input type="text" value={billTo.state} onChange={(e) => setBillTo({ ...billTo, state: e.target.value })} maxLength={2} className={inputClass} />
+                      </div>
+                      <div className="col-span-2">
+                        <label className={labelClass}>ZIP</label>
+                        <input type="text" value={billTo.zip} onChange={(e) => setBillTo({ ...billTo, zip: e.target.value })} className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </section>
 
               {/* Shipping */}
@@ -488,16 +541,18 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Items */}
-                  <div className="space-y-3 mb-5 max-h-[320px] overflow-y-auto">
+                  <div className="space-y-3 mb-5 max-h-[320px] overflow-y-auto pt-3 -mt-3">
                     {items.map((item) => (
-                      <div key={item.slug} className="flex gap-3">
-                        <div className="w-14 h-14 bg-mjs-gray-50 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 relative">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                          <span className="absolute -top-1.5 -right-1.5 bg-mjs-gray-600 text-white text-[9px] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center min-w-[18px] min-h-[18px]">
+                      <div key={item.slug} className="flex gap-3 pl-1">
+                        <div className="w-14 h-14 flex-shrink-0 relative overflow-visible">
+                          <div className="w-full h-full bg-mjs-gray-50 rounded-lg overflow-hidden border border-gray-100">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <span className="absolute -top-2 -right-2 bg-mjs-red text-white text-[9px] font-bold rounded-full flex items-center justify-center min-w-[20px] min-h-[20px] z-10 shadow-sm">
                             {item.qty}
                           </span>
                         </div>

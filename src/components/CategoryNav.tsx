@@ -23,6 +23,7 @@ const categories = [
   { name: "Breakroom", icon: Coffee, image: "/images/cat-breakroom.png", href: "/category/breakroom" },
   { name: "Equipment", icon: Wrench, image: "/images/cat-equipment.png", href: "/category/equipment" },
   { name: "Floor Care", icon: Sparkles, image: "/images/cat-floor-care.png", href: "/category/floor-care" },
+  { name: "Car Detailing", icon: Sparkles, image: "/images/cat-car-detailing.png", href: "/category/car-detailing" },
 ];
 
 export default function CategoryNav() {

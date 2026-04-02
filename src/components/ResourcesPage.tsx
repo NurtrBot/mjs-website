@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { FileText, CreditCard, ClipboardList, UserPlus, FileCheck, Search, Loader2, ExternalLink, FlaskConical } from "lucide-react";
+import { FileText, CreditCard, ClipboardList, UserPlus, FileCheck, Search, Loader2, Download, FlaskConical } from "lucide-react";
+import { sdsIndex, type SDSEntry } from "@/data/sds-index";
 
 const forms = [
   { name: "Credit Application", file: "/forms/credit-application.pdf", icon: CreditCard, color: "bg-blue-500" },
@@ -11,44 +12,23 @@ const forms = [
   { name: "Resale Certificate (CA)", file: "/forms/Resale-certificate-california.pdf", icon: FileText, color: "bg-mjs-red" },
 ];
 
-/* ── SDS Sheet Database ── */
-const msdsSheets = [
-  { name: "Heavy Duty Green Degreaser", sku: "3180EA", brand: "Janitors Finest", file: "#" },
-  { name: "Fabulous Lavender Cleaner", sku: "3162EA", brand: "Janitors Finest", file: "#" },
-  { name: "Value Scents Metered Spray - Lavender", sku: "4385370", brand: "Chase Products", file: "#" },
-  { name: "No-Rinse Sanitizing Wipes", sku: "NICM30472", brand: "Sani Professional", file: "#" },
-  { name: "Pine Disinfectant Cleaner", sku: "3158EA", brand: "Janitors Finest", file: "#" },
-  { name: "Bleach Germicidal Cleaner", sku: "3187EA", brand: "Janitors Finest", file: "#" },
-  { name: "Glass & Surface Cleaner", sku: "3165EA", brand: "Janitors Finest", file: "#" },
-  { name: "Heavy Duty Degreaser - Citrus", sku: "3181EA", brand: "Janitors Finest", file: "#" },
-  { name: "Neutral Floor Cleaner", sku: "3170EA", brand: "Janitors Finest", file: "#" },
-  { name: "Restroom Disinfectant Cleaner", sku: "3190EA", brand: "Janitors Finest", file: "#" },
-  { name: "Carpet Extraction Cleaner", sku: "3200EA", brand: "Janitors Finest", file: "#" },
-  { name: "Stainless Steel Cleaner & Polish", sku: "3210EA", brand: "Janitors Finest", file: "#" },
-  { name: "Hand Soap - Antibacterial", sku: "3220EA", brand: "Janitors Finest", file: "#" },
-  { name: "Foaming Hand Sanitizer", sku: "3230EA", brand: "Janitors Finest", file: "#" },
-  { name: "Dribble Urinal Deodorizer - Ocean Mist", sku: "DRIBBLEOM", brand: "Janitors Finest", file: "#" },
-  { name: "Johnny's Choice Toss-Ins - Grape", sku: "JCTOSSIN", brand: "Johnny's Choice", file: "#" },
-];
-
 export default function ResourcesPage() {
   const [query, setQuery] = useState("");
-  const [selectedSheet, setSelectedSheet] = useState<typeof msdsSheets[0] | null>(null);
+  const [selectedSheet, setSelectedSheet] = useState<SDSEntry | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filtered = query.length >= 2
-    ? msdsSheets.filter(
+    ? sdsIndex.filter(
         (s) =>
           s.name.toLowerCase().includes(query.toLowerCase()) ||
-          s.sku.toLowerCase().includes(query.toLowerCase()) ||
-          s.brand.toLowerCase().includes(query.toLowerCase())
-      )
+          s.sku.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 15)
     : [];
 
-  const handleSelect = (sheet: typeof msdsSheets[0]) => {
+  const handleSelect = (sheet: SDSEntry) => {
     setQuery(sheet.name);
     setShowDropdown(false);
     setLoading(true);
@@ -56,7 +36,7 @@ export default function ResourcesPage() {
     setTimeout(() => {
       setLoading(false);
       setSelectedSheet(sheet);
-    }, 1200);
+    }, 800);
   };
 
   // Close dropdown on outside click
@@ -79,12 +59,12 @@ export default function ResourcesPage() {
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-6">
             <a href="/" className="hover:text-white transition-colors">Home</a>
             <span>/</span>
-            <span className="text-gray-400">Resources</span>
+            <span className="text-gray-400">Forms &amp; SDS</span>
           </div>
           <div className="text-center max-w-2xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Resources</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Forms &amp; SDS Sheets</h1>
             <p className="text-gray-400 mt-3">
-              Download new customer forms and look up Safety Data Sheets for our chemical products.
+              Download new customer forms and search our library of {sdsIndex.length.toLocaleString()} Safety Data Sheets.
             </p>
           </div>
         </div>
@@ -123,10 +103,10 @@ export default function ResourcesPage() {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-12">
           <div className="text-center mb-8">
             <span className="inline-block bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2">
-              Safety Data Sheets
+              {sdsIndex.length.toLocaleString()} Sheets Available
             </span>
             <h2 className="text-xl font-bold text-mjs-dark">SDS Sheet Finder</h2>
-            <p className="text-sm text-mjs-gray-400 mt-1">Search by product name, SKU, or brand to find safety data sheets.</p>
+            <p className="text-sm text-mjs-gray-400 mt-1">Search by product name or part number to find and download safety data sheets.</p>
           </div>
 
           {/* Search Bar */}
@@ -139,17 +119,17 @@ export default function ResourcesPage() {
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); setSelectedSheet(null); }}
                 onFocus={() => query.length >= 2 && setShowDropdown(true)}
-                placeholder="Search product name, SKU, or brand..."
+                placeholder="Search by product name or part number..."
                 className="w-full pl-12 pr-4 py-4 text-sm bg-mjs-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red transition-all"
               />
             </div>
 
             {/* Dropdown Suggestions */}
             {showDropdown && filtered.length > 0 && (
-              <div ref={dropdownRef} className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-20 max-h-[300px] overflow-y-auto">
-                {filtered.map((sheet) => (
+              <div ref={dropdownRef} className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-20 max-h-[350px] overflow-y-auto">
+                {filtered.map((sheet, i) => (
                   <button
-                    key={sheet.sku}
+                    key={`${sheet.sku}-${i}`}
                     onClick={() => handleSelect(sheet)}
                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left border-b border-gray-50 last:border-0"
                   >
@@ -158,16 +138,21 @@ export default function ResourcesPage() {
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-mjs-dark truncate">{sheet.name}</div>
-                      <div className="text-[11px] text-mjs-gray-400">{sheet.brand} &middot; SKU: {sheet.sku}</div>
+                      <div className="text-[11px] text-mjs-gray-400">Part #: {sheet.sku}</div>
                     </div>
                   </button>
                 ))}
+                {filtered.length === 15 && (
+                  <div className="px-4 py-2 text-[10px] text-mjs-gray-400 text-center bg-mjs-gray-50">
+                    Showing top 15 results — type more to narrow down
+                  </div>
+                )}
               </div>
             )}
 
             {showDropdown && query.length >= 2 && filtered.length === 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 p-6 text-center z-20">
-                <p className="text-sm text-mjs-gray-400">No matching products found. Try a different search term.</p>
+                <p className="text-sm text-mjs-gray-400">No matching SDS sheets found for &ldquo;{query}&rdquo;. Try a different search term or part number.</p>
               </div>
             )}
           </div>
@@ -189,7 +174,7 @@ export default function ResourcesPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-mjs-dark">{selectedSheet.name}</div>
-                  <div className="text-xs text-mjs-gray-400 mt-0.5">{selectedSheet.brand} &middot; SKU: {selectedSheet.sku}</div>
+                  <div className="text-xs text-mjs-gray-400 mt-0.5">Part #: {selectedSheet.sku}</div>
                 </div>
                 <a
                   href={selectedSheet.file}
@@ -197,8 +182,8 @@ export default function ResourcesPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-mjs-red text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors flex-shrink-0"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  View SDS
+                  <Download className="w-4 h-4" />
+                  Download
                 </a>
               </div>
             </div>

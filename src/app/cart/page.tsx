@@ -17,9 +17,12 @@ import {
   Tag,
   X,
   PackageCheck,
+  ShoppingCart,
+  Sparkles,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { allProducts } from "@/data/products";
 
 export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, addItem, itemCount, subtotal } =
@@ -369,6 +372,82 @@ export default function CartPage() {
               </div>
             </div>
           )}
+
+          {/* ═══ RECOMMENDED FOR YOU — UPSELL STRIP ═══ */}
+          {items.length > 0 && (() => {
+            const cartSlugs = new Set(items.map((i) => i.slug));
+            const cartCategories = new Set(
+              items.map((i) => allProducts.find((p) => p.slug === i.slug)?.category).filter(Boolean)
+            );
+            // Get category-matched products first, then fill with other popular items
+            const categoryMatched = allProducts
+              .filter((p) => !cartSlugs.has(p.slug) && cartCategories.has(p.category));
+            const otherPopular = allProducts
+              .filter((p) => !cartSlugs.has(p.slug) && !cartCategories.has(p.category))
+              .sort((a, b) => b.reviewCount - a.reviewCount);
+            const upsellProducts = [...categoryMatched, ...otherPopular].slice(0, 8);
+
+            if (upsellProducts.length === 0) return null;
+
+            return (
+              <div className="mt-8 mb-2">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  {/* Header */}
+                  <div className="px-6 pt-5 pb-4 flex flex-wrap items-center gap-3">
+                    <h3 className="text-sm font-bold text-mjs-dark">Recommended for You</h3>
+                    <div className="flex items-center gap-1.5 bg-red-50 text-mjs-red text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <Sparkles className="w-3 h-3" />
+                      Take an Extra 10% Off
+                    </div>
+                  </div>
+
+                  {/* Products Grid */}
+                  <div className="px-6 pb-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                      {upsellProducts.map((product) => {
+                        const discountedPrice = +(product.price * 0.9).toFixed(2);
+                        const savings = +(product.price - discountedPrice).toFixed(2);
+                        return (
+                          <div key={product.slug} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-3 flex flex-col group hover:shadow-md hover:border-gray-200 transition-all">
+                            <a href={`/product/${product.slug}`} className="block h-[90px] mb-2 overflow-hidden rounded-lg bg-white">
+                              <img src={product.images[0]} alt={product.cardTitle} className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-2" : "object-cover"}`} />
+                            </a>
+                            <div className="flex-1 min-h-[40px]">
+                              <div className="text-[9px] text-mjs-gray-400 font-medium uppercase">{product.brand}</div>
+                              <a href={`/product/${product.slug}`} className="text-[11px] font-semibold text-mjs-dark leading-tight line-clamp-2 group-hover:text-mjs-red transition-colors">
+                                {product.cardTitle}
+                              </a>
+                            </div>
+                            <div className="mt-2">
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-sm font-black text-mjs-dark">${discountedPrice.toFixed(2)}</span>
+                                <span className="text-[10px] text-mjs-gray-400 line-through">${product.price.toFixed(2)}</span>
+                              </div>
+                              <div className="text-[9px] text-mjs-red font-semibold mb-2">Save ${savings.toFixed(2)}</div>
+                              <button
+                                onClick={() => addItem({
+                                  slug: product.slug,
+                                  name: product.cardTitle,
+                                  brand: product.brand,
+                                  price: discountedPrice,
+                                  image: product.images[0],
+                                  pack: product.pack,
+                                })}
+                                className="w-full bg-white border border-mjs-red text-mjs-red text-[10px] font-bold py-1.5 rounded-lg hover:bg-mjs-red hover:text-white transition-colors flex items-center justify-center gap-1"
+                              >
+                                <ShoppingCart className="w-3 h-3" />
+                                Add to Cart
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </main>
       <Footer />

@@ -72,6 +72,8 @@ export default function Footer() {
           <span className="text-white/10">|</span>
           <a href="/auth" className="text-gray-400 hover:text-white transition-colors">Create Account</a>
           <span className="text-white/10">|</span>
+          <a href="/account" className="text-gray-400 hover:text-white transition-colors">My Account</a>
+          <span className="text-white/10">|</span>
           <a href="/cart" className="text-gray-400 hover:text-white transition-colors">Cart</a>
           <span className="text-white/10">|</span>
           <a href="/category/paper-products" className="text-gray-400 hover:text-white transition-colors">Paper Products</a>

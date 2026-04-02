@@ -1,0 +1,2514 @@
+{
+  "331": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "463": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "480": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "482": {
+    "category": "Equipment & Tools",
+    "subcategory": "Tissue Dispensers"
+  },
+  "483": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "500": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "611": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "621": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "626": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "631": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "651": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "672": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "1015": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "1044": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1114": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "1243": {
+    "category": "Gloves & Safety",
+    "subcategory": "Latex Gloves"
+  },
+  "1324": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1343": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1355": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "1380": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "1640": {
+    "category": "Equipment & Tools",
+    "subcategory": "Squeegees"
+  },
+  "1672": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "1692": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1695": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1995": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "1999": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2020": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2041": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2042": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2044": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2046": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "2846": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "3170": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brooms & Dustpans"
+  },
+  "3175": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "3823": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4011": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "4021": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "4121": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "4286": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "4320": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "4330": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "4331": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "4500": {
+    "category": "Paper & Restroom",
+    "subcategory": "Seat Covers"
+  },
+  "4504": {
+    "category": "Paper & Restroom",
+    "subcategory": "Seat Covers"
+  },
+  "4525": {
+    "category": "Paper & Restroom",
+    "subcategory": "Seat Covers"
+  },
+  "4684": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "5108": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "5110": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "5201": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5202": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5210": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5300": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "5302": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "5402": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "5505": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "5602": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5608": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5675": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "5701": {
+    "category": "Paper & Restroom",
+    "subcategory": "Facial Tissue"
+  },
+  "5800": {
+    "category": "Paper & Restroom",
+    "subcategory": "Seat Covers"
+  },
+  "5900": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "5930": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "5940": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "5990": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "6002": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "6430": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "7323": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "7594": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "8019": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "8028": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "8036": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "8069": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "8101": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "9000": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "9290": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "10030": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "10201": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "10501": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "10712": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "13930": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "16100": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "16200": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "20003": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "20005": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20010": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "20020": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "20030": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "20205": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20291": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "20405": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20505": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20705": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "21105": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "23502": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "30130": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Glass Cleaners"
+  },
+  "30161": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "34725": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "40387": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "40501": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "42102": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "42104": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "42108": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "42112": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "43012": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "49525": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Packaging Supplies"
+  },
+  "50130": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "50135": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "62001": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "63010": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "63015": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "63018": {
+    "category": "Equipment & Tools",
+    "subcategory": "Window Cleaning"
+  },
+  "70250": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Laundry"
+  },
+  "79529": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "81925": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "82201": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Glass Cleaners"
+  },
+  "82222": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "82901": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "83201": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "83501": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "85000": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "86000": {
+    "category": "Equipment & Tools",
+    "subcategory": "Buckets & Wringers"
+  },
+  "90201": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "90202": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "90203": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "90204": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "100012": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "107128": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107251": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107303": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107310": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107360": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107713": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107778": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "107786": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "110244": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "120119": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "120125": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "120157": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "130136": {
+    "category": "Equipment & Tools",
+    "subcategory": "Spray Bottles"
+  },
+  "130550": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "143133": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Boxes"
+  },
+  "143136": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Boxes"
+  },
+  "166778": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Boxes"
+  },
+  "193382": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "193414": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "202310": {
+    "category": "Paper & Restroom",
+    "subcategory": "Paper Products"
+  },
+  "315855": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "357004": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "496779": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "3280232": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "4385370": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385371": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385373": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385374": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385375": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "8011716": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8011724": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8012532": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8620712": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "8852016": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8852024": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8852832": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "9010001": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "9092424": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "980089707": {
+    "category": "Breakroom",
+    "subcategory": "Plates & Bowls"
+  },
+  "980144024": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "GJO85133": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "421WHI": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "422WHI": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "425GRY": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "425WHI": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "IMP9325": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "424SSB": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "423SSB": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "SCD50CH": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "SCD50WHP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "SCD50SM": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "BOB2888": {
+    "category": "Equipment & Tools",
+    "subcategory": "Tissue Dispensers"
+  },
+  "TD220": {
+    "category": "Equipment & Tools",
+    "subcategory": "Tissue Dispensers"
+  },
+  "TD500": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "TD330": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "TD300": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "TD600": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "BOB262": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "481S": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "432-CLR": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "GJO21100": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "SF4000W": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "SPC750": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "FNWTT20B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "FNBST20B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "FRWT20B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "FCK50B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "T5812": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "N6012": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M950B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M950G": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M950R": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M950Y": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M915100B": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M915100Y": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "M915100G": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "DRIBBLE10002": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "4385137EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "4385149EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385136EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385151EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Glass Cleaners"
+  },
+  "4385153EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385197EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385156EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "4385157EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "4385165EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385152EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "4385359EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385323EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "4385325EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "3180EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "3158EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "3187EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Glass Cleaners"
+  },
+  "25630EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "51301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "50401EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "3265EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "12520EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "3162EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "7015SP": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "7019D": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "1090-12": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "50901EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "GOJ911802": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "81312EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Glass Cleaners"
+  },
+  "80601EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "40201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "40401EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "40101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "20501EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20701EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "21201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "21001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20401EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "21101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "20301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "41101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "30401EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30701EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30606EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30801EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "30901EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "31801EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "60001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "62901EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "61301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "91101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "71501EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Laundry"
+  },
+  "CPC14278CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "80301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "91301EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "91001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "10612EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "1300NOIL-250": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "1355BS": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "CL242406": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL243306": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL243308": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL303708": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL303710": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL334016": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL404812": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL404814": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL404816": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL404822K": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL434814": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL434816": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL366014": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL386014": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "CL386017": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "LD2423045K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD2432045K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD243208K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD303608K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD333915K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD333912K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD404611K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD404612K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD404610K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD404615K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD365815K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD424715K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD385815K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "2221P": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brooms & Dustpans"
+  },
+  "GJO85151": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brooms & Dustpans"
+  },
+  "LDPC12BP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brooms & Dustpans"
+  },
+  "BWK28QTWBBLA": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "BWK41QTWBBLA": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "DLR18": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "193382R": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "642259BLU": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "642425GRN": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "642426BLK": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "SP50": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "SP81": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "SP85": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "CWB01/THI": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "92524B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "92536B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "92548B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "92560B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "9000F": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "M8300COMP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "M7000COMP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "M70009018COMP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "M70009024COMP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8997LG5BLU": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8997LG5GRN": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8997LG5RED": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "8997LG5OR": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "96-601": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "BR15": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "LPF-56SEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Latex Gloves"
+  },
+  "LPF-56MEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Latex Gloves"
+  },
+  "LPF-56LEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Latex Gloves"
+  },
+  "LPF-56XLEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Latex Gloves"
+  },
+  "VCPF-48SEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Vinyl Gloves"
+  },
+  "VCPF-48MEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Vinyl Gloves"
+  },
+  "VCPF-48LEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Vinyl Gloves"
+  },
+  "VCPF-48XLEA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Vinyl Gloves"
+  },
+  "4018B": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "6624GR": {
+    "category": "Gloves & Safety",
+    "subcategory": "Bouffant Caps"
+  },
+  "6624R": {
+    "category": "Gloves & Safety",
+    "subcategory": "Bouffant Caps"
+  },
+  "6624B": {
+    "category": "Gloves & Safety",
+    "subcategory": "Bouffant Caps"
+  },
+  "6624P": {
+    "category": "Gloves & Safety",
+    "subcategory": "Bouffant Caps"
+  },
+  "6624Y": {
+    "category": "Gloves & Safety",
+    "subcategory": "Bouffant Caps"
+  },
+  "DM": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8210": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "4350N": {
+    "category": "Gloves & Safety",
+    "subcategory": "Shoe Covers"
+  },
+  "JMC103L": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Tape"
+  },
+  "SPACEPAK-W": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Packaging Supplies"
+  },
+  "SPACEPAK-P": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Packaging Supplies"
+  },
+  "BBL48412": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Bubble Wrap"
+  },
+  "BBL48112": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Bubble Wrap"
+  },
+  "BBL484316": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Bubble Wrap"
+  },
+  "BBL481316": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Bubble Wrap"
+  },
+  "DRINK35T2500": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK5T2500": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK7T2500": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DW08": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "MEFO10": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "MESP10": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "MEKN10": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "HESP": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "HEFO": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "HEKN": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "DURPC1500BKD": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "DURPC2400BKD": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "DURPC1400": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "DURPC1300": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "DURPC1604BKD": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "101011G": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "06-1062": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "EUR6321310": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "EURSC684F": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "H17E": {
+    "category": "Floor Care",
+    "subcategory": "Floor Machines"
+  },
+  "H20E": {
+    "category": "Floor Care",
+    "subcategory": "Floor Machines"
+  },
+  "EC2513": {
+    "category": "Floor Care",
+    "subcategory": "Floor Brushes"
+  },
+  "EC2515": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "EC2517": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "EC2520": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "80-2100": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "80-2100H": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "80-2500H": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "90-0000": {
+    "category": "Equipment & Tools",
+    "subcategory": "Air Movers"
+  },
+  "WVP20": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "5963P": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "487-B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Tissue Dispensers"
+  },
+  "487-1B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Tissue Dispensers"
+  },
+  "ALPSGN-2": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "ALPSGN-3": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "ALPSGN-4": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "ALPSGN-5": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "ALPSGN-6": {
+    "category": "Equipment & Tools",
+    "subcategory": "Safety Signs"
+  },
+  "LD325030K": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "41212EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "40212EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "40412EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "30201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "31001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "10701EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "32800EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "40901EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "471-40SIL": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "471-40-STO": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "472-40-SIL": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "472-40-STO": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "BOB2111": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "BOB2112": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "BOB270": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "BOB40": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "BOB4112": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "BOB822": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "GJO58143": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brooms & Dustpans"
+  },
+  "74-612": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "86-606": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "98-600": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "BWK32GLWRGRA": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "BWK44GLWRGRA": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "BWKCLIPCBL": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "BWKCLIPCME": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "BWKCLIPMAN": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "BWKCLIPSAP": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "BWKCS1A": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "BWKCS2": {
+    "category": "Equipment & Tools",
+    "subcategory": "Brushes & Pads"
+  },
+  "BWKL3850": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "DRINK12S1000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK161000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK24600": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK9S1000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK10T1000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "DRINK12T1000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "CGW35001CT": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "4385177EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "CLO00031CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "CLO01594EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "CLO30208PK": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "CLO30966CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Bleach"
+  },
+  "CLO35300CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "CLO35417CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "CLO35420CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "DIA88047CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "FRS3WDS60CME": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRS3WDS60MAN": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRS3WDS60SAP": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRSTWDSCB": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRSTWDSCM": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRSTWDSMG": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "FRSTWDSSA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "MESO": {
+    "category": "Breakroom",
+    "subcategory": "Cutlery"
+  },
+  "GPC21000": {
+    "category": "Paper & Restroom",
+    "subcategory": "Multifolds"
+  },
+  "HOSMT4": {
+    "category": "Paper & Restroom",
+    "subcategory": "Paper Products"
+  },
+  "JELCL4PROEA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "KCC21271CT": {
+    "category": "Paper & Restroom",
+    "subcategory": "Facial Tissue"
+  },
+  "KCC21400": {
+    "category": "Paper & Restroom",
+    "subcategory": "Facial Tissue"
+  },
+  "MMM8200": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8210V": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8233": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8247": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8511": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "MMM8577": {
+    "category": "Gloves & Safety",
+    "subcategory": "Safety Equipment"
+  },
+  "NICM30472": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "NICP22884CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "NICP66784": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "PGC025001": {
+    "category": "Paper & Restroom",
+    "subcategory": "Paper Products"
+  },
+  "PGC57445CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "RAC74278CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "RAC77617": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "RAC84251CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "RAC84251PK": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "RCP4013111": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "RCP4013131": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "SMP13005CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "SMP13005EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "SMP13006": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "SMP13008": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "SMP13012": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "SMP13012CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "TEC4015411": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "2320EP": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "322wc-rf/175-5": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "SP23": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "5112P": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "40112EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "10601EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "8997LG5WHI": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "51401EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "JMC323": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Tape"
+  },
+  "41001EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "432-BLK": {
+    "category": "Equipment & Tools",
+    "subcategory": "Towel Dispensers"
+  },
+  "3170LMT": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "5603P": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "80201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Degreasers"
+  },
+  "8601EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "6303EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "6304EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "6305EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8901EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8902EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8903EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8904EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8997LG1": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "900-0031": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "90012EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "CL242408": {
+    "category": "Trash Liners",
+    "subcategory": "High Density Liners"
+  },
+  "EUR52100": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "IMP15255": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "LD333906C": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "LD404611C": {
+    "category": "Trash Liners",
+    "subcategory": "Low Density Liners"
+  },
+  "M915100R": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "R8PCK": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "ST852": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "51901EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "4385163EA": {
+    "category": "Packaging & Shipping",
+    "subcategory": "Packaging Supplies"
+  },
+  "RAC74828CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "RAC04650CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Disinfectants"
+  },
+  "617-20": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "426GRY": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "31305EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "10201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "31201EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "10112EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "10101EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "82801EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Kitchen Chemicals"
+  },
+  "83501EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "C-CCRTU16": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "C-CCQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "C-FTS16": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "S-UPSQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "S-PSQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "S-PSG": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Floor Care Chemicals"
+  },
+  "S-QZPQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "S-QZCQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "TF-D1": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "TF-L1": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "TF-D3": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "TF-L3": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "C-DCG": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "C-DCQ": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "333B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dusters"
+  },
+  "APCJANPT100565": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "BOB8221": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "DPK16LS": {
+    "category": "Breakroom",
+    "subcategory": "Plates & Bowls"
+  },
+  "DURPC1604CT": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "EURSC81B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "FRS1WBST": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "GOJ856502N6300": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "128EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "APCJANPTMV2": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "APCJANPTQV2": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "APCJANPTSCP102": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "APCJANPTSCP62": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "BWK4CUPCARRIER": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "ADS08W": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "SIP101000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "SIP121000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "SIP161000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "SIP12600": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "SIP81000": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "CGW24514": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "CLO30208": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Wipes"
+  },
+  "CPC53058": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "FRSEA36CB": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "FRSEA36CME": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "FRSEA36CT30": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "FRSEA36MG30": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "FRSEA36SAP": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Air Fresheners"
+  },
+  "GPC28124": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "GPC32006": {
+    "category": "Paper & Restroom",
+    "subcategory": "Napkins"
+  },
+  "EMP4.5CONE": {
+    "category": "Breakroom",
+    "subcategory": "Cups & Lids"
+  },
+  "50-1001": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "SEV44727EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "GJO11573": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "GJO11574": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "GJO11575": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "GJO11576": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "GJO11577": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "GJO11579": {
+    "category": "Breakroom",
+    "subcategory": "Food Containers"
+  },
+  "CGW12514": {
+    "category": "Breakroom",
+    "subcategory": "Breakroom Supplies"
+  },
+  "DT6LIMEGREEN": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "DT6NAVY": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "DT6RED": {
+    "category": "Equipment & Tools",
+    "subcategory": "Carts & Shelving"
+  },
+  "HSG0125-OB": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "HSAB001": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "DP862-BK": {
+    "category": "Equipment & Tools",
+    "subcategory": "Soap Dispensers"
+  },
+  "LD333910K": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "LD385820K": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "DRIBBLEOC": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "DRIBBLERC": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "DRIBBLEGA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "DRIBBLEOM": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "72-15": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "51-15": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "41-15": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "33-19": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "55-17": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "75-19": {
+    "category": "Floor Care",
+    "subcategory": "Floor Pads"
+  },
+  "RT680011": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "LD333920K": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "LD506015K": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "LD616815K": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "LD242450C": {
+    "category": "Trash Liners",
+    "subcategory": "Can Liners"
+  },
+  "8302EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8303EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8304EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8402EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8403EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "8404EA": {
+    "category": "Gloves & Safety",
+    "subcategory": "Nitrile Gloves"
+  },
+  "25640EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "03025EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Carpet Care"
+  },
+  "6430-2JUG": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "General Cleaners"
+  },
+  "25625EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "CLO60607CT": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "All-Purpose Cleaners"
+  },
+  "P100M": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "P99": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "TC16501": {
+    "category": "Paper & Restroom",
+    "subcategory": "Roll Towels"
+  },
+  "80-7000": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "80-3500H": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "86-4000H": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "80-0500": {
+    "category": "Equipment & Tools",
+    "subcategory": "General Equipment"
+  },
+  "WVC20": {
+    "category": "Equipment & Tools",
+    "subcategory": "Vacuums"
+  },
+  "11035EA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Bleach"
+  },
+  "243310CB": {
+    "category": "Trash Liners",
+    "subcategory": "Compostable Liners"
+  },
+  "334010CB": {
+    "category": "Trash Liners",
+    "subcategory": "Compostable Liners"
+  },
+  "404810CB": {
+    "category": "Trash Liners",
+    "subcategory": "Compostable Liners"
+  },
+  "PRTE70160": {
+    "category": "Equipment & Tools",
+    "subcategory": "Mops & Handles"
+  },
+  "51401FEA": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Hand Soap & Sanitizer"
+  },
+  "ADS08B": {
+    "category": "Equipment & Tools",
+    "subcategory": "Dispensers"
+  },
+  "WWBABYPOWDER": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWBLACKROYALE": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWFRESHLEMON": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWLAVENDERSACHET": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWNUCAR": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWPINACOLADA": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "WWWILDCHERRY": {
+    "category": "Car Detailing",
+    "subcategory": "Air Fresheners"
+  },
+  "5604P": {
+    "category": "Paper & Restroom",
+    "subcategory": "Toilet Tissue"
+  },
+  "JC25": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  },
+  "JC250": {
+    "category": "Cleaning Chemicals",
+    "subcategory": "Restroom Cleaners"
+  }
+}
