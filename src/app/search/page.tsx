@@ -134,7 +134,7 @@ function SearchContent() {
   useEffect(() => {
     if (query.length < 2) { setBcResults([]); return; }
     setLoading(true);
-    fetch(`/api/products/search?q=${encodeURIComponent(query)}&limit=30`)
+    fetch(`/api/products/search?q=${encodeURIComponent(query)}&limit=250`)
       .then((res) => res.json())
       .then((data) => {
         setBcResults((data.products || []).filter(hasRealImage));

@@ -488,6 +488,13 @@ export const BC_CATEGORY_MAP: Record<number, string> = {
 
   // ── Car Detailing ──────────────────────────────────────────────────────
   // (1730 already mapped above under chemicals tree)
+
+  // ── Catch-all / Misc BC categories ────────────────────────────────────
+  1340: "equipment",       // CUSTOMER SPECIFIC ADDED PRODUCTS (mixed, mostly equipment)
+  1347: "packaging-film",  // CUSTOMER SPECIFIC (boxes, shipping, matting)
+  1361: "breakroom",       // Essendant Products (cups, vacuum bags — mixed)
+  1379: "breakroom",       // GENUINE JOE PRODUCTS (food storage bags)
+  1442: "cleaning-chemicals", // Technology (toilet bowl cleaner)
 };
 
 // ---------------------------------------------------------------------------

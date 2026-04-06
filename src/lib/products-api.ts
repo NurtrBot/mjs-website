@@ -391,9 +391,25 @@ export async function fetchAllProducts(page = 1, limit = 50): Promise<{ products
   };
 }
 
-export async function searchProducts(keyword: string, limit = 20): Promise<ProductData[]> {
-  const res = await getProducts({ keyword, limit, is_visible: true });
-  return res.data.filter((p) => p.price > 0).map(transformProduct);
+export async function searchProducts(keyword: string, limit = 250): Promise<ProductData[]> {
+  const allResults: ProductData[] = [];
+  const seen = new Set<number>();
+  let page = 1;
+  const maxPages = 4; // up to 1000 products
+
+  while (page <= maxPages) {
+    const res = await getProducts({ keyword, limit: 250, page, is_visible: true });
+    for (const p of res.data) {
+      if (!seen.has(p.id) && p.price > 0) {
+        seen.add(p.id);
+        allResults.push(transformProduct(p));
+      }
+    }
+    if (page >= res.meta.pagination.total_pages) break;
+    page++;
+  }
+
+  return allResults;
 }
 
 export { transformProduct };
