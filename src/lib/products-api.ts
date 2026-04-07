@@ -69,8 +69,10 @@ function transformProduct(bc: BCProduct): ProductData {
     brand,
     price: bc.calculated_price || bc.price,
     originalPrice: bc.retail_price > bc.price ? bc.retail_price : undefined,
-    rating: 4.5,
-    reviewCount: bc.total_sold > 0 ? Math.min(bc.total_sold, 500) : 0,
+    rating: bc.reviews_count && bc.reviews_count > 0 && bc.reviews_rating_sum
+      ? Math.round((bc.reviews_rating_sum / bc.reviews_count) * 10) / 10
+      : 0,
+    reviewCount: bc.reviews_count || 0,
     images,
     inStock: bc.availability === "available" && (bc.inventory_tracking === "none" || bc.inventory_level > 0),
     stockQty: bc.inventory_level || 100,
@@ -87,7 +89,12 @@ function transformProduct(bc: BCProduct): ProductData {
     cardTitle,
     pack,
     imageFit: "contain",
-    quickBuy: [],
+    quickBuy: [
+      { label: "1 Unit", qty: 1 },
+      { label: "3 Units", qty: 3, savings: "Save 5%" },
+      { label: "5 Units", qty: 5, savings: "Save 10%" },
+      { label: "10 Units", qty: 10, savings: "Save 15%" },
+    ],
     sdsSheet: findSdsSheet(bc.sku || ""),
   };
 }

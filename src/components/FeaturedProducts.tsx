@@ -67,28 +67,14 @@ export default function FeaturedProducts() {
   };
 
   useEffect(() => {
-    // Fetch best sellers — top products by total_sold from multiple categories
-    const slugs = ["paper-products", "cleaning-chemicals", "gloves-safety", "packaging-film", "equipment", "trash-liners"];
-    Promise.all(
-      slugs.map(s => fetch(`/api/products/category?slug=${s}&limit=250`).then(r => r.json()).catch(() => ({ products: [] })))
-    ).then(results => {
-      const all: ProductData[] = [];
-      const seen = new Set<string>();
-      for (const r of results) {
-        for (const p of (r.products || [])) {
-          if (!seen.has(p.sku) && p.images?.[0] && !p.images[0].includes("placeholder")) {
-            seen.add(p.sku);
-            all.push(p);
-          }
-        }
-      }
-      // Shuffle then take top 20 for a fresh look each load
-      for (let i = all.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [all[i], all[j]] = [all[j], all[i]];
-      }
-      setItems(all.slice(0, 20));
-    });
+    // Fetch actual best sellers from BC sorted by total_sold
+    fetch("/api/products/bestsellers")
+      .then(r => r.json())
+      .then(data => {
+        const products = (data.products || []) as ProductData[];
+        setItems(products.filter((p: ProductData) => p.images?.[0] && !p.images[0].includes("placeholder")));
+      })
+      .catch(() => {});
   }, []);
 
   if (items.length === 0) return null;

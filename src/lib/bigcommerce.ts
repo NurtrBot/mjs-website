@@ -65,6 +65,8 @@ export interface BCProduct {
   sort_order: number;
   custom_url: { url: string };
   images?: BCProductImage[];
+  reviews_count?: number;
+  reviews_rating_sum?: number;
 }
 
 export interface BCProductImage {
@@ -117,6 +119,30 @@ export async function getProductById(id: number): Promise<BCProduct | null> {
 export async function getProductImages(productId: number): Promise<BCProductImage[]> {
   const res = await bcFetch(`/catalog/products/${productId}/images`);
   return res.data || [];
+}
+
+/* ── Reviews ── */
+export interface BCReview {
+  id: number;
+  product_id: number;
+  title: string;
+  text: string;
+  status: string;
+  rating: number;
+  name: string;
+  email: string;
+  date_created: string;
+  date_modified: string;
+  date_reviewed: string;
+}
+
+export async function getProductReviews(productId: number): Promise<BCReview[]> {
+  try {
+    const res = await bcFetch(`/catalog/products/${productId}/reviews`, { limit: "50", status: "1" });
+    return res.data || [];
+  } catch {
+    return [];
+  }
 }
 
 /* ── Brands ── */

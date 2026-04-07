@@ -87,6 +87,124 @@ function QuantitySelector({
   );
 }
 
+/* ───────── reviews component ───────── */
+
+interface ReviewData {
+  id: number;
+  title: string;
+  text: string;
+  rating: number;
+  name: string;
+  date: string;
+}
+
+function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: number; reviewCount: number }) {
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [avgRating, setAvgRating] = useState(rating);
+  const [count, setCount] = useState(reviewCount);
+
+  useEffect(() => {
+    fetch(`/api/products/reviews?sku=${encodeURIComponent(sku)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.reviews?.length > 0) {
+          setReviews(data.reviews);
+          setAvgRating(data.rating);
+          setCount(data.count);
+        }
+      })
+      .catch(() => {});
+  }, [sku]);
+
+  // Don't render section if no reviews
+  if (count === 0 && reviews.length === 0) return null;
+
+  // Build rating distribution
+  const dist = [0, 0, 0, 0, 0];
+  reviews.forEach(r => { if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1]++; });
+  const total = reviews.length || 1;
+
+  return (
+    <section id="reviews" className="bg-mjs-gray-50 border-t border-gray-200">
+      <div className="max-w-[1400px] mx-auto px-4 py-6">
+        {/* Review Header */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 md:divide-x md:divide-gray-200">
+            <div className="md:pr-6 text-center md:text-left flex-shrink-0">
+              <h3 className="text-base font-bold text-mjs-dark mb-1">Customer Reviews</h3>
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                {avgRating > 0 && (
+                  <span className="inline-flex items-center gap-0.5 bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+                    {avgRating.toFixed(1)} <Star className="w-3 h-3 fill-white" />
+                  </span>
+                )}
+                <span className="text-xs text-mjs-gray-500">{count} Review{count !== 1 ? "s" : ""}</span>
+              </div>
+            </div>
+
+            {avgRating > 0 && (
+              <div className="md:px-6 flex-shrink-0 text-center">
+                <div className="text-3xl font-black text-mjs-dark leading-none">{avgRating.toFixed(1)}</div>
+                <StarRating rating={avgRating} size="sm" />
+                <div className="text-[10px] text-mjs-gray-500 mt-0.5">{count} total</div>
+              </div>
+            )}
+
+            {reviews.length > 0 && (
+              <div className="md:pl-6 flex-shrink-0 w-full md:w-auto">
+                <div className="space-y-1 w-[200px]">
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const pct = Math.round((dist[star - 1] / total) * 100);
+                    return (
+                      <div key={star} className="flex items-center gap-2">
+                        <span className="text-[11px] font-medium text-mjs-gray-500 w-2.5">{star}</span>
+                        <Star className="w-3 h-3 text-mjs-gold fill-mjs-gold" />
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-mjs-gold rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="text-[10px] text-mjs-gray-500 w-7 text-right">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Review Cards */}
+        {reviews.length > 0 && (
+          <div className="grid md:grid-cols-3 gap-3">
+            {reviews.map((review) => (
+              <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-mjs-red/10 rounded-full flex items-center justify-center">
+                      <span className="text-mjs-red font-bold text-xs">{review.name.charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-mjs-gray-800">{review.name}</div>
+                      <div className="text-[10px] text-mjs-gray-500">
+                        {new Date(review.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-mjs-green bg-green-50 px-1.5 py-0.5 rounded">
+                    <Check className="w-2.5 h-2.5" /> Verified
+                  </span>
+                </div>
+                <StarRating rating={review.rating} />
+                {review.title && <div className="text-sm font-bold text-mjs-gray-800 mt-1.5">{review.title}</div>}
+                {review.text && <p className="text-xs text-mjs-gray-600 mt-1 leading-relaxed">{review.text}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /* ───────── main component ───────── */
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
@@ -599,7 +717,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               </div>
               <div>
                 <div className="text-xs font-bold text-mjs-gray-800">Bulk Quote</div>
-                <div className="text-[10px] text-mjs-blue font-semibold">(717) 779-2640</div>
+                <div className="text-[10px] text-mjs-blue font-semibold">(714) 779-2640</div>
               </div>
             </div>
           </div>
@@ -736,127 +854,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       </section>
 
       {/* ═══════ 4. REVIEWS — FULL WIDTH ═══════ */}
-      <section id="reviews" className="bg-mjs-gray-50 border-t border-gray-200">
-        <div className="max-w-[1400px] mx-auto px-4 py-6">
-          {/* Unified Review Header Bar */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 md:divide-x md:divide-gray-200">
-              {/* Section 1: Title + Badge */}
-              <div className="md:pr-6 text-center md:text-left flex-shrink-0">
-                <h3 className="text-base font-bold text-mjs-dark mb-1">
-                  Customer Reviews
-                </h3>
-                <div className="flex items-center justify-center md:justify-start gap-2">
-                  <span className="inline-flex items-center gap-0.5 bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">
-                    4.9 <Star className="w-3 h-3 fill-white" />
-                  </span>
-                  <span className="text-xs text-mjs-gray-400">229 Reviews</span>
-                </div>
-              </div>
-
-              {/* Section 2: Google Badge */}
-              <div className="md:px-6 flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-0.5">
-                    <span className="text-base font-bold text-[#4285F4]">G</span>
-                    <span className="text-base font-bold text-[#EA4335]">o</span>
-                    <span className="text-base font-bold text-[#FBBC05]">o</span>
-                    <span className="text-base font-bold text-[#4285F4]">g</span>
-                    <span className="text-base font-bold text-[#34A853]">l</span>
-                    <span className="text-base font-bold text-[#EA4335]">e</span>
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-mjs-gold fill-mjs-gold" />
-                    ))}
-                  </div>
-                </div>
-                <div className="text-[11px] font-semibold text-mjs-gray-500 mt-0.5">
-                  #1 Rated &amp; Reviewed
-                </div>
-              </div>
-
-              {/* Section 3: Score */}
-              <div className="md:px-6 flex-shrink-0 text-center">
-                <div className="text-3xl font-black text-mjs-dark leading-none">4.9</div>
-                <StarRating rating={4.9} size="sm" />
-                <div className="text-[10px] text-mjs-gray-400 mt-0.5">229 total</div>
-              </div>
-
-              {/* Section 4: Rating Bars */}
-              <div className="md:pl-6 flex-shrink-0 w-full md:w-auto">
-                <div className="space-y-1 w-[200px]">
-                  {[5, 4, 3, 2, 1].map((star) => {
-                    const pct = star === 5 ? 78 : star === 4 ? 15 : star === 3 ? 5 : star === 2 ? 1 : 1;
-                    return (
-                      <div key={star} className="flex items-center gap-2">
-                        <span className="text-[11px] font-medium text-mjs-gray-500 w-2.5">{star}</span>
-                        <Star className="w-3 h-3 text-mjs-gold fill-mjs-gold" />
-                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-mjs-gold rounded-full" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="text-[10px] text-mjs-gray-400 w-7 text-right">{pct}%</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Review Cards — full-width grid */}
-          <div className="grid md:grid-cols-3 gap-3">
-            {[
-              {
-                name: "Carlos M.",
-                date: "February 2026",
-                rating: 5,
-                title: "Great stretch film for the price",
-                body: "We use these in our warehouse daily. The cling is excellent and the rolls last a long time. Will definitely reorder.",
-                verified: true,
-              },
-              {
-                name: "Linda T.",
-                date: "January 2026",
-                rating: 5,
-                title: "Best value we've found",
-                body: "Switched from a more expensive brand and honestly can't tell the difference. Saves us a lot on monthly supplies.",
-                verified: true,
-              },
-              {
-                name: "Mark D.",
-                date: "December 2025",
-                rating: 4,
-                title: "Good product, fast shipping",
-                body: "Ordered on Tuesday, arrived two days later. Film is clear and strong. Only minor issue is the core could be a bit sturdier.",
-                verified: true,
-              },
-            ].map((review, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-mjs-red/10 rounded-full flex items-center justify-center">
-                      <span className="text-mjs-red font-bold text-xs">{review.name.charAt(0)}</span>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-mjs-gray-800">{review.name}</div>
-                      <div className="text-[10px] text-mjs-gray-400">{review.date}</div>
-                    </div>
-                  </div>
-                  {review.verified && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-mjs-green bg-green-50 px-1.5 py-0.5 rounded">
-                      <Check className="w-2.5 h-2.5" /> Verified
-                    </span>
-                  )}
-                </div>
-                <StarRating rating={review.rating} />
-                <div className="text-sm font-bold text-mjs-gray-800 mt-1.5">{review.title}</div>
-                <p className="text-xs text-mjs-gray-600 mt-1 leading-relaxed">{review.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
 
       {/* ═══════ CLOSING: TRUST + CONTACT ═══════ */}
       <section className="bg-white border-t border-gray-200">
