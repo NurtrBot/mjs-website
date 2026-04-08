@@ -9,6 +9,8 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
 
   // Form state
   const [firstName, setFirstName] = useState("");
@@ -28,10 +30,28 @@ export default function AuthPage() {
     setShowSuccess(true);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login({ firstName: email.split("@")[0], lastName: "", email, company: "" });
-    window.location.href = "/";
+    setLoginError("");
+    setLoginLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.customer) {
+        setLoginError(data.error || "Account not found. Please check your email.");
+        setLoginLoading(false);
+        return;
+      }
+      login(data.customer);
+      window.location.href = "/account";
+    } catch {
+      setLoginError("Something went wrong. Please try again.");
+    }
+    setLoginLoading(false);
   };
 
   const closeSuccess = () => {
@@ -172,8 +192,14 @@ export default function AuthPage() {
                     </div>
                   </div>
 
-                  <button type="submit" className="w-full bg-mjs-red text-white font-semibold py-3 rounded-full text-sm hover:bg-red-700 transition-colors">
-                    Log In
+                  {loginError && (
+                    <div className="bg-red-50 text-red-600 text-xs font-medium px-4 py-2.5 rounded-lg">
+                      {loginError}
+                    </div>
+                  )}
+
+                  <button type="submit" disabled={loginLoading} className="w-full bg-mjs-red text-white font-semibold py-3 rounded-full text-sm hover:bg-red-700 transition-colors disabled:opacity-50">
+                    {loginLoading ? "Logging in..." : "Log In"}
                   </button>
 
                   <p className="text-center text-xs text-mjs-gray-400">

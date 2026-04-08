@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import {
@@ -9,9 +9,8 @@ import {
   CreditCard, Phone, Mail, RefreshCw, Eye, Star, Shield,
   ChevronRight, Store, BadgePercent, Plus, X,
 } from "lucide-react";
-import { allProducts } from "@/data/products";
 
-const tabs = ["Overview", "Orders", "My Pricing", "Account Info"];
+const tabs = ["Overview", "Orders", "Account Info"];
 
 /* ── Mock Order Data with Line Items ── */
 interface OrderLineItem {
@@ -104,17 +103,100 @@ export default function AccountDashboard() {
   const [customShipTo, setCustomShipTo] = useState({ name: "", address: "", city: "", state: "", zip: "" });
   const [editBillTo, setEditBillTo] = useState(false);
   const [billTo, setBillTo] = useState({
-    company: "EasterDay Janitorial Services",
-    name: "Nick Martinez",
-    email: "nick@easterday.com",
-    phone: "(714) 555-1234",
-    address: "1200 W Main St",
-    city: "Anaheim",
-    state: "CA",
-    zip: "92801",
+    company: "",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
   });
   const [viewingOrder, setViewingOrder] = useState<MockOrder | null>(null);
   const [reordered, setReordered] = useState<string | null>(null);
+
+  // Real BC data state
+  const [bcOrders, setBcOrders] = useState<MockOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+
+  const mockUser = user || { firstName: "Guest", lastName: "", email: "", company: "" };
+
+  // Fetch real orders from BC
+  useEffect(() => {
+    if (!user?.id) { setOrdersLoading(false); return; }
+    fetch(`/api/customer/orders?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        const orders: MockOrder[] = (data.orders || []).map((o: Record<string, unknown>) => {
+          const status = o.status as string;
+          let statusColor = "text-mjs-gray-500 bg-gray-50";
+          if (status === "Completed" || status === "Shipped" || status === "Delivered") statusColor = "text-green-600 bg-green-50";
+          else if (status === "Awaiting Shipment" || status === "Awaiting Pickup") statusColor = "text-blue-600 bg-blue-50";
+          else if (status === "Pending") statusColor = "text-amber-600 bg-amber-50";
+          else if (status === "Cancelled" || status === "Declined" || status === "Refunded") statusColor = "text-red-600 bg-red-50";
+          return {
+            id: `MJS-${o.id}`,
+            date: new Date(o.date as string).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            items: (o.lineItems as Record<string, unknown>[])?.length || o.itemCount as number || 0,
+            total: Number(o.total) || 0,
+            status,
+            statusColor,
+            tax: Number(o.tax) || 0,
+            shipping: Number(o.shipping) || 0,
+            lineItems: ((o.lineItems as Record<string, unknown>[]) || []).map(li => ({
+              name: li.name as string,
+              sku: li.sku as string,
+              qty: li.qty as number,
+              price: Number(li.price) || 0,
+            })),
+          };
+        });
+        setBcOrders(orders);
+        setOrdersLoading(false);
+      })
+      .catch(() => setOrdersLoading(false));
+  }, [user?.id]);
+
+  // Fetch real addresses from BC
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/customer/addresses?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.addresses?.length > 0) {
+          const bcAddrs = data.addresses.map((a: Record<string, unknown>) => ({
+            id: a.id as number,
+            label: (a.company as string) || `${a.city}, ${a.state}`,
+            company: (a.company as string) || "",
+            address: `${a.address1}${a.address2 ? " " + a.address2 : ""}`,
+            city: a.city as string,
+            state: a.state as string,
+            zip: a.zip as string,
+          }));
+          setAddresses(bcAddrs);
+        }
+      })
+      .catch(() => {});
+  }, [user?.id]);
+
+  // Populate billTo from user data
+  useEffect(() => {
+    if (user) {
+      setBillTo({
+        company: user.company || "",
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email || "",
+        phone: user.phone || "",
+        address: "",
+        city: "",
+        state: "",
+        zip: "",
+      });
+    }
+  }, [user]);
+
+  // Only show real BC orders — no mock data for logged-in users
+  const displayOrders = bcOrders;
 
   const handleReorder = (order: MockOrder) => {
     for (const item of order.lineItems) {
@@ -131,20 +213,47 @@ export default function AccountDashboard() {
     setTimeout(() => setReordered(null), 3000);
   };
 
-  // Mock customer data for demo
-  const mockUser = user || {
-    firstName: "Nick",
-    lastName: "Martinez",
-    email: "nick@easterday.com",
-    company: "EasterDay Janitorial Services",
-  };
+  // Editable company info — syncs when user data arrives
+  const [companyInfo, setCompanyInfo] = useState({
+    company: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
+  useEffect(() => {
+    if (user) {
+      setCompanyInfo({
+        company: user.company || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user]);
+  const [editingCompany, setEditingCompany] = useState(false);
 
-  // Mock saved addresses
-  const savedAddresses = [
-    { id: 1, label: "Main Office", name: "EasterDay Janitorial", address: "1200 W Main St", city: "Anaheim", state: "CA", zip: "92801" },
-    { id: 2, label: "Building B - Downtown", name: "EasterDay Janitorial", address: "500 S Grand Ave, Suite 300", city: "Los Angeles", state: "CA", zip: "90071" },
-    { id: 3, label: "Warehouse", name: "EasterDay Janitorial", address: "8800 Valley Blvd", city: "Rosemead", state: "CA", zip: "91770" },
-  ];
+  // Multi-address book
+  interface SavedAddress {
+    id: number;
+    label: string;
+    company: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+  }
+  const [addresses, setAddresses] = useState<SavedAddress[]>([
+    { id: 1, label: "Main Office", company: "EasterDay Janitorial", address: "1200 W Main St", city: "Anaheim", state: "CA", zip: "92801" },
+    { id: 2, label: "Building B - Downtown", company: "EasterDay Janitorial", address: "500 S Grand Ave, Suite 300", city: "Los Angeles", state: "CA", zip: "90071" },
+    { id: 3, label: "Warehouse", company: "EasterDay Janitorial", address: "8800 Valley Blvd", city: "Rosemead", state: "CA", zip: "91770" },
+  ]);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [addressForm, setAddressForm] = useState({ label: "", company: "", address: "", city: "", state: "", zip: "" });
+
+  const savedAddresses = addresses;
 
   const openOrderModal = () => {
     setOrderStep(1);
@@ -154,12 +263,9 @@ export default function AccountDashboard() {
     setShowOrderModal(true);
   };
 
-  // Customer discount (mock — would come from BigCommerce)
-  const discountRate = 0.15;
-  const pricingTier = "Wholesale A";
-
-  // Sample priced products
-  const pricedProducts = allProducts.filter(p => p.price > 0).slice(0, 12);
+  // Account details (would come from BigCommerce customer groups)
+  const pricingTier = "Standard";
+  const discountRate = 0;
 
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
@@ -199,7 +305,7 @@ export default function AccountDashboard() {
                 <Package className="w-5 h-5 text-mjs-red" />
               </div>
               <div>
-                <div className="text-2xl font-black text-mjs-dark">24</div>
+                <div className="text-2xl font-black text-mjs-dark">{displayOrders.length}</div>
                 <div className="text-xs text-mjs-gray-400">Total Orders</div>
               </div>
             </div>
@@ -232,7 +338,7 @@ export default function AccountDashboard() {
                 <DollarSign className="w-5 h-5 text-blue-500" />
               </div>
               <div>
-                <div className="text-2xl font-black text-mjs-dark">${mockOrders.reduce((sum, o) => sum + o.total, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div className="text-2xl font-black text-mjs-dark">${displayOrders.reduce((sum, o) => sum + o.total, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div className="text-xs text-mjs-gray-400">Total Spent</div>
               </div>
             </div>
@@ -269,7 +375,19 @@ export default function AccountDashboard() {
                   <button onClick={() => setActiveTab("Orders")} className="text-xs text-mjs-red font-semibold hover:underline">View All</button>
                 </div>
                 <div className="divide-y divide-gray-50">
-                  {mockOrders.slice(0, 4).map((order) => (
+                  {ordersLoading ? (
+                    <div className="px-6 py-10 text-center">
+                      <div className="w-6 h-6 border-2 border-gray-200 border-t-mjs-red rounded-full animate-spin mx-auto" />
+                      <p className="text-xs text-mjs-gray-400 mt-2">Loading orders...</p>
+                    </div>
+                  ) : displayOrders.length === 0 ? (
+                    <div className="px-6 py-10 text-center">
+                      <Package className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                      <p className="text-sm font-semibold text-mjs-gray-600">No orders yet</p>
+                      <p className="text-xs text-mjs-gray-400 mt-1">Your order history will appear here once you place your first order.</p>
+                      <a href="/" className="inline-block mt-3 text-xs text-mjs-red font-semibold hover:underline">Start Shopping</a>
+                    </div>
+                  ) : displayOrders.slice(0, 4).map((order) => (
                     <button key={order.id} onClick={() => setViewingOrder(order)} className="w-full px-6 py-4 flex items-center justify-between hover:bg-mjs-gray-50/50 transition-colors text-left">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-mjs-gray-50 rounded-lg flex items-center justify-center">
@@ -359,6 +477,14 @@ export default function AccountDashboard() {
               <h2 className="text-sm font-bold text-mjs-dark">Order History</h2>
             </div>
             <div className="overflow-x-auto">
+              {displayOrders.length === 0 ? (
+                <div className="px-6 py-16 text-center">
+                  <Package className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-mjs-gray-600">No orders yet</p>
+                  <p className="text-xs text-mjs-gray-400 mt-1 max-w-sm mx-auto">Once you place an order, it will appear here with full details, tracking, and reorder options.</p>
+                  <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">Start Shopping</a>
+                </div>
+              ) : (
               <table className="w-full">
                 <thead>
                   <tr className="bg-mjs-gray-50 text-xs font-semibold text-mjs-gray-400 uppercase tracking-wider">
@@ -371,7 +497,7 @@ export default function AccountDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {mockOrders.map((order) => (
+                  {displayOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-mjs-gray-50/50 transition-colors">
                       <td className="px-6 py-4 text-sm font-semibold text-mjs-dark">{order.id}</td>
                       <td className="px-6 py-4 text-sm text-mjs-gray-500">{order.date}</td>
@@ -401,145 +527,209 @@ export default function AccountDashboard() {
                   ))}
                 </tbody>
               </table>
+              )}
             </div>
           </div>
         )}
 
         {/* ═══ MY PRICING TAB ═══ */}
-        {activeTab === "My Pricing" && (
-          <div>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
-              <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-sm font-bold text-mjs-dark">Your Custom Pricing</h2>
-                <span className="bg-green-50 text-green-600 text-[10px] font-bold px-2.5 py-0.5 rounded-full">{(discountRate * 100).toFixed(0)}% Off Retail</span>
-              </div>
-              <p className="text-xs text-mjs-gray-400">These prices are exclusive to your account. Add items to cart at your special rate.</p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-              {pricedProducts.map((product) => {
-                const yourPrice = +(product.price * (1 - discountRate)).toFixed(2);
-                const saved = +(product.price - yourPrice).toFixed(2);
-                return (
-                  <div key={product.slug} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-                    <a href={`/product/${product.slug}`} className="block h-[140px] bg-white overflow-hidden">
-                      <img src={product.images[0]} alt={product.cardTitle} className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}`} />
-                    </a>
-                    <div className="p-3 flex flex-col flex-1">
-                      <div className="text-[9px] text-mjs-gray-400 font-medium uppercase">{product.brand}</div>
-                      <a href={`/product/${product.slug}`} className="text-[11px] font-semibold text-mjs-dark leading-tight mt-0.5 group-hover:text-mjs-red transition-colors line-clamp-2">
-                        {product.cardTitle}
-                      </a>
-                      <div className="mt-auto pt-2">
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-sm font-black text-mjs-dark">${yourPrice.toFixed(2)}</span>
-                          <span className="text-[10px] text-mjs-gray-400 line-through">${product.price.toFixed(2)}</span>
-                        </div>
-                        <div className="text-[9px] text-mjs-green font-semibold">You save ${saved.toFixed(2)}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* ═══ ACCOUNT INFO TAB ═══ */}
         {activeTab === "Account Info" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            {/* ── Company Information ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-5">
                 <h2 className="text-sm font-bold text-mjs-dark">Company Information</h2>
-                <button className="text-xs text-mjs-red font-semibold hover:underline">Edit</button>
+                <button
+                  onClick={() => setEditingCompany(!editingCompany)}
+                  className="text-xs text-mjs-red font-semibold hover:underline"
+                >
+                  {editingCompany ? "Done" : "Edit"}
+                </button>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="w-4 h-4 text-mjs-gray-400" />
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-mjs-gray-400 font-medium uppercase">Company Name</div>
-                    <div className="text-sm font-semibold text-mjs-dark">{mockUser.company}</div>
-                  </div>
+
+              {!editingCompany ? (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {[
+                    { icon: Building2, label: "Company Name", value: companyInfo.company },
+                    { icon: User, label: "Contact Name", value: `${companyInfo.firstName} ${companyInfo.lastName}` },
+                    { icon: Mail, label: "Email", value: companyInfo.email },
+                    { icon: Phone, label: "Phone", value: companyInfo.phone },
+                  ].map((field) => (
+                    <div key={field.label} className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
+                        <field.icon className="w-4 h-4 text-mjs-gray-400" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-mjs-gray-500 font-medium uppercase">{field.label}</div>
+                        <div className="text-sm font-semibold text-mjs-dark">{field.value}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-mjs-gray-400" />
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <input type="text" value={companyInfo.company} onChange={(e) => setCompanyInfo({ ...companyInfo, company: e.target.value })} placeholder="Company Name" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" value={companyInfo.firstName} onChange={(e) => setCompanyInfo({ ...companyInfo, firstName: e.target.value })} placeholder="First Name" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    <input type="text" value={companyInfo.lastName} onChange={(e) => setCompanyInfo({ ...companyInfo, lastName: e.target.value })} placeholder="Last Name" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
                   </div>
-                  <div>
-                    <div className="text-[10px] text-mjs-gray-400 font-medium uppercase">Contact Name</div>
-                    <div className="text-sm font-semibold text-mjs-dark">{mockUser.firstName} {mockUser.lastName}</div>
-                  </div>
+                  <input type="email" value={companyInfo.email} onChange={(e) => setCompanyInfo({ ...companyInfo, email: e.target.value })} placeholder="Email" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                  <input type="tel" value={companyInfo.phone} onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })} placeholder="Phone" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-4 h-4 text-mjs-gray-400" />
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-mjs-gray-400 font-medium uppercase">Email</div>
-                    <div className="text-sm font-semibold text-mjs-dark">{mockUser.email}</div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
 
+            {/* ── Delivery Addresses ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-mjs-dark">Delivery Address</h2>
-                <button className="text-xs text-mjs-red font-semibold hover:underline">Edit</button>
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-sm font-bold text-mjs-dark">Delivery Addresses</h2>
+                <button
+                  onClick={() => {
+                    setAddressForm({ label: "", company: companyInfo.company, address: "", city: "", state: "CA", zip: "" });
+                    setEditingAddressId(null);
+                    setShowAddressForm(true);
+                  }}
+                  className="flex items-center gap-1 text-xs text-mjs-red font-semibold hover:underline"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Address
+                </button>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 text-mjs-gray-400" />
+
+              {/* Address Cards Grid */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {addresses.map((addr) => (
+                  <div key={addr.id} className="border border-gray-200 rounded-xl p-4 hover:border-mjs-red/30 hover:shadow-sm transition-all group">
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="text-[10px] font-bold text-mjs-red uppercase tracking-wide bg-red-50 px-2 py-0.5 rounded">{addr.label}</span>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            setAddressForm({ label: addr.label, company: addr.company, address: addr.address, city: addr.city, state: addr.state, zip: addr.zip });
+                            setEditingAddressId(addr.id);
+                            setShowAddressForm(true);
+                          }}
+                          className="text-[10px] text-mjs-gray-500 hover:text-mjs-red font-medium"
+                        >
+                          Edit
+                        </button>
+                        <span className="text-mjs-gray-300">|</span>
+                        <button
+                          onClick={() => setAddresses(addresses.filter(a => a.id !== addr.id))}
+                          className="text-[10px] text-mjs-gray-500 hover:text-red-600 font-medium"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-sm font-semibold text-mjs-dark">{addr.company}</div>
+                    <div className="text-xs text-mjs-gray-600 mt-1">{addr.address}</div>
+                    <div className="text-xs text-mjs-gray-600">{addr.city}, {addr.state} {addr.zip}</div>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-mjs-gray-400 font-medium uppercase">Address</div>
-                    <div className="text-sm text-mjs-gray-600">Address on file</div>
+                ))}
+
+                {/* Add New Address Card */}
+                <button
+                  onClick={() => {
+                    setAddressForm({ label: "", company: companyInfo.company, address: "", city: "", state: "CA", zip: "" });
+                    setEditingAddressId(null);
+                    setShowAddressForm(true);
+                  }}
+                  className="border-2 border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center gap-2 hover:border-mjs-red/40 hover:bg-red-50/30 transition-all min-h-[120px]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-mjs-gray-50 flex items-center justify-center">
+                    <Plus className="w-5 h-5 text-mjs-gray-400" />
+                  </div>
+                  <span className="text-xs font-semibold text-mjs-gray-500">Add New Address</span>
+                </button>
+              </div>
+
+              {/* Add/Edit Address Form */}
+              {showAddressForm && (
+                <div className="mt-4 border border-mjs-red/20 bg-red-50/20 rounded-xl p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-mjs-dark">
+                      {editingAddressId ? "Edit Address" : "New Delivery Address"}
+                    </h3>
+                    <button onClick={() => setShowAddressForm(false)} className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center">
+                      <X className="w-4 h-4 text-mjs-gray-400" />
+                    </button>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <input type="text" value={addressForm.label} onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })} placeholder="Label (e.g. Main Office, Warehouse)" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    <input type="text" value={addressForm.company} onChange={(e) => setAddressForm({ ...addressForm, company: e.target.value })} placeholder="Company Name" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    <input type="text" value={addressForm.address} onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })} placeholder="Street Address" className="sm:col-span-2 border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    <input type="text" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} placeholder="City" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="text" value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} placeholder="State" maxLength={2} className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                      <input type="text" value={addressForm.zip} onChange={(e) => setAddressForm({ ...addressForm, zip: e.target.value })} placeholder="ZIP" className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all" />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-4">
+                    <button
+                      onClick={() => {
+                        if (!addressForm.label || !addressForm.address || !addressForm.city || !addressForm.zip) return;
+                        if (editingAddressId) {
+                          setAddresses(addresses.map(a => a.id === editingAddressId ? { ...addressForm, id: editingAddressId } : a));
+                        } else {
+                          setAddresses([...addresses, { ...addressForm, id: Date.now() }]);
+                        }
+                        setShowAddressForm(false);
+                        setEditingAddressId(null);
+                      }}
+                      className="bg-mjs-red text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                    >
+                      {editingAddressId ? "Save Changes" : "Add Address"}
+                    </button>
+                    <button
+                      onClick={() => { setShowAddressForm(false); setEditingAddressId(null); }}
+                      className="text-sm text-mjs-gray-500 font-medium px-4 py-2.5 hover:text-mjs-dark transition-colors"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-mjs-dark">Billing Information</h2>
-                <button className="text-xs text-mjs-red font-semibold hover:underline">Edit</button>
-              </div>
-              <div className="space-y-4">
+            {/* ── Billing & Account Details ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-mjs-dark">Billing Information</h2>
+                </div>
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
                     <CreditCard className="w-4 h-4 text-mjs-gray-400" />
                   </div>
                   <div>
-                    <div className="text-[10px] text-mjs-gray-400 font-medium uppercase">Payment Method</div>
-                    <div className="text-sm text-mjs-gray-600">Bill to Company (Net 30)</div>
+                    <div className="text-[10px] text-mjs-gray-500 font-medium uppercase">Payment Method</div>
+                    <div className="text-sm font-semibold text-mjs-dark">Bill to Company (Net 30)</div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-mjs-dark">Account Details</h2>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-mjs-gray-400">Pricing Tier</span>
-                  <span className="font-semibold text-mjs-dark">{pricingTier}</span>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-mjs-dark">Account Details</h2>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-mjs-gray-400">Discount Rate</span>
-                  <span className="font-semibold text-mjs-dark">{(discountRate * 100).toFixed(0)}%</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-mjs-gray-400">Account Since</span>
-                  <span className="font-semibold text-mjs-dark">Jan 2024</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-mjs-gray-400">Credit Terms</span>
-                  <span className="font-semibold text-mjs-dark">Net 30</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-mjs-gray-500">Pricing Tier</span>
+                    <span className="font-semibold text-mjs-dark">{pricingTier}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-mjs-gray-500">Discount Rate</span>
+                    <span className="font-semibold text-mjs-dark">{(discountRate * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-mjs-gray-500">Account Since</span>
+                    <span className="font-semibold text-mjs-dark">Jan 2024</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-mjs-gray-500">Credit Terms</span>
+                    <span className="font-semibold text-mjs-dark">Net 30</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -690,7 +880,7 @@ export default function AccountDashboard() {
                               </div>
                             )}
                           </div>
-                          <div className="text-xs text-mjs-gray-500 mt-0.5">{addr.name}</div>
+                          <div className="text-xs text-mjs-gray-500 mt-0.5">{addr.company}</div>
                           <div className="text-xs text-mjs-gray-500">{addr.address}, {addr.city}, {addr.state} {addr.zip}</div>
                         </div>
                       </button>

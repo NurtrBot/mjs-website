@@ -22,7 +22,181 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { allProducts } from "@/data/products";
+
+/* ═══ FREQUENTLY BOUGHT TOGETHER ENGINE ═══ */
+
+// Pairing rules: product keywords → complementary products (never suggest the same type)
+const PAIRING_RULES: { match: string[]; pairWith: string[]; avoid: string[] }[] = [
+  // Paper → Dispensers + Restroom essentials
+  { match: ["roll towel", "paper towel", "hardwound"], pairWith: ["towel dispenser", "hand soap", "trash liner"], avoid: ["towel"] },
+  { match: ["toilet tissue", "bath tissue", "bathroom tissue"], pairWith: ["tissue dispenser", "seat cover", "hand soap", "air freshener"], avoid: ["tissue", "toilet"] },
+  { match: ["multifold", "multi-fold", "c-fold", "singlefold"], pairWith: ["folded towel dispenser", "hand soap", "hand sanitizer"], avoid: ["fold"] },
+  { match: ["facial tissue"], pairWith: ["tissue dispenser", "disinfecting wipe"], avoid: ["facial"] },
+  // Dispensers → Refills + Restroom
+  { match: ["soap dispenser", "foam dispenser"], pairWith: ["hand soap", "foam soap", "paper towel"], avoid: ["dispenser"] },
+  { match: ["towel dispenser"], pairWith: ["roll towel", "hand soap", "trash liner"], avoid: ["dispenser"] },
+  // Soaps → Dispensers + Towels
+  { match: ["hand soap", "hand sanitizer", "foam soap", "foam wash"], pairWith: ["soap dispenser", "paper towel", "air freshener"], avoid: ["soap", "sanitizer", "wash"] },
+  // Chemicals → Tools
+  { match: ["degreaser", "all purpose cleaner"], pairWith: ["spray bottle", "microfiber", "nitrile glove"], avoid: ["degreaser", "cleaner"] },
+  { match: ["glass cleaner", "window cleaner"], pairWith: ["squeegee", "microfiber towel", "spray bottle"], avoid: ["glass", "window"] },
+  { match: ["floor cleaner", "floor finish", "floor stripper"], pairWith: ["mop head", "floor pad", "mop bucket"], avoid: ["floor"] },
+  { match: ["carpet shampoo", "carpet cleaner"], pairWith: ["carpet bonnet", "carpet extractor", "floor pad"], avoid: ["carpet"] },
+  { match: ["disinfectant", "disinfecting"], pairWith: ["spray bottle", "nitrile glove", "microfiber"], avoid: ["disinfect"] },
+  // Mops → Buckets + Handles + Heads
+  { match: ["mop head", "mop refill"], pairWith: ["mop handle", "mop bucket", "floor cleaner"], avoid: ["mop head"] },
+  { match: ["mop handle"], pairWith: ["mop head", "mop bucket", "floor cleaner"], avoid: ["handle"] },
+  { match: ["mop bucket", "wringer"], pairWith: ["mop head", "mop handle", "floor cleaner"], avoid: ["bucket", "wringer"] },
+  // Gloves → Other PPE + Hygiene
+  { match: ["nitrile glove", "latex glove", "vinyl glove"], pairWith: ["face mask", "bouffant cap", "hand sanitizer", "disinfecting wipe"], avoid: ["glove"] },
+  // Trash → Can Liners + Cleaning
+  { match: ["trash can", "waste receptacle"], pairWith: ["can liner", "degreaser", "disinfectant"], avoid: ["trash can", "receptacle"] },
+  { match: ["can liner", "trash liner", "trash bag"], pairWith: ["trash can", "degreaser"], avoid: ["liner", "bag"] },
+  // Packaging
+  { match: ["stretch film", "stretch wrap"], pairWith: ["tape gun", "bubble wrap", "packing peanut"], avoid: ["stretch", "film"] },
+  { match: ["tape", "packing tape"], pairWith: ["tape gun", "stretch film", "bubble wrap"], avoid: ["tape"] },
+  { match: ["bubble wrap", "bubble cushion"], pairWith: ["tape gun", "packing peanut", "stretch film"], avoid: ["bubble"] },
+  // Breakroom — always suggest DIFFERENT breakroom categories
+  { match: ["fork", "spoon", "knife", "cutlery", "utensil"], pairWith: ["napkin", "coffee", "paper cup", "plate"], avoid: ["fork", "spoon", "knife", "cutlery", "utensil"] },
+  { match: ["plate", "bowl"], pairWith: ["napkin", "cutlery", "coffee", "foam cup"], avoid: ["plate", "bowl"] },
+  { match: ["cup", "foam cup", "paper cup"], pairWith: ["coffee", "napkin", "stir stick", "sugar"], avoid: ["cup"] },
+  { match: ["coffee", "creamer"], pairWith: ["paper cup", "stir stick", "sugar", "napkin"], avoid: ["coffee", "creamer"] },
+  { match: ["napkin"], pairWith: ["cutlery", "plate", "coffee", "cup"], avoid: ["napkin"] },
+  // Vacuums → Bags + Chemicals
+  { match: ["vacuum", "backpack vacuum"], pairWith: ["vacuum bag", "filter bag", "carpet shampoo"], avoid: ["vacuum"] },
+];
+
+interface CartItemType {
+  slug: string;
+  name: string;
+  brand: string;
+  price: number;
+  image: string;
+  pack: string;
+}
+
+interface ProductType {
+  slug: string;
+  sku: string;
+  cardTitle: string;
+  brand: string;
+  price: number;
+  images: string[];
+  pack: string;
+  imageFit?: string;
+}
+
+function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemType[]; addItem: (item: CartItemType, qty?: number) => void }) {
+  const [pairings, setPairings] = useState<ProductType[]>([]);
+
+  useEffect(() => {
+    const cartNames = cartItems.map(i => i.name.toLowerCase());
+    const searchTerms = new Set<string>();
+    const avoidTerms = new Set<string>();
+
+    // Collect what to search for AND what to avoid
+    for (const rule of PAIRING_RULES) {
+      const cartMatches = cartNames.some(name => rule.match.some(m => name.includes(m)));
+      if (cartMatches) {
+        rule.pairWith.forEach(term => searchTerms.add(term));
+        rule.avoid.forEach(term => avoidTerms.add(term));
+      }
+    }
+
+    // Also avoid anything already in the cart by name keywords
+    for (const name of cartNames) {
+      const words = name.split(/[\s,]+/).filter(w => w.length > 3);
+      words.slice(0, 3).forEach(w => avoidTerms.add(w));
+    }
+
+    // Fallback: universal complements
+    if (searchTerms.size === 0) {
+      searchTerms.add("hand soap");
+      searchTerms.add("microfiber");
+      searchTerms.add("can liner");
+      searchTerms.add("paper towel");
+    }
+
+    const cartSlugs = new Set(cartItems.map(i => i.slug));
+    const terms = Array.from(searchTerms).slice(0, 8);
+
+    Promise.all(
+      terms.map(term =>
+        fetch(`/api/products/search?q=${encodeURIComponent(term)}&limit=5`)
+          .then(r => r.json())
+          .catch(() => ({ products: [] }))
+      )
+    ).then(results => {
+      const seen = new Set<string>();
+      const picks: ProductType[] = [];
+
+      for (const r of results) {
+        for (const p of (r.products || [])) {
+          if (seen.has(p.sku) || cartSlugs.has(p.slug)) continue;
+          if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
+
+          // Skip if product name contains any avoid terms
+          const pName = p.cardTitle?.toLowerCase() || p.name?.toLowerCase() || "";
+          const shouldAvoid = Array.from(avoidTerms).some(term => pName.includes(term));
+          if (shouldAvoid) continue;
+
+          seen.add(p.sku);
+          picks.push(p);
+        }
+      }
+
+      // Dedupe by taking max 1 per search term for variety
+      setPairings(picks.slice(0, 6));
+    });
+  }, [cartItems]);
+
+  if (pairings.length === 0) return null;
+
+  return (
+    <div className="mt-8 mb-2">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-6 pt-5 pb-4">
+          <h3 className="text-sm font-bold text-mjs-dark">Frequently Bought Together</h3>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {pairings.map((product) => (
+              <div key={product.slug} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-2.5 flex flex-col group hover:shadow-md hover:border-gray-200 transition-all">
+                <a href={`/product/${product.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white">
+                  <img src={product.images[0]} alt={product.cardTitle} className="w-full h-full object-cover" />
+                </a>
+                <div className="flex-1 min-h-[36px]">
+                  <div className="text-[9px] text-mjs-gray-400 font-medium uppercase truncate">{product.brand}</div>
+                  <a href={`/product/${product.slug}`} className="text-[11px] font-semibold text-mjs-dark leading-tight line-clamp-2 group-hover:text-mjs-red transition-colors">
+                    {product.cardTitle}
+                  </a>
+                </div>
+                <div className="mt-1.5">
+                  <span className="text-sm font-black text-mjs-dark">${product.price.toFixed(2)}</span>
+                  <div className="text-[9px] text-mjs-gray-500 mb-1.5">{product.pack}</div>
+                  <button
+                    onClick={() => addItem({
+                      slug: product.slug,
+                      name: product.cardTitle,
+                      brand: product.brand,
+                      price: product.price,
+                      image: product.images[0],
+                      pack: product.pack,
+                    })}
+                    className="w-full bg-white border border-mjs-red text-mjs-red text-[10px] font-bold py-1.5 rounded-lg hover:bg-mjs-red hover:text-white transition-colors flex items-center justify-center gap-1"
+                  >
+                    <ShoppingCart className="w-3 h-3" />
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, addItem, itemCount, subtotal } =
@@ -373,80 +547,9 @@ export default function CartPage() {
             </div>
           )}
 
-          {/* ═══ RECOMMENDED FOR YOU — UPSELL STRIP ═══ */}
+          {/* ═══ FREQUENTLY BOUGHT TOGETHER ═══ */}
           {items.length > 0 && (() => {
-            const cartSlugs = new Set(items.map((i) => i.slug));
-            const cartCategories = new Set(
-              items.map((i) => allProducts.find((p) => p.slug === i.slug)?.category).filter(Boolean)
-            );
-            // Get category-matched products first, then fill with other popular items
-            const categoryMatched = allProducts
-              .filter((p) => !cartSlugs.has(p.slug) && cartCategories.has(p.category));
-            const otherPopular = allProducts
-              .filter((p) => !cartSlugs.has(p.slug) && !cartCategories.has(p.category))
-              .sort((a, b) => b.reviewCount - a.reviewCount);
-            const upsellProducts = [...categoryMatched, ...otherPopular].slice(0, 8);
-
-            if (upsellProducts.length === 0) return null;
-
-            return (
-              <div className="mt-8 mb-2">
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  {/* Header */}
-                  <div className="px-6 pt-5 pb-4 flex flex-wrap items-center gap-3">
-                    <h3 className="text-sm font-bold text-mjs-dark">Recommended for You</h3>
-                    <div className="flex items-center gap-1.5 bg-red-50 text-mjs-red text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                      <Sparkles className="w-3 h-3" />
-                      Take an Extra 10% Off
-                    </div>
-                  </div>
-
-                  {/* Products Grid */}
-                  <div className="px-6 pb-6">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-                      {upsellProducts.map((product) => {
-                        const discountedPrice = +(product.price * 0.9).toFixed(2);
-                        const savings = +(product.price - discountedPrice).toFixed(2);
-                        return (
-                          <div key={product.slug} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-3 flex flex-col group hover:shadow-md hover:border-gray-200 transition-all">
-                            <a href={`/product/${product.slug}`} className="block h-[90px] mb-2 overflow-hidden rounded-lg bg-white">
-                              <img src={product.images[0]} alt={product.cardTitle} className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-2" : "object-cover"}`} />
-                            </a>
-                            <div className="flex-1 min-h-[40px]">
-                              <div className="text-[9px] text-mjs-gray-400 font-medium uppercase">{product.brand}</div>
-                              <a href={`/product/${product.slug}`} className="text-[11px] font-semibold text-mjs-dark leading-tight line-clamp-2 group-hover:text-mjs-red transition-colors">
-                                {product.cardTitle}
-                              </a>
-                            </div>
-                            <div className="mt-2">
-                              <div className="flex items-baseline gap-1.5">
-                                <span className="text-sm font-black text-mjs-dark">${discountedPrice.toFixed(2)}</span>
-                                <span className="text-[10px] text-mjs-gray-400 line-through">${product.price.toFixed(2)}</span>
-                              </div>
-                              <div className="text-[9px] text-mjs-red font-semibold mb-2">Save ${savings.toFixed(2)}</div>
-                              <button
-                                onClick={() => addItem({
-                                  slug: product.slug,
-                                  name: product.cardTitle,
-                                  brand: product.brand,
-                                  price: discountedPrice,
-                                  image: product.images[0],
-                                  pack: product.pack,
-                                })}
-                                className="w-full bg-white border border-mjs-red text-mjs-red text-[10px] font-bold py-1.5 rounded-lg hover:bg-mjs-red hover:text-white transition-colors flex items-center justify-center gap-1"
-                              >
-                                <ShoppingCart className="w-3 h-3" />
-                                Add to Cart
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
+            return <FrequentlyBoughtTogether cartItems={items} addItem={addItem} />;
           })()}
         </div>
       </main>
