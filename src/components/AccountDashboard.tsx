@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useOrderSetup } from "@/context/OrderContext";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
@@ -94,6 +95,7 @@ const mockOrders: MockOrder[] = [
 export default function AccountDashboard() {
   const { user } = useAuth();
   const { addItem } = useCart();
+  const { setOrderSetup } = useOrderSetup();
   const [activeTab, setActiveTab] = useState("Overview");
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [orderStep, setOrderStep] = useState(1);
@@ -198,15 +200,25 @@ export default function AccountDashboard() {
   // Only show real BC orders — no mock data for logged-in users
   const displayOrders = bcOrders;
 
-  const handleReorder = (order: MockOrder) => {
-    for (const item of order.lineItems) {
+  const handleReorder = async (order: MockOrder) => {
+    // Fetch product details for images
+    const results = await Promise.all(
+      order.lineItems.map(item =>
+        fetch(`/api/products/search?q=${encodeURIComponent(item.sku)}&limit=1`)
+          .then(r => r.json())
+          .catch(() => ({ products: [] }))
+      )
+    );
+    for (let i = 0; i < order.lineItems.length; i++) {
+      const item = order.lineItems[i];
+      const found = results[i]?.products?.[0];
       addItem({
-        slug: item.sku.toLowerCase(),
+        slug: found?.slug || item.sku.toLowerCase(),
         name: item.name,
-        brand: "MJS",
+        brand: found?.brand || "MJS",
         price: item.price,
-        image: "/images/placeholder-product.svg",
-        pack: "",
+        image: found?.images?.[0] || "/images/placeholder-product.svg",
+        pack: found?.pack || "",
       }, item.qty);
     }
     setReordered(order.id);
@@ -817,6 +829,17 @@ export default function AccountDashboard() {
                     ))}
                   </div>
 
+                  {/* Bill to Company confirmation */}
+                  {paymentMethod === "bill" && (
+                    <div className="bg-blue-50 rounded-xl p-4 mb-6 flex items-start gap-3">
+                      <Building2 className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-sm font-semibold text-blue-700">Billing to {billTo.company || "your company"}</div>
+                        <div className="text-xs text-blue-600">{billTo.name} &middot; Net 30 Terms</div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Fulfillment */}
                   <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider mb-3">Fulfillment</h3>
                   <div className="grid grid-cols-2 gap-3 mb-6">
@@ -826,7 +849,13 @@ export default function AccountDashboard() {
                     ].map((opt) => (
                       <button
                         key={opt.id}
-                        onClick={() => setFulfillment(opt.id)}
+                        onClick={() => {
+                          setFulfillment(opt.id);
+                          // Auto-select first saved address when choosing delivery
+                          if (opt.id === "delivery" && addresses.length > 0 && !selectedAddress) {
+                            setSelectedAddress(addresses[0].id);
+                          }
+                        }}
                         className={`p-4 rounded-xl border-2 text-center transition-all ${
                           fulfillment === opt.id
                             ? "border-mjs-red bg-red-50"
@@ -839,6 +868,30 @@ export default function AccountDashboard() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Delivery — show saved address preview if available */}
+                  {fulfillment === "delivery" && addresses.length > 0 && (
+                    <div className="bg-mjs-gray-50 rounded-xl p-4 mb-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider">Ship To</h3>
+                        <span className="text-[10px] text-mjs-gray-400">{addresses.length} address{addresses.length !== 1 ? "es" : ""} on file</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-mjs-red flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-sm font-semibold text-mjs-dark">{addresses.find(a => a.id === selectedAddress)?.label || addresses[0].label}</div>
+                          <div className="text-xs text-mjs-gray-500">
+                            {(() => { const a = addresses.find(addr => addr.id === selectedAddress) || addresses[0]; return `${a.address}, ${a.city}, ${a.state} ${a.zip}`; })()}
+                          </div>
+                          {addresses.length > 1 && (
+                            <button onClick={() => { setOrderStep(2); }} className="text-[10px] text-mjs-red font-semibold mt-1 hover:underline">
+                              Change address
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Pickup info */}
                   {fulfillment === "pickup" && (
@@ -940,54 +993,87 @@ export default function AccountDashboard() {
 
             {/* Footer Actions */}
             <div className="px-8 py-5 border-t border-gray-100 flex gap-3">
-              {orderStep === 1 ? (
-                <>
-                  <button onClick={() => setShowOrderModal(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-mjs-gray-500 hover:bg-gray-50 transition-colors">
-                    Cancel
-                  </button>
-                  {fulfillment === "pickup" ? (
-                    <a
-                      href="/"
+              {(() => {
+                const saveAndShop = () => {
+                  const selectedAddr = addresses.find(a => a.id === selectedAddress);
+                  setOrderSetup({
+                    paymentMethod: paymentMethod as "bill" | "card" | "cash",
+                    fulfillment: fulfillment as "delivery" | "pickup",
+                    billTo: {
+                      company: billTo.company,
+                      name: billTo.name,
+                      email: billTo.email,
+                      phone: billTo.phone,
+                    },
+                    shipTo: fulfillment === "delivery" && selectedAddr ? {
+                      label: selectedAddr.label,
+                      company: selectedAddr.company,
+                      address: selectedAddr.address,
+                      city: selectedAddr.city,
+                      state: selectedAddr.state,
+                      zip: selectedAddr.zip,
+                    } : fulfillment === "delivery" && customShipTo.address ? {
+                      label: customShipTo.name || "Custom Address",
+                      company: "",
+                      address: customShipTo.address,
+                      city: customShipTo.city,
+                      state: customShipTo.state,
+                      zip: customShipTo.zip,
+                    } : null,
+                  });
+                  setShowOrderModal(false);
+                  window.location.href = "/";
+                };
+
+                return orderStep === 1 ? (
+                  <>
+                    <button onClick={() => setShowOrderModal(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-mjs-gray-500 hover:bg-gray-50 transition-colors">
+                      Cancel
+                    </button>
+                    {fulfillment === "pickup" || (fulfillment === "delivery" && selectedAddress) ? (
+                      <button
+                        onClick={saveAndShop}
+                        className={`flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
+                          paymentMethod && fulfillment
+                            ? "bg-mjs-red text-white hover:bg-red-700"
+                            : "bg-gray-100 text-mjs-gray-400 pointer-events-none"
+                        }`}
+                      >
+                        Start Shopping
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => fulfillment && setOrderStep(2)}
+                        className={`flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors flex items-center justify-center gap-2 ${
+                          paymentMethod && fulfillment
+                            ? "bg-mjs-red text-white hover:bg-red-700"
+                            : "bg-gray-100 text-mjs-gray-400 cursor-not-allowed"
+                        }`}
+                        disabled={!paymentMethod || !fulfillment}
+                      >
+                        Next: Ship To Address
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setOrderStep(1)} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-mjs-gray-500 hover:bg-gray-50 transition-colors">
+                      Back
+                    </button>
+                    <button
+                      onClick={saveAndShop}
                       className={`flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
-                        paymentMethod && fulfillment
+                        selectedAddress || customShipTo.address
                           ? "bg-mjs-red text-white hover:bg-red-700"
                           : "bg-gray-100 text-mjs-gray-400 pointer-events-none"
                       }`}
                     >
                       Start Shopping
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => fulfillment && setOrderStep(2)}
-                      className={`flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors flex items-center justify-center gap-2 ${
-                        paymentMethod && fulfillment
-                          ? "bg-mjs-red text-white hover:bg-red-700"
-                          : "bg-gray-100 text-mjs-gray-400 cursor-not-allowed"
-                      }`}
-                      disabled={!paymentMethod || !fulfillment}
-                    >
-                      Next: Ship To Address
-                      <ArrowRight className="w-4 h-4" />
                     </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <button onClick={() => setOrderStep(1)} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-mjs-gray-500 hover:bg-gray-50 transition-colors">
-                    Back
-                  </button>
-                  <a
-                    href="/"
-                    className={`flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
-                      selectedAddress || customShipTo.address
-                        ? "bg-mjs-red text-white hover:bg-red-700"
-                        : "bg-gray-100 text-mjs-gray-400 pointer-events-none"
-                    }`}
-                  >
-                    Start Shopping
-                  </a>
-                </>
-              )}
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -996,7 +1082,7 @@ export default function AccountDashboard() {
       {/* ═══ ORDER INVOICE MODAL ═══ */}
       {viewingOrder && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setViewingOrder(null)}>
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Invoice Header */}
             <div className="bg-mjs-dark rounded-t-2xl px-8 py-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -1036,24 +1122,24 @@ export default function AccountDashboard() {
 
             {/* Line Items */}
             <div className="px-8 py-4">
-              <table className="w-full">
+              <table className="w-full table-fixed">
                 <thead>
                   <tr className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-wider border-b border-gray-100">
-                    <th className="text-left py-2">Item</th>
-                    <th className="text-center py-2">SKU</th>
-                    <th className="text-center py-2">Qty</th>
-                    <th className="text-right py-2">Price</th>
-                    <th className="text-right py-2">Total</th>
+                    <th className="text-left py-2 w-[50%]">Item</th>
+                    <th className="text-left py-2 w-[12%]">SKU</th>
+                    <th className="text-center py-2 w-[8%]">Qty</th>
+                    <th className="text-right py-2 w-[15%]">Price</th>
+                    <th className="text-right py-2 w-[15%]">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {viewingOrder.lineItems.map((item, i) => (
                     <tr key={i}>
-                      <td className="py-3 text-sm font-medium text-mjs-dark">{item.name}</td>
-                      <td className="py-3 text-xs text-mjs-gray-500 text-center">{item.sku}</td>
+                      <td className="py-3 pr-3 text-sm font-medium text-mjs-dark truncate">{item.name}</td>
+                      <td className="py-3 text-xs text-mjs-gray-500">{item.sku}</td>
                       <td className="py-3 text-sm text-mjs-gray-600 text-center">{item.qty}</td>
-                      <td className="py-3 text-sm text-mjs-gray-600 text-right">${item.price.toFixed(2)}</td>
-                      <td className="py-3 text-sm font-semibold text-mjs-dark text-right">${(item.price * item.qty).toFixed(2)}</td>
+                      <td className="py-3 text-sm text-mjs-gray-600 text-right whitespace-nowrap">${item.price.toFixed(2)}</td>
+                      <td className="py-3 text-sm font-semibold text-mjs-dark text-right whitespace-nowrap">${(item.price * item.qty).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

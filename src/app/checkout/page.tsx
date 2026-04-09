@@ -2,8 +2,10 @@
 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useOrderSetup } from "@/context/OrderContext";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { Building2 } from "lucide-react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,21 +20,26 @@ import {
 export default function CheckoutPage() {
   const { items, subtotal, itemCount } = useCart();
   const { user } = useAuth();
+  const { orderSetup } = useOrderSetup();
   const [step, setStep] = useState(1);
   const [showOrderSummary, setShowOrderSummary] = useState(false);
+
+  const isPickup = orderSetup?.fulfillment === "pickup";
+  const isBillToAccount = orderSetup?.paymentMethod === "bill";
+  const isCash = orderSetup?.paymentMethod === "cash";
 
   const freeDeliveryThreshold = 399;
   const taxRate = 0.0775;
   const tax = subtotal * taxRate;
-  const shipping =
+  const shipping = isPickup ? 0 :
     subtotal >= freeDeliveryThreshold ? 0 : subtotal > 0 ? 35.00 : 0;
   const total = subtotal + tax + shipping;
 
   const [form, setForm] = useState({
-    email: user?.email || "",
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    company: user?.company || "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    company: "",
     address: "",
     apt: "",
     city: "",
@@ -40,9 +47,9 @@ export default function CheckoutPage() {
     zip: "",
     phone: "",
     sameAsBilling: true,
-    billingFirstName: user?.firstName || "",
-    billingLastName: user?.lastName || "",
-    billingCompany: user?.company || "",
+    billingFirstName: "",
+    billingLastName: "",
+    billingCompany: "",
     billingAddress: "",
     billingApt: "",
     billingCity: "",
@@ -55,20 +62,66 @@ export default function CheckoutPage() {
     notes: "",
   });
 
+  // Auto-fill from order setup + user data
+  useEffect(() => {
+    const ship = orderSetup?.shipTo;
+    const names = (user?.firstName || "").split(" ");
+    setForm(prev => ({
+      ...prev,
+      email: user?.email || prev.email,
+      firstName: user?.firstName || prev.firstName,
+      lastName: user?.lastName || prev.lastName,
+      company: ship?.company || user?.company || prev.company,
+      address: ship?.address || prev.address,
+      city: ship?.city || prev.city,
+      state: ship?.state || prev.state || "CA",
+      zip: ship?.zip || prev.zip,
+      phone: user?.phone || prev.phone,
+      cardName: user ? `${user.firstName} ${user.lastName}` : prev.cardName,
+    }));
+  }, [user, orderSetup]);
+
   const update = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const [editBillTo, setEditBillTo] = useState(false);
   const [billTo, setBillTo] = useState({
-    company: user?.company || "",
-    name: user ? `${user.firstName} ${user.lastName}` : "",
-    email: user?.email || "",
+    company: "",
+    name: "",
+    email: "",
     phone: "",
     address: "",
     city: "",
     state: "CA",
     zip: "",
   });
+
+  // Auto-fill billTo from order setup
+  useEffect(() => {
+    if (orderSetup?.billTo) {
+      setBillTo({
+        company: orderSetup.billTo.company || user?.company || "",
+        name: orderSetup.billTo.name || (user ? `${user.firstName} ${user.lastName}` : ""),
+        email: orderSetup.billTo.email || user?.email || "",
+        phone: orderSetup.billTo.phone || user?.phone || "",
+        address: "",
+        city: "",
+        state: "CA",
+        zip: "",
+      });
+    } else if (user) {
+      setBillTo({
+        company: user.company || "",
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email || "",
+        phone: user.phone || "",
+        address: "",
+        city: "",
+        state: "CA",
+        zip: "",
+      });
+    }
+  }, [user, orderSetup]);
 
   const inputClass =
     "w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40 transition-colors bg-white";
@@ -144,7 +197,7 @@ export default function CheckoutPage() {
         )}
 
         {items.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             {/* Left — Form */}
             <div className="lg:col-span-3">
               {/* Back to cart */}
@@ -225,8 +278,21 @@ export default function CheckoutPage() {
               {/* Shipping */}
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <h2 className="text-base font-bold text-mjs-dark mb-4">
-                  Shipping Address
+                  {isPickup ? "Pickup Location" : "Shipping Address"}
                 </h2>
+
+                {isPickup ? (
+                  <div className="bg-green-50 rounded-xl p-5 flex items-start gap-3">
+                    <Truck className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-sm font-bold text-green-700">Will Call — Anaheim Warehouse</div>
+                      <div className="text-xs text-green-600 mt-1">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+                      <div className="text-xs text-green-600 mt-0.5">Mon — Fri, 6:30 AM — 2:45 PM</div>
+                      <div className="text-xs text-green-500 mt-2">Your order will be ready for pickup once confirmed.</div>
+                    </div>
+                  </div>
+                ) : (
+                <>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelClass}>First Name</label>
@@ -305,9 +371,12 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+                </>
+                )}
               </section>
 
-              {/* Billing */}
+              {/* Billing Address — only show for credit card customers */}
+              {!isBillToAccount && !isCash && (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">
@@ -331,150 +400,117 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className={labelClass}>First Name</label>
-                        <input
-                          type="text"
-                          value={form.billingFirstName}
-                          onChange={(e) =>
-                            update("billingFirstName", e.target.value)
-                          }
-                          className={inputClass}
-                        />
+                        <input type="text" value={form.billingFirstName} onChange={(e) => update("billingFirstName", e.target.value)} className={inputClass} />
                       </div>
                       <div>
                         <label className={labelClass}>Last Name</label>
-                        <input
-                          type="text"
-                          value={form.billingLastName}
-                          onChange={(e) =>
-                            update("billingLastName", e.target.value)
-                          }
-                          className={inputClass}
-                        />
+                        <input type="text" value={form.billingLastName} onChange={(e) => update("billingLastName", e.target.value)} className={inputClass} />
                       </div>
                     </div>
                     <div className="mt-3">
                       <label className={labelClass}>Company (optional)</label>
-                      <input
-                        type="text"
-                        value={form.billingCompany}
-                        onChange={(e) =>
-                          update("billingCompany", e.target.value)
-                        }
-                        className={inputClass}
-                      />
+                      <input type="text" value={form.billingCompany} onChange={(e) => update("billingCompany", e.target.value)} className={inputClass} />
                     </div>
                     <div className="mt-3">
                       <label className={labelClass}>Street Address</label>
-                      <input
-                        type="text"
-                        value={form.billingAddress}
-                        onChange={(e) =>
-                          update("billingAddress", e.target.value)
-                        }
-                        className={inputClass}
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <label className={labelClass}>
-                        Apt / Suite / Unit (optional)
-                      </label>
-                      <input
-                        type="text"
-                        value={form.billingApt}
-                        onChange={(e) => update("billingApt", e.target.value)}
-                        className={inputClass}
-                      />
+                      <input type="text" value={form.billingAddress} onChange={(e) => update("billingAddress", e.target.value)} className={inputClass} />
                     </div>
                     <div className="grid grid-cols-3 gap-3 mt-3">
                       <div>
                         <label className={labelClass}>City</label>
-                        <input
-                          type="text"
-                          value={form.billingCity}
-                          onChange={(e) =>
-                            update("billingCity", e.target.value)
-                          }
-                          className={inputClass}
-                        />
+                        <input type="text" value={form.billingCity} onChange={(e) => update("billingCity", e.target.value)} className={inputClass} />
                       </div>
                       <div>
                         <label className={labelClass}>State</label>
+                        <input type="text" value={form.billingState} onChange={(e) => update("billingState", e.target.value)} maxLength={2} className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>ZIP Code</label>
+                        <input type="text" value={form.billingZip} onChange={(e) => update("billingZip", e.target.value)} className={inputClass} />
+                      </div>
+                    </div>
+                  </>
+                )}
+              </section>
+              )}
+
+              {/* Payment */}
+              <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  {isBillToAccount ? (
+                    <Building2 className="w-5 h-5 text-blue-500" />
+                  ) : (
+                    <CreditCard className="w-5 h-5 text-mjs-gray-400" />
+                  )}
+                  <h2 className="text-base font-bold text-mjs-dark">
+                    Payment
+                  </h2>
+                </div>
+
+                {isBillToAccount ? (
+                  <div className="bg-blue-50 rounded-xl p-5">
+                    <div className="text-sm font-bold text-blue-700">Bill to Account — Net 30 Terms</div>
+                    <div className="text-xs text-blue-600 mt-1">{billTo.company}</div>
+                    <div className="text-xs text-blue-600">{billTo.name} &middot; {billTo.email}</div>
+                    <p className="text-xs text-blue-500 mt-3">
+                      This order will be billed to your company account. Payment is due within 30 days of invoice date.
+                    </p>
+                  </div>
+                ) : isCash ? (
+                  <div className="bg-green-50 rounded-xl p-5">
+                    <div className="text-sm font-bold text-green-700">Cash on Pickup</div>
+                    <div className="text-xs text-green-600 mt-1">Payment will be collected at our Anaheim warehouse when you pick up your order.</div>
+                    <div className="text-xs text-green-600 mt-2">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs text-mjs-gray-400 mb-4">
+                      Your credit card billing may reflect our corporate name
+                      Bergman Inc.
+                    </p>
+                    <div className="mb-3">
+                      <label className={labelClass}>Name on Card</label>
+                      <input
+                        type="text"
+                        value={form.cardName}
+                        onChange={(e) => update("cardName", e.target.value)}
+                        className={inputClass}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className={labelClass}>Card Number</label>
+                      <input
+                        type="text"
+                        value={form.cardNumber}
+                        onChange={(e) => update("cardNumber", e.target.value)}
+                        placeholder="1234 5678 9012 3456"
+                        className={inputClass}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={labelClass}>Expiration</label>
                         <input
                           type="text"
-                          value={form.billingState}
-                          onChange={(e) =>
-                            update("billingState", e.target.value)
-                          }
+                          value={form.expiry}
+                          onChange={(e) => update("expiry", e.target.value)}
+                          placeholder="MM / YY"
                           className={inputClass}
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>ZIP Code</label>
+                        <label className={labelClass}>CVV</label>
                         <input
                           type="text"
-                          value={form.billingZip}
-                          onChange={(e) => update("billingZip", e.target.value)}
+                          value={form.cvv}
+                          onChange={(e) => update("cvv", e.target.value)}
+                          placeholder="123"
                           className={inputClass}
                         />
                       </div>
                     </div>
                   </>
                 )}
-              </section>
-
-              {/* Payment */}
-              <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <CreditCard className="w-5 h-5 text-mjs-gray-400" />
-                  <h2 className="text-base font-bold text-mjs-dark">
-                    Payment
-                  </h2>
-                </div>
-                <p className="text-xs text-mjs-gray-400 mb-4">
-                  Your credit card billing may reflect our corporate name
-                  Bergman Inc.
-                </p>
-                <div className="mb-3">
-                  <label className={labelClass}>Name on Card</label>
-                  <input
-                    type="text"
-                    value={form.cardName}
-                    onChange={(e) => update("cardName", e.target.value)}
-                    className={inputClass}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className={labelClass}>Card Number</label>
-                  <input
-                    type="text"
-                    value={form.cardNumber}
-                    onChange={(e) => update("cardNumber", e.target.value)}
-                    placeholder="1234 5678 9012 3456"
-                    className={inputClass}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className={labelClass}>Expiration</label>
-                    <input
-                      type="text"
-                      value={form.expiry}
-                      onChange={(e) => update("expiry", e.target.value)}
-                      placeholder="MM / YY"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>CVV</label>
-                    <input
-                      type="text"
-                      value={form.cvv}
-                      onChange={(e) => update("cvv", e.target.value)}
-                      placeholder="123"
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
               </section>
 
               {/* Order Notes */}
@@ -494,7 +530,12 @@ export default function CheckoutPage() {
               {/* Place Order */}
               <button className="w-full bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 mb-8">
                 <Lock className="w-4 h-4" />
-                Place Order &mdash; ${total.toFixed(2)}
+                {isBillToAccount
+                  ? `Place Order — Bill to Account — $${total.toFixed(2)}`
+                  : isCash
+                  ? `Place Order — Pay at Pickup — $${total.toFixed(2)}`
+                  : `Place Order — $${total.toFixed(2)}`
+                }
               </button>
             </div>
 

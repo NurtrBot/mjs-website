@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useOrderSetup } from "@/context/OrderContext";
 
 /* ═══ FREQUENTLY BOUGHT TOGETHER ENGINE ═══ */
 
@@ -201,11 +202,15 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
 export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, addItem, itemCount, subtotal } =
     useCart();
+  const { orderSetup } = useOrderSetup();
+  const isPickup = orderSetup?.fulfillment === "pickup";
   const [promoCode, setPromoCode] = useState("");
   const [showShippingPopup, setShowShippingPopup] = useState(false);
+  const [showPickupPopup, setShowPickupPopup] = useState(false);
   const [animateBar, setAnimateBar] = useState(false);
   const [paperQty, setPaperQty] = useState(1);
   const [paperAdded, setPaperAdded] = useState(false);
+  const [pickupSuggestions, setPickupSuggestions] = useState<ProductType[]>([]);
   const router = useRouter();
 
   const copyPaper = {
@@ -217,8 +222,56 @@ export default function CartPage() {
     pack: "10 Reams/Case",
   };
 
+  // Fetch pickup suggestions when popup shows
+  useEffect(() => {
+    if (!showPickupPopup || items.length === 0) return;
+
+    const cartNames = items.map(i => i.name.toLowerCase());
+    const searchTerms = new Set<string>();
+    const avoidTerms = new Set<string>();
+
+    for (const rule of PAIRING_RULES) {
+      if (cartNames.some(name => rule.match.some(m => name.includes(m)))) {
+        rule.pairWith.forEach(t => searchTerms.add(t));
+        rule.avoid.forEach(t => avoidTerms.add(t));
+      }
+    }
+    cartNames.forEach(n => n.split(/[\s,]+/).filter(w => w.length > 3).slice(0, 3).forEach(w => avoidTerms.add(w)));
+
+    if (searchTerms.size === 0) {
+      searchTerms.add("hand soap");
+      searchTerms.add("microfiber");
+      searchTerms.add("nitrile glove");
+    }
+
+    const cartSlugs = new Set(items.map(i => i.slug));
+    const terms = Array.from(searchTerms).slice(0, 6);
+
+    Promise.all(
+      terms.map(t => fetch(`/api/products/search?q=${encodeURIComponent(t)}&limit=3`).then(r => r.json()).catch(() => ({ products: [] })))
+    ).then(results => {
+      const seen = new Set<string>();
+      const picks: ProductType[] = [];
+      for (const r of results) {
+        for (const p of (r.products || [])) {
+          if (seen.has(p.sku) || cartSlugs.has(p.slug)) continue;
+          if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
+          const pName = (p.cardTitle || "").toLowerCase();
+          if (Array.from(avoidTerms).some(t => pName.includes(t))) continue;
+          seen.add(p.sku);
+          picks.push(p);
+          if (picks.length >= 3) break;
+        }
+        if (picks.length >= 3) break;
+      }
+      setPickupSuggestions(picks);
+    });
+  }, [showPickupPopup, items]);
+
   const handleCheckout = () => {
-    if (subtotal < freeDeliveryThreshold) {
+    if (isPickup) {
+      setShowPickupPopup(true);
+    } else if (subtotal < freeDeliveryThreshold) {
       setShowShippingPopup(true);
       setTimeout(() => setAnimateBar(true), 100);
     } else {
@@ -229,6 +282,7 @@ export default function CartPage() {
   const closePopup = () => {
     setAnimateBar(false);
     setShowShippingPopup(false);
+    setShowPickupPopup(false);
     setPaperAdded(false);
     setPaperQty(1);
   };
@@ -754,6 +808,61 @@ export default function CartPage() {
                 opacity: 1;
                 transform: scale(1) translateY(0);
               }
+            }
+          `}</style>
+        </>
+      )}
+
+      {/* ═══ PICKUP IMPULSE POPUP ═══ */}
+      {showPickupPopup && (
+        <>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[80]" onClick={() => { closePopup(); router.push("/checkout"); }} />
+          <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.15)] max-w-[480px] w-full animate-[popIn_0.25s_ease-out]">
+              <div className="px-8 pt-8 pb-6">
+                <h3 className="text-lg font-black text-mjs-dark text-center mb-1">Before you go...</h3>
+                <p className="text-sm text-mjs-gray-500 text-center mb-6">These items pair well with your order</p>
+
+                {pickupSuggestions.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-3 mb-6">
+                    {pickupSuggestions.map((p) => (
+                      <div key={p.sku} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-3 flex flex-col group">
+                        <a href={`/product/${p.slug}`} className="block aspect-square rounded-lg overflow-hidden mb-2 bg-white">
+                          <img src={p.images[0]} alt={p.cardTitle} className="w-full h-full object-cover" />
+                        </a>
+                        <div className="text-[10px] font-semibold text-mjs-dark leading-tight line-clamp-2 min-h-[28px]">{p.cardTitle}</div>
+                        <div className="text-sm font-black text-mjs-dark mt-1">${p.price.toFixed(2)}</div>
+                        <div className="text-[9px] text-mjs-gray-500 mb-2">{p.pack}</div>
+                        <button
+                          onClick={() => addItem({ slug: p.slug, name: p.cardTitle, brand: p.brand, price: p.price, image: p.images[0], pack: p.pack })}
+                          className="w-full bg-mjs-red text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <ShoppingCart className="w-3 h-3" /> Add
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-20 flex items-center justify-center mb-6">
+                    <div className="w-5 h-5 border-2 border-gray-200 border-t-mjs-red rounded-full animate-spin" />
+                  </div>
+                )}
+
+                <button
+                  onClick={() => { closePopup(); router.push("/checkout"); }}
+                  className="w-full bg-mjs-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  No thanks, proceed to checkout
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+            @keyframes popIn {
+              from { opacity: 0; transform: scale(0.96) translateY(8px); }
+              to { opacity: 1; transform: scale(1) translateY(0); }
             }
           `}</style>
         </>

@@ -1,17 +1,50 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useOrderSetup } from "@/context/OrderContext";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
   X,
   Minus,
   Plus,
   Trash2,
   ShoppingBag,
+  ShoppingCart,
   ShieldCheck,
   Truck,
+  Store,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
+
+// Same pairing rules as the cart page
+const PICKUP_PAIRINGS: { match: string[]; pairWith: string[]; avoid: string[] }[] = [
+  { match: ["roll towel", "paper towel", "hardwound"], pairWith: ["hand soap", "trash liner", "towel dispenser"], avoid: ["towel"] },
+  { match: ["toilet tissue", "bath tissue"], pairWith: ["seat cover", "hand soap", "air freshener"], avoid: ["tissue", "toilet"] },
+  { match: ["hand soap", "hand sanitizer"], pairWith: ["paper towel", "soap dispenser"], avoid: ["soap", "sanitizer"] },
+  { match: ["degreaser", "cleaner"], pairWith: ["spray bottle", "microfiber", "nitrile glove"], avoid: ["degreaser", "cleaner"] },
+  { match: ["floor cleaner", "floor finish"], pairWith: ["mop head", "floor pad"], avoid: ["floor"] },
+  { match: ["nitrile glove", "latex glove", "vinyl glove"], pairWith: ["face mask", "hand sanitizer"], avoid: ["glove"] },
+  { match: ["can liner", "trash liner"], pairWith: ["degreaser", "disinfectant"], avoid: ["liner"] },
+  { match: ["stretch film"], pairWith: ["tape gun", "bubble wrap"], avoid: ["stretch", "film"] },
+  { match: ["fork", "spoon", "knife", "cutlery"], pairWith: ["napkin", "coffee", "paper cup"], avoid: ["fork", "spoon", "knife"] },
+  { match: ["plate", "bowl"], pairWith: ["napkin", "cutlery", "coffee"], avoid: ["plate", "bowl"] },
+  { match: ["cup", "foam cup"], pairWith: ["coffee", "napkin", "stir stick"], avoid: ["cup"] },
+  { match: ["mop"], pairWith: ["floor cleaner", "mop bucket"], avoid: ["mop"] },
+  { match: ["disinfectant"], pairWith: ["spray bottle", "nitrile glove", "paper towel"], avoid: ["disinfect"] },
+];
+
+interface PickupSuggestion {
+  slug: string;
+  sku: string;
+  cardTitle: string;
+  brand: string;
+  price: number;
+  images: string[];
+  pack: string;
+  imageFit?: string;
+}
 
 export default function CartPanel() {
   const {
@@ -21,16 +54,66 @@ export default function CartPanel() {
     updateQty,
     removeItem,
     clearCart,
+    addItem,
     itemCount,
     subtotal,
   } = useCart();
+  const { orderSetup } = useOrderSetup();
 
+  const isPickup = orderSetup?.fulfillment === "pickup";
   const freeDeliveryThreshold = 399;
   const remaining = freeDeliveryThreshold - subtotal;
   const freeDeliveryProgress = Math.min(
     (subtotal / freeDeliveryThreshold) * 100,
     100
   );
+
+  // Pickup impulse suggestions
+  const [suggestions, setSuggestions] = useState<PickupSuggestion[]>([]);
+  useEffect(() => {
+    if (!isPickup || items.length === 0) { setSuggestions([]); return; }
+
+    const cartNames = items.map(i => i.name.toLowerCase());
+    const searchTerms = new Set<string>();
+    const avoidTerms = new Set<string>();
+
+    for (const rule of PICKUP_PAIRINGS) {
+      if (cartNames.some(name => rule.match.some(m => name.includes(m)))) {
+        rule.pairWith.forEach(t => searchTerms.add(t));
+        rule.avoid.forEach(t => avoidTerms.add(t));
+      }
+    }
+    cartNames.forEach(n => n.split(/[\s,]+/).filter(w => w.length > 3).slice(0, 3).forEach(w => avoidTerms.add(w)));
+
+    if (searchTerms.size === 0) {
+      searchTerms.add("hand soap");
+      searchTerms.add("microfiber");
+      searchTerms.add("nitrile glove");
+    }
+
+    const cartSlugs = new Set(items.map(i => i.slug));
+    const terms = Array.from(searchTerms).slice(0, 5);
+
+    Promise.all(
+      terms.map(t => fetch(`/api/products/search?q=${encodeURIComponent(t)}&limit=3`).then(r => r.json()).catch(() => ({ products: [] })))
+    ).then(results => {
+      const seen = new Set<string>();
+      const picks: PickupSuggestion[] = [];
+      for (const r of results) {
+        for (const p of (r.products || [])) {
+          if (seen.has(p.sku) || cartSlugs.has(p.slug)) continue;
+          if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
+          const pName = (p.cardTitle || p.name || "").toLowerCase();
+          if (Array.from(avoidTerms).some(t => pName.includes(t))) continue;
+          seen.add(p.sku);
+          picks.push(p);
+          if (picks.length >= 3) break;
+        }
+        if (picks.length >= 3) break;
+      }
+      setSuggestions(picks);
+    });
+  }, [isPickup, items]);
 
   if (!isOpen) return null;
 
@@ -88,9 +171,14 @@ export default function CartPanel() {
         {/* Cart Items */}
         {items.length > 0 && (
           <>
-            {/* Free Delivery Progress */}
+            {/* Fulfillment Status Bar */}
             <div className="px-5 py-3 bg-mjs-gray-50 border-b border-gray-100">
-              {remaining > 0 ? (
+              {isPickup ? (
+                <div className="flex items-center gap-2 text-xs font-semibold text-green-600">
+                  <Store className="w-4 h-4" />
+                  Will Call — Anaheim Warehouse
+                </div>
+              ) : remaining > 0 ? (
                 <>
                   <div className="text-xs text-mjs-gray-600 mb-1.5">
                     Add{" "}
@@ -198,9 +286,11 @@ export default function CartPanel() {
                 </span>
               </div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-mjs-gray-500">Shipping</span>
+                <span className="text-sm text-mjs-gray-500">{isPickup ? "Pickup" : "Shipping"}</span>
                 <span className="text-sm font-semibold text-mjs-gray-700">
-                  {subtotal >= freeDeliveryThreshold ? (
+                  {isPickup ? (
+                    <span className="text-mjs-green">FREE</span>
+                  ) : subtotal >= freeDeliveryThreshold ? (
                     <span className="text-mjs-green">FREE</span>
                   ) : (
                     "Calculated at checkout"
@@ -240,8 +330,11 @@ export default function CartPanel() {
                   Secure Checkout
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-mjs-gray-400">
-                  <Truck className="w-3 h-3" />
-                  Free Delivery $399+
+                  {isPickup ? (
+                    <><Store className="w-3 h-3" /> Ready Same Day</>
+                  ) : (
+                    <><Truck className="w-3 h-3" /> Free Delivery $399+</>
+                  )}
                 </div>
               </div>
             </div>

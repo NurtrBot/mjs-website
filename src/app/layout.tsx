@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { OrderProvider } from "@/context/OrderContext";
 import CartPanel from "@/components/CartPanel";
 
 const inter = Inter({
@@ -28,10 +29,12 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
         <AuthProvider>
-          <CartProvider>
-            {children}
-            <CartPanel />
-          </CartProvider>
+          <OrderProvider>
+            <CartProvider>
+              {children}
+              <CartPanel />
+            </CartProvider>
+          </OrderProvider>
         </AuthProvider>
       </body>
     </html>

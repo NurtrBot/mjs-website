@@ -30,7 +30,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
 
       <div className="p-4 flex flex-col flex-1">
         <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">
-          {product.brand}
+          {product.sku}
         </div>
         <a href={`/product/${product.slug}`}>
           <h3 className="text-sm font-semibold text-mjs-gray-800 leading-snug mt-1 group-hover:text-mjs-red transition-colors">
