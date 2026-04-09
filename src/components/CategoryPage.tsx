@@ -70,13 +70,12 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
   ],
   "breakroom": [
     { label: "Cups & Lids", subcategories: ["Cups & Lids"] },
-    { label: "Plates & Bowls", subcategories: ["Plates & Bowls"] },
     { label: "Cutlery", subcategories: ["Cutlery"] },
+    { label: "Plates & Bowls", subcategories: ["Plates & Bowls"] },
     { label: "Napkins", subcategories: ["Napkins"] },
-    { label: "Batteries", subcategories: ["Batteries"] },
-    { label: "Beverages", subcategories: ["Beverages"] },
     { label: "Food Storage", subcategories: ["Food Storage"] },
-    { label: "Coffee", subcategories: ["Coffee & Supplies"] },
+    { label: "Beverages", subcategories: ["Beverages"] },
+    { label: "Batteries", subcategories: ["Batteries"] },
   ],
   "equipment": [
     { label: "Dispensers", subcategories: ["Dispensers", "Tape Dispensers"] },

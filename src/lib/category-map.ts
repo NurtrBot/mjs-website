@@ -122,8 +122,8 @@ export const BC_CATEGORY_MAP: Record<number, string> = {
   1202: "gloves-safety", // BLACK NITRILE GLOVES
   1203: "gloves-safety", // LATEX GLOVES
   1204: "gloves-safety", // VINYL GLOVES
-  1205: "gloves-safety", // GLOVE DISPENSERS
-  1206: "gloves-safety", // ACRYLIC GLOVE DISPENSER
+  1205: "equipment",      // GLOVE DISPENSERS → dispensers belong with equipment
+  1206: "equipment",      // ACRYLIC GLOVE DISPENSER
   1343: "gloves-safety", // HYBRID STRETCH DISPOSABLE GLOVES
   1588: "gloves-safety", // NITRILE GLOVES
   1589: "gloves-safety", // DIAMOND GRIP 8 MIL NITRILE GLOVES

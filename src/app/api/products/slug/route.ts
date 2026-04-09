@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const noise = new Set(["for", "the", "per", "and", "with", "each", "carton", "case",
       "box", "pack", "roll", "rolls", "bundle", "wrap", "gauge", "clear", "white",
       "black", "blue", "green", "red", "yellow", "natural", "inch", "gallon", "item"]);
-    const allWords = slug.split("-");
+    const allWords = slug.split("-").filter(Boolean);
     const meaningfulWords = allWords
       .filter(w => w.length > 2 && !/^\d+$/.test(w) && !noise.has(w));
 
@@ -38,21 +38,23 @@ export async function GET(req: NextRequest) {
 
     // Find best match by comparing slugs
     let bestMatch: BCProduct | null = null;
+    const normalizeSlug = (s: string) => s.replace(/--+/g, "-").replace(/^-|-$/g, "");
+    const normalizedInput = normalizeSlug(slug);
 
-    // Pass 1: exact slug match
+    // Pass 1: exact slug match (normalize both sides for double-dash BC slugs)
     for (const p of res.data) {
-      const pSlug = p.custom_url?.url?.replace(/^\/|\/$/g, "") || "";
-      if (pSlug === slug) {
+      const pSlug = normalizeSlug(p.custom_url?.url?.replace(/^\/|\/$/g, "") || "");
+      if (pSlug === normalizedInput || pSlug === slug) {
         bestMatch = p;
         break;
       }
     }
 
-    // Pass 2: slug contains match (BC slug might be a substring or superset)
+    // Pass 2: slug contains match
     if (!bestMatch) {
       for (const p of res.data) {
-        const pSlug = p.custom_url?.url?.replace(/^\/|\/$/g, "") || "";
-        if (pSlug && (slug.includes(pSlug) || pSlug.includes(slug))) {
+        const pSlug = normalizeSlug(p.custom_url?.url?.replace(/^\/|\/$/g, "") || "");
+        if (pSlug && (normalizedInput.includes(pSlug) || pSlug.includes(normalizedInput))) {
           bestMatch = p;
           break;
         }

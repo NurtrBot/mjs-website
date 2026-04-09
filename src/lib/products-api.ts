@@ -46,7 +46,7 @@ function transformProduct(bc: BCProduct): ProductData {
   const subcategory = getSubcategory(bc);
 
   // Skip known duplicate/bad products
-  const SKIP_SKUS = new Set(["10712"]);
+  const SKIP_SKUS = new Set(["10712", "143133", "143136", "1426410", "166778", "4385163EA", "1672", "9290", "315855", "83201"]);
   if (SKIP_SKUS.has(bc.sku)) return null as unknown as ProductData;
 
   // Category overrides — move misplaced products to correct category
@@ -60,6 +60,18 @@ function transformProduct(bc: BCProduct): ProductData {
       (subcategory === "Carpet Care" && siteCategory === "equipment") ||
       (subcategory === "Floor Finishes" && siteCategory === "equipment")) {
     finalCategory = "Cleaning Chemicals";
+  }
+  // Disinfectants from any non-chemical category → Cleaning Chemicals
+  if (subcategory === "Disinfectants" && finalCategory !== "Cleaning Chemicals") {
+    finalCategory = "Cleaning Chemicals";
+  }
+  // Chemical subcategories from non-chemical categories → Cleaning Chemicals
+  if ((subcategory === "Air Fresheners" || subcategory === "Urinal Screens" || subcategory === "Dish & Laundry") && finalCategory !== "Cleaning Chemicals") {
+    finalCategory = "Cleaning Chemicals";
+  }
+  // Equipment items from non-equipment categories → Equipment
+  if ((subcategory === "Dispensers" || subcategory === "Rags & Wipers" || subcategory === "Vacuums") && finalCategory !== "Equipment") {
+    finalCategory = "Equipment";
   }
 
   const slug = bc.custom_url?.url
@@ -90,7 +102,7 @@ function transformProduct(bc: BCProduct): ProductData {
     },
     category: finalCategory,
     subcategory,
-    cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || cardTitle,
+    cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
     pack,
     imageFit: "contain",
     quickBuy: [
@@ -166,6 +178,30 @@ function buildLinerTitle(name: string, subcategory: string): string | null {
   return parts.join(" ");
 }
 
+function buildCupTitle(name: string, subcategory: string): string | null {
+  if (subcategory !== "Cups & Lids") return null;
+  const n = name;
+  // Extract oz size
+  const ozMatch = n.match(/([\d.\/]+)\s*[Oo]z/);
+  const oz = ozMatch ? ozMatch[1] + " oz" : "";
+  if (!oz) return null;
+
+  // Determine cup type
+  const lower = n.toLowerCase();
+  let type = "Cup";
+  if (lower.includes("hot cup") || lower.includes("paper hot")) type = "Paper Hot Cup";
+  else if (lower.includes("cold cup") && lower.includes("translucent")) type = "Translucent Cold Cup";
+  else if (lower.includes("cold cup") && lower.includes("clear")) type = "Clear Cold Cup";
+  else if (lower.includes("cold cup") && lower.includes("squat")) type = "Squat Cold Cup";
+  else if (lower.includes("double wall")) type = "Double Wall Paper Cup";
+  else if (lower.includes("ripple")) type = "Ripple Hot Cup";
+  else if (lower.includes("cone")) type = "Paper Cone Cup";
+  else if (lower.includes("cold cup")) type = "Cold Cup";
+  else if (lower.includes("paper cup")) type = "Paper Cup";
+
+  return `${oz} ${type}`;
+}
+
 function buildGloveTitle(name: string, subcategory: string): string | null {
   const gloveTypes = ["Blue Nitrile", "Black Nitrile", "Orange Diamond Nitrile", "Black Diamond Nitrile", "Diamond Nitrile", "Nitrile Gloves", "Latex Gloves", "High Risk Latex", "Vinyl Gloves"];
   if (!gloveTypes.includes(subcategory)) return null;
@@ -189,14 +225,16 @@ function buildGloveTitle(name: string, subcategory: string): string | null {
 }
 
 function extractPack(name: string): string {
+  // Normalize commas in numbers: "1,000" → "1000"
+  const normalized = name.replace(/(\d),(\d)/g, "$1$2");
   const patterns = [
-    /(\d+)\s*\/\s*(case|carton|ct|cs|bx|pk|box)/i,
-    /(\d+)\s*(rolls?|sheets?|packs?|bags?|count|ct|pk|bx|per case)\b/i,
-    /(\d+)\s*per\s+(case|carton|box)/i,
+    /([\d,]+)\s*\/\s*(case|carton|ct|cs|bx|pk|box)/i,
+    /([\d,]+)\s*(rolls?|sheets?|packs?|bags?|count|ct|pk|bx|per case)\b/i,
+    /([\d,]+)\s*per\s+(case|carton|box)/i,
     /\b(gallon|each|pair)\b/i,
   ];
   for (const p of patterns) {
-    const m = name.match(p);
+    const m = normalized.match(p);
     if (m) return m[0];
   }
   return "Each";
@@ -230,6 +268,7 @@ function extractBrand(name: string): string {
     "STONE PRO": "Stone Pro",
     "WAVE": "Wave",
     "DURABLE PACKAGING": "Durable Packaging",
+    "WRAP IT ALL": "Wrap It All",
   };
   const upper = name.toUpperCase();
   for (const [key, val] of Object.entries(brands)) {
@@ -308,15 +347,18 @@ function getSubcategory(bc: BCProduct): string {
   // ── Chemicals — order matters: specific before general ──
   if (name.includes("degreaser")) return "Degreasers";
   // Dish/oven/laundry BEFORE soap/sanitizer to avoid false matches
+  if (name.includes("7th gen") || name.includes("seventh gen")) return "Dish & Laundry";
   if (name.includes("dish wash") || name.includes("dish soap") || name.includes("dishwash") || name.includes("dishmolive") || name.includes("dish detergent") || name.includes("pot/pan") || name.includes("pot &")) return "Dish & Laundry";
   if (name.includes("oven clean") || name.includes("oven &") || name.includes("grill clean")) return "Dish & Laundry";
   if (name.includes("laundry")) return "Dish & Laundry";
   // Sanitizing wipes → Disinfectants, not hand soap
   if (name.includes("sanitizing wipe") || name.includes("sanitizing multi") || name.includes("disinfecting wipe") || name.includes("disinfect")) return "Disinfectants";
-  if (name.includes("urinal") || name.includes("bowl clip") || (name.includes("dribble") && siteSlug === "cleaning-chemicals")) return "Urinal Screens";
+  if (name.includes("urinal") || name.includes("bowl clip") || name.includes("eco air") || name.includes("freshprod") || (name.includes("dribble") && siteSlug === "cleaning-chemicals")) return "Urinal Screens";
   // Floor-friendly cleaners that contain "deodorizer" — must check BEFORE air fresheners
   if (name.includes("pine clean") || name.includes("pine disinfect") || (name.includes("pine") && name.includes("deodorizer"))) return "Floor & Carpet";
   if (name.includes("air freshener dispenser") || name.includes("metered") && name.includes("dispenser")) return "Dispensers";
+  // Eco Air / FreshProd → Urinal Screens (before air freshener catch-all)
+  if (name.includes("eco air") || name.includes("freshprod")) return "Urinal Screens";
   if (name.includes("metered spray") || name.includes("air freshener") || name.includes("freshener") || name.includes("odor") || name.includes("deodoriz")) return "Air Fresheners";
   if (name.includes("hand soap") || name.includes("hand sanitiz") || name.includes("hand lotion")) return "Hand Soap & Sanitizer";
   if (name.includes("lotion soap") || name.includes("foam soap") || name.includes("foam wash") || name.includes("body wash")) return "Hand Soap & Sanitizer";
@@ -359,7 +401,7 @@ function getSubcategory(bc: BCProduct): string {
 
   // ── Equipment ──
   if (name.includes("microfiber") || name.includes("smart rag") || name.includes("smartrag")) return "Microfiber";
-  if (name.includes("rag") || name.includes("surgical towel") || name.includes("knit rag") || name.includes("teri towel")) return "Rags & Wipers";
+  if (/\brag\b|\brags\b/.test(name) || name.includes("surgical towel") || name.includes("knit rag") || name.includes("teri towel")) return "Rags & Wipers";
   if (name.includes("absorbent") || name.includes("spill")) return "Absorbents";
   if (name.includes("sweeping compound")) return "Sweeping Compounds";
   if (name.includes("dispenser")) return "Dispensers";
@@ -397,12 +439,13 @@ function getSubcategory(bc: BCProduct): string {
 
   // ── Breakroom ──
   if (name.includes("napkin")) return "Napkins";
+  if (name.includes("food storage") || name.includes("freezer") && name.includes("bag") || name.includes("sandwich") && name.includes("bag") || name.includes("ziplock") || name.includes("resealable")) return "Food Storage";
   if (name.includes("battery") || name.includes("batteries") || name.includes("procell")) return "Batteries";
   if (name.includes("water") && (name.includes("bottle") || name.includes("spring") || name.includes("gallon"))) return "Beverages";
   if (name.includes("food storage") || name.includes("food bag")) return "Food Storage";
   if (name.includes("cup") || name.includes("lid")) return "Cups & Lids";
   if (name.includes("plate") || name.includes("bowl")) return "Plates & Bowls";
-  if (name.includes("fork") || name.includes("spoon") || name.includes("knife") || name.includes("cutlery") || name.includes("utensil")) return "Cutlery";
+  if (name.includes("fork") || name.includes("spoon") || name.includes("knife") || name.includes("knives") || name.includes("cutlery") || name.includes("utensil")) return "Cutlery";
   if (name.includes("coffee") || name.includes("creamer") || name.includes("sugar") || name.includes("stir")) return "Coffee & Supplies";
 
   return "General";
@@ -500,6 +543,32 @@ export async function fetchProductsByCategory(
     "Copy Paper": 25,
   };
 
+  // Subcategory display order for breakroom
+  const BREAKROOM_ORDER: Record<string, number> = {
+    "Cups & Lids": 1,
+    "Cutlery": 2,
+    "Plates & Bowls": 3,
+    "Napkins": 4,
+    "Coffee & Supplies": 5,
+    "Food Storage": 6,
+    "Beverages": 7,
+    "Batteries": 8,
+    "General": 10,
+  };
+
+  // Subcategory display order for packaging
+  const PACKAGING_ORDER: Record<string, number> = {
+    "Stretch Film": 1,
+    "Tape": 2,
+    "Bubble Wrap": 3,
+    "Cable Ties": 4,
+    "Packing Peanuts": 5,
+    "Steel Strapping": 6,
+    "Labels": 7,
+    "Tape Dispensers": 8,
+    "General": 10,
+  };
+
   // Subcategory display order for trash liners
   const LINER_ORDER: Record<string, number> = {
     "Clear Can Liners": 1,
@@ -536,6 +605,13 @@ export async function fetchProductsByCategory(
     const aJF = a.brand.toLowerCase().includes("janitors finest") ? 1 : 0;
     const bJF = b.brand.toLowerCase().includes("janitors finest") ? 1 : 0;
 
+    // For packaging: Wrap It All first
+    if (siteSlug === "packaging-film" && a.subcategory === "Stretch Film" && b.subcategory === "Stretch Film") {
+      const aWIA = a.brand.toLowerCase().includes("wrap it all") ? 1 : 0;
+      const bWIA = b.brand.toLowerCase().includes("wrap it all") ? 1 : 0;
+      if (aWIA !== bWIA) return bWIA - aWIA;
+    }
+
     // For chemicals: JF first, then Chemcor second
     if (siteSlug === "cleaning-chemicals") {
       if (aJF !== bJF) return bJF - aJF;
@@ -556,6 +632,8 @@ export async function fetchProductsByCategory(
       const orderMap = siteSlug === "gloves-safety" ? GLOVE_ORDER
         : siteSlug === "paper-products" ? PAPER_ORDER
         : siteSlug === "trash-liners" ? LINER_ORDER
+        : siteSlug === "packaging-film" ? PACKAGING_ORDER
+        : siteSlug === "breakroom" ? BREAKROOM_ORDER
         : null;
       const aOrder = orderMap?.[a.subcategory] ?? 50;
       const bOrder = orderMap?.[b.subcategory] ?? 50;
@@ -571,8 +649,9 @@ export async function fetchProductsByCategory(
         if (n.includes("non-para")) return 2;
         if (n.includes("wave") || n.includes("tidal")) return 3;
         if (n.includes("bowl clip")) return 5;
-        if (n.includes("mat")) return 6;
-        if (n.includes("seal") || n.includes("1114")) return 7;
+        if (n.includes("eco air") || n.includes("freshprod")) return 6;
+        if (n.includes("mat")) return 7;
+        if (n.includes("seal") || n.includes("1114")) return 8;
         return 4;
       };
       const diff = urinalOrder(a.name) - urinalOrder(b.name);
