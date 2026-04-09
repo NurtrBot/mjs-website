@@ -66,7 +66,8 @@ function transformProduct(bc: BCProduct): ProductData {
     finalCategory = "Cleaning Chemicals";
   }
   // Chemical subcategories from non-chemical categories → Cleaning Chemicals
-  if ((subcategory === "Air Fresheners" || subcategory === "Urinal Screens" || subcategory === "Dish & Laundry") && finalCategory !== "Cleaning Chemicals") {
+  // BUT keep car-detailing products in car-detailing
+  if ((subcategory === "Air Fresheners" || subcategory === "Urinal Screens" || subcategory === "Dish & Laundry") && finalCategory !== "Cleaning Chemicals" && siteCategory !== "car-detailing") {
     finalCategory = "Cleaning Chemicals";
   }
   // Equipment items from non-equipment categories → Equipment
