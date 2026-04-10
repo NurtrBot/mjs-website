@@ -22,7 +22,7 @@ export interface ProductData {
   badgeColor?: string;
   imageFit?: "contain" | "cover";
   // Quick buy options
-  quickBuy: { label: string; qty: number; savings?: string }[];
+  quickBuy: { label: string; qty: number; savings?: string; unitPrice?: number }[];
   // SDS sheet (chemicals only)
   sdsSheet?: string;
 }
@@ -62,9 +62,10 @@ export const products: ProductData[] = [
     badge: "BEST SELLER",
     badgeColor: "bg-mjs-red",
     quickBuy: [
-      { label: "1 Case", qty: 1 },
-      { label: "2 Cases", qty: 2, savings: "Save 5%" },
-      { label: "5 Cases", qty: 5, savings: "Save 10%" },
+      { label: "1 Case", qty: 1, unitPrice: 48.99 },
+      { label: "5 Cases", qty: 5, unitPrice: 46.99, savings: "Save $2/case" },
+      { label: "15 Cases", qty: 15, unitPrice: 43.99, savings: "Save $5/case" },
+      { label: "25 Cases", qty: 25, unitPrice: 39.99, savings: "Save $9/case" },
     ],
   },
   {
@@ -136,9 +137,10 @@ export const products: ProductData[] = [
     category: "Paper & Restroom",
     subcategory: "Toilet Tissue",
     quickBuy: [
-      { label: "1 Carton", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-      { label: "4 Cartons", qty: 4, savings: "Save 12%" },
+      { label: "1 Case", qty: 1, unitPrice: 36.99 },
+      { label: "24 Cases", qty: 24, unitPrice: 33.99, savings: "Save $3/case" },
+      { label: "48 Cases", qty: 48, unitPrice: 28.99, savings: "Save $8/case" },
+      { label: "54 Cases", qty: 54, unitPrice: 26.99, savings: "Save $10/case" },
     ],
   },
   {

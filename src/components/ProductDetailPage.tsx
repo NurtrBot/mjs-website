@@ -230,12 +230,15 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
 
   const handleAddToCart = () => {
     if (!product) return;
+    // Use bulk unit price if qty matches a quickBuy option
+    const matchedBulk = product.quickBuy.find(opt => opt.qty === qty);
+    const unitPrice = matchedBulk?.unitPrice || product.price;
     addItem({
       slug: product.slug,
       sku: product.sku,
       name: product.cardTitle,
       brand: product.brand,
-      price: product.price,
+      price: unitPrice,
       image: product.images[0],
       pack: product.pack,
     }, qty);
@@ -257,33 +260,25 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
     if (shipZip.length < 5 || !product) return;
     setShipChecking(true);
 
-    // Check local delivery zones first
+    // Detect local zone for free delivery info
     const prefix = shipZip.slice(0, 3);
     const ocZips = ["926", "927", "928"];
     const laZips = ["900","901","902","903","904","905","906","907","908","909","910","911","912","913","914","915","916","917","918"];
     const ieZips = ["920","921","922","923","924","925"];
     const sdZips = ["919","930","931","932","933","934","935"];
 
-    if (ocZips.includes(prefix) || laZips.includes(prefix) || ieZips.includes(prefix)) {
-      setShipArea("OC / LA / IE");
-      setShipMethod("Free Delivery Available");
+    const isLocal = ocZips.includes(prefix) || laZips.includes(prefix) || ieZips.includes(prefix);
+    const isSD = sdZips.includes(prefix);
+
+    if (isLocal) {
       setFreeMinimum("$399");
-      setShipPrice("FREE on orders $399+");
-      setShipChecked(true);
-      setShipChecking(false);
-      return;
-    }
-    if (sdZips.includes(prefix)) {
-      setShipArea("San Diego");
-      setShipMethod("Free Delivery Available");
+    } else if (isSD) {
       setFreeMinimum("$699");
-      setShipPrice("FREE on orders $699+");
-      setShipChecked(true);
-      setShipChecking(false);
-      return;
+    } else {
+      setFreeMinimum("");
     }
 
-    // Everything else — get real UPS rate
+    // Always fetch real UPS rate from ShipperHQ
     fetch("/api/shipping/estimate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -300,7 +295,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
         if (cheapest) {
           setShipPrice(`$${cheapest.cost.toFixed(2)}`);
           setShipMethod(cheapest.name || "UPS Ground");
-          setShipArea(cheapest.name || "UPS Ground");
+          setShipArea(isLocal ? "OC / LA / IE" : isSD ? "San Diego" : cheapest.name || "UPS Ground");
         } else {
           setShipPrice("Call for rate");
           setShipMethod("UPS Ground");
@@ -495,10 +490,11 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 </div>
                 <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${product.quickBuy.length}, 1fr)` }}>
                   {product.quickBuy.map((opt, i) => {
-                    const savingsPercent = opt.savings
-                      ? parseInt(opt.savings.replace(/\D/g, "")) / 100
-                      : 0;
-                    const unitPrice = +(product.price * (1 - savingsPercent)).toFixed(2);
+                    const unitPrice = opt.unitPrice
+                      ? opt.unitPrice
+                      : opt.savings
+                        ? +(product.price * (1 - parseInt(opt.savings.replace(/\D/g, "")) / 100)).toFixed(2)
+                        : product.price;
                     return (
                       <button
                         key={i}
@@ -886,6 +882,19 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               ))}
             </div>
           </div>
+
+          {/* Prop 65 Warning — chemicals only */}
+          {(product.category === "Cleaning Chemicals" || product.sdsSheet) && (
+            <div className="mt-4 flex items-start gap-3 text-xs text-mjs-gray-500 leading-relaxed">
+              <span className="text-amber-500 text-base flex-shrink-0 mt-px">&#9888;</span>
+              <p>
+                <span className="font-semibold text-mjs-gray-600">Attention CA Residents: Prop 65 Warning</span>
+                <br />
+                WARNING: This product can expose you to chemicals including lead, which are known to the State of California to cause cancer, birth defects, or other reproductive harm. For more information, go to{" "}
+                <a href="https://www.p65warnings.ca.gov" target="_blank" rel="noopener noreferrer" className="text-mjs-red hover:underline">www.p65warnings.ca.gov</a>.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

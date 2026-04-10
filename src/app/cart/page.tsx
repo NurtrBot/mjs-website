@@ -81,11 +81,14 @@ interface ProductType {
   slug: string;
   sku: string;
   cardTitle: string;
+  name?: string;
   brand: string;
   price: number;
   images: string[];
   pack: string;
   imageFit?: string;
+  subcategory?: string;
+  reviewCount?: number;
 }
 
 function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemType[]; addItem: (item: CartItemType, qty?: number) => void }) {
@@ -224,48 +227,131 @@ export default function CartPage() {
     pack: "10 Reams/Case",
   };
 
-  // Fetch impulse suggestions when checkout popup shows
+  // Smart product matching algorithm for impulse suggestions
   useEffect(() => {
     if (!showPickupPopup || items.length === 0) return;
 
     const cartNames = items.map(i => i.name.toLowerCase());
-    const searchTerms = new Set<string>();
+    const cartSkus = new Set(items.map(i => i.sku || i.slug));
+    const cartSlugs = new Set(items.map(i => i.slug));
+
+    // Step 1: Build search terms from pairing rules
+    const pairedTerms = new Set<string>();
     const avoidTerms = new Set<string>();
 
     for (const rule of PAIRING_RULES) {
       if (cartNames.some(name => rule.match.some(m => name.includes(m)))) {
-        rule.pairWith.forEach(t => searchTerms.add(t));
+        rule.pairWith.forEach(t => pairedTerms.add(t));
         rule.avoid.forEach(t => avoidTerms.add(t));
       }
     }
-    cartNames.forEach(n => n.split(/[\s,]+/).filter(w => w.length > 3).slice(0, 3).forEach(w => avoidTerms.add(w)));
 
-    if (searchTerms.size === 0) {
-      searchTerms.add("hand soap");
-      searchTerms.add("microfiber");
-      searchTerms.add("nitrile glove");
+    // Step 2: Extract keywords from cart item names for broader matching
+    const cartKeywords: string[] = [];
+    cartNames.forEach(n => {
+      n.split(/[\s,]+/).filter(w => w.length > 3).forEach(w => {
+        avoidTerms.add(w); // avoid suggesting same type
+        cartKeywords.push(w);
+      });
+    });
+
+    // Step 3: Build category-aware complementary searches
+    // Map common cart keywords to complementary product categories
+    const complementMap: Record<string, string[]> = {
+      towel: ["hand soap", "soap dispenser", "trash liner"],
+      tissue: ["seat cover", "hand sanitizer", "air freshener"],
+      soap: ["paper towel", "soap dispenser", "hand sanitizer"],
+      glove: ["face mask", "hand sanitizer", "disinfecting wipe"],
+      liner: ["degreaser", "disinfectant", "trash can"],
+      degreaser: ["spray bottle", "microfiber", "nitrile glove"],
+      disinfect: ["spray bottle", "paper towel", "nitrile glove"],
+      mop: ["floor cleaner", "mop bucket", "floor pad"],
+      vacuum: ["vacuum bag", "carpet shampoo"],
+      stretch: ["tape gun", "bubble wrap", "packing peanut"],
+      tape: ["stretch film", "bubble wrap", "tape gun"],
+      cup: ["napkin", "coffee", "stir stick"],
+      plate: ["napkin", "cutlery", "cup"],
+      napkin: ["cup", "plate", "cutlery"],
+      coffee: ["cup", "napkin", "stir stick"],
+      freshener: ["urinal screen", "disinfectant"],
+      chemical: ["spray bottle", "microfiber", "nitrile glove"],
+      cleaner: ["microfiber", "spray bottle", "mop head"],
+      wipe: ["hand sanitizer", "nitrile glove", "paper towel"],
+    };
+
+    for (const keyword of cartKeywords) {
+      for (const [trigger, complements] of Object.entries(complementMap)) {
+        if (keyword.includes(trigger)) {
+          complements.forEach(c => pairedTerms.add(c));
+        }
+      }
     }
 
-    const cartSlugs = new Set(items.map(i => i.slug));
-    const terms = Array.from(searchTerms).slice(0, 6);
+    // Step 4: Always include some universal high-value items as fallback
+    const universalTerms = ["hand soap", "microfiber towel", "nitrile glove", "paper towel", "disinfecting wipe", "trash liner", "air freshener"];
 
+    // Step 5: Combine all search terms, shuffle for variety
+    const allTerms = [...Array.from(pairedTerms), ...universalTerms];
+    for (let i = allTerms.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allTerms[i], allTerms[j]] = [allTerms[j], allTerms[i]];
+    }
+    // Deduplicate
+    const uniqueTerms = [...new Set(allTerms)].slice(0, 8);
+
+    // Step 6: Fetch products for each term
     Promise.all(
-      terms.map(t => fetch(`/api/products/search?q=${encodeURIComponent(t)}&limit=3`).then(r => r.json()).catch(() => ({ products: [] })))
+      uniqueTerms.map(t =>
+        fetch(`/api/products/search?q=${encodeURIComponent(t)}&limit=5`)
+          .then(r => r.json())
+          .catch(() => ({ products: [] }))
+      )
     ).then(results => {
+      // Step 7: Score and rank all candidates
+      const candidates: (ProductType & { score: number })[] = [];
       const seen = new Set<string>();
-      const picks: ProductType[] = [];
+
       for (const r of results) {
         for (const p of (r.products || [])) {
-          if (seen.has(p.sku) || cartSlugs.has(p.slug)) continue;
+          if (!p || seen.has(p.sku) || cartSkus.has(p.sku) || cartSlugs.has(p.slug)) continue;
           if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
-          const pName = (p.cardTitle || "").toLowerCase();
+
+          const pName = (p.cardTitle || p.name || "").toLowerCase();
+          // Skip if too similar to cart items
           if (Array.from(avoidTerms).some(t => pName.includes(t))) continue;
+
+          // Score: prefer items from pairing rules, popular items, different categories
+          let score = Math.random() * 20; // Random base for variety
+          if (p.reviewCount > 0) score += Math.min(p.reviewCount, 50); // Popularity bonus
+          if (p.brand?.toLowerCase().includes("janitors finest")) score += 15; // JF bonus
+          if (p.price > 5 && p.price < 80) score += 10; // Sweet spot pricing
+
           seen.add(p.sku);
-          picks.push(p);
-          if (picks.length >= 3) break;
+          candidates.push({ ...p, score });
         }
-        if (picks.length >= 3) break;
       }
+
+      // Step 8: Sort by score, take top 3
+      candidates.sort((a, b) => b.score - a.score);
+
+      // Ensure variety — don't pick 3 from the same subcategory
+      const picks: ProductType[] = [];
+      const usedSubcats = new Set<string>();
+      for (const c of candidates) {
+        if (picks.length >= 3) break;
+        if (c.subcategory && usedSubcats.has(c.subcategory) && picks.length < candidates.length - 1) continue;
+        if (c.subcategory) usedSubcats.add(c.subcategory);
+        picks.push(c);
+      }
+
+      // If we couldn't get 3 diverse picks, fill from remaining
+      if (picks.length < 3) {
+        for (const c of candidates) {
+          if (picks.length >= 3) break;
+          if (!picks.find(p => p.sku === c.sku)) picks.push(c);
+        }
+      }
+
       setPickupSuggestions(picks);
     });
   }, [showPickupPopup, items]);

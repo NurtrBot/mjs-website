@@ -30,10 +30,13 @@ export default function CheckoutPage() {
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
   const [shippingName, setShippingName] = useState("");
   const [estimatingShipping, setEstimatingShipping] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<"bill" | "card" | "cash" | "">(
+    (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
+  );
 
   const isPickup = orderSetup?.fulfillment === "pickup";
-  const isBillToAccount = orderSetup?.paymentMethod === "bill";
-  const isCash = orderSetup?.paymentMethod === "cash";
+  const isBillToAccount = selectedPayment === "bill";
+  const isCash = selectedPayment === "cash";
 
   const taxRate = 0.0775;
   const tax = subtotal * taxRate;
@@ -566,6 +569,36 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
+                {/* Payment method selector for logged-in users */}
+                {user?.id && (
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    <button
+                      onClick={() => setSelectedPayment("bill")}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        selectedPayment === "bill"
+                          ? "border-mjs-red bg-red-50"
+                          : "border-gray-100 hover:border-gray-200"
+                      }`}
+                    >
+                      <Building2 className={`w-5 h-5 mx-auto mb-1.5 ${selectedPayment === "bill" ? "text-mjs-red" : "text-mjs-gray-400"}`} />
+                      <div className="text-xs font-semibold text-mjs-dark">Bill to Account</div>
+                      <div className="text-[10px] text-mjs-gray-500">Net 30 Terms</div>
+                    </button>
+                    <button
+                      onClick={() => setSelectedPayment("card")}
+                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        selectedPayment === "card"
+                          ? "border-mjs-red bg-red-50"
+                          : "border-gray-100 hover:border-gray-200"
+                      }`}
+                    >
+                      <CreditCard className={`w-5 h-5 mx-auto mb-1.5 ${selectedPayment === "card" ? "text-mjs-red" : "text-mjs-gray-400"}`} />
+                      <div className="text-xs font-semibold text-mjs-dark">Credit Card</div>
+                      <div className="text-[10px] text-mjs-gray-500">Pay Now</div>
+                    </button>
+                  </div>
+                )}
+
                 {isBillToAccount ? (
                   <div className="bg-blue-50 rounded-xl p-5">
                     <div className="text-sm font-bold text-blue-700">Bill to Account — Net 30 Terms</div>
@@ -664,8 +697,15 @@ export default function CheckoutPage() {
                   setPlacing(true);
                   setOrderError("");
                   try {
-                    const payMethod = isBillToAccount ? "bill" : isCash ? "cash" : "card";
+                    const payMethod = selectedPayment || "card";
                     const fulfill = isPickup ? "pickup" : "delivery";
+
+                    // Require payment selection for logged-in users
+                    if (user?.id && !selectedPayment) {
+                      setOrderError("Please select a payment method — Bill to Account or Credit Card.");
+                      setPlacing(false);
+                      return;
+                    }
 
                     // Build shipping address — use pickup address for pickup orders
                     const shipAddr = isPickup ? {

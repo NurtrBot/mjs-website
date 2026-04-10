@@ -17,6 +17,70 @@ function findSdsSheet(sku: string): string | undefined {
   return sdsMap.get(sku.toUpperCase());
 }
 
+/* ── Custom bulk pricing by SKU ── */
+const CUSTOM_PRICING: Record<string, { label: string; qty: number; unitPrice?: number; savings?: string }[]> = {
+  "5602": [
+    { label: "1 Case", qty: 1, unitPrice: 48.99 },
+    { label: "5 Cases", qty: 5, unitPrice: 46.99, savings: "Save $2/case" },
+    { label: "15 Cases", qty: 15, unitPrice: 43.99, savings: "Save $5/case" },
+    { label: "25 Cases", qty: 25, unitPrice: 39.99, savings: "Save $9/case" },
+  ],
+  "5200": [
+    { label: "1 Case", qty: 1, unitPrice: 36.99 },
+    { label: "24 Cases", qty: 24, unitPrice: 33.99, savings: "Save $3/case" },
+    { label: "48 Cases", qty: 48, unitPrice: 28.99, savings: "Save $8/case" },
+    { label: "54 Cases", qty: 54, unitPrice: 26.99, savings: "Save $10/case" },
+  ],
+  "5109": [
+    { label: "1 Case", qty: 1, unitPrice: 43.99 },
+    { label: "10 Cases", qty: 10, unitPrice: 39.99, savings: "Save $4/case" },
+    { label: "25 Cases", qty: 25, unitPrice: 36.99, savings: "Save $7/case" },
+    { label: "50 Cases", qty: 50, unitPrice: 33.99, savings: "Save $10/case" },
+  ],
+  "5800": [
+    { label: "1 Case", qty: 1, unitPrice: 37.99 },
+    { label: "12 Cases", qty: 12, unitPrice: 34.99, savings: "Save $3/case" },
+    { label: "30 Cases", qty: 30, unitPrice: 31.99, savings: "Save $6/case" },
+    { label: "60 Cases", qty: 60, unitPrice: 29.99, savings: "Save $8/case" },
+  ],
+  "5300": [
+    { label: "1 Case", qty: 1, unitPrice: 30.99 },
+    { label: "24 Cases", qty: 24, unitPrice: 27.99, savings: "Save $3/case" },
+    { label: "48 Cases", qty: 48, unitPrice: 24.99, savings: "Save $6/case" },
+    { label: "72 Cases", qty: 72, unitPrice: 22.99, savings: "Save $8/case" },
+  ],
+  "FLM8018": [
+    { label: "1 Case", qty: 1, unitPrice: 53.99 },
+    { label: "32 Cases", qty: 32, unitPrice: 49.99, savings: "Save $4/case" },
+    { label: "48 Cases", qty: 48, unitPrice: 45.99, savings: "Save $8/case" },
+    { label: "64 Cases", qty: 64, unitPrice: 42.99, savings: "Save $11/case" },
+  ],
+  "FLM140180": [
+    { label: "1 Case", qty: 1, unitPrice: 49.99 },
+    { label: "32 Cases", qty: 32, unitPrice: 46.99, savings: "Save $3/case" },
+    { label: "48 Cases", qty: 48, unitPrice: 42.99, savings: "Save $7/case" },
+    { label: "64 Cases", qty: 64, unitPrice: 39.99, savings: "Save $10/case" },
+  ],
+  "5108": [
+    { label: "1 Case", qty: 1, unitPrice: 53.99 },
+    { label: "7 Cases", qty: 7, unitPrice: 50.99, savings: "Save $3/case" },
+    { label: "21 Cases", qty: 21, unitPrice: 47.99, savings: "Save $6/case" },
+    { label: "35 Cases", qty: 35, unitPrice: 44.99, savings: "Save $9/case" },
+  ],
+  "5505": [
+    { label: "1 Case", qty: 1, unitPrice: 40.99 },
+    { label: "15 Cases", qty: 15, unitPrice: 37.99, savings: "Save $3/case" },
+    { label: "25 Cases", qty: 25, unitPrice: 34.99, savings: "Save $6/case" },
+    { label: "50 Cases", qty: 50, unitPrice: 31.99, savings: "Save $9/case" },
+  ],
+  "GJO21100": [
+    { label: "1 Case", qty: 1, unitPrice: 39.99 },
+    { label: "24 Cases", qty: 24, unitPrice: 32.99, savings: "Save $7/case" },
+    { label: "48 Cases", qty: 48, unitPrice: 30.99, savings: "Save $9/case" },
+    { label: "60 Cases", qty: 60, unitPrice: 27.99, savings: "Save $12/case" },
+  ],
+};
+
 /* ── Transform a BigCommerce product into our ProductData format ── */
 function transformProduct(bc: BCProduct): ProductData {
   const siteCategory = getSiteCategory(bc.categories);
@@ -106,7 +170,7 @@ function transformProduct(bc: BCProduct): ProductData {
     cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
     pack,
     imageFit: "contain",
-    quickBuy: [
+    quickBuy: CUSTOM_PRICING[bc.sku] || [
       { label: "1 Unit", qty: 1 },
       { label: "3 Units", qty: 3, savings: "Save 5%" },
       { label: "5 Units", qty: 5, savings: "Save 10%" },
@@ -613,12 +677,23 @@ export async function fetchProductsByCategory(
       if (aWIA !== bWIA) return bWIA - aWIA;
     }
 
-    // For chemicals: JF first, then Chemcor second
-    if (siteSlug === "cleaning-chemicals") {
+    // For chemicals and paper: ALL JF products first
+    if (siteSlug === "cleaning-chemicals" || siteSlug === "paper-products") {
       if (aJF !== bJF) return bJF - aJF;
-      const aCC = a.brand.toLowerCase().includes("chemcor") ? 1 : 0;
-      const bCC = b.brand.toLowerCase().includes("chemcor") ? 1 : 0;
-      if (aCC !== bCC) return bCC - aCC;
+      // Within JF paper: priority SKUs first
+      if (siteSlug === "paper-products" && aJF && bJF) {
+        const prioritySKUs = ["5602","5608","5603P","5604P","5200","5300","5108","5109"];
+        const aIdx = prioritySKUs.indexOf(a.sku);
+        const bIdx = prioritySKUs.indexOf(b.sku);
+        const aPri = aIdx >= 0 ? aIdx : 99;
+        const bPri = bIdx >= 0 ? bIdx : 99;
+        if (aPri !== bPri) return aPri - bPri;
+      }
+      if (siteSlug === "cleaning-chemicals") {
+        const aCC = a.brand.toLowerCase().includes("chemcor") ? 1 : 0;
+        const bCC = b.brand.toLowerCase().includes("chemcor") ? 1 : 0;
+        if (aCC !== bCC) return bCC - aCC;
+      }
     }
 
     // For equipment: machines float to top
