@@ -1,7 +1,7 @@
 import { Truck, ShieldCheck, Headphones, DollarSign, RotateCcw } from "lucide-react";
 
 const props = [
-  { icon: Truck, text: "Free Delivery $399+" },
+  { icon: Truck, text: "Ships Nationwide" },
   { icon: DollarSign, text: "Wholesale Prices" },
   { icon: ShieldCheck, text: "Quality Guaranteed" },
   { icon: Headphones, text: "Expert Support" },

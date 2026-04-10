@@ -13,6 +13,7 @@ import Testimonials from "@/components/Testimonials";
 import ValueProps from "@/components/ValueProps";
 import CTABanner from "@/components/CTABanner";
 import NewArrivals from "@/components/NewArrivals";
+import ReadyToShipAlt from "@/components/ReadyToShipAlt";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -27,7 +28,7 @@ export default function Home() {
         <DeliveryZone />
         <FeaturedProducts />
         <IndustrySection />
-        <BrandsBar />
+        <ReadyToShipAlt />
         <PromoBannerRow />
         <NewArrivals />
         <Testimonials />

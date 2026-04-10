@@ -5,6 +5,8 @@ import { CheckCircle, ShoppingCart } from "lucide-react";
 
 export interface CartItem {
   slug: string;
+  sku?: string;
+  productId?: number;
   name: string;
   brand: string;
   price: number;
@@ -39,6 +41,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [toast, setToast] = useState<ToastData | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Restore cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("mjs_cart");
+      if (stored) setItems(JSON.parse(stored));
+    } catch {}
+    setHydrated(true);
+  }, []);
+
+  // Persist cart to localStorage on change
+  useEffect(() => {
+    if (!hydrated) return;
+    try { localStorage.setItem("mjs_cart", JSON.stringify(items)); } catch {}
+  }, [items, hydrated]);
 
   useEffect(() => {
     if (!toast) return;

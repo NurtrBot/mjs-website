@@ -24,10 +24,31 @@ export default function AuthPage() {
   const [zip, setZip] = useState("");
   const [phone, setPhone] = useState("");
 
-  const handleSignup = (e: React.FormEvent) => {
+  const [signupError, setSignupError] = useState("");
+  const [signupLoading, setSignupLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    login({ firstName, lastName, email, company });
-    setShowSuccess(true);
+    setSignupError("");
+    setSignupLoading(true);
+    try {
+      const res = await fetch("/api/customers/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email, company, phone, password, address, city, state, zip }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setSignupError(data.error || "Failed to create account. Please try again.");
+        setSignupLoading(false);
+        return;
+      }
+      login(data.customer);
+      setShowSuccess(true);
+    } catch {
+      setSignupError("Something went wrong. Please try again.");
+    }
+    setSignupLoading(false);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -161,8 +182,14 @@ export default function AuthPage() {
                     </div>
                   </div>
 
-                  <button type="submit" className="w-full bg-mjs-red text-white font-semibold py-3 rounded-full text-sm hover:bg-red-700 transition-colors">
-                    Create Account
+                  {signupError && (
+                    <div className="bg-red-50 text-red-600 text-xs font-medium px-4 py-2.5 rounded-lg">
+                      {signupError}
+                    </div>
+                  )}
+
+                  <button type="submit" disabled={signupLoading} className="w-full bg-mjs-red text-white font-semibold py-3 rounded-full text-sm hover:bg-red-700 transition-colors disabled:opacity-50">
+                    {signupLoading ? "Creating Account..." : "Create Account"}
                   </button>
 
                   <p className="text-center text-xs text-mjs-gray-400">

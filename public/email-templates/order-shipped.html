@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Shipped - Mobile Janitorial Supply</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5;">
+<tr><td align="center" style="padding:40px 16px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+<!-- Header -->
+<tr>
+<td style="background-color:#1a1a2e;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center;">
+  <img src="https://mjs-website.vercel.app/images/mjs-email-logo.png" alt="Mobile Janitorial Supply" width="200" style="display:block;margin:0 auto 12px;">
+  <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">Anaheim, CA &middot; (714) 779-2640</p>
+</td>
+</tr>
+
+<!-- Shipped Badge -->
+<tr>
+<td style="background-color:#ffffff;padding:40px 40px 24px;text-align:center;">
+  <div style="width:56px;height:56px;background-color:#eff6ff;border-radius:50%;margin:0 auto 16px;line-height:56px;text-align:center;">
+    <span style="color:#3b82f6;font-size:24px;">&#x1F69A;</span>
+  </div>
+  <h2 style="margin:0;color:#1a1a2e;font-size:24px;font-weight:800;">Your Order Has Shipped!</h2>
+  <p style="margin:8px 0 0;color:#6b7280;font-size:14px;line-height:1.5;">
+    Great news — your order is on its way.<br>
+    Track your shipment using the link below.
+  </p>
+</td>
+</tr>
+
+<!-- Order Info -->
+<tr>
+<td style="background-color:#ffffff;padding:0 40px 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="background-color:#f9fafb;border-radius:12px;padding:20px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>
+          <span style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Order</span><br>
+          <span style="color:#1a1a2e;font-size:18px;font-weight:900;">{{order.id}}</span>
+        </td>
+        <td align="right">
+          <span style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Status</span><br>
+          <span style="display:inline-block;background-color:#dbeafe;color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">Shipped</span>
+        </td>
+      </tr>
+      </table>
+    </td>
+  </tr>
+  </table>
+</td>
+</tr>
+
+<!-- Tracking -->
+<tr>
+<td style="background-color:#ffffff;padding:0 40px 24px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0fdf4;border-radius:12px;">
+  <tr>
+    <td style="padding:20px 24px;">
+      <span style="color:#166534;font-size:12px;font-weight:700;">Tracking Number</span><br>
+      <a href="{{tracking.url}}" style="color:#dc2626;font-size:15px;font-weight:800;text-decoration:none;">{{tracking.number}}</a>
+      <p style="margin:6px 0 0;color:#6b7280;font-size:11px;">{{shipping.method}}</p>
+    </td>
+  </tr>
+  </table>
+</td>
+</tr>
+
+<!-- Divider -->
+<tr><td style="background-color:#ffffff;padding:0 40px 8px;"><div style="height:1px;background-color:#f3f4f6;"></div></td></tr>
+
+<!-- Items -->
+<tr>
+<td style="background-color:#ffffff;padding:16px 40px 24px;">
+  <h3 style="margin:0 0 16px;color:#1a1a2e;font-size:14px;font-weight:700;">Items in This Shipment</h3>
+  {{#each order.items}}
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+  <tr>
+    <td width="48" valign="top">
+      <img src="{{image}}" alt="" width="48" height="48" style="border-radius:8px;object-fit:cover;background-color:#f9fafb;">
+    </td>
+    <td style="padding-left:12px;" valign="top">
+      <span style="color:#1a1a2e;font-size:13px;font-weight:600;">{{name}}</span><br>
+      <span style="color:#9ca3af;font-size:11px;">Qty: {{quantity}}</span>
+    </td>
+  </tr>
+  </table>
+  {{/each}}
+</td>
+</tr>
+
+<!-- Ship To -->
+<tr>
+<td style="background-color:#ffffff;padding:0 40px 32px;">
+  <span style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Delivering To</span>
+  <p style="margin:8px 0 0;color:#374151;font-size:13px;line-height:1.6;">
+    {{shipping.first_name}} {{shipping.last_name}}<br>
+    {{#if shipping.company}}{{shipping.company}}<br>{{/if}}
+    {{shipping.street_1}}<br>
+    {{shipping.city}}, {{shipping.state}} {{shipping.zip}}
+  </p>
+</td>
+</tr>
+
+<!-- Track Button -->
+<tr>
+<td style="background-color:#ffffff;padding:0 40px 32px;text-align:center;">
+  <a href="{{tracking.url}}" style="display:inline-block;background-color:#dc2626;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">
+    Track Your Shipment
+  </a>
+</td>
+</tr>
+
+<!-- Support -->
+<tr>
+<td style="background-color:#ffffff;padding:0 40px 32px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fef2f2;border-radius:12px;">
+  <tr>
+    <td style="padding:20px 24px;text-align:center;">
+      <span style="color:#1a1a2e;font-size:13px;font-weight:700;">Questions about your delivery?</span><br>
+      <span style="color:#6b7280;font-size:12px;">Call </span>
+      <a href="tel:7147792640" style="color:#dc2626;font-size:12px;font-weight:700;text-decoration:none;">(714) 779-2640</a>
+      <span style="color:#6b7280;font-size:12px;"> &middot; Mon — Fri, 6:30 AM — 3:00 PM</span>
+    </td>
+  </tr>
+  </table>
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="background-color:#1a1a2e;border-radius:0 0 16px 16px;padding:28px 40px;text-align:center;">
+  <p style="margin:0 0 4px;color:#ffffff;font-size:13px;font-weight:700;">Mobile Janitorial Supply</p>
+  <p style="margin:0 0 12px;color:#9ca3af;font-size:11px;">3066 E. La Palma Ave, Anaheim, CA 92806</p>
+  <p style="margin:0;color:#6b7280;font-size:10px;line-height:1.6;">
+    <a href="https://mobilejanitorialsupply.com" style="color:#dc2626;text-decoration:none;font-weight:600;">mobilejanitorialsupply.com</a>
+  </p>
+</td>
+</tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>

@@ -5,7 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useOrderSetup } from "@/context/OrderContext";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Building2, Loader2 } from "lucide-react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,21 +19,25 @@ import {
 } from "lucide-react";
 
 export default function CheckoutPage() {
-  const { items, subtotal, itemCount } = useCart();
+  const { items, subtotal, itemCount, clearCart } = useCart();
   const { user } = useAuth();
-  const { orderSetup } = useOrderSetup();
+  const { orderSetup, clearOrderSetup } = useOrderSetup();
+  const router = useRouter();
+  const [placing, setPlacing] = useState(false);
+  const [orderError, setOrderError] = useState("");
   const [step, setStep] = useState(1);
   const [showOrderSummary, setShowOrderSummary] = useState(false);
+  const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
+  const [shippingName, setShippingName] = useState("");
+  const [estimatingShipping, setEstimatingShipping] = useState(false);
 
   const isPickup = orderSetup?.fulfillment === "pickup";
   const isBillToAccount = orderSetup?.paymentMethod === "bill";
   const isCash = orderSetup?.paymentMethod === "cash";
 
-  const freeDeliveryThreshold = 399;
   const taxRate = 0.0775;
   const tax = subtotal * taxRate;
-  const shipping = isPickup ? 0 :
-    subtotal >= freeDeliveryThreshold ? 0 : subtotal > 0 ? 35.00 : 0;
+  const shipping = isPickup ? 0 : shippingEstimate ?? 0;
   const total = subtotal + tax + shipping;
 
   const [form, setForm] = useState({
@@ -95,6 +100,96 @@ export default function CheckoutPage() {
     state: "CA",
     zip: "",
   });
+
+  // Delivery zone detection
+  const getDeliveryZone = (zip: string): "oc" | "la" | "ie" | "sd" | "ups" => {
+    const prefix = zip.slice(0, 3);
+    const ocZips = ["926", "927", "928"];
+    const laZips = ["900", "901", "902", "903", "904", "905", "906", "907", "908", "909", "910", "911", "912", "913", "914", "915", "916", "917", "918"];
+    const ieZips = ["920", "921", "922", "923", "924", "925"];
+    const sdZips = ["919", "930", "931", "932", "933", "934", "935"];
+    if (ocZips.includes(prefix)) return "oc";
+    if (laZips.includes(prefix)) return "la";
+    if (ieZips.includes(prefix)) return "ie";
+    if (sdZips.includes(prefix)) return "sd";
+    return "ups";
+  };
+
+  // Fetch real shipping estimate when zip changes
+  useEffect(() => {
+    if (isPickup || !form.zip || form.zip.length < 5 || items.length === 0) {
+      if (isPickup) setShippingEstimate(0);
+      return;
+    }
+
+    const zone = getDeliveryZone(form.zip);
+
+    // Local delivery zones
+    const isLoggedIn = !!user?.id;
+
+    if (zone === "oc" || zone === "la" || zone === "ie") {
+      if (subtotal >= 399) {
+        setShippingEstimate(0);
+        setShippingName("FREE Delivery");
+        setEstimatingShipping(false);
+        return;
+      }
+      // Under threshold — logged-in customers get flat $35, guests get UPS
+      if (isLoggedIn) {
+        setShippingEstimate(35);
+        setShippingName("Local Delivery");
+        setEstimatingShipping(false);
+        return;
+      }
+      // Guest — fall through to UPS rate
+    }
+
+    if (zone === "sd") {
+      if (subtotal >= 699) {
+        setShippingEstimate(0);
+        setShippingName("FREE Delivery");
+        setEstimatingShipping(false);
+        return;
+      }
+      // Under threshold — logged-in customers get flat $65, guests get UPS
+      if (isLoggedIn) {
+        setShippingEstimate(65);
+        setShippingName("San Diego Delivery");
+        setEstimatingShipping(false);
+        return;
+      }
+      // Guest — fall through to UPS rate
+    }
+
+    // All other orders — get real UPS rate
+    setEstimatingShipping(true);
+    fetch("/api/shipping/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: items.map(i => ({ sku: i.sku || i.slug, productId: i.productId, quantity: i.qty })),
+        zip: form.zip,
+        state: form.state || "",
+        city: form.city || "",
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.rates?.length > 0) {
+          const deliveryRates = data.rates.filter((r: { type: string }) => r.type !== "pickupinstore" && r.type !== "pickup");
+          const cheapest = deliveryRates.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
+          if (cheapest) {
+            setShippingEstimate(cheapest.cost);
+            setShippingName(cheapest.name);
+          } else {
+            setShippingEstimate(0);
+            setShippingName("Shipping");
+          }
+        }
+        setEstimatingShipping(false);
+      })
+      .catch(() => { setEstimatingShipping(false); });
+  }, [form.zip, form.state, items.length, isPickup, subtotal]);
 
   // Auto-fill billTo from order setup
   useEffect(() => {
@@ -209,7 +304,8 @@ export default function CheckoutPage() {
                 Back to Cart
               </Link>
 
-              {/* Bill To */}
+              {/* Bill To — only for logged-in customer accounts */}
+              {user?.id && (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">Bill To</h2>
@@ -274,6 +370,7 @@ export default function CheckoutPage() {
                   </div>
                 )}
               </section>
+              )}
 
               {/* Shipping */}
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
@@ -294,6 +391,28 @@ export default function CheckoutPage() {
                 ) : (
                 <>
                 <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Email</label>
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => update("email", e.target.value)}
+                      placeholder="your@email.com"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Phone</label>
+                    <input
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => update("phone", e.target.value)}
+                      placeholder="(555) 555-5555"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mt-3">
                   <div>
                     <label className={labelClass}>First Name</label>
                     <input
@@ -493,8 +612,14 @@ export default function CheckoutPage() {
                         <input
                           type="text"
                           value={form.expiry}
-                          onChange={(e) => update("expiry", e.target.value)}
+                          onChange={(e) => {
+                            let v = e.target.value.replace(/[^\d]/g, "");
+                            if (v.length > 4) v = v.slice(0, 4);
+                            if (v.length >= 3) v = v.slice(0, 2) + " / " + v.slice(2);
+                            update("expiry", v);
+                          }}
                           placeholder="MM / YY"
+                          maxLength={7}
                           className={inputClass}
                         />
                       </div>
@@ -528,14 +653,130 @@ export default function CheckoutPage() {
               </section>
 
               {/* Place Order */}
-              <button className="w-full bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 mb-8">
-                <Lock className="w-4 h-4" />
-                {isBillToAccount
-                  ? `Place Order — Bill to Account — $${total.toFixed(2)}`
-                  : isCash
-                  ? `Place Order — Pay at Pickup — $${total.toFixed(2)}`
-                  : `Place Order — $${total.toFixed(2)}`
-                }
+              {orderError && (
+                <div className="bg-red-50 text-red-600 text-sm font-medium px-4 py-3 rounded-xl mb-4">
+                  {orderError}
+                </div>
+              )}
+              <button
+                disabled={placing}
+                onClick={async () => {
+                  setPlacing(true);
+                  setOrderError("");
+                  try {
+                    const payMethod = isBillToAccount ? "bill" : isCash ? "cash" : "card";
+                    const fulfill = isPickup ? "pickup" : "delivery";
+
+                    // Build shipping address — use pickup address for pickup orders
+                    const shipAddr = isPickup ? {
+                      firstName: form.firstName || user?.firstName || "Pickup",
+                      lastName: form.lastName || user?.lastName || "Customer",
+                      email: form.email || user?.email || "",
+                      company: form.company || user?.company || "",
+                      address1: "3066 E La Palma Ave",
+                      city: "Anaheim",
+                      state: "CA",
+                      zip: "92806",
+                      phone: form.phone || user?.phone || "",
+                    } : {
+                      firstName: form.firstName,
+                      lastName: form.lastName,
+                      email: form.email || user?.email || "",
+                      company: form.company || "",
+                      address1: form.address,
+                      address2: form.apt || "",
+                      city: form.city,
+                      state: form.state,
+                      zip: form.zip,
+                      phone: form.phone || "",
+                    };
+
+                    if (!isPickup && !shipAddr.address1) {
+                      setOrderError("Please enter a shipping address.");
+                      setPlacing(false);
+                      return;
+                    }
+
+                    if (!shipAddr.email) {
+                      setOrderError("Please enter your email address.");
+                      setPlacing(false);
+                      return;
+                    }
+
+                    // Validate card details if paying by card
+                    if (payMethod === "card") {
+                      if (!form.cardNumber || !form.expiry || !form.cvv || !form.cardName) {
+                        setOrderError("Please fill in all credit card fields.");
+                        setPlacing(false);
+                        return;
+                      }
+                    }
+
+                    const orderItems = items.map(item => ({
+                      sku: item.sku || item.slug,
+                      productId: item.productId,
+                      quantity: item.qty,
+                    }));
+
+                    const res = await fetch("/api/orders/create", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        items: orderItems,
+                        customerId: user?.id,
+                        paymentMethod: payMethod,
+                        fulfillment: fulfill,
+                        shippingAddress: shipAddr,
+                        billingAddress: isBillToAccount ? {
+                          firstName: billTo.name?.split(" ")[0] || "",
+                          lastName: billTo.name?.split(" ").slice(1).join(" ") || "",
+                          email: billTo.email,
+                          company: billTo.company,
+                          address1: billTo.address || shipAddr.address1,
+                          city: billTo.city || shipAddr.city,
+                          state: billTo.state || shipAddr.state,
+                          zip: billTo.zip || shipAddr.zip,
+                          phone: billTo.phone || "",
+                        } : undefined,
+                        notes: form.notes || "",
+                        card: payMethod === "card" ? {
+                          cardName: form.cardName,
+                          cardNumber: form.cardNumber,
+                          expiry: form.expiry,
+                          cvv: form.cvv,
+                        } : undefined,
+                      }),
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                      setOrderError(data.error || "Failed to place order. Please try again.");
+                      setPlacing(false);
+                      return;
+                    }
+
+                    // Success — clear cart and redirect
+                    clearCart();
+                    clearOrderSetup();
+                    router.push(`/order-confirmation?order=${data.orderNumber}&method=${payMethod}&fulfillment=${fulfill}&shipping=${encodeURIComponent(data.shippingMethod || "")}&shippingCost=${data.shippingCost || 0}`);
+                  } catch (err) {
+                    setOrderError("Something went wrong. Please try again or call (714) 779-2640.");
+                    setPlacing(false);
+                  }
+                }}
+                className="w-full bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 mb-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {placing ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
+                ) : (
+                  <><Lock className="w-4 h-4" />
+                  {isBillToAccount
+                    ? `Place Order — Bill to Account — $${total.toFixed(2)}`
+                    : isCash
+                    ? `Place Order — Pay at Pickup — $${total.toFixed(2)}`
+                    : `Place Order — $${total.toFixed(2)}`
+                  }</>
+                )}
               </button>
             </div>
 
@@ -623,9 +864,17 @@ export default function CheckoutPage() {
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-mjs-gray-500">Shipping</span>
+                      <span className="text-mjs-gray-500">
+                        {shippingName || "Shipping"}
+                      </span>
                       <span className="font-semibold text-mjs-gray-700">
-                        {shipping === 0 ? (
+                        {estimatingShipping ? (
+                          <span className="text-mjs-gray-400">Calculating...</span>
+                        ) : isPickup ? (
+                          <span className="text-mjs-green">FREE (Pickup)</span>
+                        ) : shippingEstimate === null ? (
+                          <span className="text-mjs-gray-400">Enter zip code</span>
+                        ) : shipping === 0 ? (
                           <span className="text-mjs-green">FREE</span>
                         ) : (
                           `$${shipping.toFixed(2)}`
@@ -659,7 +908,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-mjs-gray-400">
                       <Truck className="w-3.5 h-3.5 flex-shrink-0" />
-                      Free Delivery on Orders $399+
+                      Ships Nationwide
                     </div>
                   </div>
                 </div>

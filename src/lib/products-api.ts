@@ -719,7 +719,7 @@ export async function fetchProductBySlug(slug: string): Promise<ProductData | nu
 
 export async function fetchAllProducts(page = 1, limit = 50): Promise<{ products: ProductData[]; total: number; totalPages: number }> {
   const res = await getProducts({ page, limit, is_visible: true });
-  const products = res.data.filter((p) => p.price > 0).map(transformProduct);
+  const products = res.data.filter((p) => p.price > 0).map(transformProduct).filter(Boolean) as ProductData[];
   return {
     products,
     total: res.meta.pagination.total,
@@ -738,7 +738,8 @@ export async function searchProducts(keyword: string, limit = 250): Promise<Prod
     for (const p of res.data) {
       if (!seen.has(p.id) && p.price > 0) {
         seen.add(p.id);
-        allResults.push(transformProduct(p));
+        const transformed = transformProduct(p);
+        if (transformed) allResults.push(transformed);
       }
     }
     if (page >= res.meta.pagination.total_pages) break;

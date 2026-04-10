@@ -14,7 +14,8 @@ export async function GET() {
 
     const products = res.data
       .filter((p) => p.price > 0 && p.images && p.images.length > 0)
-      .map(transformProduct);
+      .map(transformProduct)
+      .filter(Boolean);
 
     return NextResponse.json({ products });
   } catch (error: unknown) {

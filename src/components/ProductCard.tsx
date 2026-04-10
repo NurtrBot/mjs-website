@@ -82,6 +82,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
               onClick={() => {
                 addItem({
                   slug: product.slug,
+                  sku: product.sku,
                   name: product.cardTitle,
                   brand: product.brand,
                   price: product.price,

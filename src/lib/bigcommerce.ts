@@ -1,6 +1,54 @@
+import https from "https";
+import { gunzipSync } from "zlib";
+
 const STORE_HASH = process.env.BIGCOMMERCE_STORE_HASH!;
 const ACCESS_TOKEN = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
 const BASE_URL = `https://api.bigcommerce.com/stores/${STORE_HASH}/v3`;
+const V2_URL = `https://api.bigcommerce.com/stores/${STORE_HASH}/v2`;
+const AUTH_HEADERS = {
+  "X-Auth-Token": ACCESS_TOKEN,
+  "Accept": "application/json",
+  "Content-Type": "application/json",
+};
+
+// Native HTTPS request for write operations (bypasses Next.js fetch gzip bug)
+function nativeRequest(method: string, url: string, body?: unknown): Promise<unknown> {
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(url);
+    const postData = body ? JSON.stringify(body) : undefined;
+    const req = https.request({
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      method,
+      headers: {
+        "X-Auth-Token": process.env.BIGCOMMERCE_ACCESS_TOKEN!,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        ...(postData ? { "Content-Length": Buffer.byteLength(postData) } : {}),
+      },
+    }, (res) => {
+      const chunks: Buffer[] = [];
+      res.on("data", (chunk: Buffer) => chunks.push(chunk));
+      res.on("end", () => {
+        let buffer = Buffer.concat(chunks);
+        // Handle gzip
+        if (res.headers["content-encoding"] === "gzip") {
+          try { buffer = gunzipSync(buffer); } catch {}
+        }
+        const text = buffer.toString("utf-8");
+        if (res.statusCode && res.statusCode >= 400) {
+          reject(new Error(`BC ${method} ${parsed.pathname}: ${res.statusCode} ${text.slice(0, 200)}`));
+          return;
+        }
+        if (!text) { resolve({ data: null }); return; }
+        try { resolve(JSON.parse(text)); } catch { reject(new Error(`Invalid JSON from BC: ${text.slice(0, 100)}`)); }
+      });
+    });
+    req.on("error", reject);
+    if (postData) req.write(postData);
+    req.end();
+  });
+}
 
 async function bcFetch(endpoint: string, params?: Record<string, string>) {
   const url = new URL(`${BASE_URL}${endpoint}`);
@@ -8,15 +56,33 @@ async function bcFetch(endpoint: string, params?: Record<string, string>) {
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   }
   const res = await fetch(url.toString(), {
-    headers: {
-      "X-Auth-Token": ACCESS_TOKEN,
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-    next: { revalidate: 300 }, // Cache for 5 minutes
+    headers: AUTH_HEADERS,
+    next: { revalidate: 300 },
   });
   if (!res.ok) throw new Error(`BigCommerce API error: ${res.status} ${res.statusText}`);
   return res.json();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function bcPost(endpoint: string, body: unknown): Promise<any> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("POST", `https://api.bigcommerce.com/stores/${storeHash}/v3${endpoint}`, body);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function bcPut(endpoint: string, body: unknown): Promise<any> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v3${endpoint}`, body);
+}
+
+async function bcDelete(endpoint: string) {
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    method: "DELETE",
+    headers: AUTH_HEADERS,
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`BC DELETE ${endpoint}: ${res.status}`);
+  }
 }
 
 /* ── Categories ── */
@@ -156,41 +222,302 @@ export async function getBrands(): Promise<BCBrand[]> {
   return res.data || [];
 }
 
-/* ── Customers (V2 API for some endpoints) ── */
+/* ── Customers ── */
 export async function getCustomerByEmail(email: string) {
-  const V2_URL = `https://api.bigcommerce.com/stores/${STORE_HASH}/v2`;
-  const res = await fetch(`${V2_URL}/customers?email=${encodeURIComponent(email)}`, {
-    headers: {
-      "X-Auth-Token": ACCESS_TOKEN,
-      "Accept": "application/json",
-    },
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.[0] || null;
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v2/customers?email=${encodeURIComponent(email)}`;
+  try {
+    const data = await nativeRequest("GET", url);
+    if (Array.isArray(data)) return data[0] || null;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
-/* ── Orders (V2 API) ── */
+export async function createCustomer(data: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+  password: string;
+  address?: {
+    address1: string;
+    city: string;
+    state_or_province: string;
+    postal_code: string;
+    country_code: string;
+  };
+}) {
+  const customerBody: Record<string, unknown>[] = [{
+    first_name: data.first_name,
+    last_name: data.last_name,
+    email: data.email,
+    company: data.company || "",
+    phone: data.phone || "",
+    authentication: { new_password: data.password },
+  }];
+  const res = await bcPost("/customers", customerBody);
+  const customer = res.data?.[0];
+  if (!customer) throw new Error("Failed to create customer");
+
+  // Create address if provided (non-critical — don't fail the signup)
+  if (data.address && data.address.address1) {
+    try {
+      await bcPost("/customers/addresses", [{
+        customer_id: customer.id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        company: data.company || "",
+        address1: data.address.address1,
+        city: data.address.city,
+        state_or_province: data.address.state_or_province,
+        postal_code: data.address.postal_code,
+        country_code: data.address.country_code,
+      }]);
+    } catch {
+      // Address creation is optional — customer is still created
+    }
+  }
+
+  return customer;
+}
+
+export async function createCustomerAddress(customerId: number, address: {
+  first_name: string;
+  last_name: string;
+  company?: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state_or_province: string;
+  postal_code: string;
+  country_code: string;
+  phone?: string;
+}) {
+  const res = await bcPost("/customers/addresses", [{
+    customer_id: customerId,
+    ...address,
+  }]);
+  return res.data?.[0];
+}
+
+/* ── Orders (V2 API for reads) ── */
 export async function getOrdersByCustomerId(customerId: number) {
-  const V2_URL = `https://api.bigcommerce.com/stores/${STORE_HASH}/v2`;
-  const res = await fetch(`${V2_URL}/orders?customer_id=${customerId}&sort=date_created:desc&limit=20`, {
-    headers: {
-      "X-Auth-Token": ACCESS_TOKEN,
-      "Accept": "application/json",
-    },
-  });
-  if (!res.ok) return [];
-  return res.json();
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders?customer_id=${customerId}&sort=date_created:desc&limit=20`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getOrderProducts(orderId: number) {
-  const V2_URL = `https://api.bigcommerce.com/stores/${STORE_HASH}/v2`;
-  const res = await fetch(`${V2_URL}/orders/${orderId}/products`, {
-    headers: {
-      "X-Auth-Token": ACCESS_TOKEN,
-      "Accept": "application/json",
-    },
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}/products`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   WRITE API — Cart → Checkout → Order Pipeline
+   ══════════════════════════════════════════════════════════════════════ */
+
+export interface CartLineItem {
+  product_id: number;
+  quantity: number;
+}
+
+export interface ShippingAddress {
+  first_name: string;
+  last_name: string;
+  email: string;
+  company?: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state_or_province: string;
+  state_or_province_code: string;
+  postal_code: string;
+  country_code: string;
+  phone?: string;
+}
+
+export interface ShippingOption {
+  id: string;
+  description: string;
+  type: string;
+  cost: number;
+  transit_time: string;
+}
+
+/* ── Step 1: Create Cart ── */
+export async function createCart(lineItems: CartLineItem[], customerId?: number) {
+  const body: Record<string, unknown> = {
+    line_items: lineItems,
+  };
+  if (customerId) body.customer_id = customerId;
+  const res = await bcPost("/carts", body);
+  return res.data;
+}
+
+/* ── Step 2: Get Checkout ── */
+export async function getCheckout(cartId: string) {
+  const res = await bcFetch(`/checkouts/${cartId}`);
+  return res.data;
+}
+
+/* ── Step 3: Add Shipping Address + Get Rates ── */
+export async function addConsignment(cartId: string, address: ShippingAddress, lineItemIds: { item_id: string; quantity: number }[]) {
+  const res = await bcPost(
+    `/checkouts/${cartId}/consignments?include=consignments.available_shipping_options`,
+    [{
+      address,
+      line_items: lineItemIds,
+    }]
+  );
+  return res.data;
+}
+
+/* ── Step 4: Select Shipping Option ── */
+export async function selectShippingOption(cartId: string, consignmentId: string, shippingOptionId: string) {
+  const res = await bcPut(`/checkouts/${cartId}/consignments/${consignmentId}`, {
+    shipping_option_id: shippingOptionId,
   });
-  if (!res.ok) return [];
+  return res.data;
+}
+
+/* ── Step 5: Add Billing Address ── */
+export async function setBillingAddress(cartId: string, address: ShippingAddress) {
+  const res = await bcPost(`/checkouts/${cartId}/billing-address`, address);
+  return res.data;
+}
+
+/* ── Step 6: Create Order from Checkout ── */
+export async function createOrderFromCheckout(cartId: string) {
+  const res = await bcPost(`/checkouts/${cartId}/orders`, {});
+  return res.data;
+}
+
+/* ── Step 7: Update Order Status (for bill-to-account / cash) ── */
+export async function updateOrderStatus(orderId: number, statusId: number) {
+  const res = await fetch(`${V2_URL}/orders/${orderId}`, {
+    method: "PUT",
+    headers: AUTH_HEADERS,
+    body: JSON.stringify({ status_id: statusId }),
+  });
+  if (!res.ok) throw new Error(`Failed to update order status: ${res.status}`);
   return res.json();
+}
+
+/* ── Helper: Get product ID by SKU (for cart creation) ── */
+export async function getProductIdBySku(sku: string): Promise<number | null> {
+  try {
+    const res = await bcFetch("/catalog/products", { sku, limit: "1" });
+    return res.data?.[0]?.id || null;
+  } catch {
+    return null;
+  }
+}
+
+/* ── Helper: Delete Cart (cleanup) ── */
+export async function deleteCart(cartId: string) {
+  await bcDelete(`/carts/${cartId}`);
+}
+
+/* ── Storefront Token (for embedded payment) ── */
+export async function createStorefrontToken(origin: string) {
+  const res = await bcPost("/storefront/api-token", {
+    channel_id: 1,
+    expires_at: Math.floor(Date.now() / 1000) + 3600,
+    allowed_cors_origins: [origin],
+  });
+  return res.data?.token;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PAYMENTS API — Process credit card through Intuit/QuickBooks
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Get payment access token for an order ── */
+export async function getPaymentAccessToken(orderId: number): Promise<string> {
+  const res = await bcPost("/payments/access_tokens", { order: { id: orderId } });
+  const token = res.data?.id;
+  if (!token) throw new Error("Failed to get payment access token");
+  return token;
+}
+
+/* ── Process card payment ── */
+export async function processCardPayment(
+  paymentToken: string,
+  card: {
+    cardholderName: string;
+    number: string;
+    expiryMonth: number;
+    expiryYear: number;
+    verificationValue: string;
+  }
+): Promise<{ status: string; transactionId?: string }> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  const url = `https://payments.bigcommerce.com/stores/${storeHash}/payments`;
+
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      payment: {
+        instrument: {
+          type: "card",
+          cardholder_name: card.cardholderName,
+          number: card.number.replace(/\s/g, ""),
+          expiry_month: card.expiryMonth,
+          expiry_year: card.expiryYear,
+          verification_value: card.verificationValue,
+        },
+        payment_method_id: "qbmsv2.card",
+      },
+    });
+
+    const parsed = new URL(url);
+    const req = https.request({
+      hostname: parsed.hostname,
+      path: parsed.pathname,
+      method: "POST",
+      headers: {
+        "Authorization": `PAT ${paymentToken}`,
+        "Accept": "application/vnd.bc.v1+json",
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+      },
+    }, (res) => {
+      const chunks: Buffer[] = [];
+      res.on("data", (chunk: Buffer) => chunks.push(chunk));
+      res.on("end", () => {
+        let buffer = Buffer.concat(chunks);
+        if (res.headers["content-encoding"] === "gzip") {
+          try { buffer = gunzipSync(buffer); } catch {}
+        }
+        const text = buffer.toString("utf-8");
+        if (res.statusCode && res.statusCode >= 400) {
+          reject(new Error(`Payment failed: ${res.statusCode} ${text.slice(0, 200)}`));
+          return;
+        }
+        try {
+          const data = JSON.parse(text);
+          resolve({
+            status: data.data?.status || "success",
+            transactionId: data.data?.transaction?.id,
+          });
+        } catch {
+          reject(new Error(`Payment response parse error: ${text.slice(0, 100)}`));
+        }
+      });
+    });
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
 }

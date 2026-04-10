@@ -48,7 +48,7 @@ const faqs: FAQItem[] = [
     category: "Delivery",
     icon: <Truck className="w-5 h-5" />,
     question: "Does Mobile Janitorial Supply provide delivery service and how long does it take?",
-    answer: "Yes, we offer free delivery with a minimum order. If under a minimum order there is a $35.00 delivery charge for most counties. All orders usually ship in 1-2 days.",
+    answer: "Yes, we offer free delivery on qualifying orders. Orange County, Los Angeles, and Inland Empire orders over $399 ship free. San Diego orders over $699 ship free. All other orders ship via UPS Ground. Orders usually ship in 1-2 days.",
   },
   {
     category: "Products",

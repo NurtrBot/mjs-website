@@ -69,6 +69,7 @@ const PAIRING_RULES: { match: string[]; pairWith: string[]; avoid: string[] }[] 
 
 interface CartItemType {
   slug: string;
+  sku?: string;
   name: string;
   brand: string;
   price: number;
@@ -178,6 +179,7 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
                   <button
                     onClick={() => addItem({
                       slug: product.slug,
+                      sku: product.sku,
                       name: product.cardTitle,
                       brand: product.brand,
                       price: product.price,
@@ -222,7 +224,7 @@ export default function CartPage() {
     pack: "10 Reams/Case",
   };
 
-  // Fetch pickup suggestions when popup shows
+  // Fetch impulse suggestions when checkout popup shows
   useEffect(() => {
     if (!showPickupPopup || items.length === 0) return;
 
@@ -269,14 +271,8 @@ export default function CartPage() {
   }, [showPickupPopup, items]);
 
   const handleCheckout = () => {
-    if (isPickup) {
-      setShowPickupPopup(true);
-    } else if (subtotal < freeDeliveryThreshold) {
-      setShowShippingPopup(true);
-      setTimeout(() => setAnimateBar(true), 100);
-    } else {
-      router.push("/checkout");
-    }
+    // Show impulse popup as last-chance upsell for everyone
+    setShowPickupPopup(true);
   };
 
   const closePopup = () => {
@@ -293,16 +289,9 @@ export default function CartPage() {
     setTimeout(() => setAnimateBar(true), 50);
   };
 
-  const freeDeliveryThreshold = 399;
-  const remaining = freeDeliveryThreshold - subtotal;
-  const freeDeliveryProgress = Math.min(
-    (subtotal / freeDeliveryThreshold) * 100,
-    100
-  );
   const taxRate = 0.0775;
   const tax = subtotal * taxRate;
-  const shipping = subtotal >= freeDeliveryThreshold ? 0 : subtotal > 0 ? 35.00 : 0;
-  const total = subtotal + tax + shipping;
+  const total = subtotal + tax;
 
   return (
     <>
@@ -339,39 +328,6 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* Free Delivery Banner */}
-          {items.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-              {remaining > 0 ? (
-                <div className="flex items-center gap-3">
-                  <Truck className="w-5 h-5 text-mjs-gray-400 flex-shrink-0" />
-                  <div className="flex-1">
-                    <div className="text-sm text-mjs-gray-600 mb-2">
-                      Add{" "}
-                      <span className="font-bold text-mjs-dark">
-                        ${remaining.toFixed(2)}
-                      </span>{" "}
-                      more for{" "}
-                      <span className="font-bold text-mjs-green">
-                        FREE delivery
-                      </span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-mjs-green rounded-full transition-all duration-500"
-                        style={{ width: `${freeDeliveryProgress}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm font-semibold text-mjs-green">
-                  <Truck className="w-5 h-5" />
-                  You qualify for FREE delivery!
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Empty State */}
           {items.length === 0 && (
@@ -547,12 +503,8 @@ export default function CartPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">Shipping</span>
-                      <span className="font-semibold text-mjs-gray-700">
-                        {shipping === 0 ? (
-                          <span className="text-mjs-green">FREE</span>
-                        ) : (
-                          `$${shipping.toFixed(2)}`
-                        )}
+                      <span className="font-semibold text-mjs-gray-400 text-xs">
+                        Calculated at checkout
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -593,7 +545,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] text-mjs-gray-400">
                       <Truck className="w-3.5 h-3.5" />
-                      Free Delivery $399+
+                      Ships Nationwide
                     </div>
                   </div>
                 </div>
@@ -609,211 +561,7 @@ export default function CartPage() {
       </main>
       <Footer />
 
-      {/* Free Shipping Threshold Popup */}
-      {showShippingPopup && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[80]"
-            onClick={closePopup}
-          />
-          <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.15)] max-w-[460px] w-full animate-[popIn_0.25s_ease-out] my-auto">
-              {/* Close */}
-              <div className="flex justify-end px-5 pt-4">
-                <button
-                  onClick={closePopup}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-4 h-4 text-mjs-gray-400" />
-                </button>
-              </div>
-
-              <div className="px-8 pb-8">
-                {/* Truck Image */}
-                <div className="flex justify-center mb-4 -mt-1">
-                  <img
-                    src="/images/cat-delivery.png"
-                    alt="Free Delivery"
-                    className="w-28 h-auto object-contain"
-                  />
-                </div>
-
-                {/* Headline */}
-                <div className="text-center mb-5">
-                  <h3 className="text-xl font-black text-mjs-dark mb-1.5">
-                    You&apos;re almost there!
-                  </h3>
-                  <p className="text-sm text-mjs-gray-500 leading-relaxed">
-                    Spend <span className="font-bold text-mjs-dark">${remaining > 0 ? remaining.toFixed(2) : "0.00"}</span> more
-                    to unlock{" "}
-                    <span className="font-bold text-mjs-green">FREE shipping</span>
-                    {" "}&mdash; save <span className="font-semibold">$35</span> on delivery
-                  </p>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-6">
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-mjs-red rounded-full transition-all duration-700 ease-out"
-                      style={{ width: animateBar ? `${freeDeliveryProgress}%` : "0%" }}
-                    />
-                  </div>
-                  <div className="flex justify-between mt-2">
-                    <span className="text-xs font-semibold text-mjs-gray-500">
-                      ${subtotal.toFixed(2)}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5 text-mjs-green" />
-                      <span className="text-xs font-bold text-mjs-green">$399 FREE</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="relative mb-5">
-                  <div className="h-px bg-gray-200" />
-                  <span className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-[10px] font-bold text-mjs-gray-400 uppercase tracking-widest">
-                    Quick Add
-                  </span>
-                </div>
-
-                {/* Copy Paper Upsell */}
-                <div className="border border-gray-200 rounded-xl p-4 mb-6 bg-gradient-to-br from-white to-orange-50/40">
-                  <div className="flex gap-4">
-                    {/* Product Image */}
-                    <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-white border border-gray-100 flex items-center justify-center p-1">
-                      <img
-                        src="/images/product-copy-paper.png"
-                        alt="Supreme Copy Paper"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-
-                    {/* Product Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <div>
-                          <span className="inline-block bg-orange-100 text-orange-600 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded mb-1">
-                            Popular Add-On
-                          </span>
-                          <h4 className="text-sm font-bold text-mjs-dark leading-snug">
-                            Supreme Copy Paper
-                          </h4>
-                        </div>
-                      </div>
-                      <p className="text-[11px] text-mjs-gray-400 mb-2">
-                        Letter Size &middot; 20 lb &middot; 10 Reams/Case
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base font-black text-mjs-dark">
-                          $52.99
-                          <span className="text-[10px] font-medium text-mjs-gray-400 ml-0.5">/case</span>
-                        </span>
-
-                        {/* Qty Selector + Add */}
-                        {!paperAdded ? (
-                          <div className="flex items-center gap-1.5">
-                            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                              <button
-                                onClick={() => setPaperQty(Math.max(1, paperQty - 1))}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                              >
-                                <Minus className="w-3 h-3 text-mjs-gray-500" />
-                              </button>
-                              <span className="w-7 h-7 flex items-center justify-center text-xs font-bold text-mjs-dark border-x border-gray-200 bg-gray-50">
-                                {paperQty}
-                              </span>
-                              <button
-                                onClick={() => setPaperQty(paperQty + 1)}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                              >
-                                <Plus className="w-3 h-3 text-mjs-gray-500" />
-                              </button>
-                            </div>
-                            <button
-                              onClick={handleAddPaper}
-                              className="bg-mjs-red hover:bg-mjs-red-dark text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                            >
-                              Add
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-xs font-bold text-mjs-green flex items-center gap-1">
-                            <PackageCheck className="w-4 h-4" />
-                            Added!
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* How much this helps */}
-                  {!paperAdded && remaining > 0 && (
-                    <div className="mt-3 pt-3 border-t border-gray-100 text-center">
-                      <p className="text-[11px] text-mjs-gray-400">
-                        {copyPaper.price * paperQty >= remaining ? (
-                          <>
-                            Adding {paperQty} {paperQty === 1 ? "case" : "cases"} will{" "}
-                            <span className="font-bold text-mjs-green">unlock free shipping</span>
-                          </>
-                        ) : (
-                          <>
-                            Adding {paperQty} {paperQty === 1 ? "case" : "cases"} gets you to{" "}
-                            <span className="font-semibold text-mjs-dark">
-                              ${(subtotal + copyPaper.price * paperQty).toFixed(2)}
-                            </span>
-                            {" "}&mdash;{" "}
-                            <span className="font-semibold text-mjs-red">
-                              ${(remaining - copyPaper.price * paperQty).toFixed(2)}
-                            </span>{" "}
-                            away
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div className="space-y-2.5">
-                  <Link
-                    href="/"
-                    onClick={closePopup}
-                    className="w-full bg-mjs-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl text-sm transition-all flex items-center justify-center gap-2"
-                  >
-                    Continue Shopping
-                  </Link>
-                  <button
-                    onClick={() => {
-                      closePopup();
-                      router.push("/checkout");
-                    }}
-                    className="w-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-mjs-gray-500 font-medium py-3 rounded-xl text-sm transition-all flex items-center justify-center gap-2"
-                  >
-                    Pay Delivery Fee &middot; $35.00
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <style jsx>{`
-            @keyframes popIn {
-              from {
-                opacity: 0;
-                transform: scale(0.96) translateY(8px);
-              }
-              to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-              }
-            }
-          `}</style>
-        </>
-      )}
-
-      {/* ═══ PICKUP IMPULSE POPUP ═══ */}
+      {/* ═══ IMPULSE POPUP ═══ */}
       {showPickupPopup && (
         <>
           <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[80]" onClick={() => { closePopup(); router.push("/checkout"); }} />
@@ -834,7 +582,7 @@ export default function CartPage() {
                         <div className="text-sm font-black text-mjs-dark mt-1">${p.price.toFixed(2)}</div>
                         <div className="text-[9px] text-mjs-gray-500 mb-2">{p.pack}</div>
                         <button
-                          onClick={() => addItem({ slug: p.slug, name: p.cardTitle, brand: p.brand, price: p.price, image: p.images[0], pack: p.pack })}
+                          onClick={() => addItem({ slug: p.slug, sku: p.sku, name: p.cardTitle, brand: p.brand, price: p.price, image: p.images[0], pack: p.pack })}
                           className="w-full bg-mjs-red text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
                         >
                           <ShoppingCart className="w-3 h-3" /> Add

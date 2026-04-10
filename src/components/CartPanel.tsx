@@ -61,12 +61,6 @@ export default function CartPanel() {
   const { orderSetup } = useOrderSetup();
 
   const isPickup = orderSetup?.fulfillment === "pickup";
-  const freeDeliveryThreshold = 399;
-  const remaining = freeDeliveryThreshold - subtotal;
-  const freeDeliveryProgress = Math.min(
-    (subtotal / freeDeliveryThreshold) * 100,
-    100
-  );
 
   // Pickup impulse suggestions
   const [suggestions, setSuggestions] = useState<PickupSuggestion[]>([]);
@@ -178,29 +172,10 @@ export default function CartPanel() {
                   <Store className="w-4 h-4" />
                   Will Call — Anaheim Warehouse
                 </div>
-              ) : remaining > 0 ? (
-                <>
-                  <div className="text-xs text-mjs-gray-600 mb-1.5">
-                    Add{" "}
-                    <span className="font-bold text-mjs-dark">
-                      ${remaining.toFixed(2)}
-                    </span>{" "}
-                    more for{" "}
-                    <span className="font-bold text-mjs-green">
-                      FREE delivery
-                    </span>
-                  </div>
-                  <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-mjs-green rounded-full transition-all duration-500"
-                      style={{ width: `${freeDeliveryProgress}%` }}
-                    />
-                  </div>
-                </>
               ) : (
-                <div className="flex items-center gap-2 text-xs font-semibold text-mjs-green">
+                <div className="flex items-center gap-2 text-xs font-semibold text-mjs-gray-600">
                   <Truck className="w-4 h-4" />
-                  You qualify for FREE delivery!
+                  Shipping calculated at checkout
                 </div>
               )}
             </div>
@@ -290,10 +265,8 @@ export default function CartPanel() {
                 <span className="text-sm font-semibold text-mjs-gray-700">
                   {isPickup ? (
                     <span className="text-mjs-green">FREE</span>
-                  ) : subtotal >= freeDeliveryThreshold ? (
-                    <span className="text-mjs-green">FREE</span>
                   ) : (
-                    "Calculated at checkout"
+                    <span className="text-mjs-gray-400 text-xs">At checkout</span>
                   )}
                 </span>
               </div>
@@ -333,7 +306,7 @@ export default function CartPanel() {
                   {isPickup ? (
                     <><Store className="w-3 h-3" /> Ready Same Day</>
                   ) : (
-                    <><Truck className="w-3 h-3" /> Free Delivery $399+</>
+                    <><Truck className="w-3 h-3" /> Ships Nationwide</>
                   )}
                 </div>
               </div>

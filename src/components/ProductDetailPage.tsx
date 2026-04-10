@@ -232,6 +232,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
     if (!product) return;
     addItem({
       slug: product.slug,
+      sku: product.sku,
       name: product.cardTitle,
       brand: product.brand,
       price: product.price,
@@ -250,44 +251,70 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const [shipArea, setShipArea] = useState("");
   const [freeMinimum, setFreeMinimum] = useState("");
 
-  const checkShipping = () => {
-    if (shipZip.length < 5) return;
-    setShipChecking(true);
-    setTimeout(() => {
-      const prefix = shipZip.slice(0, 3);
-      // Orange County
-      const ocZips = ["926","927","928","906","907"];
-      // Los Angeles
-      const laZips = ["900","901","902","903","904","905","908","909","910","911","912","913","914","915","916","917","918"];
-      // Inland Empire (Riverside / San Bernardino)
-      const ieZips = ["920","921","922","923","924","925"];
-      // San Diego
-      const sdZips = ["919","930","931","932","933","934","935"];
+  const [shipMethod, setShipMethod] = useState("");
 
-      if (ocZips.includes(prefix)) {
-        setShipArea("Orange County");
-        setFreeMinimum("$399");
-        setShipPrice("$35.00");
-      } else if (laZips.includes(prefix)) {
-        setShipArea("Los Angeles");
-        setFreeMinimum("$399");
-        setShipPrice("$35.00");
-      } else if (ieZips.includes(prefix)) {
-        setShipArea("Inland Empire");
-        setFreeMinimum("$399");
-        setShipPrice("$35.00");
-      } else if (sdZips.includes(prefix)) {
-        setShipArea("San Diego");
-        setFreeMinimum("$699");
-        setShipPrice("$45.00");
-      } else {
-        setShipArea("UPS Ground");
-        setFreeMinimum("");
-        setShipPrice("$35.00");
-      }
+  const checkShipping = () => {
+    if (shipZip.length < 5 || !product) return;
+    setShipChecking(true);
+
+    // Check local delivery zones first
+    const prefix = shipZip.slice(0, 3);
+    const ocZips = ["926", "927", "928"];
+    const laZips = ["900","901","902","903","904","905","906","907","908","909","910","911","912","913","914","915","916","917","918"];
+    const ieZips = ["920","921","922","923","924","925"];
+    const sdZips = ["919","930","931","932","933","934","935"];
+
+    if (ocZips.includes(prefix) || laZips.includes(prefix) || ieZips.includes(prefix)) {
+      setShipArea("OC / LA / IE");
+      setShipMethod("Free Delivery Available");
+      setFreeMinimum("$399");
+      setShipPrice("FREE on orders $399+");
       setShipChecked(true);
       setShipChecking(false);
-    }, 500);
+      return;
+    }
+    if (sdZips.includes(prefix)) {
+      setShipArea("San Diego");
+      setShipMethod("Free Delivery Available");
+      setFreeMinimum("$699");
+      setShipPrice("FREE on orders $699+");
+      setShipChecked(true);
+      setShipChecking(false);
+      return;
+    }
+
+    // Everything else — get real UPS rate
+    fetch("/api/shipping/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: [{ sku: product.sku, quantity: qty }],
+        zip: shipZip,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        const rates = data.rates || [];
+        const delivery = rates.filter((r: { type: string }) => r.type !== "pickupinstore" && r.type !== "pickup");
+        const cheapest = delivery.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
+        if (cheapest) {
+          setShipPrice(`$${cheapest.cost.toFixed(2)}`);
+          setShipMethod(cheapest.name || "UPS Ground");
+          setShipArea(cheapest.name || "UPS Ground");
+        } else {
+          setShipPrice("Call for rate");
+          setShipMethod("UPS Ground");
+          setShipArea("UPS Ground");
+        }
+        setFreeMinimum("");
+        setShipChecked(true);
+        setShipChecking(false);
+      })
+      .catch(() => {
+        setShipPrice("Call for rate");
+        setShipChecked(true);
+        setShipChecking(false);
+      });
   };
 
   // Loading state
@@ -538,13 +565,22 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                       </div>
                     )}
                   </div>
-                  {shipChecked && shipZip ? (
+                  {shipChecking ? (
                     <>
-                      <div className="text-sm font-semibold text-mjs-dark">Ships UPS Ground</div>
+                      <div className="text-sm font-semibold text-mjs-dark">Calculating...</div>
+                      <div className="text-xs text-mjs-gray-600 mt-1">
+                        <Loader2 className="w-4 h-4 animate-spin inline" />
+                      </div>
+                      <div className="text-sm font-bold text-mjs-gray-400 mt-2">—</div>
+                    </>
+                  ) : shipChecked && shipZip ? (
+                    <>
+                      <div className="text-sm font-semibold text-mjs-dark">{shipMethod || "Ships UPS Ground"}</div>
                       <div className="text-xs text-mjs-gray-600 mt-1">
                         {product.inStock ? `${product.stockQty.toLocaleString()} available` : "Check availability"}
                       </div>
                       <div className="text-sm font-bold text-mjs-green mt-2">{shipPrice}</div>
+                      {freeMinimum && <div className="text-[10px] text-mjs-gray-400 mt-0.5">Free over {freeMinimum}</div>}
                     </>
                   ) : (
                     <>
@@ -628,7 +664,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   <div className="flex items-center justify-center gap-2">
                     <Truck className="w-4 h-4 text-mjs-gray-500 flex-shrink-0" />
                     <span className="text-xs font-semibold text-mjs-gray-600 text-center">
-                      Ships UPS Ground &middot; Rates calculated at checkout
+                      {shipMethod || "Ships UPS Ground"} &middot; {shipPrice || "Enter zip for rate"}
                     </span>
                   </div>
                 ) : (
@@ -867,7 +903,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
             </div>
             <div className="flex items-center gap-2">
               <Truck className="w-5 h-5 text-mjs-blue" />
-              <span className="text-xs font-semibold text-mjs-gray-600">Free Delivery $399+</span>
+              <span className="text-xs font-semibold text-mjs-gray-600">Ships Nationwide</span>
             </div>
             <div className="flex items-center gap-2">
               <RotateCcw className="w-5 h-5 text-amber-600" />

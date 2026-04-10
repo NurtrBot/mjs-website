@@ -16,6 +16,7 @@ import { LogOut } from "lucide-react";
 import { allProducts, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useShipping } from "@/context/ShippingContext";
 
 export default function Header() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function Header() {
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const { itemCount, toggleCart } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
+  const { zip: shippingZip, setZip: setShippingZip } = useShipping();
 
   const handleSearch = (query: string) => {
     if (query.trim().length > 0) {
@@ -190,6 +192,9 @@ export default function Header() {
                     e.preventDefault();
                     if (locationInput.trim()) {
                       setDeliveryLocation(locationInput.trim());
+                      // If it looks like a zip code, save it for shipping estimates
+                      const zipMatch = locationInput.trim().match(/\b(\d{5})\b/);
+                      if (zipMatch) setShippingZip(zipMatch[1]);
                       setLocationOpen(false);
                     }
                   }}

@@ -70,6 +70,8 @@ export default function Footer() {
           <span className="text-white/10">|</span>
           <a href="/resources" className="text-gray-400 hover:text-white transition-colors">Forms &amp; SDS</a>
           <span className="text-white/10">|</span>
+          <a href="/catalogs" className="text-gray-400 hover:text-white transition-colors">Catalogs</a>
+          <span className="text-white/10">|</span>
           <a href="/auth" className="text-gray-400 hover:text-white transition-colors">Create Account</a>
           <span className="text-white/10">|</span>
           <a href="/account" className="text-gray-400 hover:text-white transition-colors">My Account</a>
