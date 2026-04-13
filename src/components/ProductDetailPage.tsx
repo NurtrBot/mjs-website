@@ -230,8 +230,9 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
 
   const handleAddToCart = () => {
     if (!product) return;
-    // Use bulk unit price if qty matches a quickBuy option
-    const matchedBulk = product.quickBuy.find(opt => opt.qty === qty);
+    // Use selected brick's unit price, or match by qty
+    const selectedOpt = product.quickBuy[selectedBrick];
+    const matchedBulk = selectedOpt || product.quickBuy.find(opt => opt.qty === qty);
     const unitPrice = matchedBulk?.unitPrice || product.price;
     addItem({
       slug: product.slug,
@@ -245,6 +246,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   };
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
+  const [selectedBrick, setSelectedBrick] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [shipZip, setShipZip] = useState("");
   const [shipOption, setShipOption] = useState<"pickup" | "delivery">("delivery");
@@ -495,20 +497,21 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                       : opt.savings
                         ? +(product.price * (1 - parseInt(opt.savings.replace(/\D/g, "")) / 100)).toFixed(2)
                         : product.price;
+                    const isSelected = selectedBrick === i;
                     return (
                       <button
                         key={i}
-                        onClick={() => setQty(opt.qty)}
+                        onClick={() => { setSelectedBrick(i); setQty(opt.qty); }}
                         className={`flex flex-col items-center text-center px-3 py-3 rounded-lg border transition-all ${
-                          qty === opt.qty
+                          isSelected
                             ? "border-mjs-red bg-red-50"
                             : "border-gray-200 bg-white hover:border-mjs-red/40 hover:bg-red-50/50"
                         }`}
                       >
-                        <span className={`text-sm font-semibold ${qty === opt.qty ? "text-mjs-red" : "text-mjs-gray-800"}`}>
+                        <span className={`text-sm font-semibold ${isSelected ? "text-mjs-red" : "text-mjs-gray-800"}`}>
                           {opt.label}
                         </span>
-                        <span className={`text-base font-bold mt-1 ${qty === opt.qty ? "text-mjs-red" : "text-mjs-dark"}`}>
+                        <span className={`text-base font-bold mt-1 ${isSelected ? "text-mjs-red" : "text-mjs-dark"}`}>
                           ${unitPrice.toFixed(2)}
                         </span>
                         {opt.savings ? (

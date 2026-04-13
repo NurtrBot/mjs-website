@@ -5,6 +5,28 @@ import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-rea
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
+function getProductFamily(name: string): string {
+  return name.toLowerCase()
+    .replace(/\b(small|medium|large|x-?large|xl|xxl)\b/gi, "")
+    .replace(/\b\d+\s*(oz|gal|qt|ml|fl|lb|ft|"|inch|rolls?|sheets?|ct|pk|bx|cs|per|carton|case)\b/gi, "")
+    .replace(/\b(white|black|blue|red|green|yellow|orange|pink|clear|natural|kraft)\b/gi, "")
+    .replace(/\b\d+\s*x\s*\d+/g, "")
+    .replace(/[®™,\-()]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 40);
+}
+
+function formatCardName(name: string): string {
+  let clean = name.replace(/\s*\([A-Z0-9-]+\)\s*$/, "").replace(/[®™]/g, "");
+  if (clean === clean.toUpperCase() && clean.length > 5) {
+    clean = clean.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    clean = clean.replace(/\b(Oz|Ply|Ft|Qt|Gal|Mil|Ct|Cs|Bx|Pk|Jr|Hd|Ups|Sds|Epa)\b/gi, m => m.toUpperCase());
+  }
+  if (clean.length > 80) clean = clean.slice(0, 77) + "...";
+  return clean.trim();
+}
+
 function ShipCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
@@ -16,7 +38,7 @@ function ShipCard({ product }: { product: ProductData }) {
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>
-          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-1 group-hover:text-mjs-red transition-colors">{product.cardTitle}</h3>
+          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors">{formatCardName(product.name)}</h3>
         </a>
         <div className="mt-1.5">
           <span className="text-base font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
@@ -63,7 +85,14 @@ export default function ReadyToShipAlt() {
           const j = Math.floor(Math.random() * (i + 1));
           [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
         }
-        setItems(filtered.slice(0, 20));
+        const seenFamilies = new Set<string>();
+        const diverse = filtered.filter(p => {
+          const family = getProductFamily(p.name);
+          if (seenFamilies.has(family)) return false;
+          seenFamilies.add(family);
+          return true;
+        });
+        setItems(diverse.slice(0, 20));
       })
       .catch(() => {});
   }, []);

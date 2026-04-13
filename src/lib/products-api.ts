@@ -73,6 +73,43 @@ const CUSTOM_PRICING: Record<string, { label: string; qty: number; unitPrice?: n
     { label: "25 Cases", qty: 25, unitPrice: 34.99, savings: "Save $6/case" },
     { label: "50 Cases", qty: 50, unitPrice: 31.99, savings: "Save $9/case" },
   ],
+  // Floor Pads — size selector bricks
+  "72-15": [
+    { label: '15"', qty: 1, unitPrice: 24.72 },
+    { label: '17"', qty: 1, unitPrice: 27.12 },
+    { label: '19"', qty: 1, unitPrice: 32.47 },
+    { label: '20"', qty: 1, unitPrice: 34.87 },
+  ],
+  "51-15": [
+    { label: '15"', qty: 1, unitPrice: 24.72 },
+    { label: '17"', qty: 1, unitPrice: 27.12 },
+    { label: '19"', qty: 1, unitPrice: 32.47 },
+    { label: '20"', qty: 1, unitPrice: 34.87 },
+  ],
+  "41-15": [
+    { label: '15"', qty: 1, unitPrice: 24.72 },
+    { label: '17"', qty: 1, unitPrice: 27.12 },
+    { label: '19"', qty: 1, unitPrice: 32.47 },
+    { label: '20"', qty: 1, unitPrice: 34.87 },
+  ],
+  "55-17": [
+    { label: '15"', qty: 1, unitPrice: 24.72 },
+    { label: '17"', qty: 1, unitPrice: 27.12 },
+    { label: '19"', qty: 1, unitPrice: 32.47 },
+    { label: '20"', qty: 1, unitPrice: 34.87 },
+  ],
+  "33-19": [
+    { label: '15"', qty: 1, unitPrice: 24.72 },
+    { label: '17"', qty: 1, unitPrice: 27.12 },
+    { label: '19"', qty: 1, unitPrice: 32.47 },
+    { label: '20"', qty: 1, unitPrice: 34.87 },
+  ],
+  "75-19": [
+    { label: '15"', qty: 1, unitPrice: 28.62 },
+    { label: '17"', qty: 1, unitPrice: 32.12 },
+    { label: '19"', qty: 1, unitPrice: 41.62 },
+    { label: '20"', qty: 1, unitPrice: 45.37 },
+  ],
   "GJO21100": [
     { label: "1 Case", qty: 1, unitPrice: 39.99 },
     { label: "24 Cases", qty: 24, unitPrice: 32.99, savings: "Save $7/case" },
@@ -135,7 +172,7 @@ function transformProduct(bc: BCProduct): ProductData {
     finalCategory = "Cleaning Chemicals";
   }
   // Equipment items from non-equipment categories → Equipment
-  if ((subcategory === "Dispensers" || subcategory === "Rags & Wipers" || subcategory === "Vacuums") && finalCategory !== "Equipment") {
+  if ((subcategory === "Dispensers" || subcategory === "Rags & Wipers" || subcategory === "Vacuums" || subcategory === "Batteries") && finalCategory !== "Equipment") {
     finalCategory = "Equipment";
   }
 
@@ -417,7 +454,7 @@ function getSubcategory(bc: BCProduct): string {
   if (name.includes("oven clean") || name.includes("oven &") || name.includes("grill clean")) return "Dish & Laundry";
   if (name.includes("laundry")) return "Dish & Laundry";
   // Sanitizing wipes → Disinfectants, not hand soap
-  if (name.includes("sanitizing wipe") || name.includes("sanitizing multi") || name.includes("disinfecting wipe") || name.includes("disinfect")) return "Disinfectants";
+  if (name.includes("sanitizing wipe") || name.includes("sanitizing") && name.includes("wipe") || name.includes("sanitizing") && name.includes("multi") || name.includes("disinfecting wipe") || name.includes("disinfect")) return "Disinfectants";
   if (name.includes("urinal") || name.includes("bowl clip") || name.includes("eco air") || name.includes("freshprod") || (name.includes("dribble") && siteSlug === "cleaning-chemicals")) return "Urinal Screens";
   // Floor-friendly cleaners that contain "deodorizer" — must check BEFORE air fresheners
   if (name.includes("pine clean") || name.includes("pine disinfect") || (name.includes("pine") && name.includes("deodorizer"))) return "Floor & Carpet";
@@ -437,8 +474,18 @@ function getSubcategory(bc: BCProduct): string {
   if (name.includes("shower") || name.includes("tub clean") || name.includes("bathroom clean")) return "Bathroom Cleaners";
   if (name.includes("all purpose") || name.includes("all-purpose")) return "All Purpose Cleaners";
   if (name.includes("stripper")) return "Floor Strippers";
+  // Floor machine accessories and machines — must check before floor/carpet chemical checks
+  if (name.includes("rotary floor brush") || name.includes("tampico") && name.includes("brush") || name.includes("polypropylene") && name.includes("floor brush") || name.includes("nylon") && name.includes("floor brush")) return "Floor Machines";
+  if ((name.includes("pad driver") && name.includes("rotary")) || (name.includes("pad driver") && name.includes("bristle"))) return "Floor Machines";
+  if ((name.includes("pad driver") || name.includes("clutch plate")) && !name.includes("floor machine") && !name.includes("hercules") && !name.includes("rpm")) return "Floor Machines";
+  if (name.includes("extractor") || name.includes("sniper") || name.includes("dragon") || name.includes("restroom cleaner")) return "Floor Machines";
+  if (name.includes("floor machine") || name.includes("floor scrubber") || name.includes("hercules") || name.includes("walk-behind") || name.includes("walk behind")) return "Floor Machines";
+  if (name.includes("air mover") || name.includes("genair") || name.includes("carpet dryer")) return "Air Movers";
+  if (name.includes("spot extractor") || name.includes("spot-extractor")) return "Floor Machines";
+  if (name.includes("dual jet wand") || name.includes("wand and hose")) return "Floor Machines";
   if (name.includes("floor finish") || name.includes("floor seal")) return "Floor Finishes";
   if (name.includes("floor clean") || name.includes("floor")) return "Floor Care";
+  if (name.includes("bonnet")) return "Bonnets";
   if (name.includes("carpet")) return "Carpet Care";
   if (name.includes("polish")) return "Polishes";
   if (name.includes("drain")) return "Drain Cleaners";
@@ -465,16 +512,20 @@ function getSubcategory(bc: BCProduct): string {
   if (name.includes("stretch") || name.includes("film") || name.includes("wrap")) return "Stretch Film";
 
   // ── Equipment ──
-  if (name.includes("microfiber") || name.includes("smart rag") || name.includes("smartrag")) return "Microfiber";
-  if (/\brag\b|\brags\b/.test(name) || name.includes("surgical towel") || name.includes("knit rag") || name.includes("teri towel")) return "Rags & Wipers";
+  if ((name.includes("microfiber") && (name.includes("mop") || name.includes("loop")) && !name.includes("bucket")) || name.includes("microfiber flat mop") || name.includes("microfiber wet mop")) return "Mops & Handles";
+  if (name.includes("microfiber") && name.includes("sleeve")) return "Window Equipment";
+  if (name.includes("microfiber") && name.includes("duster")) return "Dusters";
+  if ((name.includes("microfiber") && !name.includes("bucket")) || name.includes("smart rag") || name.includes("smartrag")) return "Microfiber";
+  if (/\brag\b|\brags\b/.test(name) || name.includes("surgical towel") || name.includes("knit rag") || name.includes("teri towel") || name.includes("bar mop")) return "Rags & Wipers";
   if (name.includes("absorbent") || name.includes("spill")) return "Absorbents";
   if (name.includes("sweeping compound")) return "Sweeping Compounds";
   if (name.includes("dispenser")) return "Dispensers";
   if (name.includes("dust mop")) return "Dust Mops";
-  if (name.includes("mop head") || name.includes("mop handle") || name.includes("mop bucket") || name.includes("mop")) return "Mops & Handles";
+  if (name.includes("mop bucket") || name.includes("bucket/wringer") || (name.includes("bucket") && name.includes("mop"))) return "Buckets & Wringers";
+  if (name.includes("mop head") || name.includes("mop handle") || name.includes("mop")) return "Mops & Handles";
   if (name.includes("broom") || name.includes("dust pan") || name.includes("dustpan")) return "Brooms & Dustpans";
   if (name.includes("bucket") || name.includes("wringer")) return "Buckets & Wringers";
-  if (name.includes("vacuum")) return "Vacuums";
+  if (name.includes("vacuum") || name.includes("mosquito") || (name.includes("backpack") && name.includes("hepa")) || name.includes("wet / dry") || name.includes("wet/dry")) return "Vacuums";
   if (name.includes("squeeg") || name.includes("scraper") || name.includes("window") || name.includes("ettore") || name.includes("rubber refill") || name.includes("channel replacement") || name.includes("washer sleeve") || name.includes("extension pole")) return "Window Equipment";
   if (name.includes("sprayer") || name.includes("spray bottle") || name.includes("trigger")) return "Sprayers & Bottles";
   if (name.includes("janitor cart") || name.includes("dolly") || name.includes("dump truck")) return "Carts & Dollies";
@@ -499,7 +550,7 @@ function getSubcategory(bc: BCProduct): string {
   if (name.includes("pad driver") || name.includes("clutch plate")) return "Pad Drivers";
   if (name.includes("sign") || name.includes("wet floor")) return "Signs";
   if (name.includes("air mover") || name.includes("blower") || name.includes("fan")) return "Air Movers";
-  if (name.includes("extractor") || name.includes("floor machine") || name.includes("buffer") || name.includes("burnisher")) return "Floor Machines";
+  if (name.includes("extractor") || name.includes("floor machine") || name.includes("floor scrubber") || name.includes("buffer") || name.includes("burnisher") || name.includes("restroom cleaner") || name.includes("hercules") || name.includes("sniper") || name.includes("dragon")) return "Floor Machines";
   if (name.includes("mat") && siteSlug === "equipment") return "Matting";
 
   // ── Breakroom ──
@@ -696,15 +747,39 @@ export async function fetchProductsByCategory(
       }
     }
 
-    // For equipment: machines float to top
+    // For equipment: specific subcategory priority order
     if (siteSlug === "equipment") {
-      const aMachine = machineSubs.has(a.subcategory) ? 1 : 0;
-      const bMachine = machineSubs.has(b.subcategory) ? 1 : 0;
-      if (aMachine !== bMachine) return bMachine - aMachine;
+      const equipOrder: Record<string, number> = {
+        "Floor Machines": 1,
+        "Air Movers": 1,
+        "Vacuums": 2,
+        "Dispensers": 3,
+        "Tape Dispensers": 3,
+        "Mops & Handles": 4,
+        "Dust Mops": 4,
+        "Brooms & Dustpans": 5,
+        "Buckets & Wringers": 6,
+        "Trash Cans": 7,
+        "Carts & Dollies": 7,
+        "Window Equipment": 8,
+        "Sprayers & Bottles": 9,
+        "Microfiber": 10,
+        "Rags & Wipers": 10,
+        "Brushes & Pads": 11,
+        "Pad Drivers": 11,
+        "Dusters": 12,
+        "Signs": 13,
+      };
+      const aEq = equipOrder[a.subcategory] ?? 50;
+      const bEq = equipOrder[b.subcategory] ?? 50;
+      if (aEq !== bEq) return aEq - bEq;
     }
 
     // Group by subcategory — keep product types together
-    if (a.subcategory !== b.subcategory) {
+    // But treat Floor Machines + Air Movers as same group
+    const aSub = (a.subcategory === "Air Movers") ? "Floor Machines" : a.subcategory;
+    const bSub = (b.subcategory === "Air Movers") ? "Floor Machines" : b.subcategory;
+    if (aSub !== bSub) {
       const orderMap = siteSlug === "gloves-safety" ? GLOVE_ORDER
         : siteSlug === "paper-products" ? PAPER_ORDER
         : siteSlug === "trash-liners" ? LINER_ORDER
@@ -715,6 +790,83 @@ export async function fetchProductsByCategory(
       const bOrder = orderMap?.[b.subcategory] ?? 50;
       if (aOrder !== bOrder) return aOrder - bOrder;
       return a.subcategory.localeCompare(b.subcategory);
+    }
+
+    // Floor Machines + Air Movers: treat as one group, physical machines first
+    const aIsFM = a.subcategory === "Floor Machines" || a.subcategory === "Air Movers";
+    const bIsFM = b.subcategory === "Floor Machines" || b.subcategory === "Air Movers";
+    if (aIsFM && bIsFM) {
+      const fmOrder = (name: string, sku: string): number => {
+        const n = name.toLowerCase();
+        // Floor machines — check specific SKUs and keywords, exclude items with "pad driver" in name unless they ARE a machine
+        if (["VOL-430","H17E","H20E"].includes(sku)) return 1;
+        if (/hercules|walk.behind|floor scrubber/i.test(n)) return 1;
+        if (/extractor|sniper/i.test(n)) return 2; // Extractors
+        if (/restroom|dragon/i.test(n)) return 3; // Restroom
+        if (/air mover|genair/i.test(n)) return 4; // Air mover
+        if (/pad driver/i.test(n)) return 5; // Pad drivers
+        if (/rotary floor brush|tampico|polypropylene.*floor|nylon.*floor/i.test(n)) return 6; // Floor brushes
+        if (/wand|hose/i.test(n) && !/extractor/i.test(n)) return 7; // Wands & hoses
+        return 8;
+      };
+      const diff = fmOrder(a.name, a.sku) - fmOrder(b.name, b.sku);
+      if (diff !== 0) return diff;
+    }
+
+    // Sprayers & Bottles: triggers first, then bottles, then Chapin sprayers
+    if (a.subcategory === "Sprayers & Bottles" && b.subcategory === "Sprayers & Bottles") {
+      const sprayOrder = (n: string, sku: string): number => {
+        const lower = n.toLowerCase();
+        if (lower.includes("trigger")) return 1;
+        if (lower.includes("bottle") || lower.includes("spray bottle")) return 2;
+        if (lower.includes("chapin")) return 3;
+        return 2;
+      };
+      const aO = ["110244","110246","110248","110249","110542"].includes(a.sku) ? 1
+        : sprayOrder(a.name, a.sku);
+      const bO = ["110244","110246","110248","110249","110542"].includes(b.sku) ? 1
+        : sprayOrder(b.name, b.sku);
+      if (aO !== bO) return aO - bO;
+      // Within triggers: Red, Green, Blue, Grey
+      const triggerOrder: Record<string, number> = { "110246": 1, "110248": 2, "110249": 3, "110542": 4 };
+      const aT = triggerOrder[a.sku] ?? 5;
+      const bT = triggerOrder[b.sku] ?? 5;
+      if (aT !== bT) return aT - bT;
+    }
+
+    // Brushes & Pads: specific SKU order
+    if ((a.subcategory === "Brushes & Pads" || a.subcategory === "Pad Drivers") && (b.subcategory === "Brushes & Pads" || b.subcategory === "Pad Drivers")) {
+      const brushOrder: Record<string, number> = {
+        "79529": 1, "96-601": 2, "86-606": 3, "98-600": 4, "617-20": 5,
+        "626": 6, "651": 7, "621": 8, "672": 9, "631": 10,
+        "BR15": 15, "40387": 16,
+      };
+      const aO = brushOrder[a.sku] ?? 12;
+      const bO = brushOrder[b.sku] ?? 12;
+      if (aO !== bO) return aO - bO;
+    }
+
+    // Rags & Wipers: blue towels first, then teri towels, then knit rags last
+    if (a.subcategory === "Rags & Wipers" && b.subcategory === "Rags & Wipers") {
+      const ragOrder: Record<string, number> = {
+        "FNBST20B": 1, "N6012": 2,
+        "FNWTT20B": 3, "FRWT20B": 4,
+        "FCK50B": 10,
+      };
+      const aO = ragOrder[a.sku] ?? 5;
+      const bO = ragOrder[b.sku] ?? 5;
+      if (aO !== bO) return aO - bO;
+    }
+
+    // Microfiber: M915 colored towels in specific color order, then M950, then others
+    if (a.subcategory === "Microfiber" && b.subcategory === "Microfiber") {
+      const microOrder: Record<string, number> = {
+        "M915100R": 1, "M915100B": 2, "M915100Y": 3, "M915100G": 4,
+        "M950B": 5, "M950G": 6, "M950R": 7, "M950Y": 8,
+      };
+      const aOrder = microOrder[a.sku] ?? 20;
+      const bOrder = microOrder[b.sku] ?? 20;
+      if (aOrder !== bOrder) return aOrder - bOrder;
     }
 
     // Urinal Screens: custom order within subcategory

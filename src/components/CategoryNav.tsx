@@ -41,15 +41,15 @@ export default function CategoryNav() {
                 href={cat.href}
                 onMouseEnter={() => setActive(cat.name)}
                 onMouseLeave={() => setActive(null)}
-                className={`flex flex-col items-center gap-1 px-3 py-2.5 flex-1 min-w-[100px] border-b-[3px] transition-all ${
+                className={`flex flex-col items-center gap-1 px-3 py-2.5 flex-1 min-w-[100px] border-b-[3px] transition-all overflow-hidden relative ${
                   isActive
                     ? "border-mjs-red"
                     : "border-transparent"
                 }`}
               >
                 {cat.image ? (
-                  <div className="w-[256px] h-[96px] flex items-center justify-center overflow-hidden">
-                    <img src={cat.image} alt={cat.name} className="max-w-[256px] max-h-[96px] object-contain" />
+                  <div className="w-full h-[80px] flex items-center justify-center overflow-hidden">
+                    <img src={cat.image} alt={cat.name} className="max-w-full max-h-[80px] object-contain" />
                   </div>
                 ) : (
                   <div className={`w-8 h-8 flex items-center justify-center transition-colors ${

@@ -9,14 +9,12 @@ import {
   Menu,
   X,
   Package,
-  MapPin,
   Phone,
 } from "lucide-react";
 import { LogOut } from "lucide-react";
 import { allProducts, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { useShipping } from "@/context/ShippingContext";
 
 export default function Header() {
   const router = useRouter();
@@ -26,7 +24,60 @@ export default function Header() {
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const { itemCount, toggleCart } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
-  const { zip: shippingZip, setZip: setShippingZip } = useShipping();
+  const [isSpanish, setIsSpanish] = useState(false);
+
+  // Restore language preference on mount and re-apply on navigation
+  useEffect(() => {
+    const saved = localStorage.getItem("mjs_lang");
+    if (saved === "es") {
+      setIsSpanish(true);
+      applyTranslation("es");
+    }
+  }, []);
+
+  // Re-apply translation when route changes (Next.js client navigation)
+  useEffect(() => {
+    if (isSpanish) {
+      const timer = setTimeout(() => applyTranslation("es"), 300);
+      return () => clearTimeout(timer);
+    }
+  });
+
+  const applyTranslation = (lang: string) => {
+    const existing = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (existing) {
+      existing.value = lang;
+      existing.dispatchEvent(new Event("change"));
+      return;
+    }
+    // Init Google Translate if not loaded
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    win.googleTranslateElementInit = () => {
+      new win.google.translate.TranslateElement(
+        { pageLanguage: "en", includedLanguages: "en,es", autoDisplay: false },
+        "google_translate_element"
+      );
+      setTimeout(() => {
+        const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+        if (select) { select.value = lang; select.dispatchEvent(new Event("change")); }
+      }, 500);
+    };
+    if (!document.querySelector('script[src*="translate.google.com"]')) {
+      const script = document.createElement("script");
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      document.body.appendChild(script);
+    } else if (win.google?.translate) {
+      win.googleTranslateElementInit();
+    }
+  };
+
+  const toggleLanguage = () => {
+    const newLang = isSpanish ? "en" : "es";
+    setIsSpanish(!isSpanish);
+    localStorage.setItem("mjs_lang", newLang);
+    applyTranslation(newLang);
+  };
 
   const handleSearch = (query: string) => {
     if (query.trim().length > 0) {
@@ -35,9 +86,6 @@ export default function Header() {
     }
   };
   const [profileOpen, setProfileOpen] = useState(false);
-  const [locationOpen, setLocationOpen] = useState(false);
-  const [locationInput, setLocationInput] = useState("");
-  const [deliveryLocation, setDeliveryLocation] = useState("Anaheim, CA");
 
   const [bcSearchResults, setBcSearchResults] = useState<ProductData[]>([]);
   const searchTimer = useRef<NodeJS.Timeout | null>(null);
@@ -172,51 +220,16 @@ export default function Header() {
             </div>
           </a>
 
-          {/* Location */}
-          <div className="hidden lg:flex items-center gap-1.5 flex-shrink-0 ml-2 relative">
-            <button
-              onClick={() => { setLocationOpen(!locationOpen); setLocationInput(""); }}
-              className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
-            >
-              <MapPin className="w-4 h-4 text-mjs-red" />
-              <div className="text-left">
-                <div className="text-[10px] text-mjs-gray-400 leading-none">{deliveryLocation}</div>
-                <div className="text-[11px] font-semibold text-mjs-blue leading-none mt-0.5">Set delivery location</div>
-              </div>
-            </button>
-            {locationOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 w-64 z-50">
-                <div className="text-xs font-semibold text-mjs-gray-700 mb-2">Enter zip code or city</div>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (locationInput.trim()) {
-                      setDeliveryLocation(locationInput.trim());
-                      // If it looks like a zip code, save it for shipping estimates
-                      const zipMatch = locationInput.trim().match(/\b(\d{5})\b/);
-                      if (zipMatch) setShippingZip(zipMatch[1]);
-                      setLocationOpen(false);
-                    }
-                  }}
-                >
-                  <input
-                    type="text"
-                    value={locationInput}
-                    onChange={(e) => setLocationInput(e.target.value)}
-                    placeholder="e.g. 92801 or Los Angeles, CA"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-mjs-red/30 focus:border-mjs-red"
-                    autoFocus
-                  />
-                  <button
-                    type="submit"
-                    className="mt-2 w-full bg-mjs-red text-white text-sm font-semibold py-2 rounded-md hover:bg-red-700 transition-colors"
-                  >
-                    Update Location
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="hidden lg:flex items-center gap-2 flex-shrink-0 ml-2 hover:bg-gray-50 rounded-full px-3 py-1.5 transition-colors border border-gray-200"
+          >
+            <span className="text-sm">{isSpanish ? "\uD83C\uDDFA\uD83C\uDDF8" : "\uD83C\uDDF2\uD83C\uDDFD"}</span>
+            <span className="text-[11px] font-semibold text-mjs-gray-600">
+              {isSpanish ? "English" : "Espa\u00f1ol"}
+            </span>
+          </button>
 
           {/* Search Bar — centered */}
           <div className="hidden md:block flex-1 mx-4 relative z-50">

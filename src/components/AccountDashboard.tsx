@@ -454,27 +454,60 @@ export default function AccountDashboard() {
                 </div>
               </div>
 
-              {/* Account Rep */}
+              {/* Account Reps */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 className="text-sm font-bold text-mjs-dark mb-3">Your Account Rep</h2>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-mjs-red rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">NB</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-mjs-dark">Nick Bergman</div>
-                    <div className="text-xs text-mjs-gray-400">Account Representative</div>
-                  </div>
+                <h2 className="text-sm font-bold text-mjs-dark mb-4">Your Account Team</h2>
+                <div className="space-y-4">
+                  {[
+                    { initials: "RB", name: "Ryan Bergman", email: "ryan@mobilejanitorialsupply.com" },
+                    { initials: "ZB", name: "Zack Bergman", email: "zack@mobilejanitorialsupply.com" },
+                    { initials: "NB", name: "Nick Bergman", email: "nick@mobilejanitorialsupply.com" },
+                  ].map((rep) => (
+                    <div key={rep.email} className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-mjs-red rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-white font-bold text-xs">{rep.initials}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-mjs-dark">{rep.name}</div>
+                        <a href={`mailto:${rep.email}`} className="text-xs text-mjs-gray-400 hover:text-mjs-red transition-colors">{rep.email}</a>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-2">
+                <div className="mt-4 pt-3 border-t border-gray-100">
                   <a href="tel:7147792640" className="flex items-center gap-2 text-xs text-mjs-gray-500 hover:text-mjs-red transition-colors">
                     <Phone className="w-3.5 h-3.5" /> (714) 779-2640
                   </a>
-                  <a href="mailto:orders@mobilejanitorialsupply.com" className="flex items-center gap-2 text-xs text-mjs-gray-500 hover:text-mjs-red transition-colors">
-                    <Mail className="w-3.5 h-3.5" /> orders@mobilejanitorialsupply.com
+                </div>
+              </div>
+
+              {/* Forms */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms & Documents</h2>
+                <div className="space-y-2">
+                  <a
+                    href="/forms/new-customer-contact-form.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 bg-mjs-gray-50 rounded-xl hover:bg-red-50 hover:border-mjs-red/20 border border-transparent transition-all group"
+                  >
+                    <FileText className="w-5 h-5 text-mjs-red flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-mjs-dark group-hover:text-mjs-red transition-colors">New Customer Contact Form</div>
+                      <div className="text-[10px] text-mjs-gray-400">PDF Download</div>
+                    </div>
                   </a>
-                  <a href="mailto:nick@mobilejanitorialsupply.com" className="flex items-center gap-2 text-xs text-mjs-gray-500 hover:text-mjs-red transition-colors">
-                    <Mail className="w-3.5 h-3.5" /> nick@mobilejanitorialsupply.com
+                  <a
+                    href="/forms/credit-card-authorization-form.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 bg-mjs-gray-50 rounded-xl hover:bg-red-50 hover:border-mjs-red/20 border border-transparent transition-all group"
+                  >
+                    <FileText className="w-5 h-5 text-mjs-red flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-mjs-dark group-hover:text-mjs-red transition-colors">Credit Card Authorization Form</div>
+                      <div className="text-[10px] text-mjs-gray-400">PDF Download</div>
+                    </div>
                   </a>
                 </div>
               </div>

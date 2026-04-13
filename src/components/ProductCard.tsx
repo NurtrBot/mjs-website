@@ -5,6 +5,22 @@ import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import type { ProductData } from "@/data/products";
 
+function formatCardName(name: string): string {
+  // Remove SKU in parentheses at end: "(5602)" or "(GJO21100)"
+  let clean = name.replace(/\s*\([A-Z0-9-]+\)\s*$/, "");
+  // Remove ® and ™
+  clean = clean.replace(/[®™]/g, "");
+  // Title case if ALL CAPS
+  if (clean === clean.toUpperCase() && clean.length > 5) {
+    clean = clean.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    // Fix common abbreviations back to caps
+    clean = clean.replace(/\b(Oz|Ply|Ft|Qt|Gal|Mil|Ct|Cs|Bx|Pk|Jr|Hd|Ups|Sds|Epa)\b/gi, m => m.toUpperCase());
+  }
+  // Cap at 80 chars
+  if (clean.length > 80) clean = clean.slice(0, 77) + "...";
+  return clean.trim();
+}
+
 export default function ProductCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
@@ -33,8 +49,8 @@ export default function ProductCard({ product }: { product: ProductData }) {
           {product.sku}
         </div>
         <a href={`/product/${product.slug}`}>
-          <h3 className="text-sm font-semibold text-mjs-gray-800 leading-snug mt-1 group-hover:text-mjs-red transition-colors">
-            {product.cardTitle}
+          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug mt-1 group-hover:text-mjs-red transition-colors line-clamp-2">
+            {formatCardName(product.name)}
           </h3>
         </a>
 

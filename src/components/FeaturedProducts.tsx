@@ -5,6 +5,29 @@ import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-rea
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
+// Get a "family key" from a product name — strips sizes, colors, quantities to identify duplicates
+function getProductFamily(name: string): string {
+  return name.toLowerCase()
+    .replace(/\b(small|medium|large|x-?large|xl|xxl)\b/gi, "")
+    .replace(/\b\d+\s*(oz|gal|qt|ml|fl|lb|ft|"|inch|rolls?|sheets?|ct|pk|bx|cs|per|carton|case)\b/gi, "")
+    .replace(/\b(white|black|blue|red|green|yellow|orange|pink|clear|natural|kraft)\b/gi, "")
+    .replace(/\b\d+\s*x\s*\d+/g, "")
+    .replace(/[®™,\-()]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 40);
+}
+
+function formatCardName(name: string): string {
+  let clean = name.replace(/\s*\([A-Z0-9-]+\)\s*$/, "").replace(/[®™]/g, "");
+  if (clean === clean.toUpperCase() && clean.length > 5) {
+    clean = clean.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    clean = clean.replace(/\b(Oz|Ply|Ft|Qt|Gal|Mil|Ct|Cs|Bx|Pk|Jr|Hd|Ups|Sds|Epa)\b/gi, m => m.toUpperCase());
+  }
+  if (clean.length > 80) clean = clean.slice(0, 77) + "...";
+  return clean.trim();
+}
+
 function FeaturedCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
@@ -24,7 +47,7 @@ function FeaturedCard({ product }: { product: ProductData }) {
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>
-          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-1 group-hover:text-mjs-red transition-colors">{product.cardTitle}</h3>
+          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors">{formatCardName(product.name)}</h3>
         </a>
         <div className="mt-1.5">
           <span className="text-base font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
@@ -72,7 +95,21 @@ export default function FeaturedProducts() {
       .then(r => r.json())
       .then(data => {
         const products = (data.products || []) as ProductData[];
-        setItems(products.filter((p: ProductData) => p.images?.[0] && !p.images[0].includes("placeholder")));
+        const filtered = products.filter((p: ProductData) => p.images?.[0] && !p.images[0].includes("placeholder"));
+        // Shuffle for fresh look each visit
+        for (let i = filtered.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+        }
+        // Dedupe by product family — only one of each type
+        const seenFamilies = new Set<string>();
+        const diverse = filtered.filter(p => {
+          const family = getProductFamily(p.name);
+          if (seenFamilies.has(family)) return false;
+          seenFamilies.add(family);
+          return true;
+        });
+        setItems(diverse.slice(0, 20));
       })
       .catch(() => {});
   }, []);

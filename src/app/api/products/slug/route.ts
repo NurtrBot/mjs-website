@@ -12,18 +12,18 @@ export async function GET(req: NextRequest) {
   try {
     // Build keyword search attempts from slug — try progressively shorter queries
     const noise = new Set(["for", "the", "per", "and", "with", "each", "carton", "case",
-      "box", "pack", "roll", "rolls", "bundle", "wrap", "gauge", "clear", "white",
-      "black", "blue", "green", "red", "yellow", "natural", "inch", "gallon", "item"]);
+      "box", "pack", "roll", "rolls", "bundle", "wrap", "gauge", "inch", "gallon", "item"]);
     const allWords = slug.split("-").filter(Boolean);
     const meaningfulWords = allWords
       .filter(w => w.length > 2 && !/^\d+$/.test(w) && !noise.has(w));
 
-    // Build search attempts: 4 words, 3 words, 2 words, first 2 raw words
+    // Build search attempts: 5 words, 4 words, 3 words, 2 words, first 3 raw words
     const attempts = [
+      meaningfulWords.slice(0, 5).join(" "),
       meaningfulWords.slice(0, 4).join(" "),
       meaningfulWords.slice(0, 3).join(" "),
       meaningfulWords.slice(0, 2).join(" "),
-      allWords.slice(0, 2).join(" "),
+      allWords.slice(0, 3).join(" "),
     ].filter(Boolean);
 
     // Deduplicate

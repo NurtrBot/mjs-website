@@ -33,7 +33,7 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
   ],
   "cleaning-chemicals": [
     { label: "Degreasers", subcategories: ["Degreasers"] },
-    { label: "All Purpose", subcategories: ["All Purpose Cleaners", "Bathroom Cleaners", "Glass Cleaners", "Oven Cleaners", "Specialty Cleaners", "Polishes"] },
+    { label: "All Purpose", subcategories: ["__all_purpose_whitelist__"] },
     { label: "Disinfectants", subcategories: ["Disinfectants", "Bleach"] },
     { label: "Hand Soaps", subcategories: ["Hand Soap & Sanitizer"] },
     { label: "Air Fresheners", subcategories: ["Air Fresheners"] },
@@ -75,53 +75,173 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
     { label: "Napkins", subcategories: ["Napkins"] },
     { label: "Food Storage", subcategories: ["Food Storage"] },
     { label: "Beverages", subcategories: ["Beverages"] },
-    { label: "Batteries", subcategories: ["Batteries"] },
   ],
   "equipment": [
     { label: "Dispensers", subcategories: ["Dispensers", "Tape Dispensers"] },
     { label: "Mops", subcategories: ["Mops & Handles", "Dust Mops"] },
     { label: "Brooms", subcategories: ["Brooms & Dustpans"] },
-    { label: "Buckets", subcategories: ["Buckets & Wringers"] },
+    { label: "Mop Buckets", subcategories: ["Buckets & Wringers"] },
     { label: "Vacuums", subcategories: ["Vacuums"] },
     { label: "Trash Cans", subcategories: ["Trash Cans", "Carts & Dollies"] },
     { label: "Window", subcategories: ["Window Equipment"] },
     { label: "Sprayers", subcategories: ["Sprayers & Bottles"] },
-    { label: "Microfiber", subcategories: ["Microfiber"] },
-    { label: "Rags & Wipers", subcategories: ["Rags & Wipers"] },
+    { label: "Rags & Wipers", subcategories: ["Rags & Wipers", "Microfiber"] },
     { label: "Brushes & Pads", subcategories: ["Brushes & Pads", "Pad Drivers"] },
     { label: "Dusters", subcategories: ["Dusters"] },
+    { label: "Batteries", subcategories: ["Batteries"] },
     { label: "Floor Machines", subcategories: ["Floor Machines", "Air Movers"] },
   ],
   "floor-care": [
     { label: "Floor Pads", subcategories: ["Floor Pads", "Stripping Pads", "Buffing Pads", "Polishing Pads", "Scrubbing Pads"] },
     { label: "Bonnets", subcategories: ["Bonnets"] },
-    { label: "Carpet Care", subcategories: ["Carpet Care"] },
+    { label: "Chemicals", subcategories: ["Floor Care", "Floor Strippers", "Floor Finishes", "Floor & Carpet", "Carpet Care"] },
   ],
   "car-detailing": [
-    { label: "Air Fresheners", subcategories: ["Air Fresheners"] },
-    { label: "Wash & Foam", subcategories: ["Wash"] },
-    { label: "Glass Care", subcategories: ["Glass"] },
-    { label: "Wax & Protection", subcategories: ["Wax & Protection"] },
+    { label: "Wonder Wafers", subcategories: ["__wonder_wafers__"] },
+    { label: "Air Freshener Gallons", subcategories: ["__jf_air_fresheners__"] },
   ],
+};
+
+/* ── Sub-filters: secondary filter buttons that appear when a main filter is active ── */
+const subFilters: Record<string, Record<string, { label: string; match: (name: string) => boolean }[]>> = {
+  "equipment": {
+    "Floor Machines": [
+      { label: "Floor Machines", match: (n) => /hercules|walk.behind|vol.?430/i.test(n) || (/floor machine/i.test(n) && !/brush/i.test(n) && !/pad driver/i.test(n)) },
+      { label: "Extractors", match: (n) => /extractor|sniper|spot.extractor/i.test(n) },
+      { label: "Restroom", match: (n) => /restroom|dragon/i.test(n) },
+      { label: "Air Mover", match: (n) => /air mover|genair|carpet dryer/i.test(n) },
+      { label: "Pad Drivers", match: (n) => /pad driver.*bristle|pad driver.*rotary/i.test(n) },
+      { label: "Floor Brushes", match: (n) => (/rotary floor brush|tampico|polypropylene.*floor|nylon.*floor/i.test(n)) && !/pad driver/i.test(n) },
+      { label: "Wands & Hoses", match: (n) => /dual jet wand|wand and hose/i.test(n) },
+    ],
+    "Vacuums": [
+      { label: "Upright", match: (n) => /upright|tradition|eureka|perfect.*p99|proforce/i.test(n) },
+      { label: "Backpack", match: (n) => /backpack|super coach|gofit|mosquito/i.test(n) },
+      { label: "Wet/Dry", match: (n) => /wet.*dry|storm|proguard|tank vacuum/i.test(n) },
+      { label: "Bags & Filters", match: (n) => /bag|filter|janitized|replacement|cloth/i.test(n) },
+    ],
+    "Window": [
+      { label: "Rubber Refills", match: (n) => /rubber refill|master rubber|rubber replacement/i.test(n) },
+      { label: "Channels", match: (n) => /channel/i.test(n) && !/handle/i.test(n) },
+      { label: "Handles", match: (n) => /handle/i.test(n) && !/extension/i.test(n) },
+      { label: "Washers", match: (n) => /washer|sleeve|golden glove/i.test(n) },
+      { label: "Squeegees", match: (n) => /squeeg/i.test(n) && !/handle/i.test(n) && !/holster/i.test(n) && !/soap|cleaning/i.test(n) },
+      { label: "Scrapers", match: (n) => /scraper|blade/i.test(n) },
+      { label: "Extension Poles", match: (n) => /extension pole|extension/i.test(n) },
+      { label: "Equipment", match: (n) => /bucket|holster|belt|tool|kit|soap|cleaning/i.test(n) },
+    ],
+    "Rags & Wipers": [
+      { label: "Microfiber", match: (n) => /microfiber|micro fiber|smartrag/i.test(n) },
+      { label: "Teri Towels", match: (n) => /teri|bar mop/i.test(n) },
+      { label: "Surgical", match: (n) => /surgical|blue towel/i.test(n) },
+      { label: "Cloth Rags", match: (n) => /cloth rag|knit rag|colored rag|colored knit/i.test(n) },
+    ],
+    "Mops": [
+      { label: "Dust Mop Heads", match: (n) => /dust mop head/i.test(n) },
+      { label: "Dust Mop Frames", match: (n) => /dust mop frame/i.test(n) },
+      { label: "Dust Mop Handles", match: (n) => /dust mop handle/i.test(n) },
+      { label: "Cotton Mop", match: (n) => /cotton.*mop head|cut.end.*cotton/i.test(n) },
+      { label: "Rayon Mop", match: (n) => /rayon/i.test(n) },
+      { label: "Loop Mop", match: (n) => /loop.*mop|super loop|laundry/i.test(n) },
+      { label: "Mop Handles", match: (n) => /mop.*handle|handle.*mop/i.test(n) && !/dust/i.test(n) },
+    ],
+    "Dispensers": [
+      { label: "Soap", match: (n) => /soap|sanitizer|foam|hand.*dispenser/i.test(n) && !/napkin/i.test(n) },
+      { label: "Roll Towel", match: (n) => /roll.*paper towel|roll towel|automated.*towel|lever/i.test(n) && !/center|multifold|m fold|c fold/i.test(n) },
+      { label: "Multifold & C-Fold", match: (n) => /multifold|multi-fold|m fold|c fold|folded towel|surface.mount.*paper|surface.mount.*towel|wall mount.*paper towel|wall mount.*towel dispenser|acrylic.*(432|towel)/i.test(n) && !/soap/i.test(n) },
+      { label: "Center Pull", match: (n) => /center.?pull/i.test(n) },
+      { label: "Jr Jumbo Tissue", match: (n) => /jumbo|jrt|junior/i.test(n) },
+      { label: "Toilet Tissue", match: (n) => /toilet.*paper|toilet.*tissue|double roll.*toilet|single roll.*toilet|2-roll/i.test(n) },
+      { label: "Seat Covers", match: (n) => /seat cover/i.test(n) },
+      { label: "Glove", match: (n) => /glove/i.test(n) },
+      { label: "Sanitary Napkin", match: (n) => /napkin|sanitary/i.test(n) },
+    ],
+  },
 };
 
 export default function CategoryPage({ slug }: { slug: string }) {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<number | null>(null);
+  const [activeSubFilter, setActiveSubFilter] = useState<number | null>(null);
 
   const categoryName = categoryNames[slug];
   const filters = quickFilters[slug] || [];
 
+  // Get active sub-filters for the current main filter
+  const activeFilterLabel = activeFilter !== null ? filters[activeFilter]?.label : null;
+  const currentSubFilters = activeFilterLabel ? subFilters[slug]?.[activeFilterLabel] || [] : [];
+
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/products/category?slug=${slug}&limit=250`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products || []);
+
+    // For car-detailing: also fetch JF air freshener gallons from cleaning-chemicals
+    if (slug === "car-detailing") {
+      Promise.all([
+        fetch(`/api/products/category?slug=car-detailing&limit=250`).then(r => r.json()),
+        fetch(`/api/products/category?slug=cleaning-chemicals&limit=250`).then(r => r.json()),
+      ]).then(([carData, chemData]) => {
+        const carProducts = carData.products || [];
+        const jfAirFresheners = (chemData.products || []).filter((p: ProductData) =>
+          p.subcategory === "Air Fresheners" && p.brand?.toLowerCase().includes("janitors finest")
+        );
+        const seen = new Set(carProducts.map((p: ProductData) => p.sku));
+        const merged = [...carProducts];
+        for (const p of jfAirFresheners) {
+          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push(p); }
+        }
+        setProducts(merged);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }).catch(() => setLoading(false));
+    } else
+    // For gloves-safety: also fetch glove dispensers from equipment
+    if (slug === "gloves-safety") {
+      Promise.all([
+        fetch(`/api/products/category?slug=gloves-safety&limit=250`).then(r => r.json()),
+        fetch(`/api/products/category?slug=equipment&limit=250`).then(r => r.json()),
+      ]).then(([gloveData, equipData]) => {
+        const gloveProducts = gloveData.products || [];
+        const gloveDispensers = (equipData.products || []).filter((p: ProductData) =>
+          p.subcategory === "Dispensers" && /glove/i.test(p.name)
+        );
+        const seen = new Set(gloveProducts.map((p: ProductData) => p.sku));
+        const merged = [...gloveProducts];
+        for (const p of gloveDispensers) {
+          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push({ ...p, subcategory: "Dispensers" }); }
+        }
+        setProducts(merged);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    } else
+    // For floor-care: also fetch carpet/floor chemicals from cleaning-chemicals
+    if (slug === "floor-care") {
+      Promise.all([
+        fetch(`/api/products/category?slug=floor-care&limit=250`).then(r => r.json()),
+        fetch(`/api/products/category?slug=cleaning-chemicals&limit=250`).then(r => r.json()),
+      ]).then(([floorData, chemData]) => {
+        const floorProducts = floorData.products || [];
+        // Pull in carpet/floor chemicals
+        const floorChemicals = (chemData.products || []).filter((p: ProductData) =>
+          ["Carpet Care", "Floor Care", "Floor Strippers", "Floor Finishes", "Floor & Carpet"].includes(p.subcategory)
+        );
+        // Merge and dedupe
+        const seen = new Set(floorProducts.map((p: ProductData) => p.sku));
+        const merged = [...floorProducts];
+        for (const p of floorChemicals) {
+          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push(p); }
+        }
+        setProducts(merged);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    } else {
+      fetch(`/api/products/category?slug=${slug}&limit=250`)
+        .then((res) => res.json())
+        .then((data) => {
+          setProducts(data.products || []);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
   }, [slug]);
 
   if (!categoryName) {
@@ -138,9 +258,24 @@ export default function CategoryPage({ slug }: { slug: string }) {
     );
   }
 
-  const filtered = activeFilter !== null && filters[activeFilter]
-    ? products.filter((p) => filters[activeFilter].subcategories.includes(p.subcategory))
+  let filtered = activeFilter !== null && filters[activeFilter]
+    ? products.filter((p) => {
+        const subs = filters[activeFilter].subcategories;
+        // Special name-based filters
+        if (subs.includes("__wonder_wafers__")) return /wonder wafer/i.test(p.name);
+        if (subs.includes("__jf_air_fresheners__")) return /janitors finest/i.test(p.name) && p.subcategory === "Air Fresheners" && p.sku !== "31801EA";
+        if (subs.includes("__all_purpose_whitelist__")) {
+          const allowed = new Set(["3162EA","80301EA","12520EA","128EA","CLO60607CT","CPC53058"]);
+          return allowed.has(p.sku);
+        }
+        return subs.includes(p.subcategory);
+      })
     : products;
+
+  // Apply sub-filter if active
+  if (activeSubFilter !== null && currentSubFilters[activeSubFilter]) {
+    filtered = filtered.filter((p) => currentSubFilters[activeSubFilter].match(p.name));
+  }
 
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
@@ -169,7 +304,7 @@ export default function CategoryPage({ slug }: { slug: string }) {
           <div className="bg-white rounded-xl border border-gray-100 px-6 py-4 mb-6">
             <div className="flex flex-wrap items-center justify-center gap-2">
               <button
-                onClick={() => setActiveFilter(null)}
+                onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
                 className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
                   activeFilter === null
                     ? "bg-mjs-red text-white shadow-md shadow-red-200"
@@ -181,7 +316,7 @@ export default function CategoryPage({ slug }: { slug: string }) {
               {filters.map((filter, i) => (
                 <button
                   key={filter.label}
-                  onClick={() => setActiveFilter(activeFilter === i ? null : i)}
+                  onClick={() => { setActiveFilter(activeFilter === i ? null : i); setActiveSubFilter(null); }}
                   className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
                     activeFilter === i
                       ? "bg-mjs-red text-white shadow-md shadow-red-200"
@@ -192,6 +327,35 @@ export default function CategoryPage({ slug }: { slug: string }) {
                 </button>
               ))}
             </div>
+
+            {/* Sub-filters — appear when a main filter with sub-options is active */}
+            {currentSubFilters.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-1.5 mt-3 pt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setActiveSubFilter(null)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    activeSubFilter === null
+                      ? "bg-mjs-dark text-white"
+                      : "bg-gray-100 text-mjs-gray-500 hover:bg-gray-200 hover:text-mjs-dark"
+                  }`}
+                >
+                  All
+                </button>
+                {currentSubFilters.map((sf, i) => (
+                  <button
+                    key={sf.label}
+                    onClick={() => setActiveSubFilter(activeSubFilter === i ? null : i)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                      activeSubFilter === i
+                        ? "bg-mjs-dark text-white"
+                        : "bg-gray-100 text-mjs-gray-500 hover:bg-gray-200 hover:text-mjs-dark"
+                    }`}
+                  >
+                    {sf.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -1,14 +1,18 @@
+"use client";
+
 import { ArrowRight, Percent, Users, Truck } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function PromoBannerRow() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <section className="bg-mjs-gray-50 py-4">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Bulk Savings */}
-          <a
-            href="/quote"
-            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
+          {/* Bulk Savings — static, not clickable */}
+          <div
+            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4"
           >
             <div className="w-12 h-12 bg-mjs-red/20 rounded-xl flex items-center justify-center flex-shrink-0">
               <Percent className="w-6 h-6 text-mjs-red-light" />
@@ -19,10 +23,9 @@ export default function PromoBannerRow() {
                 Save up to 30% on volume orders
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
-          </a>
+          </div>
 
-          {/* Business Account */}
+          {/* Business Account → Contact Us */}
           <a
             href="/contact"
             className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
@@ -39,9 +42,9 @@ export default function PromoBannerRow() {
             <ArrowRight className="w-4 h-4 text-blue-400 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
           </a>
 
-          {/* Track Order */}
+          {/* Track Order → Login or Account */}
           <a
-            href="/account"
+            href={isLoggedIn ? "/account" : "/auth"}
             className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
           >
             <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">

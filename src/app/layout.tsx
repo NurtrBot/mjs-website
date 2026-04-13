@@ -28,7 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <head>
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer />
+      </head>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
+        <div id="google_translate_element" style={{ display: "none" }} />
         <AuthProvider>
           <OrderProvider>
             <ShippingProvider>
