@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
         status_id: 1, // Pending — triggers BC order notification emails
         staff_notes: staffNotes,
         customer_message: notes || "",
-      });
+      }) as { id: number };
 
       const orderId = order.id;
 
