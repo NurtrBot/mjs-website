@@ -187,6 +187,16 @@ export async function getProductImages(productId: number): Promise<BCProductImag
   return res.data || [];
 }
 
+/* ── Variants (for V2 order creation) ── */
+export async function getProductVariants(productId: number): Promise<{ id: number; option_values: { id: number; option_id: number }[] }[]> {
+  try {
+    const res = await bcFetch(`/catalog/products/${productId}/variants`, { limit: "10" });
+    return res.data || [];
+  } catch {
+    return [];
+  }
+}
+
 /* ── Reviews ── */
 export interface BCReview {
   id: number;
@@ -406,13 +416,14 @@ export async function createOrderFromCheckout(cartId: string) {
 
 /* ── Step 7: Update Order Status (for bill-to-account / cash) ── */
 export async function updateOrderStatus(orderId: number, statusId: number) {
-  const res = await fetch(`${V2_URL}/orders/${orderId}`, {
-    method: "PUT",
-    headers: AUTH_HEADERS,
-    body: JSON.stringify({ status_id: statusId }),
-  });
-  if (!res.ok) throw new Error(`Failed to update order status: ${res.status}`);
-  return res.json();
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`, { status_id: statusId });
+}
+
+/* ── Update Order (general fields via V2) ── */
+export async function updateOrder(orderId: number, fields: Record<string, unknown>) {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`, fields);
 }
 
 /* ── Helper: Get product ID by SKU (for cart creation) ── */
@@ -428,6 +439,60 @@ export async function getProductIdBySku(sku: string): Promise<number | null> {
 /* ── Helper: Delete Cart (cleanup) ── */
 export async function deleteCart(cartId: string) {
   await bcDelete(`/carts/${cartId}`);
+}
+
+/* ── Create Order Directly via V2 (bypasses checkout pipeline / EverEye) ── */
+export async function createV2Order(data: {
+  customer_id?: number;
+  billing_address: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    company?: string;
+    street_1: string;
+    street_2?: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+    country_iso2: string;
+    phone?: string;
+  };
+  shipping_addresses: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    company?: string;
+    street_1: string;
+    street_2?: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+    country_iso2: string;
+    phone?: string;
+  }[];
+  products: {
+    product_id: number;
+    quantity: number;
+    product_options?: { id: number; value: string }[];
+  }[];
+  status_id?: number;
+  staff_notes?: string;
+  customer_message?: string;
+}) {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  const body = {
+    customer_id: data.customer_id || 0,
+    billing_address: data.billing_address,
+    shipping_addresses: data.shipping_addresses,
+    products: data.products,
+    status_id: data.status_id || 7,
+    ...(data.staff_notes ? { staff_notes: data.staff_notes } : {}),
+    ...(data.customer_message ? { customer_message: data.customer_message } : {}),
+  };
+  const result = await nativeRequest("POST", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders`, body);
+  return result;
 }
 
 /* ── Storefront Token (for embedded payment) ── */
@@ -452,6 +517,16 @@ export async function getPaymentAccessToken(orderId: number): Promise<string> {
   return token;
 }
 
+/* ── Get accepted payment methods for an order ── */
+export async function getAcceptedPaymentMethods(orderId: number): Promise<{ id: string; name: string }[]> {
+  try {
+    const res = await bcFetch(`/payments/methods`, { order_id: String(orderId) });
+    return res.data || [];
+  } catch {
+    return [];
+  }
+}
+
 /* ── Process card payment ── */
 export async function processCardPayment(
   paymentToken: string,
@@ -461,7 +536,8 @@ export async function processCardPayment(
     expiryMonth: number;
     expiryYear: number;
     verificationValue: string;
-  }
+  },
+  paymentMethodId?: string
 ): Promise<{ status: string; transactionId?: string }> {
   const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
   const url = `https://payments.bigcommerce.com/stores/${storeHash}/payments`;
@@ -477,7 +553,7 @@ export async function processCardPayment(
           expiry_year: card.expiryYear,
           verification_value: card.verificationValue,
         },
-        payment_method_id: "qbmsv2.card",
+        payment_method_id: paymentMethodId || "qbmsv2.card",
       },
     });
 

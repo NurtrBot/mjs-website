@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, ShoppingCart, Minus, Plus } from "lucide-react";
-import { allProducts, type ProductData } from "@/data/products";
+import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,41 +11,7 @@ import Footer from "@/components/Footer";
 const hasRealImage = (p: ProductData) =>
   p.images.length > 0 && !p.images[0].includes("placeholder");
 
-function scoreProduct(p: ProductData, query: string): number {
-  const q = query.toLowerCase().trim();
-  const tokens = q.split(/\s+/).filter(Boolean);
-  const sku = p.sku.toLowerCase();
-  const name = p.name.toLowerCase();
-  const cardTitle = p.cardTitle.toLowerCase();
-  const brand = p.brand.toLowerCase();
-  const category = p.category.toLowerCase();
-  const subcategory = p.subcategory.toLowerCase();
-  const searchable = `${name} ${cardTitle} ${brand} ${category} ${subcategory} ${sku}`;
-
-  let score = 0;
-
-  if (sku === q) return 1000;
-  if (sku.startsWith(q)) score += 200;
-  else if (sku.includes(q)) score += 150;
-
-  if (cardTitle.includes(q)) score += 100;
-  if (name.includes(q)) score += 80;
-  if (brand.includes(q)) score += 60;
-
-  for (const token of tokens) {
-    if (searchable.includes(token)) score += 20;
-    if (cardTitle.includes(token)) score += 10;
-    if (brand.includes(token)) score += 5;
-    if (subcategory.includes(token)) score += 5;
-  }
-
-  const matchedTokens = tokens.filter((t) => searchable.includes(t)).length;
-  if (tokens.length > 1 && matchedTokens < tokens.length) {
-    score -= (tokens.length - matchedTokens) * 30;
-  }
-
-  return score;
-}
+// Scoring is now handled server-side in searchProducts()
 
 function ResultCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
@@ -71,18 +37,23 @@ function ResultCard({ product }: { product: ProductData }) {
       <div className="p-4">
         <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{product.brand}</div>
         <a href={`/product/${product.slug}`}>
-          <h3 className="text-sm font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors mt-1">
-            {product.cardTitle}
+          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors mt-1">
+            {product.name}
           </h3>
         </a>
         <div className="mt-2">
-          <span className="text-lg font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
-          {product.originalPrice && (
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-xs text-mjs-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
-              <span className="text-xs font-bold text-mjs-green">{discount}% OFF</span>
-            </div>
-          )}
+          {(() => {
+            const prices = product.quickBuy?.filter(q => q.unitPrice).map(q => q.unitPrice!) || [];
+            const lowestPrice = prices.length > 0 ? Math.min(...prices) : product.price;
+            const hasDiscount = lowestPrice < product.price;
+            return (
+              <>
+                {hasDiscount && <span className="text-xs text-mjs-gray-400 line-through mr-1.5">${product.price.toFixed(2)}</span>}
+                <span className="text-lg font-bold text-mjs-dark">${lowestPrice.toFixed(2)}</span>
+                {hasDiscount && <div className="text-[10px] font-semibold text-mjs-green mt-0.5">As low as ${lowestPrice.toFixed(2)}</div>}
+              </>
+            );
+          })()}
         </div>
         <div className="text-[11px] font-medium text-mjs-gray-500 mt-1">{product.pack}</div>
         <div className="text-[10px] text-mjs-gray-400 mt-0.5">SKU: {product.sku}</div>
@@ -116,47 +87,22 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
   const [query, setQuery] = useState(q);
-  const [bcResults, setBcResults] = useState<ProductData[]>([]);
+  const [results, setResults] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Local scored results
-  const localResults = useMemo(() => {
-    if (query.length < 2) return [];
-    return allProducts
-      .filter(hasRealImage)
-      .map((p) => ({ product: p, score: scoreProduct(p, query) }))
-      .filter((r) => r.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map((r) => r.product);
-  }, [query]);
-
-  // Fetch BC results
+  // Fetch BC results (live data with current descriptions)
   useEffect(() => {
-    if (query.length < 2) { setBcResults([]); return; }
+    if (query.length < 2) { setResults([]); return; }
     setLoading(true);
     fetch(`/api/products/search?q=${encodeURIComponent(query)}&limit=250`)
       .then((res) => res.json())
       .then((data) => {
-        setBcResults((data.products || []).filter(hasRealImage));
+        const products = (data.products || []).filter(hasRealImage) as ProductData[];
+        setResults(products);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [query]);
-
-  // Merge & dedup
-  const results = useMemo(() => {
-    const seenSlugs = new Set<string>();
-    const seenSkus = new Set<string>();
-    const merged: ProductData[] = [];
-    for (const p of [...localResults, ...bcResults]) {
-      const skuKey = p.sku.toLowerCase();
-      if (seenSlugs.has(p.slug) || seenSkus.has(skuKey)) continue;
-      seenSlugs.add(p.slug);
-      seenSkus.add(skuKey);
-      merged.push(p);
-    }
-    return merged;
-  }, [localResults, bcResults]);
 
   // Sync from URL param
   useEffect(() => {

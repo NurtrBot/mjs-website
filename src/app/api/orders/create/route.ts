@@ -10,6 +10,10 @@ import {
   getProducts,
   getPaymentAccessToken,
   processCardPayment,
+  getAcceptedPaymentMethods,
+  createV2Order,
+  getProductVariants,
+  updateOrder,
   type ShippingAddress,
 } from "@/lib/bigcommerce";
 
@@ -112,6 +116,86 @@ export async function POST(req: NextRequest) {
       lineItems.push({ product_id: productId, quantity: item.quantity });
     }
 
+    // ── BILL-TO-ACCOUNT / CASH: Create directly via V2 Orders API (bypasses EverEye) ──
+    if (paymentMethod === "bill" || paymentMethod === "cash") {
+      const billAddr = billingAddress && billingAddress.address1 ? billingAddress : shippingAddress;
+      const v2Addr = {
+        first_name: shippingAddress.firstName,
+        last_name: shippingAddress.lastName,
+        email: shippingAddress.email || "order@mobilejanitorialsupply.com",
+        company: shippingAddress.company || "",
+        street_1: shippingAddress.address1,
+        street_2: shippingAddress.address2 || "",
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zip: shippingAddress.zip,
+        country: "United States",
+        country_iso2: "US",
+        phone: shippingAddress.phone || "",
+      };
+      const v2BillAddr = {
+        first_name: billAddr.firstName || shippingAddress.firstName,
+        last_name: billAddr.lastName || shippingAddress.lastName,
+        email: billAddr.email || shippingAddress.email || "order@mobilejanitorialsupply.com",
+        company: billAddr.company || shippingAddress.company || "",
+        street_1: billAddr.address1 || shippingAddress.address1,
+        street_2: (billAddr as Record<string, unknown>).address2 as string || shippingAddress.address2 || "",
+        city: billAddr.city || shippingAddress.city,
+        state: billAddr.state || shippingAddress.state,
+        zip: billAddr.zip || shippingAddress.zip,
+        country: "United States",
+        country_iso2: "US",
+        phone: billAddr.phone || shippingAddress.phone || "",
+      };
+
+      const staffNotes = `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`;
+
+      // Resolve product variants/options for V2 API (required for products with mandatory options)
+      const v2Products = await Promise.all(
+        lineItems.map(async (li) => {
+          const variants = await getProductVariants(li.product_id);
+          if (variants.length > 0) {
+            const variant = variants[0]; // Use first/default variant
+            return {
+              product_id: li.product_id,
+              quantity: li.quantity,
+              product_options: variant.option_values.map((ov) => ({
+                id: ov.option_id,
+                value: String(ov.id),
+              })),
+            };
+          }
+          return { product_id: li.product_id, quantity: li.quantity };
+        })
+      );
+
+      const order = await createV2Order({
+        customer_id: customerId,
+        billing_address: v2BillAddr,
+        shipping_addresses: [v2Addr],
+        products: v2Products,
+        status_id: 1, // Pending — triggers BC order notification emails
+        staff_notes: staffNotes,
+        customer_message: notes || "",
+      });
+
+      const orderId = order.id;
+
+      // Now update to Awaiting Payment (7) for bill-to-account tracking
+      await updateOrderStatus(orderId, 7);
+
+      return NextResponse.json({
+        success: true,
+        orderId,
+        orderNumber: `MJS-${orderId}`,
+        shippingMethod: fulfillment === "pickup" ? "In-Store Pickup" : "Delivery",
+        shippingCost: 0,
+        paymentMethod,
+        fulfillment,
+      });
+    }
+
+    // ── CREDIT CARD: Use full checkout pipeline (Cart → Consignment → Order → Payment) ──
     // 2. Create cart
     const cart = await createCart(lineItems, customerId);
     const cartId = cart.id;
@@ -149,19 +233,14 @@ export async function POST(req: NextRequest) {
     let selectedOption;
 
     if (fulfillment === "pickup") {
-      // Find pickup option
       selectedOption = shippingOptions.find((o: { type: string }) => o.type === "pickupinstore" || o.type === "pickup");
       if (!selectedOption) selectedOption = shippingOptions.find((o: { description: string }) => o.description.toLowerCase().includes("pick up"));
     } else {
-      // Find cheapest delivery option (usually UPS Ground)
       const deliveryOptions = shippingOptions.filter((o: { type: string }) => o.type !== "pickupinstore" && o.type !== "pickup");
       selectedOption = deliveryOptions.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
     }
 
-    if (!selectedOption) {
-      // Fallback: pick the first available option
-      selectedOption = shippingOptions[0];
-    }
+    if (!selectedOption) selectedOption = shippingOptions[0];
 
     if (!selectedOption) {
       return NextResponse.json({ error: "No shipping options available for this address" }, { status: 400 });
@@ -169,7 +248,7 @@ export async function POST(req: NextRequest) {
 
     await selectShippingOption(cartId, String(consignment.id), selectedOption.id);
 
-    // 6. Set billing address — always ensure all required fields
+    // 6. Set billing address
     const billAddr = billingAddress && billingAddress.address1 ? billingAddress : shippingAddress;
     const billingEmail = billAddr.email || shippingAddress.email || "order@mobilejanitorialsupply.com";
     await setBillingAddress(cartId, {
@@ -187,19 +266,19 @@ export async function POST(req: NextRequest) {
       phone: billAddr.phone || shippingAddress.phone || "",
     });
 
-    // 7. Create order
+    // 7. Create order from checkout
     const order = await createOrderFromCheckout(cartId);
     const orderId = order.id;
 
-    // 8. Handle payment based on method
-    if (paymentMethod === "bill" || paymentMethod === "cash") {
-      // Bill-to-account or cash: set status to "Awaiting Payment" (7)
-      await updateOrderStatus(orderId, 7);
-    } else if (paymentMethod === "card" && card) {
-      // Credit card: process through BC Payments API → Intuit/QuickBooks
+    // 8. Process credit card payment
+    if (card) {
       const paymentToken = await getPaymentAccessToken(orderId);
 
-      // Parse expiry "MM / YY" or "MM/YY"
+      // Get the correct payment method ID for this order
+      const methods = await getAcceptedPaymentMethods(orderId);
+      const cardMethod = methods.find((m: { id: string }) => m.id.includes("card") || m.id.includes("qbms"));
+      const paymentMethodId = cardMethod?.id || "qbmsv2.card";
+
       const expiryParts = card.expiry.replace(/\s/g, "").split("/");
       const expiryMonth = parseInt(expiryParts[0]) || 1;
       let expiryYear = parseInt(expiryParts[1]) || 2026;
@@ -211,30 +290,21 @@ export async function POST(req: NextRequest) {
         expiryMonth,
         expiryYear,
         verificationValue: card.cvv,
-      });
+      }, paymentMethodId);
 
       if (paymentResult.status !== "success") {
         return NextResponse.json({ error: "Payment was declined. Please check your card details and try again." }, { status: 400 });
       }
     }
 
-    // 9. Add order notes if provided
-    if (notes) {
-      try {
-        await fetch(`https://api.bigcommerce.com/stores/${process.env.BIGCOMMERCE_STORE_HASH}/v2/orders/${orderId}`, {
-          method: "PUT",
-          headers: {
-            "X-Auth-Token": process.env.BIGCOMMERCE_ACCESS_TOKEN!,
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            staff_notes: `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}. ${notes}`,
-          }),
-        });
-      } catch {
-        // Non-critical, don't fail the order
-      }
+    // 9. Add order notes
+    try {
+      await updateOrder(orderId, {
+        staff_notes: `[New Website] Payment: card. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`,
+        customer_message: notes || "",
+      });
+    } catch {
+      // Non-critical, don't fail the order
     }
 
     return NextResponse.json({

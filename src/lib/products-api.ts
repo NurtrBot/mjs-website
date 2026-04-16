@@ -177,7 +177,11 @@ function transformProduct(bc: BCProduct): ProductData {
   }
 
   const slug = bc.custom_url?.url
-    ? bc.custom_url.url.replace(/^\/|\/$/g, "")
+    ? bc.custom_url.url
+        .replace(/^\/|\/$/g, "")   // trim leading/trailing slashes
+        .replace(/\//g, "-")        // replace internal slashes with dashes
+        .replace(/-{2,}/g, "-")     // collapse multiple dashes
+        .replace(/^-|-$/g, "")      // trim leading/trailing dashes
     : `product-${bc.id}`;
 
   return {
@@ -207,12 +211,15 @@ function transformProduct(bc: BCProduct): ProductData {
     cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
     pack,
     imageFit: "contain",
-    quickBuy: CUSTOM_PRICING[bc.sku] || [
-      { label: "1 Unit", qty: 1 },
-      { label: "3 Units", qty: 3, savings: "Save 5%" },
-      { label: "5 Units", qty: 5, savings: "Save 10%" },
-      { label: "10 Units", qty: 10, savings: "Save 15%" },
-    ],
+    quickBuy: CUSTOM_PRICING[bc.sku] || (() => {
+      const p = bc.calculated_price || bc.price;
+      return [
+        { label: "1 Unit", qty: 1, unitPrice: Math.round(p * 100) / 100 },
+        { label: "3 Units", qty: 3, unitPrice: Math.round(p * 0.95 * 100) / 100, savings: "Save 5%" },
+        { label: "5 Units", qty: 5, unitPrice: Math.round(p * 0.90 * 100) / 100, savings: "Save 10%" },
+        { label: "10 Units", qty: 10, unitPrice: Math.round(p * 0.85 * 100) / 100, savings: "Save 15%" },
+      ];
+    })(),
     sdsSheet: findSdsSheet(bc.sku || ""),
   };
 }
@@ -954,26 +961,300 @@ export async function fetchAllProducts(page = 1, limit = 50): Promise<{ products
   };
 }
 
-export async function searchProducts(keyword: string, limit = 250): Promise<ProductData[]> {
-  const allResults: ProductData[] = [];
-  const seen = new Set<number>();
-  let page = 1;
-  const maxPages = 4; // up to 1000 products
+/* ── Smart Search — synonym expansion + multi-query + scoring ── */
 
+// Colors and modifiers that should be used as post-filters, not BC keyword searches
+const SEARCH_COLORS = new Set([
+  "red", "blue", "green", "yellow", "orange", "purple", "pink", "black", "white",
+  "clear", "natural", "kraft", "gray", "grey", "brown", "tan", "beige", "teal",
+  "lavender", "lemon", "cherry", "lime", "mint", "amber",
+]);
+
+const SEARCH_SIZES = new Set([
+  "small", "medium", "large", "xl", "xxl", "xs",
+  "gallon", "quart", "pint", "oz", "ounce",
+]);
+
+const SEARCH_DESCRIPTORS = new Set([
+  "heavy", "duty", "lightweight", "thick", "thin", "strong", "premium", "economy",
+  "scented", "unscented", "antibacterial", "antimicrobial", "industrial", "commercial",
+  "biodegradable", "recycled", "compostable", "disposable", "reusable",
+  "powder", "powdered", "liquid", "gel", "foam", "spray", "concentrate",
+  "jumbo", "mini", "bulk", "single",
+]);
+
+// Split a query into searchable keywords vs post-filter modifiers
+function splitQueryModifiers(query: string): { searchTerms: string; filters: string[] } {
+  const tokens = query.toLowerCase().trim().split(/\s+/);
+  const searchWords: string[] = [];
+  const filterWords: string[] = [];
+
+  for (const token of tokens) {
+    if (SEARCH_COLORS.has(token) || SEARCH_SIZES.has(token) || SEARCH_DESCRIPTORS.has(token)) {
+      filterWords.push(token);
+    } else {
+      searchWords.push(token);
+    }
+  }
+
+  // If ALL words are filters (e.g. "purple"), put them back as search terms too
+  if (searchWords.length === 0) {
+    return { searchTerms: query, filters: [] };
+  }
+
+  return { searchTerms: searchWords.join(" "), filters: filterWords };
+}
+
+const SEARCH_SYNONYMS: Record<string, string[]> = {
+  // Paper & Restroom
+  "toilet paper": ["toilet tissue", "bath tissue", "bathroom tissue"],
+  "bath tissue": ["toilet tissue", "toilet paper"],
+  "tp": ["toilet tissue", "toilet paper"],
+  "paper towels": ["roll towel", "multifold", "c-fold", "center-pull"],
+  "paper towel": ["roll towel", "multifold", "c-fold", "center-pull"],
+  "hand towel": ["multifold", "c-fold", "center-pull", "roll towel"],
+  "hand towels": ["multifold", "c-fold", "center-pull", "roll towel"],
+  "napkins": ["napkin", "dinner napkin", "beverage napkin"],
+  "tissue": ["facial tissue", "toilet tissue"],
+  "seat covers": ["toilet seat cover", "half-fold seat"],
+  // Soap & Dispensers
+  "pink soap": ["hand soap pink", "lotion soap pink", "liquid soap pink"],
+  "hand soap": ["lotion soap", "liquid soap", "hand wash", "foam soap"],
+  "soap": ["hand soap", "lotion soap", "liquid soap", "dish soap"],
+  "sanitizer": ["hand sanitizer", "sanitizer gel", "purell"],
+  "dispenser": ["soap dispenser", "towel dispenser", "tissue dispenser", "sanitizer dispenser"],
+  // Chemicals
+  "bleach": ["clorox", "bleach", "sodium hypochlorite"],
+  "degreaser": ["degreaser", "green degreaser", "simple green", "all purpose"],
+  "floor cleaner": ["floor care", "mop solution", "floor finish", "floor stripper"],
+  "glass cleaner": ["window cleaner", "glass", "windex"],
+  "disinfectant": ["disinfectant", "sanitizer", "germicidal", "antibacterial"],
+  "all purpose": ["all purpose cleaner", "multi purpose", "general cleaner"],
+  "air freshener": ["air freshener", "odor control", "deodorizer", "wonder wafer"],
+  // Trash & Liners
+  "trash bags": ["trash liner", "can liner", "garbage bag"],
+  "trash liners": ["trash liner", "can liner", "garbage bag"],
+  "garbage bags": ["trash liner", "can liner", "garbage bag"],
+  "can liners": ["trash liner", "can liner"],
+  // Gloves
+  "gloves": ["nitrile gloves", "latex gloves", "vinyl gloves"],
+  "nitrile": ["nitrile gloves", "nitrile exam"],
+  "latex": ["latex gloves", "latex exam"],
+  "vinyl": ["vinyl gloves", "vinyl exam"],
+  // Equipment
+  "mop": ["mop", "mop head", "mop handle", "wet mop", "dust mop", "microfiber mop"],
+  "mops": ["mop", "mop head", "mop handle", "wet mop", "dust mop", "microfiber mop"],
+  "broom": ["broom", "push broom", "angle broom", "corn broom"],
+  "brooms": ["broom", "push broom", "angle broom", "corn broom"],
+  "bucket": ["bucket", "mop bucket", "wringer"],
+  "vacuum": ["vacuum", "vacuum cleaner", "upright vacuum", "backpack vacuum"],
+  "floor machine": ["floor machine", "burnisher", "buffer", "scrubber"],
+  "rags": ["rags", "wipers", "shop towel", "microfiber cloth"],
+  "wipes": ["wipes", "disinfecting wipes", "cleaning wipes", "sanitizing wipes"],
+  // Packaging
+  "stretch film": ["stretch film", "stretch wrap", "pallet wrap"],
+  "tape": ["packing tape", "masking tape", "duct tape", "carton sealing"],
+  "bubble wrap": ["bubble", "cushioning", "void fill"],
+  "boxes": ["corrugated box", "shipping box", "carton"],
+  // Breakroom
+  "cups": ["cup", "paper cup", "foam cup", "hot cup", "cold cup"],
+  "plates": ["plate", "paper plate", "foam plate"],
+  "forks": ["fork", "utensil", "cutlery", "flatware"],
+  "spoons": ["spoon", "utensil", "cutlery"],
+  "knives": ["knife", "utensil", "cutlery"],
+  "utensils": ["fork", "spoon", "knife", "cutlery", "flatware"],
+  "coffee": ["coffee", "coffee filter", "creamer", "sugar", "stir stick"],
+  "lids": ["lid", "cup lid", "dome lid", "flat lid"],
+  // Floor Care
+  "floor pads": ["floor pad", "stripping pad", "buffing pad", "polishing pad"],
+  "stripping pads": ["stripping pad", "black pad", "strip pad"],
+  "buffing pads": ["buffing pad", "red pad", "burnishing pad"],
+  // Car Detailing
+  "car wash": ["car wash", "auto wash", "vehicle wash", "car soap"],
+  "tire": ["tire shine", "tire dressing", "tire cleaner"],
+  // General
+  "dust pan": ["dustpan", "dust pan"],
+  "spray bottle": ["spray bottle", "trigger sprayer", "sprayer"],
+  "microfiber": ["microfiber", "micro fiber", "microfibre"],
+  // Color-based product searches
+  "purple chemical": ["chemical", "cleaner", "degreaser"],
+  "green chemical": ["chemical", "cleaner", "degreaser", "simple green"],
+  "blue chemical": ["chemical", "cleaner", "glass cleaner"],
+  "pink chemical": ["hand soap", "lotion soap"],
+  "black bags": ["can liner black", "trash liner black"],
+  "clear bags": ["can liner clear", "trash liner clear"],
+  "black gloves": ["nitrile gloves black", "nitrile black"],
+  "blue gloves": ["nitrile gloves blue", "nitrile blue"],
+  "white gloves": ["vinyl gloves", "latex gloves"],
+  // Common phrases
+  "cleaning supplies": ["cleaner", "chemical", "degreaser", "disinfectant"],
+  "janitorial supplies": ["janitors finest", "cleaner", "mop", "trash liner"],
+  "restroom supplies": ["toilet tissue", "hand soap", "paper towel", "seat cover", "urinal screen"],
+  "bathroom supplies": ["toilet tissue", "hand soap", "paper towel", "seat cover"],
+  "kitchen supplies": ["dish soap", "food service", "gloves", "paper towel"],
+  "safety supplies": ["gloves", "safety", "first aid"],
+  "food service": ["cup", "plate", "napkin", "cutlery", "container", "lid"],
+  // SKU patterns
+  "jf": ["janitors finest"],
+  "gjo": ["genuine joe"],
+};
+
+function expandSearchTerms(query: string): string[] {
+  const q = query.toLowerCase().trim();
+  const terms = new Set<string>();
+  terms.add(q);
+
+  // Check for exact synonym matches first (multi-word)
+  for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
+    if (q === key || q.includes(key)) {
+      for (const syn of synonyms) terms.add(syn);
+    }
+  }
+
+  // Check individual tokens for single-word synonyms
+  const tokens = q.split(/\s+/);
+  for (const token of tokens) {
+    if (SEARCH_SYNONYMS[token]) {
+      for (const syn of SEARCH_SYNONYMS[token]) terms.add(syn);
+    }
+  }
+
+  return Array.from(terms);
+}
+
+function scoreSearchResult(p: ProductData, query: string): number {
+  const q = query.toLowerCase().trim();
+  const tokens = q.split(/\s+/).filter(Boolean);
+  const name = p.name.toLowerCase();
+  const cardTitle = p.cardTitle.toLowerCase();
+  const brand = p.brand.toLowerCase();
+  const sku = p.sku.toLowerCase();
+  const category = p.category.toLowerCase();
+  const subcategory = p.subcategory.toLowerCase();
+  const desc = p.description.toLowerCase();
+  const searchable = `${name} ${cardTitle} ${brand} ${category} ${subcategory} ${sku} ${desc}`;
+
+  let score = 0;
+
+  // Exact SKU match
+  if (sku === q) return 10000;
+  if (sku.startsWith(q)) score += 500;
+  else if (sku.includes(q)) score += 300;
+
+  // Full query in name/title
+  if (name.includes(q)) score += 200;
+  if (cardTitle.includes(q)) score += 180;
+  if (brand === q) score += 150;
+
+  // Token matching — every token must be somewhere
+  let allTokensMatch = true;
+  for (const token of tokens) {
+    if (searchable.includes(token)) {
+      score += 30;
+      if (name.includes(token)) score += 20;
+      if (cardTitle.includes(token)) score += 15;
+      if (brand.includes(token)) score += 10;
+      if (subcategory.includes(token)) score += 10;
+    } else {
+      allTokensMatch = false;
+      score -= 50;
+    }
+  }
+
+  // Bonus for all tokens matching
+  if (allTokensMatch && tokens.length > 1) score += 100;
+
+  // Boost products with images
+  if (p.images?.[0] && !p.images[0].includes("placeholder")) score += 20;
+
+  // Boost in-stock
+  if (p.inStock) score += 10;
+
+  return score;
+}
+
+async function fetchWithKeyword(keyword: string, seen: Set<number>, maxPages = 2): Promise<ProductData[]> {
+  const results: ProductData[] = [];
+  let page = 1;
   while (page <= maxPages) {
     const res = await getProducts({ keyword, limit: 250, page, is_visible: true });
     for (const p of res.data) {
       if (!seen.has(p.id) && p.price > 0) {
         seen.add(p.id);
         const transformed = transformProduct(p);
-        if (transformed) allResults.push(transformed);
+        if (transformed) results.push(transformed);
       }
     }
     if (page >= res.meta.pagination.total_pages) break;
     page++;
   }
+  return results;
+}
 
-  return allResults;
+export async function searchProducts(keyword: string, limit = 250): Promise<ProductData[]> {
+  const seen = new Set<number>();
+  const allResults: ProductData[] = [];
+
+  // Split query into searchable terms and post-filter modifiers (colors, sizes, descriptors)
+  const { searchTerms: coreQuery, filters } = splitQueryModifiers(keyword);
+
+  // Expand the core query into synonym variations
+  const searchTerms = expandSearchTerms(coreQuery);
+
+  // Also expand the full original query (catches multi-word synonym matches like "pink soap")
+  const fullExpanded = expandSearchTerms(keyword);
+  for (const t of fullExpanded) searchTerms.push(t);
+
+  // Deduplicate
+  const uniqueTerms = [...new Set(searchTerms)];
+
+  // Also try individual words as separate searches for broader coverage
+  const coreTokens = coreQuery.split(/\s+/).filter(t => t.length > 2);
+  for (const token of coreTokens) {
+    if (!uniqueTerms.includes(token)) uniqueTerms.push(token);
+  }
+
+  // Search with all expanded terms in parallel (cap at 6 to avoid overload)
+  const termBatches = uniqueTerms.slice(0, 6);
+  const batchResults = await Promise.all(
+    termBatches.map(term => fetchWithKeyword(term, seen, 2))
+  );
+
+  for (const batch of batchResults) {
+    allResults.push(...batch);
+  }
+
+  // Also try SKU-based lookup if query looks like a SKU (alphanumeric, 3-15 chars)
+  const skuQuery = keyword.replace(/\s+/g, "").toUpperCase();
+  if (/^[A-Z0-9-]{3,15}$/.test(skuQuery)) {
+    const { getProductBySku } = await import("./bigcommerce");
+    const skuProduct = await getProductBySku(skuQuery);
+    if (skuProduct && !seen.has(skuProduct.id) && skuProduct.price > 0) {
+      seen.add(skuProduct.id);
+      const transformed = transformProduct(skuProduct);
+      if (transformed) allResults.push(transformed);
+    }
+  }
+
+  // Post-filter by modifiers (color, size, descriptors) — match against name + description
+  let filtered = allResults;
+  if (filters.length > 0) {
+    filtered = allResults.filter(p => {
+      const haystack = `${p.name} ${p.description} ${p.cardTitle} ${p.subcategory}`.toLowerCase();
+      return filters.every(f => haystack.includes(f));
+    });
+    // If post-filtering eliminated everything, fall back to scoring the full set
+    if (filtered.length === 0) filtered = allResults;
+  }
+
+  // Score and sort by relevance
+  const scored = filtered
+    .map(p => ({ product: p, score: scoreSearchResult(p, keyword) }))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(r => r.product);
+
+  return scored.slice(0, limit);
 }
 
 export { transformProduct };

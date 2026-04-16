@@ -11,8 +11,8 @@ import {
   Package,
   Phone,
 } from "lucide-react";
-import { LogOut } from "lucide-react";
-import { allProducts, type ProductData } from "@/data/products";
+import { LogOut, Globe } from "lucide-react";
+import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -94,62 +94,7 @@ export default function Header() {
   const hasRealImage = (p: ProductData) =>
     p.images.length > 0 && !p.images[0].includes("placeholder");
 
-  // Score a product against the search query — higher = better match
-  const scoreProduct = (p: ProductData, query: string): number => {
-    const q = query.toLowerCase().trim();
-    const tokens = q.split(/\s+/).filter(Boolean);
-    const sku = p.sku.toLowerCase();
-    const name = p.name.toLowerCase();
-    const cardTitle = p.cardTitle.toLowerCase();
-    const brand = p.brand.toLowerCase();
-    const category = p.category.toLowerCase();
-    const subcategory = p.subcategory.toLowerCase();
-    const searchable = `${name} ${cardTitle} ${brand} ${category} ${subcategory} ${sku}`;
-
-    let score = 0;
-
-    // Exact SKU match is top priority
-    if (sku === q) return 1000;
-    // SKU starts with query
-    if (sku.startsWith(q)) score += 200;
-    // SKU contains query
-    else if (sku.includes(q)) score += 150;
-
-    // Full query appears in name/title
-    if (cardTitle.includes(q)) score += 100;
-    if (name.includes(q)) score += 80;
-    if (brand.includes(q)) score += 60;
-
-    // Tokenized matching — each word that matches adds points
-    for (const token of tokens) {
-      if (searchable.includes(token)) score += 20;
-      // Bonus for matching in key fields
-      if (cardTitle.includes(token)) score += 10;
-      if (brand.includes(token)) score += 5;
-      if (subcategory.includes(token)) score += 5;
-    }
-
-    // Penalize if not all tokens match
-    const matchedTokens = tokens.filter(t => searchable.includes(t)).length;
-    if (tokens.length > 1 && matchedTokens < tokens.length) {
-      score -= (tokens.length - matchedTokens) * 30;
-    }
-
-    return score;
-  };
-
-  // Local instant filter — only products with real photos, scored and sorted
-  const localResults = searchQuery.length > 1
-    ? allProducts
-        .filter(hasRealImage)
-        .map(p => ({ product: p, score: scoreProduct(p, searchQuery) }))
-        .filter(r => r.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 6)
-        .map(r => r.product)
-    : [];
-
-  // BigCommerce search with debounce
+  // BigCommerce search with debounce — live data with current descriptions
   useEffect(() => {
     if (searchQuery.length < 2) { setBcSearchResults([]); return; }
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -165,20 +110,7 @@ export default function Header() {
     return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
   }, [searchQuery]);
 
-  // Merge local + BC results, deduplicate by slug AND sku
-  const seenSlugs = new Set<string>();
-  const seenSkus = new Set<string>();
-  const filteredProducts: ProductData[] = [];
-  // Local results first (curated, higher quality)
-  for (const p of [...localResults, ...bcSearchResults]) {
-    const skuKey = p.sku.toLowerCase();
-    if (seenSlugs.has(p.slug) || seenSkus.has(skuKey)) continue;
-    seenSlugs.add(p.slug);
-    seenSkus.add(skuKey);
-    filteredProducts.push(p);
-    if (filteredProducts.length >= 6) break;
-  }
-
+  const filteredProducts = bcSearchResults.slice(0, 6);
   const showSuggestions = searchFocused && filteredProducts.length > 0;
 
   return (
@@ -199,7 +131,7 @@ export default function Header() {
             <img
               src="/images/mjs-logo.png"
               alt="Mobile Janitorial Supply"
-              className="h-10 w-auto"
+              className="h-[52px] w-auto"
             />
             <div className="hidden md:block">
               <div className="text-[14px] font-black tracking-tight text-mjs-dark leading-none whitespace-nowrap">
@@ -223,12 +155,20 @@ export default function Header() {
           {/* Language Toggle */}
           <button
             onClick={toggleLanguage}
-            className="hidden lg:flex items-center gap-2 flex-shrink-0 ml-2 hover:bg-gray-50 rounded-full px-3 py-1.5 transition-colors border border-gray-200"
+            className="notranslate hidden lg:flex items-center gap-2 flex-shrink-0 ml-2 bg-gradient-to-r from-mjs-red to-red-600 hover:from-red-600 hover:to-red-700 rounded-full px-3.5 py-2 transition-all shadow-sm hover:shadow-md group"
           >
-            <span className="text-sm">{isSpanish ? "\uD83C\uDDFA\uD83C\uDDF8" : "\uD83C\uDDF2\uD83C\uDDFD"}</span>
-            <span className="text-[11px] font-semibold text-mjs-gray-600">
-              {isSpanish ? "English" : "Espa\u00f1ol"}
+            <span className="text-base leading-none">{isSpanish ? "🇺🇸" : "🇲🇽"}</span>
+            <span className="text-xs text-white font-semibold">
+              {isSpanish ? "English" : "Español"}
             </span>
+            <div className="flex items-center bg-white/20 rounded-full p-0.5">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
+                EN
+              </span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${!isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
+                ES
+              </span>
+            </div>
           </button>
 
           {/* Search Bar — centered */}
@@ -267,10 +207,21 @@ export default function Header() {
                         <img src={p.images[0]} alt={p.cardTitle} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-mjs-gray-800 truncate">{p.cardTitle}</div>
-                        <div className="text-xs text-mjs-gray-400">{p.brand} &middot; {p.pack}</div>
+                        <div className="text-xs font-semibold text-mjs-gray-800 line-clamp-2 leading-snug">{p.name}</div>
                       </div>
-                      <div className="text-sm font-bold text-mjs-dark flex-shrink-0">${p.price.toFixed(2)}</div>
+                      <div className="text-right flex-shrink-0">
+                        {(() => {
+                          const prices = p.quickBuy?.filter(q => q.unitPrice).map(q => q.unitPrice!) || [];
+                          const lowestPrice = prices.length > 0 ? Math.min(...prices) : p.price;
+                          const hasDiscount = lowestPrice < p.price;
+                          return (
+                            <>
+                              {hasDiscount && <div className="text-[10px] text-mjs-gray-400 line-through">${p.price.toFixed(2)}</div>}
+                              <div className="text-sm font-bold text-mjs-dark">{hasDiscount ? "As low as " : ""}${lowestPrice.toFixed(2)}</div>
+                            </>
+                          );
+                        })()}
+                      </div>
                     </a>
                   ))}
                   <a

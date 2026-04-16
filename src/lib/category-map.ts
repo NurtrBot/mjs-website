@@ -475,10 +475,10 @@ export const BC_CATEGORY_MAP: Record<number, string> = {
   // ── Restroom Signs (1296) → equipment ──────────────────────────────────
   1296: "equipment",
 
-  // ── Batteries (1249) → breakroom ───────────────────────────────────────
-  1249: "breakroom",
-  1250: "breakroom", // BULK BATTERIES
-  1453: "breakroom", // Batteries & Electrical Supplies (Essendant)
+  // ── Batteries (1249) → equipment ───────────────────────────────────────
+  1249: "equipment",
+  1250: "equipment", // BULK BATTERIES (Procell)
+  1453: "equipment", // Batteries & Electrical Supplies (Essendant)
 
   // ── Thermometers (1344) → equipment ────────────────────────────────────
   1344: "equipment",
