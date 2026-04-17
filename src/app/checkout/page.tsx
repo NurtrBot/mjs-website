@@ -16,6 +16,7 @@ import {
   CreditCard,
   ChevronDown,
   ChevronUp,
+  Store,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -33,13 +34,26 @@ export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState<"bill" | "card" | "cash" | "">(
     (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
   );
+  const [fulfillmentType, setFulfillmentType] = useState<"delivery" | "pickup">(
+    (orderSetup?.fulfillment as "delivery" | "pickup") || "delivery"
+  );
 
-  const isPickup = orderSetup?.fulfillment === "pickup";
+  const isPickup = fulfillmentType === "pickup";
   const isBillToAccount = selectedPayment === "bill";
   const isCash = selectedPayment === "cash";
 
+  const [isTaxExempt, setIsTaxExempt] = useState(false);
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/customers/tax-id?customerId=${user.id}`)
+        .then(r => r.json())
+        .then(data => { if (data.uploaded) setIsTaxExempt(true); })
+        .catch(() => {});
+    }
+  }, [user?.id]);
+
   const taxRate = 0.0775;
-  const tax = subtotal * taxRate;
+  const tax = isTaxExempt ? 0 : subtotal * taxRate;
   const shipping = isPickup ? 0 : shippingEstimate ?? 0;
   const total = subtotal + tax + shipping;
 
@@ -121,7 +135,10 @@ export default function CheckoutPage() {
   // Fetch real shipping estimate when zip changes
   useEffect(() => {
     if (isPickup || !form.zip || form.zip.length < 5 || items.length === 0) {
-      if (isPickup) setShippingEstimate(0);
+      if (isPickup) {
+        setShippingEstimate(0);
+        setShippingName("FREE Pickup");
+      }
       return;
     }
 
@@ -375,20 +392,84 @@ export default function CheckoutPage() {
               </section>
               )}
 
-              {/* Shipping */}
+              {/* Fulfillment Selection */}
+              <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                <h2 className="text-base font-bold text-mjs-dark mb-4">
+                  How would you like to receive your order?
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setFulfillmentType("delivery")}
+                    className={`relative rounded-xl border-2 p-4 text-center transition-all ${
+                      !isPickup
+                        ? "border-mjs-red bg-red-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Truck className={`w-6 h-6 mx-auto mb-2 ${!isPickup ? "text-mjs-red" : "text-mjs-gray-400"}`} />
+                    <div className={`text-sm font-bold ${!isPickup ? "text-mjs-dark" : "text-mjs-gray-600"}`}>Delivery</div>
+                    <div className="text-[10px] text-mjs-gray-400 mt-0.5">Ship to your address</div>
+                  </button>
+                  <button
+                    onClick={() => setFulfillmentType("pickup")}
+                    className={`relative rounded-xl border-2 p-4 text-center transition-all ${
+                      isPickup
+                        ? "border-emerald-500 bg-emerald-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Store className={`w-6 h-6 mx-auto mb-2 ${isPickup ? "text-emerald-600" : "text-mjs-gray-400"}`} />
+                    <div className={`text-sm font-bold ${isPickup ? "text-mjs-dark" : "text-mjs-gray-600"}`}>Pick Up</div>
+                    <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">Always FREE</div>
+                  </button>
+                </div>
+              </section>
+
+              {/* Shipping / Pickup Details */}
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <h2 className="text-base font-bold text-mjs-dark mb-4">
                   {isPickup ? "Pickup Location" : "Shipping Address"}
                 </h2>
 
                 {isPickup ? (
-                  <div className="bg-green-50 rounded-xl p-5 flex items-start gap-3">
-                    <Truck className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-sm font-bold text-green-700">Will Call — Anaheim Warehouse</div>
-                      <div className="text-xs text-green-600 mt-1">3066 E. La Palma Ave, Anaheim, CA 92806</div>
-                      <div className="text-xs text-green-600 mt-0.5">Mon — Fri, 6:30 AM — 2:45 PM</div>
-                      <div className="text-xs text-green-500 mt-2">Your order will be ready for pickup once confirmed.</div>
+                  <div>
+                    {/* Contact info for pickup (needed for order confirmation) */}
+                    {!user?.id && (
+                      <div className="mb-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className={labelClass}>Email</label>
+                            <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="your@email.com" className={inputClass} />
+                          </div>
+                          <div>
+                            <label className={labelClass}>Phone</label>
+                            <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="(714) 555-0100" className={inputClass} />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 mt-3">
+                          <div>
+                            <label className={labelClass}>First Name</label>
+                            <input type="text" value={form.firstName} onChange={(e) => update("firstName", e.target.value)} className={inputClass} />
+                          </div>
+                          <div>
+                            <label className={labelClass}>Last Name</label>
+                            <input type="text" value={form.lastName} onChange={(e) => update("lastName", e.target.value)} className={inputClass} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="bg-emerald-50 rounded-xl p-5 flex items-start gap-3">
+                      <Store className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-sm font-bold text-emerald-700">Will Call — Anaheim Warehouse</div>
+                        <div className="text-xs text-emerald-600 mt-1">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+                        <div className="text-xs text-emerald-600 mt-0.5">Mon — Fri, 6:30 AM — 2:45 PM</div>
+                        <div className="text-xs text-emerald-500 mt-2 font-medium">Your order will be ready for pickup once confirmed.</div>
+                        <div className="mt-3 inline-flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                          <ShieldCheck className="w-3 h-3" />
+                          FREE — No Shipping Charge
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -795,6 +876,20 @@ export default function CheckoutPage() {
                       return;
                     }
 
+                    // Store order details for confirmation page
+                    try {
+                      sessionStorage.setItem("mjs_order_confirm", JSON.stringify({
+                        items: items.map(i => ({ name: i.name, sku: i.sku, qty: i.qty, price: i.price, image: i.image, pack: i.pack })),
+                        subtotal,
+                        tax,
+                        shipping,
+                        total,
+                        shippingAddress: isPickup ? null : { name: `${form.firstName} ${form.lastName}`, company: form.company, address: form.address, city: form.city, state: form.state, zip: form.zip, phone: form.phone },
+                        customerName: user ? `${user.firstName}` : form.firstName,
+                        isTaxExempt,
+                      }));
+                    } catch {}
+
                     // Success — clear cart and redirect
                     clearCart();
                     clearOrderSetup();
@@ -923,8 +1018,8 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">Sales Tax</span>
-                      <span className="font-semibold text-mjs-gray-700">
-                        ${tax.toFixed(2)}
+                      <span className={`font-semibold ${isTaxExempt ? "text-emerald-600" : "text-mjs-gray-700"}`}>
+                        {isTaxExempt ? "TAX EXEMPT" : `$${tax.toFixed(2)}`}
                       </span>
                     </div>
                   </div>

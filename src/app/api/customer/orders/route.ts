@@ -27,7 +27,8 @@ export async function GET(req: NextRequest) {
             name: (p.name as string)?.slice(0, 80),
             sku: p.sku,
             qty: p.quantity,
-            price: p.total_inc_tax,
+            price: Number(p.base_price) || Number(p.price_inc_tax) || 0,
+            lineTotal: Number(p.total_inc_tax) || 0,
           })),
         };
       })

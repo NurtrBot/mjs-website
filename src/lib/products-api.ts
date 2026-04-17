@@ -393,8 +393,8 @@ function getSubcategory(bc: BCProduct): string {
   const siteSlug = getSiteCategory(bc.categories);
 
   // ── Dispensers — MUST check before paper/tissue/glove to avoid false matches ──
-  if (name.includes("tape dispenser") || name.includes("tape gun")) return "Tape Dispensers";
-  if (name.includes("dispenser")) return "Dispensers";
+  if ((name.includes("tape dispenser") || name.includes("tape gun")) && !name.includes("not included")) return "Tape Dispensers";
+  if (name.includes("dispenser") && !name.includes("not included")) return "Dispensers";
   if (name.includes("receptacle") && !name.includes("waste")) return "Dispensers";
 
   // ── Paper Products — granular subcategories ──
@@ -510,12 +510,14 @@ function getSubcategory(bc: BCProduct): string {
   // ── Packaging — more specific first ──
   if (name.includes("bubble")) return "Bubble Wrap";
   if (name.includes("peanut") || name.includes("spacepak")) return "Packing Peanuts";
-  if (name.includes("tape gun") || name.includes("tape dispenser")) return "Tape Dispensers";
+  if ((name.includes("tape gun") || name.includes("tape dispenser")) && !name.includes("not included")) return "Tape Dispensers";
   if (name.includes("tape")) return "Tape";
   if (name.includes("zip tie") || name.includes("cable tie") || name.includes("cable zip")) return "Cable Ties";
   if (name.includes("strapping") || name.includes("metal seal")) return "Steel Strapping";
   if (name.includes("poly bag") || name.includes("reclosable") || name.includes("gusseted")) return "Poly Bags";
   if (name.includes("label") || name.includes("packing slip") || name.includes("envelope")) return "Labels";
+  if (name.includes("machine") && (name.includes("stretch") || name.includes("film"))) return "Machine Film";
+  if ((name.includes("stretch") || name.includes("film")) && /\b(black|green|red|white|orange|yellow|blue|grren)\b/.test(name)) return "Colored Stretch Film";
   if (name.includes("stretch") || name.includes("film") || name.includes("wrap")) return "Stretch Film";
 
   // ── Equipment ──
@@ -526,7 +528,7 @@ function getSubcategory(bc: BCProduct): string {
   if (/\brag\b|\brags\b/.test(name) || name.includes("surgical towel") || name.includes("knit rag") || name.includes("teri towel") || name.includes("bar mop")) return "Rags & Wipers";
   if (name.includes("absorbent") || name.includes("spill")) return "Absorbents";
   if (name.includes("sweeping compound")) return "Sweeping Compounds";
-  if (name.includes("dispenser")) return "Dispensers";
+  if (name.includes("dispenser") && !name.includes("not included")) return "Dispensers";
   if (name.includes("dust mop")) return "Dust Mops";
   if (name.includes("mop bucket") || name.includes("bucket/wringer") || (name.includes("bucket") && name.includes("mop"))) return "Buckets & Wringers";
   if (name.includes("mop head") || name.includes("mop handle") || name.includes("mop")) return "Mops & Handles";

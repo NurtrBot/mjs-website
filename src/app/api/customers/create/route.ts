@@ -33,8 +33,32 @@ export async function POST(req: NextRequest) {
       } : undefined,
     });
 
+    // Claim any guest orders placed with this email
+    let claimedOrders = 0;
+    try {
+      const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+      const token = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
+      const ordersRes = await fetch(
+        `https://api.bigcommerce.com/stores/${storeHash}/v2/orders?email=${encodeURIComponent(email)}&customer_id=0&limit=50`,
+        { headers: { "X-Auth-Token": token, "Accept": "application/json" } }
+      );
+      if (ordersRes.ok) {
+        const guestOrders = await ordersRes.json();
+        if (Array.isArray(guestOrders)) {
+          const { updateOrder } = await import("@/lib/bigcommerce");
+          for (const order of guestOrders) {
+            try {
+              await updateOrder(order.id, { customer_id: customer.id });
+              claimedOrders++;
+            } catch {}
+          }
+        }
+      }
+    } catch {}
+
     return NextResponse.json({
       success: true,
+      claimedOrders,
       customer: {
         id: customer.id,
         firstName: customer.first_name,

@@ -31,7 +31,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/shop/packaging-film",
+    href: "/shop/trash-liners",
     gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-mjs-gold",
     image: "/banner-02.jpg",
@@ -75,10 +75,10 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/shop/cleaning-chemicals",
+    href: "/search?q=toss+ins",
     gradient: "from-[#87CEEB] via-[#87CEEB] to-[#87CEEB]",
     accent: "bg-blue-600",
-    image: "/banner-tossins.png",
+    image: "/banner-tossins-new.jpg",
     isBanner: true,
   },
 ];
@@ -118,6 +118,11 @@ export default function HeroBanner() {
       <div className="max-w-[1400px] mx-auto px-4 pt-4">
         {/* ═══ MAIN CAROUSEL ═══ */}
         <div className="relative rounded-2xl overflow-hidden">
+          {/* Clickable banner link */}
+          {slide.isBanner && (
+            <a href={slide.href} className="absolute inset-0 z-[5] cursor-pointer" />
+          )}
+
           {/* Background */}
           <div className="absolute inset-0">
             <img

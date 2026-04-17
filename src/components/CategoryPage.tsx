@@ -60,6 +60,8 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
   ],
   "packaging-film": [
     { label: "Stretch Film", subcategories: ["Stretch Film"] },
+    { label: "Colored Stretch Film", subcategories: ["Colored Stretch Film"] },
+    { label: "Machine Film", subcategories: ["Machine Film"] },
     { label: "Tape", subcategories: ["Tape"] },
     { label: "Tape Guns", subcategories: ["Tape Dispensers"] },
     { label: "Bubble Wrap", subcategories: ["Bubble Wrap"] },

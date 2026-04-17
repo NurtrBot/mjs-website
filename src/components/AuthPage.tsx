@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff, X, FileDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Eye, EyeOff, X, FileDown, Package, CheckCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AuthPage() {
@@ -26,6 +26,25 @@ export default function AuthPage() {
 
   const [signupError, setSignupError] = useState("");
   const [signupLoading, setSignupLoading] = useState(false);
+  const [guestOrderCount, setGuestOrderCount] = useState(0);
+  const [claimedOrders, setClaimedOrders] = useState(0);
+  const emailCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Check for guest orders when email is entered during signup
+  useEffect(() => {
+    if (mode !== "signup" || !email || !email.includes("@")) {
+      setGuestOrderCount(0);
+      return;
+    }
+    if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    emailCheckTimer.current = setTimeout(() => {
+      fetch(`/api/customers/check-email?email=${encodeURIComponent(email)}`)
+        .then(r => r.json())
+        .then(data => setGuestOrderCount(data.guestOrders || 0))
+        .catch(() => setGuestOrderCount(0));
+    }, 500);
+    return () => { if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current); };
+  }, [email, mode]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +63,7 @@ export default function AuthPage() {
         return;
       }
       login(data.customer);
+      setClaimedOrders(data.claimedOrders || 0);
       setShowSuccess(true);
     } catch {
       setSignupError("Something went wrong. Please try again.");
@@ -170,6 +190,19 @@ export default function AuthPage() {
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="john@company.com" className={inputClass} />
                   </div>
 
+                  {guestOrderCount > 0 && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                      <Package className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-sm font-bold text-blue-800">We recognize your email!</div>
+                        <div className="text-xs text-blue-600 mt-0.5">
+                          We found <span className="font-bold">{guestOrderCount} previous order{guestOrderCount !== 1 ? "s" : ""}</span>{" "}placed with this email.
+                          Complete your signup and they&apos;ll be automatically linked to your new account.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-medium text-mjs-gray-600">Password</label>
@@ -270,9 +303,24 @@ export default function AuthPage() {
             <p className="text-sm text-mjs-gray-500 mt-2 leading-relaxed">
               Your account has been created successfully. You&apos;re all set to start shopping at wholesale prices.
             </p>
-            <button onClick={closeSuccess} className="mt-6 bg-mjs-red text-white font-semibold px-8 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
-              Start Shopping
-            </button>
+            {claimedOrders > 0 && (
+              <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <p className="text-xs text-emerald-700 font-medium">
+                  <span className="font-bold">{claimedOrders} previous order{claimedOrders !== 1 ? "s" : ""}</span> linked to your account! View them in your dashboard.
+                </p>
+              </div>
+            )}
+            <div className="flex gap-3 mt-6">
+              {claimedOrders > 0 && (
+                <a href="/account" className="flex-1 bg-mjs-dark text-white font-semibold px-4 py-2.5 rounded-lg text-sm hover:bg-gray-800 transition-colors text-center">
+                  View Orders
+                </a>
+              )}
+              <button onClick={closeSuccess} className={`${claimedOrders > 0 ? "flex-1" : "w-full"} bg-mjs-red text-white font-semibold px-8 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors`}>
+                Start Shopping
+              </button>
+            </div>
           </div>
         </div>
       )}

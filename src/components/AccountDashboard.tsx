@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useOrderSetup } from "@/context/OrderContext";
@@ -8,19 +8,19 @@ import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
   CreditCard, Phone, Mail, RefreshCw, Eye, Star, Shield,
-  ChevronRight, Store, BadgePercent, Plus, X,
+  ChevronRight, Store, BadgePercent, Plus, X, Upload, FileCheck,
 } from "lucide-react";
 
 const tabs = ["Overview", "Orders", "Account Info"];
 
-/* ── Mock Order Data with Line Items ── */
 interface OrderLineItem {
   name: string;
   sku: string;
   qty: number;
   price: number;
+  lineTotal?: number;
 }
-interface MockOrder {
+interface OrderData {
   id: string;
   date: string;
   items: number;
@@ -31,66 +31,6 @@ interface MockOrder {
   tax: number;
   shipping: number;
 }
-
-const mockOrders: MockOrder[] = [
-  {
-    id: "MJS-10482", date: "Mar 25, 2026", items: 8, total: 487.32, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 34.52, shipping: 0,
-    lineItems: [
-      { name: "2-Ply Toilet Tissue, 96 Rolls/Case", sku: "5602", qty: 3, price: 48.99 },
-      { name: "Multifold Paper Towels, White, 4000/Carton", sku: "GJO21100", qty: 2, price: 39.99 },
-      { name: "Heavy Duty Green Degreaser, 1 Gallon", sku: "3180EA", qty: 2, price: 11.50 },
-      { name: "Fabulous Lavender Cleaner, Gallon", sku: "3162EA", qty: 1, price: 13.75 },
-    ],
-  },
-  {
-    id: "MJS-10461", date: "Mar 18, 2026", items: 12, total: 1243.50, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 89.22, shipping: 0,
-    lineItems: [
-      { name: "Premium Roll Towel, 12 Rolls/Carton", sku: "5108", qty: 4, price: 61.35 },
-      { name: "Jumbo Bath Tissue, 12 Rolls/Carton", sku: "5200", qty: 5, price: 36.99 },
-      { name: "Blue Nitrile Exam Gloves, 100/Box", sku: "8601", qty: 10, price: 5.99 },
-      { name: "Clear Can Liners 40-45 Gal, 250/Case", sku: "CL404814", qty: 3, price: 37.95 },
-    ],
-  },
-  {
-    id: "MJS-10445", date: "Mar 10, 2026", items: 5, total: 329.99, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 23.40, shipping: 0,
-    lineItems: [
-      { name: "Sanitizing Multi-Surface Wipes, 12/Carton", sku: "NICM30472", qty: 1, price: 109.34 },
-      { name: "Value Scents Lavender Spray, 12/CT", sku: "4385370", qty: 2, price: 54.28 },
-      { name: "Half-Fold Toilet Seat Covers, 5000/Carton", sku: "5800", qty: 1, price: 50.59 },
-    ],
-  },
-  {
-    id: "MJS-10430", date: "Mar 3, 2026", items: 15, total: 2105.80, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 151.20, shipping: 0,
-    lineItems: [
-      { name: "2-Ply Toilet Tissue, 96 Rolls/Case", sku: "5602", qty: 10, price: 48.99 },
-      { name: "Natural Multifold Towels, 4000/Carton", sku: "5302", qty: 8, price: 27.99 },
-      { name: "Mop Bucket/Wringer Combo, 35 QT", sku: "8036", qty: 2, price: 44.95 },
-      { name: "Boxed Facial Tissue, 30/Case", sku: "5701", qty: 5, price: 25.25 },
-    ],
-  },
-  {
-    id: "MJS-10412", date: "Feb 24, 2026", items: 6, total: 612.44, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 43.39, shipping: 0,
-    lineItems: [
-      { name: "Kitchen Roll Towels, 30 Rolls/Carton", sku: "ST852", qty: 4, price: 37.95 },
-      { name: "Black Nitrile Exam Gloves, 100/Box", sku: "8902EA", qty: 10, price: 7.99 },
-      { name: "Heavy Duty Green Degreaser, 1 Gallon", sku: "3180EA", qty: 4, price: 11.50 },
-    ],
-  },
-  {
-    id: "MJS-10398", date: "Feb 17, 2026", items: 9, total: 875.20, status: "Delivered", statusColor: "text-green-600 bg-green-50",
-    tax: 62.00, shipping: 0,
-    lineItems: [
-      { name: "Clear Stretch Film, 18\" x 1500'", sku: "FLM140180", qty: 3, price: 39.99 },
-      { name: "Urinal Deodorizer Screen, Ocean Mist, 10/Carton", sku: "DRIBBLEOM", qty: 5, price: 23.95 },
-      { name: "Automated Paper Towel Dispenser, Black", sku: "980144024", qty: 2, price: 89.95 },
-    ],
-  },
-];
 
 export default function AccountDashboard() {
   const { user } = useAuth();
@@ -114,11 +54,11 @@ export default function AccountDashboard() {
     state: "",
     zip: "",
   });
-  const [viewingOrder, setViewingOrder] = useState<MockOrder | null>(null);
+  const [viewingOrder, setViewingOrder] = useState<OrderData | null>(null);
   const [reordered, setReordered] = useState<string | null>(null);
 
   // Real BC data state
-  const [bcOrders, setBcOrders] = useState<MockOrder[]>([]);
+  const [bcOrders, setBcOrders] = useState<OrderData[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
 
   const mockUser = user || { firstName: "Guest", lastName: "", email: "", company: "" };
@@ -129,7 +69,7 @@ export default function AccountDashboard() {
     fetch(`/api/customer/orders?customerId=${user.id}`)
       .then(r => r.json())
       .then(data => {
-        const orders: MockOrder[] = (data.orders || []).map((o: Record<string, unknown>) => {
+        const orders: OrderData[] = (data.orders || []).map((o: Record<string, unknown>) => {
           const status = o.status as string;
           let statusColor = "text-mjs-gray-500 bg-gray-50";
           if (status === "Completed" || status === "Shipped" || status === "Delivered") statusColor = "text-green-600 bg-green-50";
@@ -150,6 +90,7 @@ export default function AccountDashboard() {
               sku: li.sku as string,
               qty: li.qty as number,
               price: Number(li.price) || 0,
+              lineTotal: Number(li.lineTotal) || 0,
             })),
           };
         });
@@ -200,7 +141,7 @@ export default function AccountDashboard() {
   // Only show real BC orders — no mock data for logged-in users
   const displayOrders = bcOrders;
 
-  const handleReorder = async (order: MockOrder) => {
+  const handleReorder = async (order: OrderData) => {
     // Fetch product details for images
     const results = await Promise.all(
       order.lineItems.map(item =>
@@ -246,6 +187,61 @@ export default function AccountDashboard() {
   }, [user]);
   const [editingCompany, setEditingCompany] = useState(false);
 
+  // Tax ID upload
+  const [taxIdUploaded, setTaxIdUploaded] = useState(false);
+  const [taxIdFileName, setTaxIdFileName] = useState<string | null>(null);
+  const [taxIdDate, setTaxIdDate] = useState<string | null>(null);
+  const [taxIdNumber, setTaxIdNumber] = useState("");
+  const [taxIdUploading, setTaxIdUploading] = useState(false);
+  const [taxIdError, setTaxIdError] = useState("");
+  const taxFileRef = useRef<HTMLInputElement>(null);
+
+  // Check tax ID status on mount
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/customers/tax-id?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.uploaded) {
+          setTaxIdUploaded(true);
+          setTaxIdFileName(data.taxIdNumber || "On File");
+          setTaxIdDate(data.uploadDate);
+          try { localStorage.setItem("mjs_tax_exempt", "true"); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, [user?.id]);
+
+  const handleTaxIdUpload = async (file: File) => {
+    if (!user?.id) return;
+    setTaxIdUploading(true);
+    setTaxIdError("");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("customerId", String(user.id));
+      formData.append("customerName", `${user.firstName} ${user.lastName}`);
+      formData.append("customerEmail", user.email || "");
+      formData.append("companyName", user.company || "");
+      formData.append("taxIdNumber", taxIdNumber.trim());
+
+      const res = await fetch("/api/customers/tax-id", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setTaxIdError(data.error || "Upload failed. Please try again.");
+      } else {
+        setTaxIdUploaded(true);
+        setTaxIdFileName(data.taxIdNumber || taxIdNumber.trim());
+        setTaxIdDate(data.uploadDate);
+        // Store tax exempt status in localStorage for checkout
+        try { localStorage.setItem("mjs_tax_exempt", "true"); } catch {}
+      }
+    } catch {
+      setTaxIdError("Something went wrong. Please try again.");
+    }
+    setTaxIdUploading(false);
+  };
+
   // Multi-address book
   interface SavedAddress {
     id: number;
@@ -256,11 +252,7 @@ export default function AccountDashboard() {
     state: string;
     zip: string;
   }
-  const [addresses, setAddresses] = useState<SavedAddress[]>([
-    { id: 1, label: "Main Office", company: "EasterDay Janitorial", address: "1200 W Main St", city: "Anaheim", state: "CA", zip: "92801" },
-    { id: 2, label: "Building B - Downtown", company: "EasterDay Janitorial", address: "500 S Grand Ave, Suite 300", city: "Los Angeles", state: "CA", zip: "90071" },
-    { id: 3, label: "Warehouse", company: "EasterDay Janitorial", address: "8800 Valley Blvd", city: "Rosemead", state: "CA", zip: "91770" },
-  ]);
+  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
   const [addressForm, setAddressForm] = useState({ label: "", company: "", address: "", city: "", state: "", zip: "" });
@@ -581,6 +573,67 @@ export default function AccountDashboard() {
         {/* ═══ ACCOUNT INFO TAB ═══ */}
         {activeTab === "Account Info" && (
           <div className="space-y-6">
+            {/* ── Tax ID / Resale Certificate Upload — only show when not yet activated ── */}
+            {!taxIdUploaded && (
+              <div className="rounded-2xl border shadow-sm p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-100">
+                    <Upload className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-sm font-bold text-mjs-dark">Tax Exempt? Upload Your Resale Certificate</h2>
+                    <p className="text-xs text-mjs-gray-500 mt-0.5">
+                      Upload your resale certificate or tax exempt ID and enter your Tax ID number. Once activated, tax will no longer be applied to your orders.
+                    </p>
+
+                    <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-end gap-3">
+                      <div className="flex-1 w-full sm:w-auto">
+                        <label className="block text-[10px] font-medium text-mjs-gray-600 mb-1 uppercase">Tax ID / Resale Number</label>
+                        <input
+                          type="text"
+                          value={taxIdNumber}
+                          onChange={(e) => setTaxIdNumber(e.target.value)}
+                          placeholder="e.g. 89-2374982"
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <input
+                          ref={taxFileRef}
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.webp"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleTaxIdUpload(file);
+                            e.target.value = "";
+                          }}
+                        />
+                        <button
+                          onClick={() => {
+                            if (!taxIdNumber.trim()) { setTaxIdError("Please enter your Tax ID number."); return; }
+                            taxFileRef.current?.click();
+                          }}
+                          disabled={taxIdUploading}
+                          className="flex items-center gap-2 bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg text-xs hover:bg-blue-700 shadow-sm transition-all disabled:opacity-50"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          {taxIdUploading ? "Uploading..." : "Upload & Activate"}
+                        </button>
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-mjs-gray-400 mt-1.5 block">PDF, JPG, or PNG — Max 10MB</span>
+
+                    {taxIdError && (
+                      <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-600 font-medium">
+                        {taxIdError}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ── Company Information ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
@@ -611,6 +664,18 @@ export default function AccountDashboard() {
                       </div>
                     </div>
                   ))}
+                  {taxIdUploaded && (
+                    <div className="sm:col-span-2 mt-2 flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-[10px] text-emerald-600 font-medium uppercase">Tax Exempt</div>
+                        <div className="text-sm font-bold text-emerald-800">TAX ID {taxIdFileName}</div>
+                      </div>
+                      <span className="bg-emerald-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full tracking-wide">ACTIVATED</span>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -1172,7 +1237,7 @@ export default function AccountDashboard() {
                       <td className="py-3 text-xs text-mjs-gray-500">{item.sku}</td>
                       <td className="py-3 text-sm text-mjs-gray-600 text-center">{item.qty}</td>
                       <td className="py-3 text-sm text-mjs-gray-600 text-right whitespace-nowrap">${item.price.toFixed(2)}</td>
-                      <td className="py-3 text-sm font-semibold text-mjs-dark text-right whitespace-nowrap">${(item.price * item.qty).toFixed(2)}</td>
+                      <td className="py-3 text-sm font-semibold text-mjs-dark text-right whitespace-nowrap">${(item.lineTotal || item.price * item.qty).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1185,7 +1250,7 @@ export default function AccountDashboard() {
                 <div className="flex justify-between text-sm">
                   <span className="text-mjs-gray-500">Subtotal</span>
                   <span className="font-semibold text-mjs-dark">
-                    ${viewingOrder.lineItems.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2)}
+                    ${viewingOrder.lineItems.reduce((s, i) => s + (i.lineTotal || i.price * i.qty), 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">

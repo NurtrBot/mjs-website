@@ -87,115 +87,68 @@ export async function POST(req: NextRequest) {
     const lineItems: { product_id: number; quantity: number }[] = [];
     for (const item of items) {
       let productId = item.productId;
+      const sku = item.sku || "";
 
-      // Try by SKU first
-      if (!productId && item.sku) {
-        productId = await getProductIdBySku(item.sku) ?? undefined;
+      // Try by SKU first (works for clean SKUs like "5200")
+      if (!productId && sku) {
+        productId = await getProductIdBySku(sku) ?? undefined;
       }
 
-      // Fallback: search by keyword from the slug
-      if (!productId && item.sku) {
+      // If SKU looks like a slug, try extracting potential SKU segments from it
+      if (!productId && sku.includes("-")) {
+        const segments = sku.split("-");
+        // Try each segment as a potential SKU (e.g. "5200" from "janitors-finest-5200-...")
+        for (const seg of segments) {
+          if (seg.length >= 3 && seg.length <= 15) {
+            const found = await getProductIdBySku(seg) ?? undefined;
+            if (found) { productId = found; break; }
+          }
+        }
+        // Also try last segment (common pattern: slug ends with SKU)
+        if (!productId) {
+          const lastSeg = segments[segments.length - 1].toUpperCase();
+          if (lastSeg.length >= 3) {
+            productId = await getProductIdBySku(lastSeg) ?? undefined;
+          }
+        }
+      }
+
+      // Fallback: search by keywords from the slug
+      if (!productId && sku) {
         try {
-          const keyword = item.sku.replace(/-/g, " ").split(" ").filter((w: string) => w.length > 2).slice(0, 4).join(" ");
-          const res = await getProducts({ keyword, limit: 5, is_visible: true });
-          // Try exact slug match first
-          const slugMatch = res.data.find((p: { custom_url?: { url: string } }) =>
-            p.custom_url?.url?.replace(/^\/|\/$/g, "").replace(/--+/g, "-") === item.sku.replace(/--+/g, "-")
-          );
-          if (slugMatch) {
-            productId = slugMatch.id;
-          } else if (res.data.length > 0) {
-            productId = res.data[0].id;
+          const words = sku.replace(/-/g, " ").split(" ").filter((w: string) => w.length > 2);
+          // Try progressively shorter keyword searches
+          const attempts = [
+            words.slice(0, 4).join(" "),
+            words.slice(0, 3).join(" "),
+            words.slice(0, 2).join(" "),
+          ].filter(Boolean);
+
+          for (const keyword of attempts) {
+            const res = await getProducts({ keyword, limit: 10, is_visible: true });
+            if (res.data.length === 0) continue;
+
+            // Try slug match
+            const normalizedSku = sku.replace(/\//g, "-").replace(/-{2,}/g, "-").replace(/^-|-$/g, "");
+            const slugMatch = res.data.find((p: { custom_url?: { url: string } }) => {
+              const pSlug = (p.custom_url?.url || "").replace(/^\/|\/$/g, "").replace(/\//g, "-").replace(/-{2,}/g, "-");
+              return pSlug === normalizedSku || pSlug.includes(normalizedSku) || normalizedSku.includes(pSlug);
+            });
+            if (slugMatch) { productId = slugMatch.id; break; }
+
+            // Use first result as fallback
+            if (res.data[0]?.id) { productId = res.data[0].id; break; }
           }
         } catch {}
       }
 
       if (!productId) {
-        return NextResponse.json({ error: `Product not found: ${item.sku}. Please remove it from your cart and try again.` }, { status: 400 });
+        return NextResponse.json({ error: `Product not found: ${sku}. Please remove it from your cart and try again.` }, { status: 400 });
       }
       lineItems.push({ product_id: productId, quantity: item.quantity });
     }
 
-    // ── BILL-TO-ACCOUNT / CASH: Create directly via V2 Orders API (bypasses EverEye) ──
-    if (paymentMethod === "bill" || paymentMethod === "cash") {
-      const billAddr = billingAddress && billingAddress.address1 ? billingAddress : shippingAddress;
-      const v2Addr = {
-        first_name: shippingAddress.firstName,
-        last_name: shippingAddress.lastName,
-        email: shippingAddress.email || "order@mobilejanitorialsupply.com",
-        company: shippingAddress.company || "",
-        street_1: shippingAddress.address1,
-        street_2: shippingAddress.address2 || "",
-        city: shippingAddress.city,
-        state: shippingAddress.state,
-        zip: shippingAddress.zip,
-        country: "United States",
-        country_iso2: "US",
-        phone: shippingAddress.phone || "",
-      };
-      const v2BillAddr = {
-        first_name: billAddr.firstName || shippingAddress.firstName,
-        last_name: billAddr.lastName || shippingAddress.lastName,
-        email: billAddr.email || shippingAddress.email || "order@mobilejanitorialsupply.com",
-        company: billAddr.company || shippingAddress.company || "",
-        street_1: billAddr.address1 || shippingAddress.address1,
-        street_2: (billAddr as Record<string, unknown>).address2 as string || shippingAddress.address2 || "",
-        city: billAddr.city || shippingAddress.city,
-        state: billAddr.state || shippingAddress.state,
-        zip: billAddr.zip || shippingAddress.zip,
-        country: "United States",
-        country_iso2: "US",
-        phone: billAddr.phone || shippingAddress.phone || "",
-      };
-
-      const staffNotes = `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`;
-
-      // Resolve product variants/options for V2 API (required for products with mandatory options)
-      const v2Products = await Promise.all(
-        lineItems.map(async (li) => {
-          const variants = await getProductVariants(li.product_id);
-          if (variants.length > 0) {
-            const variant = variants[0]; // Use first/default variant
-            return {
-              product_id: li.product_id,
-              quantity: li.quantity,
-              product_options: variant.option_values.map((ov) => ({
-                id: ov.option_id,
-                value: String(ov.id),
-              })),
-            };
-          }
-          return { product_id: li.product_id, quantity: li.quantity };
-        })
-      );
-
-      const order = await createV2Order({
-        customer_id: customerId,
-        billing_address: v2BillAddr,
-        shipping_addresses: [v2Addr],
-        products: v2Products,
-        status_id: 1, // Pending — triggers BC order notification emails
-        staff_notes: staffNotes,
-        customer_message: notes || "",
-      }) as { id: number };
-
-      const orderId = order.id;
-
-      // Now update to Awaiting Payment (7) for bill-to-account tracking
-      await updateOrderStatus(orderId, 7);
-
-      return NextResponse.json({
-        success: true,
-        orderId,
-        orderNumber: `MJS-${orderId}`,
-        shippingMethod: fulfillment === "pickup" ? "In-Store Pickup" : "Delivery",
-        shippingCost: 0,
-        paymentMethod,
-        fulfillment,
-      });
-    }
-
-    // ── CREDIT CARD: Use full checkout pipeline (Cart → Consignment → Order → Payment) ──
+    // ── ALL ORDERS: Use checkout pipeline (triggers BC email notifications) ──
     // 2. Create cart
     const cart = await createCart(lineItems, customerId);
     const cartId = cart.id;
@@ -270,11 +223,11 @@ export async function POST(req: NextRequest) {
     const order = await createOrderFromCheckout(cartId);
     const orderId = order.id;
 
-    // 8. Process credit card payment
-    if (card) {
+    // 8. Handle payment based on method
+    if (paymentMethod === "card" && card) {
+      // Credit card: process through BC Payments API
       const paymentToken = await getPaymentAccessToken(orderId);
 
-      // Get the correct payment method ID for this order
       const methods = await getAcceptedPaymentMethods(orderId);
       const cardMethod = methods.find((m: { id: string }) => m.id.includes("card") || m.id.includes("qbms"));
       const paymentMethodId = cardMethod?.id || "qbmsv2.card";
@@ -295,12 +248,15 @@ export async function POST(req: NextRequest) {
       if (paymentResult.status !== "success") {
         return NextResponse.json({ error: "Payment was declined. Please check your card details and try again." }, { status: 400 });
       }
+    } else {
+      // Bill-to-account or cash: set status to Awaiting Payment (7) — no payment processed
+      await updateOrderStatus(orderId, 7);
     }
 
     // 9. Add order notes
     try {
       await updateOrder(orderId, {
-        staff_notes: `[New Website] Payment: card. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`,
+        staff_notes: `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`,
         customer_message: notes || "",
       });
     } catch {

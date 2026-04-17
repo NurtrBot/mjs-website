@@ -1,101 +1,318 @@
 "use client";
 
+import React from "react";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { CheckCircle, Package, Truck, Store, ArrowRight, Phone } from "lucide-react";
+import { Suspense, useState, useEffect } from "react";
+import {
+  CheckCircle, Truck, Store, CreditCard, FileText,
+  ArrowRight, Phone, UserPlus, Package, Shield, Clock,
+  RotateCcw, ShoppingCart,
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/context/AuthContext";
+
+interface OrderItem {
+  name: string;
+  sku: string;
+  qty: number;
+  price: number;
+  image: string;
+  pack: string;
+}
+
+interface OrderDetails {
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  shippingAddress: { name: string; company: string; address: string; city: string; state: string; zip: string; phone: string } | null;
+  customerName: string;
+  isTaxExempt: boolean;
+}
 
 function ConfirmationContent() {
+  const { user, isLoggedIn } = useAuth();
   const params = useSearchParams();
   const orderId = params.get("order") || "";
   const method = params.get("method") || "bill";
   const fulfillment = params.get("fulfillment") || "delivery";
   const shipping = params.get("shipping") || "";
-  const shippingCost = params.get("shippingCost") || "0";
+  const shippingCost = Number(params.get("shippingCost") || "0");
+
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("mjs_order_confirm");
+      if (stored) {
+        setOrderDetails(JSON.parse(stored));
+        sessionStorage.removeItem("mjs_order_confirm");
+      }
+    } catch {}
+  }, []);
+
+  const isPickup = fulfillment === "pickup";
+  const customerName = orderDetails?.customerName || user?.firstName || "there";
+
+  // Estimated delivery dates (3-5 business days)
+  const now = new Date();
+  const estStart = new Date(now);
+  estStart.setDate(estStart.getDate() + 3);
+  // Skip weekends
+  while (estStart.getDay() === 0 || estStart.getDay() === 6) estStart.setDate(estStart.getDate() + 1);
+  const estEnd = new Date(estStart);
+  estEnd.setDate(estEnd.getDate() + 2);
+  while (estEnd.getDay() === 0 || estEnd.getDay() === 6) estEnd.setDate(estEnd.getDate() + 1);
+  const dateFmt = (d: Date) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
   return (
     <>
       <Header />
-      <main className="bg-mjs-gray-50 min-h-[70vh]">
-        <div className="max-w-[600px] mx-auto px-4 py-16">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-green-500" />
+      <main className="bg-gray-50 min-h-screen">
+        {/* ═══ Hero Banner ═══ */}
+        <div className="bg-mjs-dark text-white">
+          <div className="max-w-[1100px] mx-auto px-4 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-10 h-10 bg-mjs-red/20 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-mjs-red" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-wider text-mjs-red">Order Confirmed</span>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-black leading-tight">
+                Thanks, {customerName}.<br />
+                Your supplies are <span className="italic font-serif font-normal text-mjs-red">on the way.</span>
+              </h1>
+              <p className="text-sm text-gray-300 font-semibold mt-3 max-w-md leading-relaxed">
+                We&apos;ve received your order and our warehouse team is packing it now.
+                {!isPickup && " You'll get tracking details as soon as it ships."}
+                {isPickup && " We'll notify you when it's ready for pickup."}
+              </p>
+            </div>
+            <div className="bg-white/10 border border-white/15 rounded-2xl px-8 py-5 text-center flex-shrink-0 min-w-[220px]">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-mjs-red">Order Number</div>
+              <div className="text-3xl font-black mt-1 tracking-tight">{orderId}</div>
+              <div className="mt-3 text-[11px]">
+                <div className="text-gray-500 uppercase text-[9px]">Placed</div>
+                <div className="font-bold text-sm text-gray-300">{now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-[1100px] mx-auto px-4 py-8">
+          {/* ═══ Order Progress ═══ */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xs font-bold text-mjs-red uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-1 h-4 bg-mjs-red rounded-full" />
+                Order Progress
+              </h2>
+              {!isPickup && (
+                <span className="text-xs text-mjs-gray-500">
+                  Estimated delivery <span className="font-bold text-mjs-dark">{dateFmt(estStart)} — {dateFmt(estEnd)}</span>
+                </span>
+              )}
+            </div>
+            <div className="flex items-start w-full">
+              {[
+                { label: "Placed", sub: `Today, ${now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`, done: true, pulse: true },
+                { label: "Processing", sub: "Up next", done: false, pulse: false },
+                { label: isPickup ? "Ready" : "Shipped", sub: "", done: false, pulse: false },
+                { label: isPickup ? "Picked Up" : "Delivered", sub: "", done: false, pulse: false },
+              ].map((step, i, arr) => (
+                <React.Fragment key={i}>
+                  <div className="flex flex-col items-center relative flex-shrink-0">
+                    {step.pulse && (
+                      <div className="absolute w-10 h-10 bg-mjs-red/30 rounded-full animate-ping" />
+                    )}
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold relative z-10 ${
+                      step.done ? "bg-mjs-red text-white shadow-lg shadow-red-200" : "bg-gray-100 text-mjs-gray-400 border border-gray-200"
+                    }`}>
+                      {step.done ? <CheckCircle className="w-5 h-5" /> : i + 1}
+                    </div>
+                    <div className="mt-2.5 text-center">
+                      <div className={`text-[11px] font-bold ${step.done ? "text-mjs-dark" : "text-mjs-gray-400"}`}>{step.label}</div>
+                      {step.sub && <div className={`text-[9px] mt-0.5 ${step.done ? "text-mjs-gray-500" : "text-mjs-gray-400"}`}>{step.sub}</div>}
+                    </div>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div className={`flex-1 h-1 mt-4 mx-3 rounded-full ${step.done ? "bg-mjs-red" : "bg-gray-200"}`} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* ═══ Left Column — Order Items + Delivery ═══ */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Order Items */}
+              {orderDetails && orderDetails.items.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xs font-bold text-mjs-red uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="w-1 h-4 bg-mjs-red rounded-full" />
+                      Your Order &middot; {orderDetails.items.reduce((s, i) => s + i.qty, 0)} Item{orderDetails.items.reduce((s, i) => s + i.qty, 0) !== 1 ? "s" : ""}
+                    </h2>
+                  </div>
+
+                  <div className="divide-y divide-gray-50">
+                    {orderDetails.items.map((item, i) => (
+                      <div key={i} className="flex items-center gap-4 py-3">
+                        <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-mjs-dark truncate">{item.name}</div>
+                          <div className="text-[10px] text-mjs-gray-400 mt-0.5">
+                            {item.pack} &middot; SKU {item.sku} &middot; Qty {item.qty}
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-sm font-bold text-mjs-dark">${(item.price * item.qty).toFixed(2)}</div>
+                          <div className="text-[10px] text-mjs-gray-400">${item.price.toFixed(2)} / ea</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Totals */}
+                  <div className="border-t border-gray-100 mt-3 pt-4 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-mjs-gray-500">Subtotal</span>
+                      <span className="font-semibold">${orderDetails.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-mjs-gray-500">Shipping ({shipping || (isPickup ? "Pickup" : "Ground")})</span>
+                      <span className={`font-semibold ${shippingCost === 0 ? "text-emerald-600" : ""}`}>
+                        {shippingCost === 0 ? "FREE" : `$${shippingCost.toFixed(2)}`}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-mjs-gray-500">Tax</span>
+                      <span className={`font-semibold ${orderDetails.isTaxExempt ? "text-emerald-600" : ""}`}>
+                        {orderDetails.isTaxExempt ? "TAX EXEMPT" : `$${orderDetails.tax.toFixed(2)}`}
+                      </span>
+                    </div>
+                    <div className="border-t border-gray-100 pt-2 flex justify-between">
+                      <span className="text-sm font-bold text-mjs-dark">Total charged</span>
+                      <span className="text-xl font-black text-mjs-dark">${orderDetails.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
 
-            <h1 className="text-2xl font-black text-mjs-dark mb-2">Order Placed!</h1>
-            <p className="text-sm text-mjs-gray-500 mb-6">
-              Thank you for your order. Your order number is:
-            </p>
-
-            <div className="bg-mjs-gray-50 rounded-xl px-6 py-4 mb-6 inline-block">
-              <span className="text-2xl font-black text-mjs-red">{orderId}</span>
-            </div>
-
-            {/* Order Details */}
-            <div className="space-y-3 mb-8 text-left">
-              <div className="flex items-center gap-3 bg-mjs-gray-50 rounded-xl p-4">
-                {fulfillment === "pickup" ? (
-                  <Store className="w-5 h-5 text-green-600 flex-shrink-0" />
+            {/* ═══ Right Column — Actions ═══ */}
+            <div className="space-y-6">
+              {/* What's Next */}
+              <div className="bg-mjs-red rounded-2xl p-6 text-white">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1">What&apos;s Next</div>
+                <h3 className="text-base font-bold mb-2">Track your order anytime</h3>
+                <p className="text-xs text-white/70 leading-relaxed mb-5">
+                  Get live updates, download invoices, and manage your deliveries from your account dashboard.
+                </p>
+                {isLoggedIn ? (
+                  <a href="/account" className="block w-full bg-white text-mjs-red font-bold py-3 rounded-xl text-sm text-center hover:bg-gray-50 transition-colors">
+                    View my orders &rarr;
+                  </a>
                 ) : (
-                  <Truck className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <a href="/auth" className="block w-full bg-white text-mjs-red font-bold py-3 rounded-xl text-sm text-center hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    Sign up to track orders
+                  </a>
                 )}
-                <div>
-                  <div className="text-sm font-semibold text-mjs-dark">
-                    {fulfillment === "pickup" ? "Will Call — Anaheim Warehouse" : shipping}
-                  </div>
-                  <div className="text-xs text-mjs-gray-500">
-                    {fulfillment === "pickup"
-                      ? "3066 E. La Palma Ave, Anaheim, CA 92806"
-                      : Number(shippingCost) === 0 ? "FREE Shipping" : `Shipping: $${Number(shippingCost).toFixed(2)}`
-                    }
-                  </div>
-                </div>
+                <a href="/" className="block w-full bg-white/15 text-white font-bold py-3 rounded-xl text-sm text-center hover:bg-white/25 transition-colors mt-3">
+                  Continue shopping
+                </a>
               </div>
+            </div>
+          </div>
 
-              <div className="flex items-center gap-3 bg-mjs-gray-50 rounded-xl p-4">
-                <Package className="w-5 h-5 text-mjs-gray-400 flex-shrink-0" />
+          {/* ═══ Delivery & Payment + Need Help — side by side ═══ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            {/* Delivery & Payment */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="text-xs font-bold text-mjs-red uppercase tracking-wider flex items-center gap-1.5 mb-4">
+                <span className="w-1 h-4 bg-mjs-red rounded-full" />
+                Delivery & Payment
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <div className="text-sm font-semibold text-mjs-dark">
-                    {method === "bill" ? "Bill to Account — Net 30"
-                      : method === "cash" ? "Cash on Pickup"
-                      : "Credit Card"}
+                  <div className="flex items-center gap-2 mb-2">
+                    {isPickup ? <Store className="w-4 h-4 text-emerald-600" /> : <Truck className="w-4 h-4 text-blue-600" />}
+                    <span className="text-xs font-bold text-mjs-dark uppercase">{isPickup ? "Pickup At" : "Shipping To"}</span>
                   </div>
-                  <div className="text-xs text-mjs-gray-500">
-                    {method === "bill" ? "Invoice will be sent to your company"
-                      : method === "cash" ? "Payment collected at pickup"
-                      : "Payment processed"}
+                  {isPickup ? (
+                    <div className="text-xs text-mjs-gray-600 leading-relaxed">
+                      <div className="font-semibold">Anaheim Warehouse</div>
+                      <div>3066 E. La Palma Ave.</div>
+                      <div>Anaheim, CA 92806</div>
+                      <div className="mt-1 text-emerald-600 font-medium">Mon–Fri, 6:30 AM – 2:45 PM</div>
+                    </div>
+                  ) : orderDetails?.shippingAddress ? (
+                    <div className="text-xs text-mjs-gray-600 leading-relaxed">
+                      <div className="font-semibold">{orderDetails.shippingAddress.name}</div>
+                      {orderDetails.shippingAddress.company && <div>{orderDetails.shippingAddress.company}</div>}
+                      <div>{orderDetails.shippingAddress.address}</div>
+                      <div>{orderDetails.shippingAddress.city}, {orderDetails.shippingAddress.state} {orderDetails.shippingAddress.zip}</div>
+                      {orderDetails.shippingAddress.phone && <div>{orderDetails.shippingAddress.phone}</div>}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-mjs-gray-500">{shipping}</div>
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    {method === "card" ? <CreditCard className="w-4 h-4 text-mjs-gray-500" /> : <FileText className="w-4 h-4 text-mjs-gray-500" />}
+                    <span className="text-xs font-bold text-mjs-dark uppercase">Payment</span>
+                  </div>
+                  <div className="text-xs text-mjs-gray-600 leading-relaxed">
+                    <div className="font-semibold">
+                      {method === "bill" ? "Bill to Account — Net 30" : method === "cash" ? "Cash on Pickup" : "Credit Card"}
+                    </div>
+                    <div>
+                      {method === "bill" ? "Invoice will be sent to your company"
+                        : method === "cash" ? "Payment collected at pickup"
+                        : "Payment processed successfully"}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="space-y-3">
-              <a
-                href="/account"
-                className="w-full bg-mjs-red hover:bg-red-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-              >
-                View My Orders
-                <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="/"
-                className="w-full bg-mjs-gray-50 hover:bg-gray-100 text-mjs-dark font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-              >
-                Continue Shopping
-              </a>
-            </div>
-
-            {/* Support */}
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <p className="text-xs text-mjs-gray-400 mb-2">Questions about your order?</p>
-              <a href="tel:7147792640" className="inline-flex items-center gap-1.5 text-sm font-semibold text-mjs-red hover:text-red-700">
+            {/* Need Help */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-mjs-gray-400 mb-1">Need Help?</div>
+              <h3 className="text-sm font-bold text-mjs-dark mb-2">We&apos;re here for you</h3>
+              <p className="text-xs text-mjs-gray-500 leading-relaxed mb-4 flex-1">
+                Questions about your order, delivery, or need to change something? Our Orange County team is standing by.
+              </p>
+              <a href="tel:7147792640" className="flex items-center justify-center gap-2 w-full border border-gray-200 rounded-xl py-3 text-sm font-bold text-mjs-dark hover:bg-gray-50 transition-colors">
                 <Phone className="w-4 h-4" />
                 (714) 779-2640
               </a>
+              <div className="text-[10px] text-mjs-gray-400 text-center mt-2">Mon-Fri &middot; 6:30 AM – 3:00 PM PST</div>
             </div>
+          </div>
+
+          {/* ═══ Value Props ═══ */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            {[
+              { icon: Truck, title: "Free delivery on $399+", sub: "OC / LA / Inland Empire" },
+              { icon: FileText, title: "Net-30 terms available", sub: "Invoice-based billing for qualified accounts" },
+              { icon: Truck, title: "1-3 Day Local Delivery", sub: "OC / LA / IE / San Diego" },
+            ].map((prop) => (
+              <div key={prop.title} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col items-center text-center">
+                <prop.icon className="w-6 h-6 text-mjs-gray-400 mb-2" />
+                <div className="text-xs font-bold text-mjs-dark">{prop.title}</div>
+                <div className="text-[10px] text-mjs-gray-400 mt-0.5">{prop.sub}</div>
+              </div>
+            ))}
           </div>
         </div>
       </main>
@@ -106,7 +323,11 @@ function ConfirmationContent() {
 
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin" /></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin" />
+      </div>
+    }>
       <ConfirmationContent />
     </Suspense>
   );

@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { ShippingProvider } from "@/context/ShippingContext";
+import { PurchaseProvider } from "@/context/PurchaseContext";
 import CartPanel from "@/components/CartPanel";
 
 const inter = Inter({
@@ -34,14 +35,16 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
         <div id="google_translate_element" style={{ display: "none" }} />
         <AuthProvider>
-          <OrderProvider>
-            <ShippingProvider>
-              <CartProvider>
-                {children}
-                <CartPanel />
-              </CartProvider>
-            </ShippingProvider>
-          </OrderProvider>
+          <PurchaseProvider>
+            <OrderProvider>
+              <ShippingProvider>
+                <CartProvider>
+                  {children}
+                  <CartPanel />
+                </CartProvider>
+              </ShippingProvider>
+            </OrderProvider>
+          </PurchaseProvider>
         </AuthProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { usePurchases } from "@/context/PurchaseContext";
 
 function getProductFamily(name: string): string {
   return name.toLowerCase()
@@ -29,13 +30,21 @@ function formatCardName(name: string): string {
 
 function ArrivalCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
+  const { getPurchaseDate } = usePurchases();
   const [qty, setQty] = useState(1);
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+  const purchasedDate = getPurchaseDate(product.sku);
 
   return (
     <div className="flex-shrink-0 w-[190px] bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-[0_0_12px_rgba(0,0,0,0.1)] transition-all group relative">
+      {purchasedDate && (
+        <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+          Purchased {purchasedDate}
+        </div>
+      )}
       {product.badge && (
         <div className={`absolute top-2 left-2 z-10 ${product.badgeColor} text-white text-[9px] font-bold px-2 py-0.5 rounded`}>
           {product.badge}
@@ -138,7 +147,7 @@ export default function NewArrivals() {
             <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">JUST IN</span>
           </div>
           <div className="flex items-center gap-2">
-            <a href="/search?q=new+arrivals" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
+            <a href="/collection?type=new-arrivals" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
             <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
             </button>

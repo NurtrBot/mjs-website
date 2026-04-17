@@ -886,18 +886,16 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* Prop 65 Warning — chemicals only */}
-          {(product.category === "Cleaning Chemicals" || product.sdsSheet) && (
-            <div className="mt-4 flex items-start gap-3 text-xs text-mjs-gray-500 leading-relaxed">
-              <span className="text-amber-500 text-base flex-shrink-0 mt-px">&#9888;</span>
-              <p>
-                <span className="font-semibold text-mjs-gray-600">Attention CA Residents: Prop 65 Warning</span>
-                <br />
-                WARNING: This product can expose you to chemicals including lead, which are known to the State of California to cause cancer, birth defects, or other reproductive harm. For more information, go to{" "}
-                <a href="https://www.p65warnings.ca.gov" target="_blank" rel="noopener noreferrer" className="text-mjs-red hover:underline">www.p65warnings.ca.gov</a>.
-              </p>
-            </div>
-          )}
+          {/* Prop 65 Warning — all products */}
+          <div className="mt-4 flex items-start gap-3 text-xs text-mjs-gray-500 leading-relaxed">
+            <span className="text-amber-500 text-base flex-shrink-0 mt-px">&#9888;</span>
+            <p>
+              <span className="font-semibold text-mjs-gray-600">Attention CA Residents: Prop 65 Warning</span>
+              <br />
+              WARNING: This product can expose you to chemicals including lead, which are known to the State of California to cause cancer, birth defects, or other reproductive harm. For more information, go to{" "}
+              <a href="https://www.p65warnings.ca.gov" target="_blank" rel="noopener noreferrer" className="text-mjs-red hover:underline">www.p65warnings.ca.gov</a>.
+            </p>
+          </div>
         </div>
       </section>
 

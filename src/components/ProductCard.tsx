@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
 
 function formatCardName(name: string): string {
@@ -23,13 +24,21 @@ function formatCardName(name: string): string {
 
 export default function ProductCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
+  const { getPurchaseDate } = usePurchases();
   const [qty, setQty] = useState(1);
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+  const purchasedDate = getPurchaseDate(product.sku);
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative flex flex-col">
+      {purchasedDate && (
+        <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+          Purchased {purchasedDate}
+        </div>
+      )}
       {product.badge && (
         <div className={`absolute top-2 left-2 z-10 ${product.badgeColor} text-white text-[9px] font-bold px-2 py-0.5 rounded`}>
           {product.badge}
