@@ -180,8 +180,8 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (!couponConfig || couponDismissed) return;
-    // Check if already dismissed this session
-    try { if (sessionStorage.getItem(`mjs_coupon_${slug}`)) return; } catch {}
+    // Only stop showing if they already copied/claimed it
+    try { if (sessionStorage.getItem(`mjs_coupon_claimed_${slug}`)) return; } catch {}
     const timer = setTimeout(() => setShowCoupon(true), couponConfig.delay * 1000);
     return () => clearTimeout(timer);
   }, [slug, couponConfig, couponDismissed]);
@@ -193,15 +193,15 @@ export default function CategoryPage({ slug }: { slug: string }) {
     setTimeout(() => {
       setShowCoupon(false);
       setCouponDismissed(true);
-      try { sessionStorage.setItem(`mjs_coupon_${slug}`, "1"); } catch {}
+      try { sessionStorage.setItem(`mjs_coupon_claimed_${slug}`, "1"); } catch {}
     }, 1500);
   }, [couponConfig, slug]);
 
   const dismissCoupon = useCallback(() => {
     setShowCoupon(false);
     setCouponDismissed(true);
-    try { sessionStorage.setItem(`mjs_coupon_${slug}`, "1"); } catch {}
-  }, [slug]);
+    // Only dismiss for this page visit — will show again on refresh
+  }, []);
 
   const categoryName = categoryNames[slug];
   const filters = quickFilters[slug] || [];

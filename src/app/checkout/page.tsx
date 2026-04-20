@@ -55,7 +55,7 @@ export default function CheckoutPage() {
 
   // Promo code
   const [promoCode, setPromoCode] = useState("");
-  const [promoApplied, setPromoApplied] = useState<{ code: string; discount: number; name: string } | null>(null);
+  const [promoApplied, setPromoApplied] = useState<{ code: string; discount: number; name: string; appliesTo?: string } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
 
@@ -64,12 +64,27 @@ export default function CheckoutPage() {
     setPromoError("");
     setPromoLoading(true);
     try {
-      const res = await fetch(`/api/promo/validate?code=${encodeURIComponent(promoCode.trim())}&subtotal=${subtotal}`);
+      const res = await fetch("/api/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: promoCode.trim(),
+          subtotal,
+          items: items.map(i => ({
+            price: i.price,
+            qty: i.qty,
+            name: i.name || "",
+            sku: i.sku || "",
+            category: (i as Record<string, unknown>).category as string || "",
+            subcategory: (i as Record<string, unknown>).subcategory as string || "",
+          })),
+        }),
+      });
       const data = await res.json();
       if (!res.ok || !data.valid) {
         setPromoError(data.error || "Invalid promo code");
       } else {
-        setPromoApplied({ code: data.code, discount: data.discount, name: data.name });
+        setPromoApplied({ code: data.code, discount: data.discount, name: data.name, appliesTo: data.appliesTo });
       }
     } catch {
       setPromoError("Failed to validate code");
@@ -1077,7 +1092,12 @@ export default function CheckoutPage() {
                     </div>
                     {promoApplied && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-emerald-600">Discount ({promoApplied.code})</span>
+                        <span className="text-emerald-600">
+                          Discount ({promoApplied.code})
+                          {promoApplied.appliesTo === "select items" && (
+                            <span className="text-[10px] text-emerald-500 block">Applied to liner items only</span>
+                          )}
+                        </span>
                         <span className="font-semibold text-emerald-600">−${promoApplied.discount.toFixed(2)}</span>
                       </div>
                     )}
