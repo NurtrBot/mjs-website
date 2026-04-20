@@ -75,8 +75,8 @@ export default function CheckoutPage() {
             qty: i.qty,
             name: i.name || "",
             sku: i.sku || "",
-            category: (i as Record<string, unknown>).category as string || "",
-            subcategory: (i as Record<string, unknown>).subcategory as string || "",
+            category: (i as unknown as Record<string, string>).category || "",
+            subcategory: (i as unknown as Record<string, string>).subcategory || "",
           })),
         }),
       });
