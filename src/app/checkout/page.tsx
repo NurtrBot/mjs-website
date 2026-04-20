@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
   Store,
+  Tag,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -52,10 +53,43 @@ export default function CheckoutPage() {
     }
   }, [user?.id]);
 
-  const taxRate = 0.0775;
-  const tax = isTaxExempt ? 0 : subtotal * taxRate;
+  // Promo code
+  const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState<{ code: string; discount: number; name: string } | null>(null);
+  const [promoError, setPromoError] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  const applyPromo = async () => {
+    if (!promoCode.trim()) return;
+    setPromoError("");
+    setPromoLoading(true);
+    try {
+      const res = await fetch(`/api/promo/validate?code=${encodeURIComponent(promoCode.trim())}&subtotal=${subtotal}`);
+      const data = await res.json();
+      if (!res.ok || !data.valid) {
+        setPromoError(data.error || "Invalid promo code");
+      } else {
+        setPromoApplied({ code: data.code, discount: data.discount, name: data.name });
+      }
+    } catch {
+      setPromoError("Failed to validate code");
+    }
+    setPromoLoading(false);
+  };
+
+  const removePromo = () => {
+    setPromoApplied(null);
+    setPromoCode("");
+    setPromoError("");
+  };
+
+  const promoDiscount = promoApplied?.discount || 0;
+  const taxableSubtotal = subtotal - promoDiscount;
+  // Tax is estimated at 7.75% for display — BC calculates the actual tax at order creation
+  const estimatedTaxRate = 0.0775;
+  const tax = isTaxExempt ? 0 : taxableSubtotal * estimatedTaxRate;
   const shipping = isPickup ? 0 : shippingEstimate ?? 0;
-  const total = subtotal + tax + shipping;
+  const total = taxableSubtotal + tax + shipping;
 
   const [form, setForm] = useState({
     email: "",
@@ -860,6 +894,7 @@ export default function CheckoutPage() {
                           phone: billTo.phone || "",
                         } : undefined,
                         notes: form.notes || "",
+                        couponCode: promoApplied?.code || undefined,
                         card: payMethod === "card" ? {
                           cardName: form.cardName,
                           cardNumber: form.cardNumber,
@@ -876,14 +911,17 @@ export default function CheckoutPage() {
                       return;
                     }
 
-                    // Store order details for confirmation page
+                    // Store order details for confirmation page — use BC's actual totals
+                    const bc = data.bcTotals || {};
                     try {
                       sessionStorage.setItem("mjs_order_confirm", JSON.stringify({
                         items: items.map(i => ({ name: i.name, sku: i.sku, qty: i.qty, price: i.price, image: i.image, pack: i.pack })),
-                        subtotal,
-                        tax,
-                        shipping,
-                        total,
+                        subtotal: bc.subtotal || subtotal,
+                        promoCode: promoApplied?.code || null,
+                        promoDiscount: bc.discount || promoDiscount,
+                        tax: bc.tax || (isTaxExempt ? 0 : tax),
+                        shipping: bc.shipping || shipping,
+                        total: bc.total || total,
                         shippingAddress: isPickup ? null : { name: `${form.firstName} ${form.lastName}`, company: form.company, address: form.address, city: form.city, state: form.state, zip: form.zip, phone: form.phone },
                         customerName: user ? `${user.firstName}` : form.firstName,
                         isTaxExempt,
@@ -990,6 +1028,45 @@ export default function CheckoutPage() {
 
                   <div className="h-px bg-gray-100 mb-4" />
 
+                  {/* Promo Code */}
+                  <div className="mb-4">
+                    {promoApplied ? (
+                      <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-xs font-bold text-emerald-700">{promoApplied.code}</span>
+                          <span className="text-[10px] text-emerald-600">−${promoApplied.discount.toFixed(2)}</span>
+                        </div>
+                        <button onClick={removePromo} className="text-emerald-400 hover:text-emerald-600 transition-colors text-xs font-semibold">
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={promoCode}
+                            onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(""); }}
+                            placeholder="Promo code"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all font-mono tracking-wide"
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyPromo(); } }}
+                          />
+                          <button
+                            onClick={applyPromo}
+                            disabled={promoLoading || !promoCode.trim()}
+                            className="bg-mjs-dark text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-40"
+                          >
+                            {promoLoading ? "..." : "Apply"}
+                          </button>
+                        </div>
+                        {promoError && (
+                          <div className="text-[11px] text-red-500 mt-1.5 font-medium">{promoError}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Totals */}
                   <div className="space-y-2.5 mb-4">
                     <div className="flex justify-between text-sm">
@@ -998,6 +1075,12 @@ export default function CheckoutPage() {
                         ${subtotal.toFixed(2)}
                       </span>
                     </div>
+                    {promoApplied && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-emerald-600">Discount ({promoApplied.code})</span>
+                        <span className="font-semibold text-emerald-600">−${promoApplied.discount.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">
                         {shippingName || "Shipping"}
@@ -1017,7 +1100,7 @@ export default function CheckoutPage() {
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-mjs-gray-500">Sales Tax</span>
+                      <span className="text-mjs-gray-500">Est. Tax</span>
                       <span className={`font-semibold ${isTaxExempt ? "text-emerald-600" : "text-mjs-gray-700"}`}>
                         {isTaxExempt ? "TAX EXEMPT" : `$${tax.toFixed(2)}`}
                       </span>

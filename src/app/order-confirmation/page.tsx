@@ -24,6 +24,8 @@ interface OrderItem {
 interface OrderDetails {
   items: OrderItem[];
   subtotal: number;
+  promoCode?: string | null;
+  promoDiscount?: number;
   tax: number;
   shipping: number;
   total: number;
@@ -179,16 +181,22 @@ function ConfirmationContent() {
                     ))}
                   </div>
 
-                  {/* Totals */}
+                  {/* Totals — from BigCommerce actual calculations */}
                   <div className="border-t border-gray-100 mt-3 pt-4 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">Subtotal</span>
                       <span className="font-semibold">${orderDetails.subtotal.toFixed(2)}</span>
                     </div>
+                    {(orderDetails.promoDiscount || 0) > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-emerald-600">Discount{orderDetails.promoCode ? ` (${orderDetails.promoCode})` : ""}</span>
+                        <span className="font-semibold text-emerald-600">−${(orderDetails.promoDiscount || 0).toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm">
-                      <span className="text-mjs-gray-500">Shipping ({shipping || (isPickup ? "Pickup" : "Ground")})</span>
-                      <span className={`font-semibold ${shippingCost === 0 ? "text-emerald-600" : ""}`}>
-                        {shippingCost === 0 ? "FREE" : `$${shippingCost.toFixed(2)}`}
+                      <span className="text-mjs-gray-500">Shipping</span>
+                      <span className={`font-semibold ${orderDetails.shipping === 0 ? "text-emerald-600" : ""}`}>
+                        {orderDetails.shipping === 0 ? "FREE" : `$${orderDetails.shipping.toFixed(2)}`}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">

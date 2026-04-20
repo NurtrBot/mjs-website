@@ -27,7 +27,7 @@ import {
   FileText,
 } from "lucide-react";
 
-import { getProductBySlug, getRelatedProducts, type ProductData } from "@/data/products";
+import { getProductBySlug, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
 /* ───────── sub-components ───────── */
@@ -211,7 +211,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const localProduct = getProductBySlug(slug);
   const [product, setProduct] = useState<ProductData | null>(localProduct || null);
   const [loading, setLoading] = useState(!localProduct);
-  const relatedProducts = getRelatedProducts(slug, 6);
+  const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const { addItem } = useCart();
 
   // Fetch from BigCommerce if not found locally (or to get fresher data)
@@ -222,6 +222,12 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       .then((data) => {
         if (data.product) {
           setProduct(data.product);
+          // Fetch smart related products based on category/subcategory
+          const p = data.product;
+          fetch(`/api/products/related?category=${encodeURIComponent(p.category || "")}&subcategory=${encodeURIComponent(p.subcategory || "")}&sku=${encodeURIComponent(p.sku || "")}`)
+            .then(r => r.json())
+            .then(rd => { if (rd.products?.length > 0) setRelatedProducts(rd.products); })
+            .catch(() => {});
         }
         setLoading(false);
       })
@@ -808,15 +814,13 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       </section>
 
       {/* ═══════ 2. RECOMMENDED PRODUCTS (upsell) ═══════ */}
+      {relatedProducts.length > 0 && (
       <section className="bg-mjs-gray-50 border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-mjs-dark">
               You May Also Need
             </h2>
-            <a href="#" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark">
-              View All &rarr;
-            </a>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
             {relatedProducts.map((rp, i) => (
@@ -825,12 +829,12 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group"
               >
                 <a href={`/product/${rp.slug}`} className="block bg-mjs-gray-50 h-[170px] overflow-hidden">
-                  <img src={rp.images[0]} alt={rp.cardTitle} className="w-full h-full object-cover" />
+                  <img src={rp.images[0]} alt={rp.name} className="w-full h-full object-contain p-2" />
                 </a>
                 <div className="p-3.5">
                   <a href={`/product/${rp.slug}`}>
-                    <h3 className="text-[13px] font-semibold text-mjs-gray-800 leading-snug group-hover:text-mjs-red transition-colors">
-                      {rp.cardTitle}
+                    <h3 className="text-[11px] font-semibold text-mjs-gray-800 leading-snug group-hover:text-mjs-red transition-colors line-clamp-2">
+                      {rp.name}
                     </h3>
                   </a>
                   <div className="text-lg font-bold text-mjs-dark mt-1.5">
@@ -842,6 +846,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   <button
                     onClick={() => addItem({
                       slug: rp.slug,
+                      sku: rp.sku,
                       name: rp.cardTitle,
                       brand: rp.brand,
                       price: rp.price,
@@ -851,7 +856,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                     className="w-full mt-3 border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
-                    Add to Cart
+                    Add
                   </button>
                 </div>
               </div>
@@ -859,6 +864,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ═══════ 3. SPECIFICATIONS ═══════ */}
       <section className="border-t border-gray-200">

@@ -211,15 +211,9 @@ function transformProduct(bc: BCProduct): ProductData {
     cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
     pack,
     imageFit: "contain",
-    quickBuy: CUSTOM_PRICING[bc.sku] || (() => {
-      const p = bc.calculated_price || bc.price;
-      return [
-        { label: "1 Unit", qty: 1, unitPrice: Math.round(p * 100) / 100 },
-        { label: "3 Units", qty: 3, unitPrice: Math.round(p * 0.95 * 100) / 100, savings: "Save 5%" },
-        { label: "5 Units", qty: 5, unitPrice: Math.round(p * 0.90 * 100) / 100, savings: "Save 10%" },
-        { label: "10 Units", qty: 10, unitPrice: Math.round(p * 0.85 * 100) / 100, savings: "Save 15%" },
-      ];
-    })(),
+    quickBuy: CUSTOM_PRICING[bc.sku] || [
+      { label: "1 Case", qty: 1, unitPrice: Math.round((bc.calculated_price || bc.price) * 100) / 100 },
+    ],
     sdsSheet: findSdsSheet(bc.sku || ""),
   };
 }

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;">
+<tr><td align="center" style="padding:24px 12px;">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+<!-- HERO -->
+<tr><td style="background-color:#1a1a2e;border-radius:14px 14px 0 0;padding:30px 32px 26px;">
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top">
+<div style="width:32px;height:32px;background-color:rgba(220,38,38,0.25);border-radius:50%;text-align:center;line-height:32px;margin-bottom:10px;font-size:18px;color:#dc2626;">&#10003;</div>
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;margin-bottom:5px;">Order Confirmed</div>
+<div style="font-size:24px;font-weight:900;color:#ffffff;line-height:1.25;">Thanks, {{ order.shipping.address.first_name }}.</div>
+<div style="font-size:24px;font-weight:900;color:#ffffff;line-height:1.25;">Your supplies are <span style="color:#dc2626;font-style:italic;font-weight:400;">on the way.</span></div>
+<div style="font-size:12px;color:#9ca3af;margin-top:12px;line-height:1.6;font-weight:600;">We've received your order and our warehouse team is packing it now. You'll get tracking details as soon as it ships.</div>
+</td>
+<td valign="top" align="right" width="180">
+<table cellpadding="0" cellspacing="0" style="background-color:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;width:170px;">
+<tr><td style="padding:14px 16px;text-align:center;">
+<div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;">Order Number</div>
+<div style="font-size:22px;font-weight:900;color:#ffffff;margin-top:3px;">MJS-{{ order.id }}</div>
+<div style="margin-top:8px;font-size:8px;text-transform:uppercase;color:#6b7280;">Placed</div>
+<div style="font-size:11px;font-weight:700;color:#d1d5db;">{{ order.date }}</div>
+</td></tr>
+</table>
+</td>
+</tr>
+</table>
+</td></tr>
+
+<!-- PROGRESS BAR -->
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Order Progress</div>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" width="22%">
+<div style="width:28px;height:28px;background:#dc2626;border-radius:50%;text-align:center;line-height:28px;margin:0 auto;color:#fff;font-size:13px;">&#10003;</div>
+<div style="font-size:10px;font-weight:700;color:#1a1a2e;margin-top:5px;">Placed</div>
+</td>
+<td width="11%"><div style="height:3px;background:#dc2626;border-radius:2px;"></div></td>
+<td align="center" width="22%">
+<div style="width:28px;height:28px;background:#dc2626;border-radius:50%;text-align:center;line-height:28px;margin:0 auto;color:#fff;font-size:12px;font-weight:800;">2</div>
+<div style="font-size:10px;font-weight:700;color:#1a1a2e;margin-top:5px;">Processing</div>
+<div style="font-size:8px;color:#9ca3af;">In progress</div>
+</td>
+<td width="11%"><div style="height:3px;background:#e5e7eb;border-radius:2px;"></div></td>
+<td align="center" width="22%">
+<div style="width:28px;height:28px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:50%;text-align:center;line-height:26px;margin:0 auto;color:#9ca3af;font-size:12px;font-weight:700;">3</div>
+<div style="font-size:10px;color:#9ca3af;margin-top:5px;">Shipped</div>
+</td>
+<td width="11%"><div style="height:3px;background:#e5e7eb;border-radius:2px;"></div></td>
+<td align="center" width="22%">
+<div style="width:28px;height:28px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:50%;text-align:center;line-height:26px;margin:0 auto;color:#9ca3af;font-size:12px;font-weight:700;">4</div>
+<div style="font-size:10px;color:#9ca3af;margin-top:5px;">Delivered</div>
+</td>
+</tr>
+</table>
+</td></tr>
+
+<!-- ORDER ITEMS -->
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Your Order</div>
+{{#each order.products}}
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f5f5f5;">
+<tr>
+<td style="vertical-align:top;">
+<div style="font-size:13px;font-weight:600;color:#1a1a2e;line-height:1.4;">{{ name }}</div>
+<div style="font-size:10px;color:#9ca3af;margin-top:3px;">SKU: {{ sku }} &middot; Qty: {{ quantity }}</div>
+</td>
+<td align="right" style="vertical-align:top;white-space:nowrap;padding-left:12px;">
+<div style="font-size:14px;font-weight:700;color:#1a1a2e;">{{total.formatted}}</div>
+<div style="font-size:10px;color:#9ca3af;">{{price.formatted}}/ea</div>
+</td>
+</tr>
+</table>
+{{/each}}
+
+<!-- TOTALS (uses BC's total_rows which includes subtotal, shipping, tax, grand total) -->
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;border-top:1px solid #eee;padding-top:12px;">
+{{#each order.total_rows}}
+<tr>
+<td style="font-size:12px;color:#6b7280;padding:4px 0;">{{label}}</td>
+<td align="right" style="font-size:12px;font-weight:600;color:#374151;padding:4px 0;">{{price.formatted}}</td>
+</tr>
+{{/each}}
+{{#if order.payment.provider_name}}
+<tr>
+<td style="font-size:12px;color:#6b7280;padding:4px 0;">Payment</td>
+<td align="right" style="font-size:12px;font-weight:600;color:#374151;padding:4px 0;">{{order.payment.provider_name}}</td>
+</tr>
+{{/if}}
+</table>
+</td></tr>
+
+<!-- SHIPPING & BILLING -->
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Shipping & Billing</div>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top" width="50%">
+<div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#1a1a2e;margin-bottom:5px;">SHIPPING ADDRESS</div>
+<div style="font-size:12px;color:#4b5563;line-height:1.6;">
+<strong>{{ order.shipping.address.first_name }} {{ order.shipping.address.last_name }}</strong><br>
+{{#if order.shipping.address.company '!=' ''}}{{ order.shipping.address.company }}<br>{{/if}}
+{{ order.shipping.address.street_1 }}<br>
+{{#if order.shipping.address.street_2 '!=' ''}}{{ order.shipping.address.street_2 }}<br>{{/if}}
+{{ order.shipping.address.city }}, {{ order.shipping.address.state }} {{ order.shipping.address.zip }}<br>
+{{ order.shipping.address.country }}
+{{#if order.shipping.address.phone}}<br>{{ order.shipping.address.phone }}{{/if}}
+</div>
+{{#if order.shipping.methods.length '>' 0}}
+<div style="margin-top:8px;font-size:11px;color:#6b7280;"><strong>Method:</strong> {{join order.shipping.methods ', '}}</div>
+{{/if}}
+</td>
+<td valign="top" width="50%" style="padding-left:16px;">
+<div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#1a1a2e;margin-bottom:5px;">BILLING ADDRESS</div>
+<div style="font-size:12px;color:#4b5563;line-height:1.6;">
+<strong>{{ order.billing.address.first_name }} {{ order.billing.address.last_name }}</strong><br>
+{{#if order.billing.address.company '!=' ''}}{{ order.billing.address.company }}<br>{{/if}}
+{{{join order.billing.address.address_lines '<br>'}}}<br>
+{{ order.billing.address.city }}, {{ order.billing.address.state }} {{ order.billing.address.zip }}<br>
+{{ order.billing.address.country }}
+{{#if order.billing.address.phone}}<br>{{ order.billing.address.phone }}{{/if}}
+</div>
+<div style="margin-top:8px;font-size:11px;color:#6b7280;"><strong>Payment:</strong> {{ order.payment_method }}{{#if order.payment.provider_name}} ({{ order.payment.provider_name }}){{/if}}</div>
+</td>
+</tr>
+</table>
+</td></tr>
+
+<!-- CTA -->
+<tr><td style="background-color:#dc2626;padding:24px 32px;text-align:center;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:3px;">What's Next</div>
+<div style="font-size:15px;font-weight:800;color:#ffffff;margin-bottom:5px;">Track your order anytime</div>
+<div style="font-size:11px;color:rgba(255,255,255,0.65);margin-bottom:18px;">Manage your deliveries from your account dashboard.</div>
+{{#if order.customer_id}}
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="background:#ffffff;border-radius:8px;padding:10px 28px;">
+<a href="{{ order.account_order_status_url }}" style="color:#dc2626;font-weight:700;font-size:13px;text-decoration:none;">View My Orders &rarr;</a>
+</td></tr>
+</table>
+<div style="height:10px;"></div>
+{{/if}}
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="background:rgba(255,255,255,0.15);border-radius:8px;padding:10px 28px;">
+<a href="https://www.mobilejanitorialsupply.com" style="color:#ffffff;font-weight:700;font-size:13px;text-decoration:none;">Continue Shopping</a>
+</td></tr>
+</table>
+</td></tr>
+
+<!-- IMPORTANT NOTICES -->
+<tr><td style="background-color:#fffbeb;padding:16px 32px;border-top:1px solid #fde68a;">
+<div style="font-size:11px;color:#92400e;line-height:1.6;">
+<strong>Please note:</strong> Some items may be shipped from a different location and may not all arrive together.<br>
+Your credit card billing may reflect our corporate name <strong>Bergman Inc.</strong>
+</div>
+</td></tr>
+
+<!-- GOOGLE REVIEW -->
+<tr><td style="background-color:#ffffff;padding:22px 32px;text-align:center;border-top:1px solid #eee;">
+<div style="font-size:14px;color:#1a1a2e;margin-bottom:10px;">Rated <strong style="color:#f59e0b;">4.9 &#9733;&#9733;&#9733;&#9733;&#9733;</strong> by our customers on Google</div>
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="background:#dc2626;border-radius:8px;padding:10px 24px;">
+<a href="https://share.google/WCfVAYxZ6TgH9j1fP" style="color:#ffffff;font-weight:700;font-size:12px;text-decoration:none;">Leave us a review &#9733;</a>
+</td></tr>
+</table>
+</td></tr>
+
+<!-- NEED HELP -->
+<tr><td style="background-color:#ffffff;padding:22px 32px;text-align:center;border-top:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#9ca3af;margin-bottom:3px;">Need Help?</div>
+<div style="font-size:14px;font-weight:800;color:#1a1a2e;margin-bottom:5px;">We're here for you</div>
+<div style="font-size:11px;color:#6b7280;margin-bottom:14px;">Questions about your order? Our team is standing by.</div>
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="border:1px solid #e5e7eb;border-radius:8px;padding:9px 24px;">
+<a href="tel:7147792640" style="color:#1a1a2e;font-weight:700;font-size:13px;text-decoration:none;">&#9742; (714) 779-2640</a>
+</td></tr>
+</table>
+<div style="font-size:9px;color:#9ca3af;margin-top:6px;">Mon-Fri &middot; 6:30 AM - 3:00 PM PST</div>
+</td></tr>
+
+<!-- VALUE PROPS -->
+<tr><td style="background-color:#f9fafb;padding:18px 32px;border-top:1px solid #eee;">
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" width="33%" style="padding:6px;font-size:10px;font-weight:700;color:#1a1a2e;">Free delivery on $399+<br><span style="font-weight:400;color:#9ca3af;font-size:9px;">OC / LA / Inland Empire</span></td>
+<td align="center" width="33%" style="padding:6px;font-size:10px;font-weight:700;color:#1a1a2e;">Net-30 terms available<br><span style="font-weight:400;color:#9ca3af;font-size:9px;">For qualified accounts</span></td>
+<td align="center" width="33%" style="padding:6px;font-size:10px;font-weight:700;color:#1a1a2e;">1-3 Day Local Delivery<br><span style="font-weight:400;color:#9ca3af;font-size:9px;">OC / LA / IE / San Diego</span></td>
+</tr>
+</table>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 14px 14px;text-align:center;">
+<div style="font-size:12px;font-weight:800;color:#ffffff;">MOBILE JANITORIAL SUPPLY</div>
+<div style="font-size:9px;color:#6b7280;margin-top:2px;margin-bottom:10px;">Google's #1 Rated &middot; Serving SoCal Since 1990</div>
+<div style="font-size:10px;color:#6b7280;line-height:1.5;">3066 E. La Palma Ave, Anaheim, CA 92806<br>(714) 779-2640 &middot; orders@mobilejanitorialsupply.com</div>
+<div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;">
+<a href="https://www.mobilejanitorialsupply.com" style="font-size:10px;color:#dc2626;text-decoration:none;font-weight:600;">mobilejanitorialsupply.com</a>
+</div>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

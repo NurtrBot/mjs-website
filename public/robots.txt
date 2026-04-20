@@ -1,0 +1,32 @@
+# Mobile Janitorial Supply — robots.txt
+# https://www.mobilejanitorialsupply.com
+
+User-agent: *
+Allow: /
+
+# Public pages
+Allow: /shop/
+Allow: /product/
+Allow: /search
+Allow: /about
+Allow: /contact
+Allow: /quote
+Allow: /faq
+Allow: /resources
+Allow: /catalogs
+Allow: /collection
+
+# Block internal/private pages
+Disallow: /api/
+Disallow: /account
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-confirmation
+Disallow: /auth
+
+# Block query strings that create duplicate content
+Disallow: /*?type=
+Disallow: /*?q=
+
+# Sitemap
+Sitemap: https://www.mobilejanitorialsupply.com/sitemap.xml

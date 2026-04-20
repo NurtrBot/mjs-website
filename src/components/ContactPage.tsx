@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useForm, ValidationError } from "@formspree/react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
 
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
+  const [formState, handleFormspree] = useForm("meevzbry");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
@@ -12,9 +13,10 @@ export default function ContactPage() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const submitted = formState.succeeded;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    handleFormspree(e);
   };
 
   const inputClass =
@@ -33,7 +35,7 @@ export default function ContactPage() {
           <div className="text-center max-w-2xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Contact Us</h1>
             <p className="text-gray-400 mt-3 text-lg leading-relaxed">
-              Have questions? Need a quote? Our team is ready to help. Reach out via phone, email, or the form below.
+              Have questions? Our team is ready to help.<br />Reach out via phone, email, or the form below.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
               <a href="mailto:orders@mobilejanitorialsupply.com" className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
@@ -65,7 +67,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-xl font-bold text-mjs-dark mb-2">Message Sent!</h3>
                 <p className="text-sm text-mjs-gray-500 max-w-sm mx-auto">Thank you for reaching out. A member of our team will get back to you within 24 hours.</p>
-                <button onClick={() => setSubmitted(false)} className="mt-6 text-sm text-mjs-red font-semibold hover:underline">
+                <button onClick={() => window.location.reload()} className="mt-6 text-sm text-mjs-red font-semibold hover:underline">
                   Send another message
                 </button>
               </div>
@@ -74,47 +76,50 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} />
+                    <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} />
+                    <ValidationError prefix="Name" field="name" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Company</label>
-                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company name (optional)" className={inputClass} />
+                    <input type="text" name="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company name (optional)" className={inputClass} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@company.com" className={inputClass} />
+                    <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@company.com" className={inputClass} />
+                    <ValidationError prefix="Email" field="email" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Phone Number</label>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(555) 123-4567" className={inputClass} />
+                    <input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(555) 123-4567" className={inputClass} />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Subject</label>
-                  <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
+                  <select name="subject" value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
                     <option value="">Select a topic...</option>
-                    <option value="general">General Inquiry</option>
-                    <option value="quote">Request a Quote</option>
-                    <option value="order">Order Question</option>
-                    <option value="delivery">Delivery Information</option>
-                    <option value="returns">Returns</option>
-                    <option value="credit">Credit Application</option>
-                    <option value="other">Other</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Request a Quote">Request a Quote</option>
+                    <option value="Order Question">Order Question</option>
+                    <option value="Delivery Information">Delivery Information</option>
+                    <option value="Returns">Returns</option>
+                    <option value="Credit Application">Credit Application</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Your Message</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} required rows={5} placeholder="How can we help you?" className={`${inputClass} resize-none`} />
+                  <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} required rows={5} placeholder="How can we help you?" className={`${inputClass} resize-none`} />
+                  <ValidationError prefix="Message" field="message" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                 </div>
 
-                <button type="submit" className="mx-auto flex items-center gap-2 bg-mjs-red text-white font-semibold px-8 py-3 rounded-lg text-sm hover:bg-red-700 transition-colors">
+                <button type="submit" disabled={formState.submitting} className="mx-auto flex items-center gap-2 bg-mjs-red text-white font-semibold px-8 py-3 rounded-lg text-sm hover:bg-red-700 transition-colors disabled:opacity-50">
                   <Send className="w-4 h-4" />
-                  Send Message
+                  {formState.submitting ? "Sending..." : "Send Message"}
                 </button>
               </form>
             )}

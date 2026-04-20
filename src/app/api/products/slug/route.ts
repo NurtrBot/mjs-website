@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProducts, getProductBySku, type BCProduct } from "@/lib/bigcommerce";
+import { getProducts, getProductBySku, getBulkPricingRules, type BCProduct } from "@/lib/bigcommerce";
 import { transformProduct } from "@/lib/products-api";
 
 const normalizeSlug = (s: string) => s
@@ -100,7 +100,40 @@ export async function GET(req: NextRequest) {
     }
 
     if (bestMatch && bestMatch.price > 0) {
-      return NextResponse.json({ product: transformProduct(bestMatch) });
+      const product = transformProduct(bestMatch);
+
+      // Fetch live bulk pricing from BC and override default tiers
+      try {
+        const rules = await getBulkPricingRules(bestMatch.id);
+        if (rules.length > 0) {
+          const basePrice = bestMatch.calculated_price || bestMatch.price;
+          const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
+            { label: "1 Case", qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
+          ];
+          const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
+          for (const rule of sorted) {
+            let tierPrice = basePrice;
+            if (rule.type === "percent") {
+              tierPrice = basePrice * (1 - rule.amount / 100);
+            } else if (rule.type === "price") {
+              tierPrice = basePrice - rule.amount;
+            } else if (rule.type === "fixed") {
+              tierPrice = rule.amount;
+            }
+            tierPrice = Math.round(tierPrice * 100) / 100;
+            const savings = Math.round((basePrice - tierPrice) * 100) / 100;
+            liveTiers.push({
+              label: `${rule.quantity_min}+ Cases`,
+              qty: rule.quantity_min,
+              unitPrice: tierPrice,
+              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/case` } : {}),
+            });
+          }
+          product.quickBuy = liveTiers;
+        }
+      } catch {}
+
+      return NextResponse.json({ product });
     }
 
     return NextResponse.json({ product: null }, { status: 404 });

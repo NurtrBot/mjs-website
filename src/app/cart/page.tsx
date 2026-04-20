@@ -555,28 +555,6 @@ export default function CartPage() {
                     Order Summary
                   </h2>
 
-                  {/* Promo Code */}
-                  <div className="mb-5">
-                    <label className="text-xs font-medium text-mjs-gray-500 mb-1.5 block">
-                      Promo Code
-                    </label>
-                    <div className="flex gap-2">
-                      <div className="flex-1 relative">
-                        <Tag className="w-4 h-4 text-mjs-gray-300 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value)}
-                          placeholder="Enter code"
-                          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40"
-                        />
-                      </div>
-                      <button className="px-4 py-2.5 bg-mjs-gray-100 hover:bg-mjs-gray-200 text-sm font-semibold text-mjs-gray-600 rounded-lg transition-colors">
-                        Apply
-                      </button>
-                    </div>
-                  </div>
-
                   <div className="h-px bg-gray-100 mb-4" />
 
                   {/* Totals */}

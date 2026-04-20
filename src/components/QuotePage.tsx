@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useForm, ValidationError } from "@formspree/react";
 import { MapPin, Phone, Mail, Send, CheckCircle, FileText, Truck, DollarSign } from "lucide-react";
 
 export default function QuotePage() {
-  const [submitted, setSubmitted] = useState(false);
+  const [formState, handleFormspree] = useForm("meevzbry");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
@@ -13,9 +14,10 @@ export default function QuotePage() {
   const [frequency, setFrequency] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const submitted = formState.succeeded;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    handleFormspree(e);
   };
 
   const inputClass =
@@ -69,59 +71,63 @@ export default function QuotePage() {
                 </div>
                 <h3 className="text-xl font-bold text-mjs-dark mb-2">Quote Request Received!</h3>
                 <p className="text-sm text-mjs-gray-500 max-w-sm mx-auto">Thank you! A member of our sales team will review your request and get back to you within 24 hours with competitive pricing.</p>
-                <button onClick={() => setSubmitted(false)} className="mt-6 text-sm text-mjs-red font-semibold hover:underline">
+                <button onClick={() => window.location.reload()} className="mt-6 text-sm text-mjs-red font-semibold hover:underline">
                   Submit another request
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                <input type="hidden" name="_subject" value="New Quote Request — MJS Website" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Full Name</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} />
+                    <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} />
+                    <ValidationError prefix="Name" field="name" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Company Name</label>
-                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} required placeholder="Your business name" className={inputClass} />
+                    <input type="text" name="company" value={company} onChange={(e) => setCompany(e.target.value)} required placeholder="Your business name" className={inputClass} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@company.com" className={inputClass} />
+                    <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@company.com" className={inputClass} />
+                    <ValidationError prefix="Email" field="email" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Phone Number</label>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="(555) 123-4567" className={inputClass} />
+                    <input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="(555) 123-4567" className={inputClass} />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Delivery Address</label>
-                  <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street address, city, zip" className={inputClass} />
+                  <input type="text" name="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street address, city, zip" className={inputClass} />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Order Frequency</label>
-                  <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className={inputClass}>
+                  <select name="frequency" value={frequency} onChange={(e) => setFrequency(e.target.value)} className={inputClass}>
                     <option value="">How often do you order?</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="biweekly">Every 2 Weeks</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="onetime">One-Time Order</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Every 2 Weeks">Every 2 Weeks</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="One-Time Order">One-Time Order</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-mjs-gray-600 mb-1.5 uppercase tracking-wide">Products &amp; Quantities Needed</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} required rows={6} placeholder="List the products, quantities, and any specific requirements. The more detail, the faster we can get you accurate pricing." className={`${inputClass} resize-none`} />
+                  <textarea name="message" value={message} onChange={(e) => setMessage(e.target.value)} required rows={6} placeholder="List the products, quantities, and any specific requirements. The more detail, the faster we can get you accurate pricing." className={`${inputClass} resize-none`} />
+                  <ValidationError prefix="Message" field="message" errors={formState.errors} className="text-xs text-red-500 mt-1" />
                 </div>
 
-                <button type="submit" className="mx-auto flex items-center gap-2 bg-mjs-red text-white font-semibold px-8 py-3 rounded-lg text-sm hover:bg-red-700 transition-colors">
+                <button type="submit" disabled={formState.submitting} className="mx-auto flex items-center gap-2 bg-mjs-red text-white font-semibold px-8 py-3 rounded-lg text-sm hover:bg-red-700 transition-colors disabled:opacity-50">
                   <Send className="w-4 h-4" />
-                  Submit Quote Request
+                  {formState.submitting ? "Submitting..." : "Submit Quote Request"}
                 </button>
               </form>
             )}

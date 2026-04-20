@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Loader2, Tag, Check, X } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
 
@@ -161,11 +161,47 @@ const subFilters: Record<string, Record<string, { label: string; match: (name: s
   },
 };
 
+// Category-specific coupon nudges (code, discount text, delay in seconds)
+const CATEGORY_COUPONS: Record<string, { code: string; discount: string; delay: number }> = {
+  "trash-liners": { code: "TRASH5", discount: "5% off", delay: 10 },
+};
+
 export default function CategoryPage({ slug }: { slug: string }) {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<number | null>(null);
   const [activeSubFilter, setActiveSubFilter] = useState<number | null>(null);
+
+  // Coupon nudge
+  const couponConfig = CATEGORY_COUPONS[slug];
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [couponCopied, setCouponCopied] = useState(false);
+  const [couponDismissed, setCouponDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!couponConfig || couponDismissed) return;
+    // Check if already dismissed this session
+    try { if (sessionStorage.getItem(`mjs_coupon_${slug}`)) return; } catch {}
+    const timer = setTimeout(() => setShowCoupon(true), couponConfig.delay * 1000);
+    return () => clearTimeout(timer);
+  }, [slug, couponConfig, couponDismissed]);
+
+  const copyCoupon = useCallback(() => {
+    if (!couponConfig) return;
+    navigator.clipboard.writeText(couponConfig.code);
+    setCouponCopied(true);
+    setTimeout(() => {
+      setShowCoupon(false);
+      setCouponDismissed(true);
+      try { sessionStorage.setItem(`mjs_coupon_${slug}`, "1"); } catch {}
+    }, 1500);
+  }, [couponConfig, slug]);
+
+  const dismissCoupon = useCallback(() => {
+    setShowCoupon(false);
+    setCouponDismissed(true);
+    try { sessionStorage.setItem(`mjs_coupon_${slug}`, "1"); } catch {}
+  }, [slug]);
 
   const categoryName = categoryNames[slug];
   const filters = quickFilters[slug] || [];
@@ -386,6 +422,55 @@ export default function CategoryPage({ slug }: { slug: string }) {
           </div>
         )}
       </div>
+
+      {/* Coupon Nudge — push notification style, top-right */}
+      {showCoupon && couponConfig && (
+        <div className="fixed top-24 right-6 z-50 animate-in slide-in-from-right-4 fade-in duration-500">
+          <div className="w-[360px] rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+            {/* Red accent header */}
+            <div className="bg-gradient-to-r from-mjs-red to-red-600 px-5 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Tag className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">Limited Time Offer</span>
+              </div>
+              <button onClick={dismissCoupon} className="text-white/50 hover:text-white transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            {/* Body */}
+            <div className="bg-white px-5 py-5 text-center">
+              <div className="text-2xl font-black text-mjs-dark tracking-tight">
+                Exclusive {couponConfig.discount}
+              </div>
+              <p className="text-sm text-mjs-gray-500 mt-1 mb-5">
+                Apply at checkout for {couponConfig.discount} your entire order.
+              </p>
+              <button
+                onClick={copyCoupon}
+                className={`w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-bold transition-all ${
+                  couponCopied
+                    ? "bg-emerald-50 border-2 border-emerald-300 text-emerald-700"
+                    : "bg-mjs-dark border-2 border-mjs-dark text-white hover:bg-gray-800"
+                }`}
+              >
+                {couponCopied ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Copied to Clipboard!
+                  </>
+                ) : (
+                  <>
+                    <span className="font-mono tracking-[0.25em] text-base">{couponConfig.code}</span>
+                    <span className="text-white/50 text-xs font-normal">— Copy Code</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

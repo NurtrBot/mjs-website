@@ -187,6 +187,24 @@ export async function getProductImages(productId: number): Promise<BCProductImag
   return res.data || [];
 }
 
+/* ── Bulk Pricing Rules ── */
+export interface BCBulkPricingRule {
+  id: number;
+  quantity_min: number;
+  quantity_max: number;
+  type: string; // "percent" | "price" | "fixed"
+  amount: number;
+}
+
+export async function getBulkPricingRules(productId: number): Promise<BCBulkPricingRule[]> {
+  try {
+    const res = await bcFetch(`/catalog/products/${productId}/bulk-pricing-rules`);
+    return res.data || [];
+  } catch {
+    return [];
+  }
+}
+
 /* ── Variants (for V2 order creation) ── */
 export async function getProductVariants(productId: number): Promise<{ id: number; option_values: { id: number; option_id: number }[] }[]> {
   try {
@@ -392,6 +410,17 @@ export async function addConsignment(cartId: string, address: ShippingAddress, l
     }]
   );
   return res.data;
+}
+
+/* ── Step 3b: Apply Coupon Code to Checkout ── */
+export async function applyCouponToCheckout(cartId: string, couponCode: string) {
+  try {
+    const res = await bcPost(`/checkouts/${cartId}/coupons`, { coupon_code: couponCode });
+    return res.data;
+  } catch {
+    // Non-critical — order proceeds without coupon
+    return null;
+  }
 }
 
 /* ── Step 4: Select Shipping Option ── */

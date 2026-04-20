@@ -13,6 +13,7 @@ import {
   getAcceptedPaymentMethods,
   createV2Order,
   getProductVariants,
+  applyCouponToCheckout,
   updateOrder,
   type ShippingAddress,
 } from "@/lib/bigcommerce";
@@ -63,6 +64,7 @@ interface OrderRequest {
     phone?: string;
   };
   notes?: string;
+  couponCode?: string;
   card?: {
     cardName: string;
     cardNumber: string;
@@ -74,7 +76,7 @@ interface OrderRequest {
 export async function POST(req: NextRequest) {
   try {
     const body: OrderRequest = await req.json();
-    const { items, customerId, paymentMethod, fulfillment, shippingAddress, billingAddress, notes, card } = body;
+    const { items, customerId, paymentMethod, fulfillment, shippingAddress, billingAddress, notes, couponCode, card } = body;
 
     if (!items?.length) {
       return NextResponse.json({ error: "No items in order" }, { status: 400 });
@@ -152,6 +154,11 @@ export async function POST(req: NextRequest) {
     // 2. Create cart
     const cart = await createCart(lineItems, customerId);
     const cartId = cart.id;
+
+    // 2b. Apply coupon code if provided
+    if (couponCode) {
+      await applyCouponToCheckout(cartId, couponCode);
+    }
 
     // 3. Build shipping address
     const shipAddr: ShippingAddress = {
@@ -263,14 +270,36 @@ export async function POST(req: NextRequest) {
       // Non-critical, don't fail the order
     }
 
+    // 10. Fetch actual order totals from BC
+    let bcTotals = { subtotal: 0, tax: 0, shipping: 0, discount: 0, total: 0 };
+    try {
+      const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+      const token = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
+      const orderRes = await fetch(
+        `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`,
+        { headers: { "X-Auth-Token": token, "Accept": "application/json" } }
+      );
+      if (orderRes.ok) {
+        const od = await orderRes.json();
+        bcTotals = {
+          subtotal: Number(od.subtotal_inc_tax) || 0,
+          tax: Number(od.total_tax) || 0,
+          shipping: Number(od.shipping_cost_inc_tax) || 0,
+          discount: Number(od.discount_amount) || 0,
+          total: Number(od.total_inc_tax) || 0,
+        };
+      }
+    } catch {}
+
     return NextResponse.json({
       success: true,
       orderId,
       orderNumber: `MJS-${orderId}`,
       shippingMethod: selectedOption.description,
-      shippingCost: selectedOption.cost,
+      shippingCost: bcTotals.shipping || selectedOption.cost,
       paymentMethod,
       fulfillment,
+      bcTotals,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
