@@ -637,8 +637,8 @@ export default function AccountDashboard() {
         })()}
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
                 <Package className="w-5 h-5 text-mjs-red" />
@@ -649,7 +649,7 @@ export default function AccountDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -660,7 +660,7 @@ export default function AccountDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
                 <BadgePercent className="w-5 h-5 text-amber-500" />
@@ -671,7 +671,7 @@ export default function AccountDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-blue-500" />

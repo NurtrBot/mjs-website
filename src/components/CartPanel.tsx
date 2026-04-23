@@ -178,6 +178,40 @@ export default function CartPanel() {
                   Shipping calculated at checkout
                 </div>
               )}
+
+              {/* Free Shipping Progress Bar */}
+              {!isPickup && (() => {
+                const threshold = 399;
+                const remaining = Math.max(0, threshold - subtotal);
+                const pct = Math.min((subtotal / threshold) * 100, 100);
+                const qualified = subtotal >= threshold;
+
+                return (
+                  <div className="mt-3 px-1">
+                    {qualified ? (
+                      <div className="flex items-center gap-2 bg-emerald-50 rounded-lg px-3 py-2">
+                        <Truck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <span className="text-xs font-bold text-emerald-700">You qualify for FREE delivery!</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] font-semibold text-mjs-gray-500">
+                            <span className="font-bold text-mjs-red">${remaining.toFixed(2)}</span> away from free delivery
+                          </span>
+                          <span className="text-[10px] text-mjs-gray-400">${subtotal.toFixed(0)} / $399</span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-mjs-red to-red-400 rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Items List */}

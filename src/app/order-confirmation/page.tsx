@@ -402,7 +402,7 @@ function ConfirmationContent() {
       {showGiftPicker && orderDetails?.rewardTier && !giftCardResult && !giftClaimed && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-in fade-in duration-500">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-md" />
-          <div className="relative w-full max-w-[620px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+          <div className="relative w-full max-w-[95vw] sm:max-w-[620px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div className="bg-mjs-dark px-6 py-8 text-center relative overflow-hidden">
               <div className="absolute top-[-50px] left-[-30px] w-[150px] h-[150px] bg-mjs-red/10 rounded-full animate-pulse" />
@@ -439,7 +439,7 @@ function ConfirmationContent() {
               ) : (
                 <div>
                   <div className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-wider text-center mb-5">Choose One</div>
-                  <div className="grid grid-cols-3 gap-2.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {orderDetails.rewardTier.gifts.map((gift, idx) => (
                       <button
                         key={gift.id}
@@ -466,7 +466,7 @@ function ConfirmationContent() {
       {giftCardResult && !giftClaimed && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-in fade-in duration-500">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} />
-          <div className="relative w-full max-w-[480px] rounded-3xl shadow-2xl overflow-hidden bg-white animate-in zoom-in-95 duration-500">
+          <div className="relative w-full max-w-[95vw] sm:max-w-[480px] rounded-3xl shadow-2xl overflow-hidden bg-white animate-in zoom-in-95 duration-500">
             <div className="bg-mjs-dark px-6 py-6 text-center">
               <button onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors text-sm z-10">&#10005;</button>
               <div className="text-4xl mb-2">&#127881;</div>
@@ -479,7 +479,7 @@ function ConfirmationContent() {
             </div>
             <div className="p-6 text-center">
               {/* Flip Card */}
-              <div className="w-full max-w-[340px] mx-auto cursor-pointer" style={{ perspective: "1000px" }} onClick={() => setGiftFlipped(!giftFlipped)}>
+              <div className="w-full max-w-[280px] sm:max-w-[340px] mx-auto cursor-pointer" style={{ perspective: "1000px" }} onClick={() => setGiftFlipped(!giftFlipped)}>
                 <div style={{ transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)", transformStyle: "preserve-3d", position: "relative", minHeight: "220px", transform: giftFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}>
                   {/* Front */}
                   <div style={{ backfaceVisibility: "hidden", position: "absolute", top: 0, left: 0, width: "100%" }} className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200">

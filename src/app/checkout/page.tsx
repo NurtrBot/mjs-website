@@ -489,7 +489,7 @@ export default function CheckoutPage() {
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <Truck className={`w-6 h-6 mx-auto mb-2 ${!isPickup ? "text-mjs-red" : "text-mjs-gray-400"}`} />
+                    <Truck className={`w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-2 ${!isPickup ? "text-mjs-red" : "text-mjs-gray-400"}`} />
                     <div className={`text-sm font-bold ${!isPickup ? "text-mjs-dark" : "text-mjs-gray-600"}`}>Delivery</div>
                     <div className="text-[10px] text-mjs-gray-400 mt-0.5">Ship to your address</div>
                   </button>
@@ -501,7 +501,7 @@ export default function CheckoutPage() {
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <Store className={`w-6 h-6 mx-auto mb-2 ${isPickup ? "text-emerald-600" : "text-mjs-gray-400"}`} />
+                    <Store className={`w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-2 ${isPickup ? "text-emerald-600" : "text-mjs-gray-400"}`} />
                     <div className={`text-sm font-bold ${isPickup ? "text-mjs-dark" : "text-mjs-gray-600"}`}>Pick Up</div>
                     <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">Always FREE</div>
                   </button>
