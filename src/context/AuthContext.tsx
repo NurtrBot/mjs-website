@@ -9,6 +9,8 @@ export interface UserData {
   email: string;
   company: string;
   phone?: string;
+  customerGroupId?: number;
+  priceListId?: number | null;
 }
 
 interface AuthContextType {

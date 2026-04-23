@@ -8,7 +8,7 @@ import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
   CreditCard, Phone, Mail, RefreshCw, Eye, Star, Shield,
-  ChevronRight, Store, BadgePercent, Plus, X, Upload, FileCheck,
+  ChevronLeft, ChevronRight, Store, BadgePercent, Plus, Minus, X, Upload, FileCheck, EyeOff, Lock,
 } from "lucide-react";
 
 const tabs = ["Overview", "Orders", "Account Info"];
@@ -32,8 +32,149 @@ interface OrderData {
   shipping: number;
 }
 
+interface BuyAgainProduct {
+  sku: string;
+  name: string;
+  price: number;
+  totalQty: number;
+  slug: string;
+  image: string;
+  brand: string;
+  pack: string;
+}
+
+function BuyAgainCard({ product, addItem }: { product: BuyAgainProduct; addItem: (item: { slug: string; sku?: string; name: string; brand: string; price: number; image: string; pack: string }, qty?: number) => void }) {
+  const [qty, setQty] = useState(1);
+  return (
+    <div className="flex-shrink-0 w-[190px] bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative">
+      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden">
+        <img src={product.image} alt={product.name} className="w-full h-full object-contain p-2" />
+      </a>
+      <div className="p-3">
+        <div className="flex items-center justify-between">
+          <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{product.sku}</div>
+          <span className="text-[8px] text-mjs-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">×{product.totalQty} ordered</span>
+        </div>
+        <a href={`/product/${product.slug}`}>
+          <h3 className="text-[10px] font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors mt-0.5">{product.name}</h3>
+        </a>
+        <div className="mt-1.5">
+          <span className="text-base font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
+        </div>
+        <div className="text-[10px] font-medium text-mjs-gray-500 mt-0.5">{product.pack}</div>
+        <div className="flex items-center gap-1.5 mt-2">
+          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-6 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <Minus className="w-2.5 h-2.5 text-mjs-gray-500" />
+            </button>
+            <span className="w-7 h-7 flex items-center justify-center text-[10px] font-bold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50">{qty}</span>
+            <button onClick={() => setQty(qty + 1)} className="w-6 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <Plus className="w-2.5 h-2.5 text-mjs-gray-500" />
+            </button>
+          </div>
+          <button
+            onClick={() => { addItem({ slug: product.slug, sku: product.sku, name: product.name, brand: product.brand, price: product.price, image: product.image, pack: product.pack }, qty); setQty(1); }}
+            className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-1.5 rounded-lg text-[10px] hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1"
+          >
+            <ShoppingCart className="w-3 h-3" />
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BuyAgainStrip({ orders, addItem }: { orders: OrderData[]; addItem: (item: { slug: string; sku?: string; name: string; brand: string; price: number; image: string; pack: string }, qty?: number) => void }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [products, setProducts] = useState<BuyAgainProduct[]>([]);
+  const scroll = (dir: "left" | "right") => {
+    scrollRef.current?.scrollBy({ left: dir === "left" ? -400 : 400, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (orders.length === 0) return;
+
+    // Count purchases per SKU
+    const counts = new Map<string, { name: string; sku: string; price: number; qty: number }>();
+    for (const order of orders) {
+      for (const item of order.lineItems) {
+        if (!item.sku) continue;
+        const existing = counts.get(item.sku);
+        if (existing) {
+          existing.qty += item.qty;
+        } else {
+          counts.set(item.sku, { name: item.name, sku: item.sku, price: item.price, qty: item.qty });
+        }
+      }
+    }
+
+    const topSkus = [...counts.values()].sort((a, b) => b.qty - a.qty).slice(0, 10);
+    if (topSkus.length === 0) return;
+
+    // Fetch product details for images
+    Promise.all(
+      topSkus.map(item =>
+        fetch(`/api/products/search?q=${encodeURIComponent(item.sku)}&limit=1`)
+          .then(r => r.json())
+          .then(data => {
+            const found = data.products?.[0];
+            return {
+              sku: item.sku,
+              name: found?.name || item.name,
+              price: item.price,
+              totalQty: item.qty,
+              slug: found?.slug || item.sku.toLowerCase(),
+              image: found?.images?.[0] || "",
+              brand: found?.brand || "",
+              pack: found?.pack || "",
+            } as BuyAgainProduct;
+          })
+          .catch(() => ({
+            sku: item.sku,
+            name: item.name,
+            price: item.price,
+            totalQty: item.qty,
+            slug: item.sku.toLowerCase(),
+            image: "",
+            brand: "",
+            pack: "",
+          } as BuyAgainProduct))
+      )
+    ).then(results => setProducts(results.filter(p => p.image)));
+  }, [orders]);
+
+  if (products.length === 0) return null;
+
+  return (
+    <div className="bg-white border-t border-gray-100 mt-6 rounded-2xl shadow-sm">
+      <div className="max-w-[1400px] mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base font-bold text-mjs-dark">Buy Again</h2>
+            <span className="bg-mjs-red/10 text-mjs-red text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">YOUR TOP ITEMS</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+              <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
+            </button>
+            <button onClick={() => scroll("right")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+              <ChevronRight className="w-4 h-4 text-mjs-gray-600" />
+            </button>
+          </div>
+        </div>
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          {products.map((product) => (
+            <BuyAgainCard key={product.sku} product={product} addItem={addItem} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AccountDashboard() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const { addItem } = useCart();
   const { setOrderSetup } = useOrderSetup();
   const [activeTab, setActiveTab] = useState("Overview");
@@ -141,6 +282,44 @@ export default function AccountDashboard() {
   // Only show real BC orders — no mock data for logged-in users
   const displayOrders = bcOrders;
 
+  const downloadInvoice = async (order: OrderData) => {
+    try {
+      const res = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order: {
+            id: order.id,
+            date: order.date,
+            status: order.status,
+            statusColor: order.statusColor,
+            items: order.items,
+            lineItems: order.lineItems,
+            tax: order.tax,
+            shipping: order.shipping,
+            total: order.total,
+          },
+          customer: {
+            firstName: mockUser.firstName,
+            lastName: mockUser.lastName,
+            company: mockUser.company,
+            email: mockUser.email,
+            phone: mockUser.phone || "",
+          },
+        }),
+      });
+      if (res.ok) {
+        const html = await res.text();
+        const newTab = window.open("", "_blank");
+        if (newTab) {
+          newTab.document.write(html);
+          newTab.document.close();
+        }
+      }
+    } catch {}
+  };
+
+
   const handleReorder = async (order: OrderData) => {
     // Fetch product details for images
     const results = await Promise.all(
@@ -186,6 +365,77 @@ export default function AccountDashboard() {
     }
   }, [user]);
   const [editingCompany, setEditingCompany] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    if (newPassword.length < 7) {
+      setPasswordError("Password must be at least 7 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    if (!user?.id) return;
+    setPasswordSaving(true);
+    try {
+      const res = await fetch("/api/customers/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerId: user.id, newPassword }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPasswordSaved(true);
+        setNewPassword("");
+        setConfirmPassword("");
+        setShowPasswordForm(false);
+        setTimeout(() => setPasswordSaved(false), 4000);
+      } else {
+        setPasswordError(data.error || "Failed to update password.");
+      }
+    } catch {
+      setPasswordError("Something went wrong. Please try again.");
+    }
+    setPasswordSaving(false);
+  };
+
+  const saveProfile = async () => {
+    if (!user?.id) return;
+    setSavingProfile(true);
+    try {
+      const res = await fetch("/api/customers/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerId: user.id,
+          firstName: companyInfo.firstName,
+          lastName: companyInfo.lastName,
+          company: companyInfo.company,
+          email: companyInfo.email,
+          phone: companyInfo.phone,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update auth context + localStorage
+        login(data.customer);
+        setProfileSaved(true);
+        setTimeout(() => setProfileSaved(false), 3000);
+      }
+    } catch {}
+    setSavingProfile(false);
+    setEditingCompany(false);
+  };
 
   // Tax ID upload
   const [taxIdUploaded, setTaxIdUploaded] = useState(false);
@@ -300,6 +550,91 @@ export default function AccountDashboard() {
             <p className="text-gray-400 text-sm">Manage your orders, view your custom pricing, and place new orders.</p>
           </div>
         </div>
+
+        {/* Account Completion Progress */}
+        {(() => {
+          const steps = [
+            { label: "Create Account", done: true, action: "" },
+            { label: "Add Shipping Address", done: addresses.length > 0, action: "account-info" },
+            { label: "Upload Tax ID", done: taxIdUploaded, action: "account-info" },
+            { label: "Place First Order", done: displayOrders.length > 0, action: "order" },
+          ];
+          const completed = steps.filter(s => s.done).length;
+          const total = steps.length;
+          const pct = Math.round((completed / total) * 100);
+
+          if (pct >= 100) return null;
+
+          return (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="text-sm font-bold text-mjs-dark">Complete Your Account</div>
+                  <div className="text-xs text-mjs-gray-400 mt-0.5">{completed} of {total} steps done — {pct}% complete</div>
+                </div>
+                <div className="text-xs font-bold text-mjs-red">{pct}%</div>
+              </div>
+              {/* Progress bar */}
+              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+                <div
+                  className="h-full bg-gradient-to-r from-mjs-red to-red-400 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              {/* Steps */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {steps.map((step, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      if (step.done || !step.action) return;
+                      if (step.action === "account-info" && step.label === "Add Shipping Address") {
+                        setActiveTab("Account Info");
+                        setTimeout(() => {
+                          setAddressForm({ label: "", company: companyInfo.company, address: "", city: "", state: "CA", zip: "" });
+                          setEditingAddressId(null);
+                          setShowAddressForm(true);
+                          // Scroll to address section
+                          document.getElementById("delivery-addresses")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }, 100);
+                      } else if (step.action === "account-info" && step.label === "Upload Tax ID") {
+                        setActiveTab("Account Info");
+                        setTimeout(() => {
+                          document.getElementById("tax-id-section")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }, 100);
+                      } else if (step.action === "order") {
+                        openOrderModal();
+                      }
+                    }}
+                    className={`flex-1 rounded-xl border p-3 text-left transition-all ${
+                      step.done
+                        ? "bg-emerald-50 border-emerald-200"
+                        : "bg-white border-gray-200 hover:border-mjs-red hover:bg-red-50 cursor-pointer"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      {step.done ? (
+                        <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-[10px] font-bold text-mjs-gray-400">{i + 1}</span>
+                        </div>
+                      )}
+                      <span className={`text-[11px] font-semibold ${step.done ? "text-emerald-700" : "text-mjs-dark"}`}>
+                        {step.label}
+                      </span>
+                    </div>
+                    {!step.done && (
+                      <div className="text-[9px] text-mjs-red font-semibold ml-7">Set up &rarr;</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -548,6 +883,9 @@ export default function AccountDashboard() {
                           <button onClick={() => setViewingOrder(order)} className="text-xs text-mjs-gray-400 hover:text-mjs-dark font-medium flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" /> View
                           </button>
+                          <button onClick={() => downloadInvoice(order)} className="text-xs text-mjs-gray-400 hover:text-mjs-dark font-medium flex items-center gap-1">
+                            <Download className="w-3.5 h-3.5" /> Invoice
+                          </button>
                           <button
                             onClick={() => handleReorder(order)}
                             className="text-xs text-mjs-red font-semibold flex items-center gap-1 hover:underline"
@@ -575,7 +913,7 @@ export default function AccountDashboard() {
           <div className="space-y-6">
             {/* ── Tax ID / Resale Certificate Upload — only show when not yet activated ── */}
             {!taxIdUploaded && (
-              <div className="rounded-2xl border shadow-sm p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+              <div id="tax-id-section" className="rounded-2xl border shadow-sm p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-100">
                     <Upload className="w-6 h-6 text-blue-600" />
@@ -637,13 +975,38 @@ export default function AccountDashboard() {
             {/* ── Company Information ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-bold text-mjs-dark">Company Information</h2>
-                <button
-                  onClick={() => setEditingCompany(!editingCompany)}
-                  className="text-xs text-mjs-red font-semibold hover:underline"
-                >
-                  {editingCompany ? "Done" : "Edit"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-mjs-dark">Company Information</h2>
+                  {profileSaved && (
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1 animate-in fade-in duration-300">
+                      <CheckCircle className="w-3 h-3" /> Saved
+                    </span>
+                  )}
+                </div>
+                {editingCompany ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setEditingCompany(false); if (user) setCompanyInfo({ company: user.company || "", firstName: user.firstName || "", lastName: user.lastName || "", email: user.email || "", phone: user.phone || "" }); }}
+                      className="text-xs text-mjs-gray-400 font-semibold hover:underline"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveProfile}
+                      disabled={savingProfile}
+                      className="text-xs bg-mjs-red text-white font-bold px-3 py-1 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                    >
+                      {savingProfile ? "Saving..." : "Save"}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setEditingCompany(true)}
+                    className="text-xs text-mjs-red font-semibold hover:underline"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
 
               {!editingCompany ? (
@@ -690,8 +1053,94 @@ export default function AccountDashboard() {
               )}
             </div>
 
-            {/* ── Delivery Addresses ── */}
+            {/* ── Password ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-mjs-dark">Password & Security</h2>
+                  {passwordSaved && (
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1 animate-in fade-in duration-300">
+                      <CheckCircle className="w-3 h-3" /> Password Updated
+                    </span>
+                  )}
+                </div>
+                {!showPasswordForm && (
+                  <button
+                    onClick={() => setShowPasswordForm(true)}
+                    className="text-xs text-mjs-red font-semibold hover:underline"
+                  >
+                    Change Password
+                  </button>
+                )}
+              </div>
+
+              {!showPasswordForm ? (
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-mjs-gray-50 flex items-center justify-center flex-shrink-0">
+                    <Lock className="w-4 h-4 text-mjs-gray-400" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-mjs-gray-500 font-medium uppercase">Password</div>
+                    <div className="text-sm font-semibold text-mjs-dark">••••••••••</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-mjs-gray-600 mb-1">New Password</label>
+                    <div className="relative">
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Minimum 7 characters"
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-mjs-gray-400 hover:text-mjs-gray-600"
+                      >
+                        {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-mjs-gray-600 mb-1">Confirm Password</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Re-enter your new password"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all"
+                    />
+                  </div>
+                  {passwordError && (
+                    <div className="bg-red-50 text-red-600 text-xs font-medium px-3 py-2 rounded-lg">
+                      {passwordError}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => { setShowPasswordForm(false); setNewPassword(""); setConfirmPassword(""); setPasswordError(""); }}
+                      className="text-xs text-mjs-gray-400 font-semibold hover:underline"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={passwordSaving}
+                      className="text-xs bg-mjs-red text-white font-bold px-4 py-1.5 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                    >
+                      {passwordSaving ? "Updating..." : "Update Password"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Delivery Addresses ── */}
+            <div id="delivery-addresses" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-sm font-bold text-mjs-dark">Delivery Addresses</h2>
                 <button
@@ -894,7 +1343,7 @@ export default function AccountDashboard() {
                           <input type="tel" value={billTo.phone} onChange={(e) => setBillTo({ ...billTo, phone: e.target.value })} placeholder="Phone" className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all" />
                         </div>
                         <input type="text" value={billTo.address} onChange={(e) => setBillTo({ ...billTo, address: e.target.value })} placeholder="Street Address" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all" />
-                        <div className="grid grid-cols-6 gap-2">
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                           <input type="text" value={billTo.city} onChange={(e) => setBillTo({ ...billTo, city: e.target.value })} placeholder="City" className="col-span-3 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all" />
                           <input type="text" value={billTo.state} onChange={(e) => setBillTo({ ...billTo, state: e.target.value })} placeholder="ST" maxLength={2} className="col-span-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all" />
                           <input type="text" value={billTo.zip} onChange={(e) => setBillTo({ ...billTo, zip: e.target.value })} placeholder="ZIP" className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-mjs-red transition-all" />
@@ -1059,7 +1508,7 @@ export default function AccountDashboard() {
                         placeholder="Street address"
                         className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-mjs-red transition-all"
                       />
-                      <div className="grid grid-cols-6 gap-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                         <input
                           type="text"
                           value={customShipTo.city}
@@ -1273,17 +1722,28 @@ export default function AccountDashboard() {
               <button onClick={() => setViewingOrder(null)} className="text-sm text-mjs-gray-500 hover:text-mjs-dark font-medium">
                 Close
               </button>
-              <button
-                onClick={() => { handleReorder(viewingOrder); setViewingOrder(null); }}
-                className="inline-flex items-center gap-2 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Reorder This Order
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => downloadInvoice(viewingOrder)}
+                  className="inline-flex items-center gap-2 bg-white border border-gray-200 text-mjs-dark font-semibold px-4 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Invoice
+                </button>
+                <button
+                  onClick={() => { handleReorder(viewingOrder); setViewingOrder(null); }}
+                  className="inline-flex items-center gap-2 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Reorder
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+      {/* ═══ Buy Again Strip — above footer ═══ */}
+      <BuyAgainStrip orders={displayOrders} addItem={addItem} />
     </section>
   );
 }

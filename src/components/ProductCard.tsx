@@ -5,6 +5,7 @@ import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
+import { trackAddToCart } from "@/lib/analytics";
 
 function formatCardName(name: string): string {
   // Remove SKU in parentheses at end: "(5602)" or "(GJO21100)"
@@ -114,6 +115,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
                   image: product.images[0],
                   pack: product.pack,
                 }, qty);
+                trackAddToCart({ sku: product.sku, name: product.cardTitle, price: product.price, quantity: qty, category: product.category, brand: product.brand });
                 setQty(1);
               }}
               className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"

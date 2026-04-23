@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trackSearch } from "@/lib/analytics";
 
 const hasRealImage = (p: ProductData) =>
   p.images.length > 0 && !p.images[0].includes("placeholder");
@@ -108,6 +109,7 @@ function SearchContent() {
       .then((data) => {
         const products = (data.products || []).filter(hasRealImage) as ProductData[];
         setResults(products);
+        trackSearch(query, products.length);
         setLoading(false);
       })
       .catch(() => setLoading(false));

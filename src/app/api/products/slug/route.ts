@@ -54,32 +54,55 @@ export async function GET(req: NextRequest) {
     const meaningfulWords = allWords
       .filter(w => w.length > 2 && !/^\d+$/.test(w) && !noise.has(w));
 
-    // Build search attempts: multi-word (progressively shorter) + single important words
-    const attempts = [
-      meaningfulWords.slice(0, 5).join(" "),
-      meaningfulWords.slice(0, 4).join(" "),
-      meaningfulWords.slice(0, 3).join(" "),
-      meaningfulWords.slice(0, 2).join(" "),
-      allWords.slice(0, 3).join(" "),
-      // Single-word fallbacks — try each meaningful word alone
-      ...meaningfulWords.slice(0, 3),
-    ].filter(Boolean);
-
-    // Deduplicate
-    const seen = new Set<string>();
-    const uniqueAttempts = attempts.filter(a => { if (seen.has(a)) return false; seen.add(a); return true; });
-
-    // Try each search attempt until we find a slug match
+    // FIRST: Try SKU-based lookup from slug segments (most reliable)
     let bestMatch: BCProduct | null = null;
-    for (const keyword of uniqueAttempts) {
-      const res = await getProducts({ keyword, limit: 50, is_visible: true });
-      if (res.data.length > 0) {
-        bestMatch = findBestMatch(res.data, slug);
-        if (bestMatch) break;
+    const slugParts = slug.split("-");
+    for (const seg of slugParts) {
+      if (seg.length >= 3 && seg.length <= 15) {
+        const found = await getProductBySku(seg);
+        if (found && found.price > 0) {
+          // Verify this product's slug actually matches
+          const foundSlug = normalizeSlug(found.custom_url?.url || "");
+          if (foundSlug.includes(normalizeSlug(slug)) || normalizeSlug(slug).includes(foundSlug) || foundSlug.includes(seg)) {
+            bestMatch = found;
+            break;
+          }
+        }
+      }
+    }
+    // Also try last segment
+    if (!bestMatch) {
+      const lastSeg = slugParts[slugParts.length - 1];
+      if (lastSeg.length >= 3) {
+        const found = await getProductBySku(lastSeg);
+        if (found && found.price > 0) bestMatch = found;
       }
     }
 
-    // Fallback: try SKU-based lookup (last segment or common patterns)
+    // SECOND: Keyword search with slug words
+    if (!bestMatch) {
+      const attempts = [
+        meaningfulWords.slice(0, 5).join(" "),
+        meaningfulWords.slice(0, 4).join(" "),
+        meaningfulWords.slice(0, 3).join(" "),
+        meaningfulWords.slice(0, 2).join(" "),
+        allWords.slice(0, 3).join(" "),
+        ...meaningfulWords.slice(0, 3),
+      ].filter(Boolean);
+
+      const seen = new Set<string>();
+      const uniqueAttempts = attempts.filter(a => { if (seen.has(a)) return false; seen.add(a); return true; });
+
+      for (const keyword of uniqueAttempts) {
+        const res = await getProducts({ keyword, limit: 50, is_visible: true });
+        if (res.data.length > 0) {
+          bestMatch = findBestMatch(res.data, slug);
+          if (bestMatch) break;
+        }
+      }
+    }
+
+    // THIRD: Last resort SKU fallback
     if (!bestMatch) {
       const parts = slug.split("-");
       // Try last segment as SKU
@@ -133,7 +156,7 @@ export async function GET(req: NextRequest) {
         }
       } catch {}
 
-      return NextResponse.json({ product });
+      return NextResponse.json({ product, bcProductId: bestMatch.id });
     }
 
     return NextResponse.json({ product: null }, { status: 404 });

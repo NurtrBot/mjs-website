@@ -15,6 +15,7 @@ import { LogOut, Globe } from "lucide-react";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { trackSearch, trackClickCTA } from "@/lib/analytics";
 
 export default function Header() {
   const router = useRouter();
@@ -77,10 +78,12 @@ export default function Header() {
     setIsSpanish(!isSpanish);
     localStorage.setItem("mjs_lang", newLang);
     applyTranslation(newLang);
+    trackClickCTA(newLang === "es" ? "Switch to Spanish" : "Switch to English", "header");
   };
 
   const handleSearch = (query: string) => {
     if (query.trim().length > 0) {
+      trackSearch(query.trim(), filteredProducts.length);
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
       setSearchFocused(false);
     }

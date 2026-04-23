@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
+import { trackContactForm } from "@/lib/analytics";
 
 export default function ContactPage() {
   const [formState, handleFormspree] = useForm("meevzbry");
@@ -17,6 +18,7 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     handleFormspree(e);
+    trackContactForm("contact");
   };
 
   const inputClass =

@@ -74,6 +74,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
+        {/* Google Analytics 4 */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N2DLCDNH9" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-6N2DLCDNH9', {
+                page_title: document.title,
+                send_page_view: true
+              });
+            `,
+          }}
+        />
         <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer />
       </head>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">

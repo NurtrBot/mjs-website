@@ -71,12 +71,19 @@ interface OrderRequest {
     expiry: string;
     cvv: string;
   };
+  reward?: {
+    id: string;
+    name: string;
+    type: "physical" | "giftcard";
+    amount?: number;
+    tier: string;
+  };
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body: OrderRequest = await req.json();
-    const { items, customerId, paymentMethod, fulfillment, shippingAddress, billingAddress, notes, couponCode, card } = body;
+    const { items, customerId, paymentMethod, fulfillment, shippingAddress, billingAddress, notes, couponCode, card, reward } = body;
 
     if (!items?.length) {
       return NextResponse.json({ error: "No items in order" }, { status: 400 });
@@ -291,6 +298,54 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
+    // 11. Send gift card via Tremendous if selected
+    let rewardResult: { redeemLink?: string; amount?: number; name?: string } | null = null;
+    if (reward?.type === "giftcard" && reward.id && reward.amount) {
+      try {
+        const tremendousKey = process.env.TREMENDOUS_API_KEY;
+        const campaignId = process.env.TREMENDOUS_CAMPAIGN_ID;
+        const fundingSourceId = process.env.TREMENDOUS_FUNDING_SOURCE_ID;
+        const baseUrl = tremendousKey?.startsWith("TEST_")
+          ? "https://testflight.tremendous.com"
+          : "https://api.tremendous.com";
+
+        if (tremendousKey) {
+          const tRes = await fetch(`${baseUrl}/api/v2/orders`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${tremendousKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              payment: { funding_source_id: fundingSourceId || "BALANCE" },
+              rewards: [{
+                value: { denomination: reward.amount, currency_code: "USD" },
+                delivery: { method: "EMAIL" },
+                recipient: {
+                  name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+                  email: shippingAddress.email,
+                },
+                products: [reward.id],
+                ...(campaignId ? { campaign_id: campaignId } : {}),
+              }],
+            }),
+          });
+
+          if (tRes.ok) {
+            const tData = await tRes.json();
+            const tReward = tData.order?.rewards?.[0];
+            rewardResult = {
+              redeemLink: tReward?.delivery?.link || "",
+              amount: reward.amount,
+              name: reward.name,
+            };
+          }
+        }
+      } catch {
+        // Non-critical — order still succeeds without gift card
+      }
+    }
+
     return NextResponse.json({
       success: true,
       orderId,
@@ -300,6 +355,7 @@ export async function POST(req: NextRequest) {
       paymentMethod,
       fulfillment,
       bcTotals,
+      reward: rewardResult || (reward?.type === "physical" ? { name: reward.name, type: "physical" } : null),
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { trackBeginCheckout } from "@/lib/analytics";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -357,6 +358,7 @@ export default function CartPage() {
   }, [showPickupPopup, items]);
 
   const handleCheckout = () => {
+    trackBeginCheckout(items.map(i => ({ sku: i.sku || "", name: i.name, price: i.price, quantity: i.qty })), subtotal);
     // Show impulse popup as last-chance upsell for everyone
     setShowPickupPopup(true);
   };

@@ -29,6 +29,8 @@ import {
 
 import { getProductBySlug, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
 
 /* ───────── sub-components ───────── */
 
@@ -212,7 +214,9 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const [product, setProduct] = useState<ProductData | null>(localProduct || null);
   const [loading, setLoading] = useState(!localProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
+  const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
+  const { user } = useAuth();
 
   // Fetch from BigCommerce if not found locally (or to get fresher data)
   useEffect(() => {
@@ -222,24 +226,33 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       .then((data) => {
         if (data.product) {
           setProduct(data.product);
-          // Fetch smart related products based on category/subcategory
+          trackViewProduct({ sku: data.product.sku, name: data.product.name, price: data.product.price, category: data.product.category, brand: data.product.brand });
+          // Fetch smart related products
           const p = data.product;
           fetch(`/api/products/related?category=${encodeURIComponent(p.category || "")}&subcategory=${encodeURIComponent(p.subcategory || "")}&sku=${encodeURIComponent(p.sku || "")}`)
             .then(r => r.json())
             .then(rd => { if (rd.products?.length > 0) setRelatedProducts(rd.products); })
             .catch(() => {});
+
+          // Fetch custom price if customer has a price list
+          if (user?.priceListId && data.bcProductId) {
+            fetch(`/api/prices?priceListId=${user.priceListId}&productId=${data.bcProductId}`)
+              .then(r => r.json())
+              .then(pd => { if (pd.price) setCustomPrice(pd.price); })
+              .catch(() => {});
+          }
         }
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [slug]);
+  }, [slug, user?.priceListId]);
 
   const handleAddToCart = () => {
     if (!product) return;
     // Use selected brick's unit price, or match by qty
     const selectedOpt = product.quickBuy[selectedBrick];
     const matchedBulk = selectedOpt || product.quickBuy.find(opt => opt.qty === qty);
-    const unitPrice = matchedBulk?.unitPrice || product.price;
+    const unitPrice = matchedBulk?.unitPrice || customPrice || product.price;
     addItem({
       slug: product.slug,
       sku: product.sku,
@@ -249,6 +262,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       image: product.images[0],
       pack: product.pack,
     }, qty);
+    trackAddToCart({ sku: product.sku, name: product.name, price: unitPrice, quantity: qty, category: product.category, brand: product.brand });
   };
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
@@ -458,11 +472,22 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
 
             {/* Pricing */}
             <div className="mb-5">
+              {customPrice && customPrice !== product.price && (
+                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full mb-2">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Your Custom Price
+                </div>
+              )}
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl font-black text-mjs-dark">
-                  ${product.price.toFixed(2)}
+                  ${(customPrice || product.price).toFixed(2)}
                 </span>
-                {product.originalPrice && (
+                {(customPrice && customPrice < product.price) ? (
+                  <span className="text-lg text-mjs-gray-400 line-through">
+                    ${product.price.toFixed(2)}
+                  </span>
+                ) : null}
+                {product.originalPrice && !customPrice && (
                   <>
                     <span className="text-lg text-mjs-gray-400 line-through">
                       ${product.originalPrice.toFixed(2)}
@@ -475,7 +500,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 )}
               </div>
               <p className="text-xs text-mjs-gray-600 mt-1">
-                Price per carton &middot; Bulk pricing available
+                Price per carton{!customPrice && " · Bulk pricing available"}
               </p>
             </div>
 
@@ -490,13 +515,13 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               </span>
             </div>
 
-            {/* Quick Buy Options */}
-            {product.quickBuy.length > 0 && (
+            {/* Quick Buy Options — hidden when customer has custom pricing */}
+            {product.quickBuy.length > 0 && !customPrice && (
               <div className="mb-4">
                 <div className="text-xs font-semibold text-mjs-gray-500 uppercase tracking-wide mb-2">
                   Quick Select
                 </div>
-                <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${product.quickBuy.length}, 1fr)` }}>
+                <div className={`grid gap-2 ${product.quickBuy.length > 3 ? "grid-cols-2 sm:grid-cols-4" : `grid-cols-${product.quickBuy.length}`}`}>
                   {product.quickBuy.map((opt, i) => {
                     const unitPrice = opt.unitPrice
                       ? opt.unitPrice
@@ -541,7 +566,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               <QuantitySelector qty={qty} setQty={setQty} />
               <button
                 onClick={handleAddToCart}
-                className="flex-1 min-w-[200px] bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-3 px-6 rounded-lg transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 text-base"
+                className="flex-1 min-w-[120px] sm:min-w-[200px] bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-3 px-4 sm:px-6 rounded-lg transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart

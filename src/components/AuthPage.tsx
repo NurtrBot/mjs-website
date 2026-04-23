@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Eye, EyeOff, X, FileDown, Package, CheckCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { trackLogin, trackSignUp } from "@/lib/analytics";
 
 export default function AuthPage() {
   const { login } = useAuth();
@@ -63,6 +64,7 @@ export default function AuthPage() {
         return;
       }
       login(data.customer);
+      trackSignUp("email");
       setClaimedOrders(data.claimedOrders || 0);
       setShowSuccess(true);
     } catch {
@@ -79,15 +81,16 @@ export default function AuthPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok || !data.customer) {
-        setLoginError(data.error || "Account not found. Please check your email.");
+        setLoginError(data.error || "Invalid email or password.");
         setLoginLoading(false);
         return;
       }
       login(data.customer);
+      trackLogin("email");
       window.location.href = "/account";
     } catch {
       setLoginError("Something went wrong. Please try again.");
@@ -112,12 +115,12 @@ export default function AuthPage() {
   ];
 
   return (
-    <section className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+    <section className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 sm:p-6">
       {/* Outer card container */}
-      <div className="w-full max-w-[1050px] bg-white rounded-3xl shadow-lg overflow-hidden flex scale-[0.85] origin-center">
+      <div className="w-full max-w-[1050px] bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col lg:flex-row md:scale-[0.85] md:origin-center">
 
         {/* Left - Form side */}
-        <div className="w-full lg:w-1/2 flex flex-col px-10 py-8">
+        <div className="w-full lg:w-1/2 flex flex-col px-6 sm:px-10 py-6 sm:py-8">
           {/* Logo */}
           <a href="/" className="mb-8">
             <img src="/images/mjs-logo.png" alt="MJS" className="h-8" />
@@ -242,7 +245,7 @@ export default function AuthPage() {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-medium text-mjs-gray-600">Password</label>
-                      <a href="#" className="text-xs text-mjs-red font-medium hover:underline">Forgot?</a>
+                      <a href="/contact" className="text-xs text-mjs-red font-medium hover:underline">Forgot? Contact Us</a>
                     </div>
                     <div className="relative">
                       <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" className={`${inputClass} pr-10`} />

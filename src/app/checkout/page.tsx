@@ -18,7 +18,39 @@ import {
   ChevronUp,
   Store,
   Tag,
+  Gift,
+  CheckCircle,
 } from "lucide-react";
+import { trackPromoCode } from "@/lib/analytics";
+
+// Physical gifts — $500 tier
+const PHYSICAL_GIFTS = [
+  { id: "carhartt-beanie", name: "Carhartt Watch Hat", description: "Acrylic knit beanie — Carhartt Brown", image: "/images/rewards/carhartt-beanie.webp" },
+  { id: "arctic-tumbler", name: "Arctic Tumbler 20oz", description: "Matte black insulated tumbler with straw", image: "/images/rewards/arctic-tumbler.webp" },
+  { id: "jbl-speaker", name: "JBL Charge Essential", description: "Waterproof Bluetooth speaker", image: "/images/rewards/jbl-speaker.avif" },
+];
+
+// Digital gift cards — $1,000+ tiers (from Tremendous campaign)
+const GIFT_CARDS = [
+  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://testflight.tremendous.com/product_images/OKMHM2X2OHYV/card" },
+  { id: "DC82VBYLI4CC", name: "Apple", image: "https://testflight.tremendous.com/product_images/DC82VBYLI4CC/card" },
+  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://testflight.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
+  { id: "AFO794BZA8LR", name: "Home Depot", image: "https://testflight.tremendous.com/product_images/AFO794BZA8LR/card" },
+  { id: "3VHRRUUEWXR7", name: "Shell Gas", image: "https://testflight.tremendous.com/product_images/3VHRRUUEWXR7/card" },
+  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://testflight.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
+  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://testflight.tremendous.com/product_images/L9SW3VT4MLW4/card" },
+  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://testflight.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
+  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://testflight.tremendous.com/product_images/CRN0ID07Y2XD/card" },
+];
+
+// Tier thresholds
+const REWARD_TIERS = [
+  { minSpend: 500, label: "Bronze", type: "physical" as const, amount: 0, gifts: PHYSICAL_GIFTS },
+  { minSpend: 1000, label: "Silver", type: "giftcard" as const, amount: 25, gifts: GIFT_CARDS },
+  { minSpend: 2500, label: "Gold", type: "giftcard" as const, amount: 50, gifts: GIFT_CARDS },
+  { minSpend: 3500, label: "Platinum", type: "giftcard" as const, amount: 75, gifts: GIFT_CARDS },
+  { minSpend: 5000, label: "Diamond", type: "giftcard" as const, amount: 100, gifts: GIFT_CARDS },
+];
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, clearCart } = useCart();
@@ -27,6 +59,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState("");
+  const [selectedGift, setSelectedGift] = useState<{ id: string; name: string; tier: string; type: "physical" | "giftcard"; amount?: number } | null>(null);
   const [step, setStep] = useState(1);
   const [showOrderSummary, setShowOrderSummary] = useState(false);
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
@@ -85,6 +118,7 @@ export default function CheckoutPage() {
         setPromoError(data.error || "Invalid promo code");
       } else {
         setPromoApplied({ code: data.code, discount: data.discount, name: data.name, appliesTo: data.appliesTo });
+        trackPromoCode(data.code, data.discount);
       }
     } catch {
       setPromoError("Failed to validate code");
@@ -422,7 +456,7 @@ export default function CheckoutPage() {
                       <label className={labelClass}>Billing Address</label>
                       <input type="text" value={billTo.address} onChange={(e) => setBillTo({ ...billTo, address: e.target.value })} placeholder="Street address" className={inputClass} />
                     </div>
-                    <div className="grid grid-cols-6 gap-3">
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                       <div className="col-span-3">
                         <label className={labelClass}>City</label>
                         <input type="text" value={billTo.city} onChange={(e) => setBillTo({ ...billTo, city: e.target.value })} className={inputClass} />
@@ -815,6 +849,7 @@ export default function CheckoutPage() {
                 />
               </section>
 
+
               {/* Place Order */}
               {orderError && (
                 <div className="bg-red-50 text-red-600 text-sm font-medium px-4 py-3 rounded-xl mb-4">
@@ -940,6 +975,12 @@ export default function CheckoutPage() {
                         shippingAddress: isPickup ? null : { name: `${form.firstName} ${form.lastName}`, company: form.company, address: form.address, city: form.city, state: form.state, zip: form.zip, phone: form.phone },
                         customerName: user ? `${user.firstName}` : form.firstName,
                         isTaxExempt,
+                        freeGift: selectedGift?.name || null,
+                        reward: data.reward || null,
+                        rewardTier: (() => {
+                          const tier = [...REWARD_TIERS].reverse().find(t => subtotal >= t.minSpend);
+                          return tier ? { type: tier.type, amount: tier.amount, label: tier.label, minSpend: tier.minSpend, gifts: tier.gifts } : null;
+                        })(),
                       }));
                     } catch {}
 
@@ -1039,6 +1080,7 @@ export default function CheckoutPage() {
                         </span>
                       </div>
                     ))}
+
                   </div>
 
                   <div className="h-px bg-gray-100 mb-4" />
@@ -1155,6 +1197,7 @@ export default function CheckoutPage() {
           </div>
         )}
       </main>
+
     </div>
   );
 }

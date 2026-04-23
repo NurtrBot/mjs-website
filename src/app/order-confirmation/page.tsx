@@ -6,11 +6,12 @@ import { Suspense, useState, useEffect } from "react";
 import {
   CheckCircle, Truck, Store, CreditCard, FileText,
   ArrowRight, Phone, UserPlus, Package, Shield, Clock,
-  RotateCcw, ShoppingCart,
+  RotateCcw, ShoppingCart, Gift,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
+import { trackPurchase, trackSelectReward } from "@/lib/analytics";
 
 interface OrderItem {
   name: string;
@@ -32,6 +33,21 @@ interface OrderDetails {
   shippingAddress: { name: string; company: string; address: string; city: string; state: string; zip: string; phone: string } | null;
   customerName: string;
   isTaxExempt: boolean;
+  rewardTier?: {
+    type: "physical" | "giftcard";
+    amount: number;
+    label: string;
+    minSpend: number;
+    gifts: { id: string; name: string; image: string; description?: string }[];
+  } | null;
+}
+
+interface GiftCardResult {
+  redeemLink: string;
+  amount: number;
+  name: string;
+  rewardId: string;
+  image: string;
 }
 
 function ConfirmationContent() {
@@ -44,16 +60,72 @@ function ConfirmationContent() {
   const shippingCost = Number(params.get("shippingCost") || "0");
 
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [showGiftPicker, setShowGiftPicker] = useState(false);
+  const [giftLoading, setGiftLoading] = useState(false);
+  const [giftCardResult, setGiftCardResult] = useState<GiftCardResult | null>(null);
+  const [giftFlipped, setGiftFlipped] = useState(false);
+  const [giftClaimed, setGiftClaimed] = useState(false);
 
   useEffect(() => {
     try {
       const stored = sessionStorage.getItem("mjs_order_confirm");
       if (stored) {
-        setOrderDetails(JSON.parse(stored));
+        const data = JSON.parse(stored);
+        setOrderDetails(data);
         sessionStorage.removeItem("mjs_order_confirm");
+        // Track purchase in GA4
+        if (data.items) {
+          trackPurchase(
+            orderId,
+            data.total || 0,
+            data.tax || 0,
+            data.shipping || 0,
+            data.items.map((i: OrderItem) => ({ sku: i.sku, name: i.name, price: i.price, quantity: i.qty }))
+          );
+        }
+        // Show gift picker after 2 seconds if order qualifies
+        if (data.rewardTier) {
+          setTimeout(() => setShowGiftPicker(true), 2000);
+        }
       }
     } catch {}
   }, []);
+
+  const handleGiftSelect = async (gift: { id: string; name: string; image: string }) => {
+    if (!orderDetails?.rewardTier) return;
+    setGiftLoading(true);
+    const tier = orderDetails.rewardTier;
+
+    if (tier.type === "giftcard") {
+      try {
+        const email = user?.email || orderDetails?.shippingAddress?.name || "";
+        const res = await fetch("/api/rewards/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            recipientName: orderDetails.customerName || "Valued Customer",
+            recipientEmail: email,
+            productId: gift.id,
+            amount: tier.amount,
+            orderId: orderId,
+          }),
+        });
+        const data = await res.json();
+        setGiftCardResult({
+          redeemLink: data.redeemLink || "",
+          amount: tier.amount,
+          name: gift.name,
+          rewardId: data.rewardId || "",
+          image: gift.image,
+        });
+      } catch {
+        setGiftCardResult({ redeemLink: "", amount: tier.amount, name: gift.name, rewardId: "", image: gift.image });
+      }
+    }
+    // For physical gifts, just record the selection
+    trackSelectReward(gift.name, tier.label, tier.amount);
+    setGiftLoading(false);
+  };
 
   const isPickup = fulfillment === "pickup";
   const customerName = orderDetails?.customerName || user?.firstName || "there";
@@ -93,7 +165,7 @@ function ConfirmationContent() {
                 {isPickup && " We'll notify you when it's ready for pickup."}
               </p>
             </div>
-            <div className="bg-white/10 border border-white/15 rounded-2xl px-8 py-5 text-center flex-shrink-0 min-w-[220px]">
+            <div className="bg-white/10 border border-white/15 rounded-2xl px-8 py-5 text-center flex-shrink-0 w-full md:w-auto md:min-w-[220px]">
               <div className="text-[10px] font-bold uppercase tracking-wider text-mjs-red">Order Number</div>
               <div className="text-3xl font-black mt-1 tracking-tight">{orderId}</div>
               <div className="mt-3 text-[11px]">
@@ -325,6 +397,133 @@ function ConfirmationContent() {
         </div>
       </main>
       <Footer />
+
+      {/* Gift Card / Physical Gift Picker Modal */}
+      {showGiftPicker && orderDetails?.rewardTier && !giftCardResult && !giftClaimed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-in fade-in duration-500">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md" />
+          <div className="relative w-full max-w-[620px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+            {/* Header */}
+            <div className="bg-mjs-dark px-6 py-8 text-center relative overflow-hidden">
+              <div className="absolute top-[-50px] left-[-30px] w-[150px] h-[150px] bg-mjs-red/10 rounded-full animate-pulse" />
+              <div className="absolute bottom-[-40px] right-[-20px] w-[120px] h-[120px] bg-mjs-red/5 rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
+              <button onClick={() => { setShowGiftPicker(false); setGiftClaimed(true); }} className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors text-sm z-10">&#10005;</button>
+              <div className="relative z-10">
+                <div className="text-5xl mb-3 animate-bounce" style={{ animationDuration: "2s" }}>{orderDetails.rewardTier.type === "giftcard" ? "💳" : "🎁"}</div>
+                <div className="text-xs font-bold uppercase tracking-[3px] text-mjs-red mb-3">You Earned a Reward</div>
+                <div className="text-2xl font-black text-white mb-1">
+                  {orderDetails.rewardTier.type === "giftcard" ? `Pick Your FREE $${orderDetails.rewardTier.amount} Gift Card` : "Pick Your FREE Gift"}
+                </div>
+                <div className="text-sm text-gray-300 mt-2">
+                  Your order unlocks the <span className="text-mjs-red font-bold">{orderDetails.rewardTier.label} Tier</span>
+                </div>
+              </div>
+            </div>
+            {/* Gift Options */}
+            <div className="bg-white p-6">
+              {giftLoading ? (
+                <div className="text-center py-10">
+                  <div className="relative inline-block mb-5">
+                    <div className="w-20 h-20 rounded-full border-4 border-gray-100 border-t-mjs-red animate-spin mx-auto" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-2xl">💳</span>
+                    </div>
+                  </div>
+                  <div className="text-lg font-black text-mjs-dark mb-1">Generating Your Gift Card...</div>
+                  <div className="flex items-center justify-center gap-1 mt-4">
+                    <div className="w-2 h-2 bg-mjs-red rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <div className="w-2 h-2 bg-mjs-red rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <div className="w-2 h-2 bg-mjs-red rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-wider text-center mb-5">Choose One</div>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {orderDetails.rewardTier.gifts.map((gift, idx) => (
+                      <button
+                        key={gift.id}
+                        onClick={() => handleGiftSelect(gift)}
+                        className="text-center bg-white rounded-xl border-2 border-gray-100 p-3 hover:border-mjs-red hover:shadow-xl transition-all duration-300 group hover:scale-[1.03]"
+                      >
+                        <div className="w-full h-[60px] overflow-hidden rounded-lg mb-2 flex items-center justify-center">
+                          <img src={gift.image} alt={gift.name} className="w-full h-full object-contain" />
+                        </div>
+                        <div className="text-[11px] font-bold text-mjs-dark group-hover:text-mjs-red transition-colors">{gift.name}</div>
+                        <div className="text-xs font-black text-mjs-red mt-0.5">${orderDetails.rewardTier!.amount} FREE</div>
+                        <div className="mt-2 bg-mjs-red text-white text-[9px] font-bold py-1.5 rounded-lg group-hover:bg-red-700 transition-colors w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gift Card Reveal Modal */}
+      {giftCardResult && !giftClaimed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-in fade-in duration-500">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} />
+          <div className="relative w-full max-w-[480px] rounded-3xl shadow-2xl overflow-hidden bg-white animate-in zoom-in-95 duration-500">
+            <div className="bg-mjs-dark px-6 py-6 text-center">
+              <button onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors text-sm z-10">&#10005;</button>
+              <div className="text-4xl mb-2">&#127881;</div>
+              <div className="text-xl font-black text-white">Your Gift Card is Ready!</div>
+              <div className="text-sm text-gray-400 mt-1">${giftCardResult.amount} {giftCardResult.name} Gift Card</div>
+              <div className="mt-3 inline-flex items-center gap-2 bg-emerald-500/20 rounded-full px-4 py-1.5">
+                <span className="text-emerald-400 text-xs">&#10003;</span>
+                <span className="text-xs font-semibold text-emerald-400">Delivered Successfully</span>
+              </div>
+            </div>
+            <div className="p-6 text-center">
+              {/* Flip Card */}
+              <div className="w-full max-w-[340px] mx-auto cursor-pointer" style={{ perspective: "1000px" }} onClick={() => setGiftFlipped(!giftFlipped)}>
+                <div style={{ transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)", transformStyle: "preserve-3d", position: "relative", minHeight: "220px", transform: giftFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}>
+                  {/* Front */}
+                  <div style={{ backfaceVisibility: "hidden", position: "absolute", top: 0, left: 0, width: "100%" }} className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                    <img src={giftCardResult.image} alt={giftCardResult.name} className="w-full h-auto" />
+                  </div>
+                  {/* Back */}
+                  <div style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", position: "absolute", top: 0, left: 0, width: "100%", minHeight: "220px" }} className="bg-gradient-to-br from-mjs-dark to-gray-800 rounded-2xl shadow-2xl flex flex-col items-center justify-center p-5 text-center">
+                    <div className="text-[9px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Your Reward</div>
+                    <div className="text-3xl font-black text-white">${giftCardResult.amount}.00</div>
+                    <div className="text-sm font-bold text-white/80 mt-1">{giftCardResult.name} Gift Card</div>
+                    {giftCardResult.rewardId && (
+                      <>
+                        <div className="h-px bg-white/10 w-full my-3" />
+                        <div className="text-[9px] text-white/40 uppercase tracking-wider mb-1">Reward Code</div>
+                        <div className="text-base font-mono font-black text-white tracking-[3px]">{giftCardResult.rewardId}</div>
+                      </>
+                    )}
+                    <div className="h-px bg-white/10 w-full my-3" />
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-4 h-4 bg-emerald-500/30 rounded-full flex items-center justify-center">
+                        <span className="text-emerald-400 text-[8px]">&#10003;</span>
+                      </div>
+                      <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Emailed</div>
+                    </div>
+                    <div className="text-xs text-white/70">{user?.email || ""}</div>
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setGiftFlipped(!giftFlipped)} className="mt-3 mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-mjs-gray-500 hover:text-mjs-red transition-colors">
+                &#8635; Tap to flip card
+              </button>
+              <div className="text-[10px] text-mjs-gray-400 mb-4">Also sent to your inbox for safekeeping</div>
+              {giftCardResult.redeemLink && (
+                <a href={giftCardResult.redeemLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-mjs-red text-white font-bold text-sm px-6 py-2.5 rounded-lg hover:bg-red-700 transition-colors mb-3">
+                  Redeem Now &rarr;
+                </a>
+              )}
+              <button onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} className="w-full bg-mjs-dark text-white font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

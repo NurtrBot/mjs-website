@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;">
+<tr><td align="center" style="padding:24px 12px;">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+<!-- HERO -->
+<tr><td style="background-color:#1a1a2e;border-radius:14px 14px 0 0;padding:30px 32px 26px;text-align:center;">
+<div style="font-size:36px;margin-bottom:8px;">&#9733;</div>
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;margin-bottom:8px;">We'd Love Your Feedback</div>
+<div style="font-size:26px;font-weight:900;color:#ffffff;line-height:1.25;">How did we do?</div>
+<div style="font-size:13px;color:#d1d5db;margin-top:10px;line-height:1.6;font-weight:600;max-width:420px;margin-left:auto;margin-right:auto;">You recently purchased from Mobile Janitorial Supply. Take a moment to share your experience — it helps us improve and helps other customers make informed decisions.</div>
+</td></tr>
+
+<!-- STAR RATING VISUAL -->
+<tr><td style="background-color:#ffffff;padding:28px 32px;text-align:center;border-bottom:1px solid #eee;">
+<div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">Rate Your Experience</div>
+<div style="font-size:40px;letter-spacing:6px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<div style="font-size:11px;color:#9ca3af;margin-top:8px;">Click on a product below to leave your review</div>
+</td></tr>
+
+<!-- PRODUCTS TO REVIEW -->
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Products to Review</div>
+{{#each review.products}}
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f5f5f5;">
+<tr>
+<td style="vertical-align:middle;">
+<div style="font-size:14px;font-weight:600;color:#1a1a2e;line-height:1.4;">{{name}}</div>
+<div style="font-size:10px;color:#f59e0b;margin-top:4px;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:#9ca3af;">— Tap to rate</span></div>
+</td>
+<td align="right" style="vertical-align:middle;width:120px;">
+<table cellpadding="0" cellspacing="0">
+<tr><td style="background:#dc2626;border-radius:6px;padding:8px 16px;">
+<a href="{{link}}" style="color:#ffffff;font-weight:700;font-size:11px;text-decoration:none;white-space:nowrap;">Write Review &rarr;</a>
+</td></tr>
+</table>
+</td>
+</tr>
+</table>
+{{/each}}
+</td></tr>
+
+<!-- WHY REVIEW -->
+<tr><td style="background-color:#f9fafb;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="text-align:center;">
+<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;">Why your review matters</div>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" width="33%" style="padding:8px;vertical-align:top;">
+<div style="font-size:20px;margin-bottom:4px;">&#128172;</div>
+<div style="font-size:10px;font-weight:700;color:#1a1a2e;">Help Others</div>
+<div style="font-size:9px;color:#9ca3af;margin-top:2px;">Your experience guides other buyers</div>
+</td>
+<td align="center" width="33%" style="padding:8px;vertical-align:top;">
+<div style="font-size:20px;margin-bottom:4px;">&#128200;</div>
+<div style="font-size:10px;font-weight:700;color:#1a1a2e;">Improve Products</div>
+<div style="font-size:9px;color:#9ca3af;margin-top:2px;">Your feedback helps us get better</div>
+</td>
+<td align="center" width="33%" style="padding:8px;vertical-align:top;">
+<div style="font-size:20px;margin-bottom:4px;">&#9201;</div>
+<div style="font-size:10px;font-weight:700;color:#1a1a2e;">Takes 30 Seconds</div>
+<div style="font-size:9px;color:#9ca3af;margin-top:2px;">Quick and easy — we appreciate it</div>
+</td>
+</tr>
+</table>
+</div>
+</td></tr>
+
+<!-- GOOGLE REVIEW CTA -->
+<tr><td style="background-color:#ffffff;padding:24px 32px;text-align:center;border-bottom:1px solid #eee;">
+<div style="font-size:14px;color:#1a1a2e;margin-bottom:4px;">Love shopping with us?</div>
+<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Leave us a Google review too — it means the world to our small team.</div>
+<div style="font-size:14px;color:#1a1a2e;margin-bottom:10px;">Rated <strong style="color:#f59e0b;">4.9 &#9733;&#9733;&#9733;&#9733;&#9733;</strong> by our customers</div>
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="background:#dc2626;border-radius:8px;padding:10px 24px;">
+<a href="https://share.google/WCfVAYxZ6TgH9j1fP" style="color:#ffffff;font-weight:700;font-size:12px;text-decoration:none;">Leave a Google Review &#9733;</a>
+</td></tr>
+</table>
+</td></tr>
+
+<!-- NEED HELP -->
+<tr><td style="background-color:#ffffff;padding:22px 32px;text-align:center;border-top:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#9ca3af;margin-bottom:3px;">Need Help?</div>
+<div style="font-size:14px;font-weight:800;color:#1a1a2e;margin-bottom:5px;">We're here for you</div>
+<div style="font-size:11px;color:#6b7280;margin-bottom:14px;">Questions about your order? Our team is standing by.</div>
+<table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+<tr><td style="border:1px solid #e5e7eb;border-radius:8px;padding:9px 24px;">
+<a href="tel:7147792640" style="color:#1a1a2e;font-weight:700;font-size:13px;text-decoration:none;">&#9742; (714) 779-2640</a>
+</td></tr>
+</table>
+<div style="font-size:9px;color:#9ca3af;margin-top:6px;">Mon-Fri &middot; 6:30 AM - 3:00 PM PST</div>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 14px 14px;text-align:center;">
+<div style="font-size:12px;font-weight:800;color:#ffffff;">MOBILE JANITORIAL SUPPLY</div>
+<div style="font-size:9px;color:#6b7280;margin-top:2px;margin-bottom:10px;">Google's #1 Rated &middot; Serving SoCal Since 1990</div>
+<div style="font-size:10px;color:#6b7280;line-height:1.5;">3066 E. La Palma Ave, Anaheim, CA 92806<br>(714) 779-2640 &middot; orders@mobilejanitorialsupply.com</div>
+<div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;">
+<a href="https://www.mobilejanitorialsupply.com" style="font-size:10px;color:#dc2626;text-decoration:none;font-weight:600;">mobilejanitorialsupply.com</a>
+<span style="color:#4b5563;font-size:10px;"> &middot; </span>
+<a href="{{ review.unsubscribe_link }}" style="font-size:9px;color:#6b7280;text-decoration:none;">Unsubscribe from review requests</a>
+</div>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

@@ -89,7 +89,7 @@ const dealTabs = [
   { label: "CHEMICALS", sub: "Best Prices", active: false, href: "/shop/cleaning-chemicals" },
   { label: "GLOVES", sub: "Upto 30% OFF", active: false, href: "/shop/gloves-safety" },
   { label: "PACKAGING", sub: "Upto 20% OFF", active: false, href: "/category/packaging-film" },
-  { label: "WEEKLY DEALS", sub: "Limited Time", active: true, href: "/search?q=deals" },
+  { label: "ANNOUNCEMENTS", sub: "What's New", active: true, href: "/announcements" },
 ];
 
 

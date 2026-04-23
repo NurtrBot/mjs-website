@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Loader2, Tag, Check, X } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
+import { trackViewCategory } from "@/lib/analytics";
 
 /* ── Site category slug → display name ── */
 const categoryNames: Record<string, string> = {
@@ -106,6 +107,16 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
 
 /* ── Sub-filters: secondary filter buttons that appear when a main filter is active ── */
 const subFilters: Record<string, Record<string, { label: string; match: (name: string) => boolean }[]>> = {
+  "trash-liners": {
+    "Clear": [
+      { label: "High Density", match: (n) => /micron/i.test(n) && /clear/i.test(n) },
+      { label: "Low Density", match: (n) => /mil/i.test(n) && /clear/i.test(n) },
+    ],
+    "Black": [
+      { label: "High Density", match: (n) => /micron/i.test(n) && /black/i.test(n) },
+      { label: "Low Density", match: (n) => /mil/i.test(n) && /black/i.test(n) },
+    ],
+  },
   "equipment": {
     "Floor Machines": [
       { label: "Floor Machines", match: (n) => /hercules|walk.behind|vol.?430/i.test(n) || (/floor machine/i.test(n) && !/brush/i.test(n) && !/pad driver/i.test(n)) },
@@ -282,6 +293,13 @@ export default function CategoryPage({ slug }: { slug: string }) {
     }
   }, [slug]);
 
+  // Track category view when products load
+  useEffect(() => {
+    if (!loading && categoryName) {
+      trackViewCategory(categoryName);
+    }
+  }, [loading, categoryName]);
+
   if (!categoryName) {
     return (
       <section className="bg-mjs-gray-50 min-h-[60vh] flex items-center justify-center">
@@ -425,8 +443,8 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
       {/* Coupon Nudge — push notification style, top-right */}
       {showCoupon && couponConfig && (
-        <div className="fixed top-24 right-6 z-50 animate-in slide-in-from-right-4 fade-in duration-500">
-          <div className="w-[360px] rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+        <div className="fixed top-20 left-4 right-4 sm:left-auto sm:top-24 sm:right-6 z-50 animate-in slide-in-from-right-4 fade-in duration-500">
+          <div className="w-full sm:w-[360px] rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
             {/* Red accent header */}
             <div className="bg-gradient-to-r from-mjs-red to-red-600 px-5 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
