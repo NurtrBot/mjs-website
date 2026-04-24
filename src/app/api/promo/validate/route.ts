@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 // Category-restricted coupons: code → which categories/subcategories it applies to
 const COUPON_RESTRICTIONS: Record<string, { categories?: string[]; subcategories?: string[] }> = {
@@ -27,6 +28,13 @@ function isTrashLiner(item: CartItem): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 attempts per 5 minutes per IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "unknown";
+  const { allowed } = rateLimit(ip, "promo", 10, 5 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ valid: false, error: "Too many attempts. Please wait a few minutes." }, { status: 429 });
+  }
+
   try {
     const { code: rawCode, subtotal, items } = await req.json() as {
       code: string;

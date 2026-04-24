@@ -28,11 +28,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { items, zip, state, city } = body as {
+    const { items, zip, state, city, address, firstName, lastName, company } = body as {
       items: EstimateItem[];
       zip: string;
       state?: string;
       city?: string;
+      address?: string;
+      firstName?: string;
+      lastName?: string;
+      company?: string;
     };
 
     if (!items?.length || !zip) {
@@ -73,10 +77,11 @@ export async function POST(req: NextRequest) {
     }));
 
     const checkoutData = await addConsignment(cartId!, {
-      first_name: "Shipping",
-      last_name: "Estimate",
+      first_name: firstName || "Shipping",
+      last_name: lastName || "Estimate",
       email: "estimate@mjs.com",
-      address1: "123 Main St",
+      company: company || "",
+      address1: address || "123 Main St",
       city: city || "Anytown",
       state_or_province: state || "CA",
       state_or_province_code: state || "CA",

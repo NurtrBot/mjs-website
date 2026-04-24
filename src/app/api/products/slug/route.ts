@@ -11,17 +11,37 @@ const normalizeSlug = (s: string) => s
 function findBestMatch(candidates: BCProduct[], slug: string): BCProduct | null {
   const normalizedInput = normalizeSlug(slug);
 
-  // Pass 1: exact slug match
+  // Pass 1: exact slug match (strongest)
   for (const p of candidates) {
     const pSlug = normalizeSlug(p.custom_url?.url?.replace(/^\/|\/$/g, "") || "");
     if (pSlug === normalizedInput) return p;
   }
 
-  // Pass 2: slug contains match
+  // Pass 2: slug starts-with or ends-with match (catches truncated slugs)
+  // Score by how close the match is — prefer the longest overlap
+  let bestCandidate: BCProduct | null = null;
+  let bestScore = 0;
   for (const p of candidates) {
     const pSlug = normalizeSlug(p.custom_url?.url?.replace(/^\/|\/$/g, "") || "");
-    if (pSlug && (normalizedInput.includes(pSlug) || pSlug.includes(normalizedInput))) return p;
+    if (!pSlug) continue;
+    // Calculate overlap score
+    let score = 0;
+    if (pSlug === normalizedInput) { score = 10000; }
+    else if (pSlug.startsWith(normalizedInput) || normalizedInput.startsWith(pSlug)) {
+      score = Math.min(pSlug.length, normalizedInput.length);
+      // Penalize if lengths are very different (means it's a partial match)
+      const lenDiff = Math.abs(pSlug.length - normalizedInput.length);
+      if (lenDiff > 10) score -= lenDiff;
+    }
+    else if (pSlug.includes(normalizedInput) || normalizedInput.includes(pSlug)) {
+      score = Math.min(pSlug.length, normalizedInput.length) - 20;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestCandidate = p;
+    }
   }
+  if (bestCandidate && bestScore > 20) return bestCandidate;
 
   // Pass 3: SKU match from last segment
   const parts = slug.split("-");
@@ -54,23 +74,57 @@ export async function GET(req: NextRequest) {
     const meaningfulWords = allWords
       .filter(w => w.length > 2 && !/^\d+$/.test(w) && !noise.has(w));
 
-    // FIRST: Try SKU-based lookup from slug segments (most reliable)
+    // FIRST: Try exact slug match via BC custom_url search
     let bestMatch: BCProduct | null = null;
     const slugParts = slug.split("-");
-    for (const seg of slugParts) {
-      if (seg.length >= 3 && seg.length <= 15) {
-        const found = await getProductBySku(seg);
+
+    // Try compound segments as SKUs (e.g. "LPF-56SEA" from slug parts "lpf" + "56sea")
+    for (let i = 0; i < slugParts.length - 1 && !bestMatch; i++) {
+      // Try pairs: seg[i]-seg[i+1]
+      const pair = `${slugParts[i]}-${slugParts[i + 1]}`.toUpperCase();
+      if (pair.length >= 4 && pair.length <= 20) {
+        const found = await getProductBySku(pair);
         if (found && found.price > 0) {
-          // Verify this product's slug actually matches
           const foundSlug = normalizeSlug(found.custom_url?.url || "");
-          if (foundSlug.includes(normalizeSlug(slug)) || normalizeSlug(slug).includes(foundSlug) || foundSlug.includes(seg)) {
+          if (foundSlug === normalizeSlug(slug) || normalizeSlug(slug).includes(foundSlug) || foundSlug.includes(normalizeSlug(slug))) {
             bestMatch = found;
             break;
           }
         }
       }
+      // Try triples: seg[i]-seg[i+1]-seg[i+2]
+      if (i < slugParts.length - 2) {
+        const triple = `${slugParts[i]}-${slugParts[i + 1]}-${slugParts[i + 2]}`.toUpperCase();
+        if (triple.length >= 5 && triple.length <= 20) {
+          const found = await getProductBySku(triple);
+          if (found && found.price > 0) {
+            const foundSlug = normalizeSlug(found.custom_url?.url || "");
+            if (foundSlug === normalizeSlug(slug) || normalizeSlug(slug).includes(foundSlug) || foundSlug.includes(normalizeSlug(slug))) {
+              bestMatch = found;
+              break;
+            }
+          }
+        }
+      }
     }
-    // Also try last segment
+
+    // Try single segments as SKUs
+    if (!bestMatch) {
+      for (const seg of slugParts) {
+        if (seg.length >= 3 && seg.length <= 15) {
+          const found = await getProductBySku(seg);
+          if (found && found.price > 0) {
+            const foundSlug = normalizeSlug(found.custom_url?.url || "");
+            if (foundSlug === normalizeSlug(slug) || normalizeSlug(slug).includes(foundSlug) || foundSlug.includes(normalizeSlug(slug))) {
+              bestMatch = found;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Try last segment as fallback
     if (!bestMatch) {
       const lastSeg = slugParts[slugParts.length - 1];
       if (lastSeg.length >= 3) {
@@ -86,6 +140,10 @@ export async function GET(req: NextRequest) {
         meaningfulWords.slice(0, 4).join(" "),
         meaningfulWords.slice(0, 3).join(" "),
         meaningfulWords.slice(0, 2).join(" "),
+        // Skip first word (often a brand name BC doesn't index)
+        meaningfulWords.slice(1, 5).join(" "),
+        meaningfulWords.slice(1, 4).join(" "),
+        meaningfulWords.slice(2, 5).join(" "),
         allWords.slice(0, 3).join(" "),
         ...meaningfulWords.slice(0, 3),
       ].filter(Boolean);

@@ -274,6 +274,10 @@ export default function CheckoutPage() {
         zip: form.zip,
         state: form.state || "",
         city: form.city || "",
+        address: form.address || "",
+        firstName: form.firstName || "",
+        lastName: form.lastName || "",
+        company: form.company || "",
       }),
     })
       .then(r => r.json())

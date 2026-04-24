@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCustomerByEmail } from "@/lib/bigcommerce";
+import { rateLimit } from "@/lib/rate-limit";
 import https from "https";
 import { gunzipSync } from "zlib";
 
@@ -37,6 +38,16 @@ function nativeRequest(method: string, url: string, body?: unknown): Promise<unk
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 attempts per 15 minutes per IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "unknown";
+  const { allowed, retryAfterMs } = rateLimit(ip, "login", 5, 15 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: `Too many login attempts. Please try again in ${Math.ceil(retryAfterMs / 60000)} minutes.` },
+      { status: 429 }
+    );
+  }
+
   try {
     const { email, password } = await req.json();
     if (!email) {
