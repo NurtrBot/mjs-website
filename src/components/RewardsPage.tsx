@@ -24,15 +24,59 @@ const CUSTOMER_TIERS = [
 // ── Hardcoded popular brands (always visible, no API wait) ──
 const POPULAR_BRANDS = [
   { id: "OKMHM2X2OHYV", name: "Amazon" },
+  { id: "SRDHFATO9KHN", name: "Target" },
   { id: "DC82VBYLI4CC", name: "Apple" },
+  { id: "DPIPLH0SRBO6", name: "Walmart" },
   { id: "4SAT90Q41D60", name: "Chevron" },
   { id: "2XG0FLQXBDCZ", name: "Starbucks" },
+  { id: "FGXZUYWP4FII", name: "Nike" },
   { id: "9OEIQ5EWBWT9", name: "DoorDash" },
+  { id: "AFO794BZA8LR", name: "Home Depot" },
+  { id: "UL2EZW1028HF", name: "Uber" },
   { id: "CRN0ID07Y2XD", name: "Chipotle" },
+  { id: "C9N9S97PA7QL", name: "Best Buy" },
+  { id: "3Y1VI49CMXEC", name: "Nordstrom" },
   { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines" },
+  { id: "OUUZS1D2WZED", name: "Macy's" },
+  { id: "2OEXU81GQGHZ", name: "Sephora" },
+  { id: "NYTE9M63VZ7A", name: "eBay" },
   { id: "HNFP6TMSPA9W", name: "Airbnb" },
   { id: "DYHLA54LEX11", name: "AMC Theatres" },
+  { id: "OUOC99YPZ5OB", name: "Lowe's" },
+  { id: "KGPM2ZYRPHE6", name: "Delta Air Lines" },
+  { id: "GQHY7QGWSI00", name: "Domino's" },
+  { id: "HX4U3DQX6GSA", name: "Adidas" },
+  { id: "IIX6NOU88XQC", name: "Panera Bread" },
+  { id: "SUCNT639A6H9", name: "Google Play" },
+  { id: "VICATURH56RI", name: "H&M" },
+  { id: "GB08GUQD12NV", name: "Taco Bell" },
+  { id: "EZ9TELXE8OYB", name: "Bath & Body Works" },
+  { id: "67FA8RXMAMXK", name: "Columbia Sportswear" },
+  { id: "J8IF1NOYS959", name: "Burger King" },
+  { id: "VKURYR906AG9", name: "Barnes & Noble" },
+  { id: "LRY6PF4E4AKC", name: "GameStop" },
+  { id: "4Q8AZCZ0AZ8E", name: "Saks Fifth Avenue" },
+  { id: "GTA2XIZHZ36U", name: "Carnival Cruise Line" },
+  { id: "PJNLKSECF7GR", name: "CVS Pharmacy" },
   { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods" },
+  { id: "H3NT6D9F1F2X", name: "Texas Roadhouse" },
+  { id: "QE673ZZANX9Q", name: "Krispy Kreme" },
+  { id: "X2R7MKDGN5NB", name: "REI" },
+  { id: "7JJM4UE9VMAW", name: "Staples" },
+  { id: "899XF6JLQTER", name: "Ulta" },
+  { id: "46I7B4VZAFES", name: "Fanatics" },
+  { id: "9QGPDPJ90G9Q", name: "Cheesecake Factory" },
+  { id: "AWK191TKR91A", name: "IHOP" },
+  { id: "AC5JKD7ABONB", name: "T.J.Maxx" },
+  { id: "ZYAN2BFK1M60", name: "Subway" },
+  { id: "0BDNR16UFAEZ", name: "Wayfair" },
+  { id: "AIHWKAS0WMCF", name: "Kohl's" },
+  { id: "2YHZ6RZH5FYT", name: "JCPenney" },
+  { id: "N9QEV7YC3HLK", name: "Instacart" },
+  { id: "8C7E0V49KKTF", name: "Sam's Club" },
+  { id: "QJ4T6Y5ORZFM", name: "Dave & Buster's" },
+  { id: "WIUHHHXTSHYF", name: "Red Robin" },
+  { id: "N7XGUA9XXFAB", name: "Banana Republic" },
 ];
 
 // Brands to prioritize at top of grid
@@ -178,15 +222,16 @@ export default function RewardsPage() {
           </div>
         </div>
 
-        {/* ═══ BRAND MARQUEE ═══ */}
-        {brands.length > 0 && (
-          <div className="pb-20 space-y-4">
-            <MarqueeRow brands={row1} direction="left" speed={25} />
-            <MarqueeRow brands={row2} direction="right" speed={30} />
-            <MarqueeRow brands={row3} direction="left" speed={24} />
-          </div>
-        )}
       </div>
+
+      {/* ═══ BRAND MARQUEE ═══ */}
+      {brands.length > 0 && (
+        <div className="bg-mjs-dark pb-20 space-y-4 w-full overflow-hidden">
+          <MarqueeRow brands={row1} direction="left" speed={25} />
+          <MarqueeRow brands={row2} direction="right" speed={30} />
+          <MarqueeRow brands={row3} direction="left" speed={24} />
+        </div>
+      )}
 
       {/* ═══ TIER BREAKDOWN ═══ */}
       <div className="max-w-[1100px] mx-auto px-4 -mt-10 relative z-10">
