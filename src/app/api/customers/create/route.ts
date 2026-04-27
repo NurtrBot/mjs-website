@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCustomer, getCustomerByEmail } from "@/lib/bigcommerce";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,6 +55,11 @@ export async function POST(req: NextRequest) {
           }
         }
       }
+    } catch {}
+
+    // Send welcome email via Resend
+    try {
+      await sendWelcomeEmail(email, firstName, lastName, email);
     } catch {}
 
     return NextResponse.json({

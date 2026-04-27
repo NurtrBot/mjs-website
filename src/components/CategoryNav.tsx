@@ -7,14 +7,14 @@ import {
   Hand,
   Package,
   Coffee,
-  Truck,
+  Gift,
   Wrench,
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 
 const categories = [
-  { name: "1-2 Day Delivery", icon: Truck, highlight: true, image: "/images/cat-delivery.png", href: "/" },
+  { name: "Reward Program", icon: Gift, highlight: true, image: "/images/rewards-icon.png", href: "/rewards" },
   { name: "Paper Products", icon: ScrollText, image: "/images/cat-paper-products.png", href: "/category/paper-products" },
   { name: "Cleaning Chemicals", icon: Droplets, image: "/images/cat-chemicals.png", href: "/category/cleaning-chemicals" },
   { name: "Trash Liners", icon: SprayCan, image: "/images/cat-trash-liners.png", href: "/category/trash-liners" },
@@ -48,8 +48,8 @@ export default function CategoryNav() {
                 }`}
               >
                 {cat.image ? (
-                  <div className="w-full h-[80px] flex items-center justify-center overflow-hidden">
-                    <img src={cat.image} alt={cat.name} className="max-w-full max-h-[80px] object-contain" />
+                  <div className="w-full h-[115px] flex items-center justify-center overflow-hidden">
+                    <img src={cat.image} alt={cat.name} className="max-w-full max-h-[115px] object-contain" />
                   </div>
                 ) : (
                   <div className={`w-8 h-8 flex items-center justify-center transition-colors ${

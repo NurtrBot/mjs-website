@@ -30,6 +30,7 @@ import {
 import { getProductBySlug, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useFavorites } from "@/context/FavoritesContext";
 import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
 
 /* ───────── sub-components ───────── */
@@ -217,6 +218,8 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
   const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isFavorited = product ? isFavorite(product.sku) : false;
 
   // Fetch from BigCommerce if not found locally (or to get fresher data)
   useEffect(() => {
@@ -413,12 +416,12 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
             </div>
 
             {/* Thumbnails */}
-            <div className="flex gap-3">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-full pb-1">
               {product.images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-20 h-20 rounded-xl border-2 overflow-hidden flex-shrink-0 transition-all ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 overflow-hidden flex-shrink-0 transition-all ${
                     selectedImage === i
                       ? "border-mjs-red shadow-md"
                       : "border-gray-200 hover:border-gray-400"
@@ -711,23 +714,30 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
             {/* Secondary actions */}
             <div className="flex items-center gap-4 mb-6">
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={() => toggleFavorite({
+                  slug: product.slug,
+                  sku: product.sku,
+                  name: product.name,
+                  brand: product.brand,
+                  price: customPrice || product.price,
+                  image: product.images[0],
+                  pack: product.pack,
+                })}
                 className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
-                  isWishlisted
+                  isFavorited
                     ? "text-mjs-red"
                     : "text-mjs-gray-500 hover:text-mjs-red"
                 }`}
               >
                 <Heart
-                  className={`w-4 h-4 ${isWishlisted ? "fill-mjs-red" : ""}`}
+                  className={`w-4 h-4 ${isFavorited ? "fill-mjs-red" : ""}`}
                 />
-                {isWishlisted ? "Saved" : "Save to List"}
+                {isFavorited ? "Saved" : "Save for Later"}
               </button>
-              <button className="flex items-center gap-1.5 text-sm font-medium text-mjs-gray-500 hover:text-mjs-gray-700 transition-colors">
-                <Share2 className="w-4 h-4" />
-                Share
-              </button>
-              <button className="flex items-center gap-1.5 text-sm font-medium text-mjs-gray-500 hover:text-mjs-gray-700 transition-colors">
+              <button
+                onClick={() => window.print()}
+                className="flex items-center gap-1.5 text-sm font-medium text-mjs-gray-500 hover:text-mjs-gray-700 transition-colors"
+              >
                 <Printer className="w-4 h-4" />
                 Print
               </button>

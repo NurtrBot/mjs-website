@@ -157,7 +157,7 @@ export async function getProducts(params?: {
   const queryParams: Record<string, string> = {
     limit: String(params?.limit || 50),
     page: String(params?.page || 1),
-    include: "images",
+    include: "images,bulk_pricing_rules",
   };
   if (params?.category_id) queryParams["categories:in"] = String(params.category_id);
   if (params?.is_visible !== undefined) queryParams.is_visible = String(params.is_visible);
@@ -285,6 +285,8 @@ export async function createCustomer(data: {
     company: data.company || "",
     phone: data.phone || "",
     authentication: { new_password: data.password },
+    origin_channel_id: 1,
+    channel_ids: [1],
   }];
   const res = await bcPost("/customers", customerBody);
   const customer = res.data?.[0];

@@ -3,15 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useFavorites } from "@/context/FavoritesContext";
 import { useOrderSetup } from "@/context/OrderContext";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
   CreditCard, Phone, Mail, RefreshCw, Eye, Star, Shield,
-  ChevronLeft, ChevronRight, Store, BadgePercent, Plus, Minus, X, Upload, FileCheck, EyeOff, Lock,
+  ChevronLeft, ChevronRight, Store, BadgePercent, Plus, Minus, X, Upload, FileCheck, EyeOff, Lock, Gift,
 } from "lucide-react";
 
-const tabs = ["Overview", "Orders", "Account Info"];
+const tabs = ["Overview", "Orders", "Rewards", "Account Info"];
 
 interface OrderLineItem {
   name: string;
@@ -23,6 +24,7 @@ interface OrderLineItem {
 interface OrderData {
   id: string;
   date: string;
+  dateRaw: string;
   items: number;
   total: number;
   status: string;
@@ -41,6 +43,97 @@ interface BuyAgainProduct {
   image: string;
   brand: string;
   pack: string;
+}
+
+function YourProductsStrip({ favorites, removeFavorite, orders, addItem }: {
+  favorites: import("@/context/FavoritesContext").FavoriteItem[];
+  removeFavorite: (sku: string) => void;
+  orders: OrderData[];
+  addItem: (item: { slug: string; sku?: string; name: string; brand: string; price: number; image: string; pack: string }, qty?: number) => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [buyAgainProducts, setBuyAgainProducts] = useState<BuyAgainProduct[]>([]);
+
+  useEffect(() => {
+    if (orders.length === 0) return;
+    const counts = new Map<string, { name: string; sku: string; price: number; qty: number }>();
+    for (const order of orders) {
+      for (const item of order.lineItems) {
+        if (!item.sku) continue;
+        const existing = counts.get(item.sku);
+        if (existing) existing.qty += item.qty;
+        else counts.set(item.sku, { name: item.name, sku: item.sku, price: item.price, qty: item.qty });
+      }
+    }
+    const topSkus = [...counts.values()].sort((a, b) => b.qty - a.qty).slice(0, 10);
+    if (topSkus.length === 0) return;
+    Promise.all(
+      topSkus.map(item =>
+        fetch(`/api/products/search?q=${encodeURIComponent(item.sku)}&limit=1`)
+          .then(r => r.json())
+          .then(data => {
+            const found = data.products?.[0];
+            return { sku: item.sku, name: found?.name || item.name, price: item.price, totalQty: item.qty, slug: found?.slug || item.sku.toLowerCase(), image: found?.images?.[0] || "", brand: found?.brand || "", pack: found?.pack || "" } as BuyAgainProduct;
+          })
+          .catch(() => ({ sku: item.sku, name: item.name, price: item.price, totalQty: item.qty, slug: item.sku.toLowerCase(), image: "", brand: "", pack: "" } as BuyAgainProduct))
+      )
+    ).then(results => setBuyAgainProducts(results.filter(p => p.image)));
+  }, [orders]);
+
+  // Merge: favorites first, then buy-again (skip duplicates)
+  const favSkus = new Set(favorites.map(f => f.sku.toUpperCase()));
+  const buyAgainFiltered = buyAgainProducts.filter(p => !favSkus.has(p.sku.toUpperCase()));
+
+  if (favorites.length === 0 && buyAgainFiltered.length === 0) return null;
+
+  return (
+    <div className="bg-white border-t border-gray-100 mt-6 rounded-2xl shadow-sm">
+      <div className="max-w-[1400px] mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base font-bold text-mjs-dark">Your Products</h2>
+            {favorites.length > 0 && <span className="bg-mjs-red/10 text-mjs-red text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">{favorites.length} SAVED</span>}
+            {buyAgainFiltered.length > 0 && <span className="bg-gray-100 text-mjs-gray-500 text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">+ REORDER</span>}
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => scrollRef.current?.scrollBy({ left: -400, behavior: "smooth" })} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+              <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
+            </button>
+            <button onClick={() => scrollRef.current?.scrollBy({ left: 400, behavior: "smooth" })} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+              <ChevronRight className="w-4 h-4 text-mjs-gray-600" />
+            </button>
+          </div>
+        </div>
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          {/* Favorites first */}
+          {favorites.map((fav) => (
+            <div key={`fav-${fav.sku}`} className="flex-shrink-0 w-[190px] bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative">
+              <button onClick={() => removeFavorite(fav.sku)} className="absolute top-2 right-2 z-10 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center text-mjs-gray-400 hover:text-mjs-red hover:bg-red-50 transition-all shadow-sm">
+                <X className="w-3 h-3" />
+              </button>
+              <div className="absolute top-2 left-2 z-10 bg-mjs-red text-white text-[7px] font-bold px-1.5 py-0.5 rounded">SAVED</div>
+              <a href={`/product/${fav.slug}`} className="block h-[160px] bg-white overflow-hidden">
+                <img src={fav.image} alt={fav.name} className="w-full h-full object-contain p-2" />
+              </a>
+              <div className="p-3">
+                <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{fav.sku}</div>
+                <a href={`/product/${fav.slug}`}><h3 className="text-[10px] font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors mt-0.5">{fav.name}</h3></a>
+                <div className="mt-1.5"><span className="text-base font-bold text-mjs-dark">${fav.price.toFixed(2)}</span></div>
+                <div className="text-[10px] font-medium text-mjs-gray-500 mt-0.5">{fav.pack}</div>
+                <button onClick={() => addItem({ slug: fav.slug, sku: fav.sku, name: fav.name, brand: fav.brand, price: fav.price, image: fav.image, pack: fav.pack })} className="w-full mt-2 bg-white border border-mjs-red text-mjs-red font-semibold py-1.5 rounded-lg text-[10px] hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1">
+                  <ShoppingCart className="w-3 h-3" /> Add
+                </button>
+              </div>
+            </div>
+          ))}
+          {/* Then buy-again items */}
+          {buyAgainFiltered.map((product) => (
+            <BuyAgainCard key={`ba-${product.sku}`} product={product} addItem={addItem} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function BuyAgainCard({ product, addItem }: { product: BuyAgainProduct; addItem: (item: { slug: string; sku?: string; name: string; brand: string; price: number; image: string; pack: string }, qty?: number) => void }) {
@@ -175,6 +268,8 @@ function BuyAgainStrip({ orders, addItem }: { orders: OrderData[]; addItem: (ite
 
 export default function AccountDashboard() {
   const { user, login } = useAuth();
+  const { favorites, removeFavorite } = useFavorites();
+  const [viewingReward, setViewingReward] = useState<{ amount: number; brand: string; tierLabel: string; tierColor: string; orderId: string; orderDate: string; orderTotal: number; hoursLeft: number; minsLeft: number; isDelivered: boolean } | null>(null);
   const { addItem } = useCart();
   const { setOrderSetup } = useOrderSetup();
   const [activeTab, setActiveTab] = useState("Overview");
@@ -220,6 +315,7 @@ export default function AccountDashboard() {
           return {
             id: `MJS-${o.id}`,
             date: new Date(o.date as string).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            dateRaw: o.date as string,
             items: (o.lineItems as Record<string, unknown>[])?.length || o.itemCount as number || 0,
             total: Number(o.total) || 0,
             status,
@@ -909,6 +1005,155 @@ export default function AccountDashboard() {
 
         {/* ═══ MY PRICING TAB ═══ */}
         {/* ═══ ACCOUNT INFO TAB ═══ */}
+        {activeTab === "Rewards" && (
+          <div className="space-y-6">
+            {/* Rewards Summary */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-sm font-bold text-mjs-dark">Your Rewards</h2>
+                <a href="/rewards" className="text-xs text-mjs-red font-semibold hover:underline">View Rewards Program &rarr;</a>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="bg-gray-50 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-black text-mjs-dark">{displayOrders.length}</div>
+                  <div className="text-[10px] text-mjs-gray-400 mt-0.5">Total Orders</div>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-black text-mjs-dark">
+                    ${displayOrders.reduce((s, o) => s + o.total, 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </div>
+                  <div className="text-[10px] text-mjs-gray-400 mt-0.5">Lifetime Spend</div>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-black text-mjs-red">{displayOrders.filter(o => o.total >= 700).length}</div>
+                  <div className="text-[10px] text-mjs-gray-400 mt-0.5">Rewards Earned</div>
+                </div>
+              </div>
+
+              {/* Tier Display — Premium */}
+              <div className="bg-gradient-to-br from-mjs-dark via-gray-800 to-mjs-dark rounded-2xl p-6 mb-6 relative overflow-hidden">
+                <div className="absolute top-[-30px] right-[-20px] w-[120px] h-[120px] bg-mjs-red/5 rounded-full" />
+                <div className="absolute bottom-[-40px] left-[-20px] w-[100px] h-[100px] bg-mjs-red/5 rounded-full" />
+                <div className="relative">
+                  <div className="text-center mb-5">
+                    <div className="text-3xl mb-2">🎁</div>
+                    <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-1">Reward Tiers</div>
+                    <div className="text-lg font-black text-white">Earn a Gift Card on Every Qualifying Order</div>
+                    <div className="text-xs text-gray-400 mt-1">Highest tier per order — gift card delivered to your email within 72 hours</div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      { min: "$700", reward: "$10", label: "Bronze", color: "from-amber-600 to-amber-700" },
+                      { min: "$2,000", reward: "$25", label: "Silver", color: "from-gray-400 to-gray-500" },
+                      { min: "$3,500", reward: "$50", label: "Gold", color: "from-yellow-400 to-amber-500" },
+                      { min: "$5,000", reward: "$75", label: "Platinum", color: "from-indigo-500 to-purple-600" },
+                      { min: "$7,500", reward: "$100", label: "Diamond", color: "from-mjs-red to-red-700" },
+                    ].map((tier, i) => (
+                      <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center hover:bg-white/10 transition-all">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tier.color} flex items-center justify-center mx-auto mb-2 shadow-lg`}>
+                          <span className="text-white text-sm font-black">{tier.reward}</span>
+                        </div>
+                        <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{tier.label}</div>
+                        <div className="text-xs font-bold text-white mt-0.5">{tier.min}+</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Reward History */}
+              <div>
+                <h3 className="text-sm font-bold text-mjs-dark mb-3">Reward History</h3>
+                {displayOrders.filter(o => o.total >= 700).length > 0 ? (
+                  <div className="space-y-3">
+                    {displayOrders
+                      .filter(o => o.total >= 700)
+                      .map(order => {
+                        let rewardAmount = 0;
+                        let tierLabel = "";
+                        let tierColor = "from-amber-600 to-amber-700";
+                        if (order.total >= 7500) { rewardAmount = 100; tierLabel = "Diamond"; tierColor = "from-mjs-red to-red-700"; }
+                        else if (order.total >= 5000) { rewardAmount = 75; tierLabel = "Platinum"; tierColor = "from-indigo-500 to-purple-600"; }
+                        else if (order.total >= 3500) { rewardAmount = 50; tierLabel = "Gold"; tierColor = "from-yellow-400 to-amber-500"; }
+                        else if (order.total >= 2000) { rewardAmount = 25; tierLabel = "Silver"; tierColor = "from-gray-400 to-gray-500"; }
+                        else if (order.total >= 700) { rewardAmount = 10; tierLabel = "Bronze"; tierColor = "from-amber-600 to-amber-700"; }
+
+                        // Extract gift card brand from order notes if available
+                        const staffNotes = (order as unknown as Record<string, unknown>).staffNotes as string || "";
+                        const brandMatch = staffNotes.match(/GIFT CARD:\s*(\w+)/);
+                        const giftBrand = brandMatch ? brandMatch[1] : null;
+
+                        // Calculate 72h countdown from order creation time
+                        const orderDate = new Date(order.dateRaw);
+                        const deliveryDate = new Date(orderDate.getTime() + 72 * 60 * 60 * 1000);
+                        const now = new Date();
+                        const msRemaining = deliveryDate.getTime() - now.getTime();
+                        const hoursLeft = Math.max(0, Math.floor(msRemaining / (1000 * 60 * 60)));
+                        const minsLeft = Math.max(0, Math.floor((msRemaining % (1000 * 60 * 60)) / (1000 * 60)));
+                        const isDelivered = msRemaining <= 0;
+
+                        return (
+                          <div
+                            key={order.id}
+                            onClick={() => setViewingReward({ amount: rewardAmount, brand: giftBrand || "Gift Card", tierLabel, tierColor, orderId: order.id, orderDate: order.date, orderTotal: order.total, hoursLeft, minsLeft, isDelivered })}
+                            className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md hover:border-mjs-red/30 transition-all cursor-pointer"
+                          >
+                            <div className="flex items-center gap-4">
+                              {/* Tier icon */}
+                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tierColor} flex items-center justify-center flex-shrink-0 shadow-md`}>
+                                <span className="text-white text-sm font-black">${rewardAmount}</span>
+                              </div>
+                              {/* Details */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-bold text-mjs-dark">${rewardAmount} Gift Card</span>
+                                  {giftBrand && (
+                                    <span className="text-[9px] font-bold bg-gray-100 text-mjs-gray-600 px-2 py-0.5 rounded-full">{giftBrand}</span>
+                                  )}
+                                </div>
+                                <div className="text-[10px] text-mjs-gray-400 mt-0.5">
+                                  {order.id} &middot; {order.date} &middot; {tierLabel} Tier &middot; ${order.total.toFixed(2)} order
+                                </div>
+                              </div>
+                              {/* Status / Countdown */}
+                              <div className="text-right flex-shrink-0">
+                                {isDelivered ? (
+                                  <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                    <CheckCircle className="w-3 h-3" />
+                                    Delivered
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                      <Clock className="w-3 h-3" />
+                                      {hoursLeft}h {minsLeft}m
+                                    </div>
+                                    <div className="text-[9px] text-mjs-gray-400 mt-1">Delivering soon</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <div className="text-center py-10 bg-gray-50 rounded-xl">
+                    <Gift className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+                    <div className="text-sm font-bold text-mjs-gray-500 mb-1">No rewards yet</div>
+                    <div className="text-xs text-mjs-gray-400">Place an order of $700 or more to earn your first gift card.</div>
+                    <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-5 py-2 rounded-lg text-xs hover:bg-red-700 transition-colors">
+                      Start Shopping
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === "Account Info" && (
           <div className="space-y-6">
             {/* ── Tax ID / Resale Certificate Upload — only show when not yet activated ── */}
@@ -919,9 +1164,9 @@ export default function AccountDashboard() {
                     <Upload className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-sm font-bold text-mjs-dark">Tax Exempt? Upload Your Resale Certificate</h2>
+                    <h2 className="text-sm font-bold text-mjs-dark">Tax Exempt? Enter Your Resale / Tax ID</h2>
                     <p className="text-xs text-mjs-gray-500 mt-0.5">
-                      Upload your resale certificate or tax exempt ID and enter your Tax ID number. Once activated, tax will no longer be applied to your orders.
+                      Enter your Tax ID or Resale Certificate number below. Once verified and activated, tax will no longer be applied to your orders.
                     </p>
 
                     <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-end gap-3">
@@ -931,36 +1176,57 @@ export default function AccountDashboard() {
                           type="text"
                           value={taxIdNumber}
                           onChange={(e) => setTaxIdNumber(e.target.value)}
-                          placeholder="e.g. 89-2374982"
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+                          placeholder="e.g. 12-3456789 or SR GHA 12-345678"
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500 transition-all font-mono tracking-wide"
                         />
                       </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          ref={taxFileRef}
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png,.webp"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleTaxIdUpload(file);
-                            e.target.value = "";
-                          }}
-                        />
-                        <button
-                          onClick={() => {
-                            if (!taxIdNumber.trim()) { setTaxIdError("Please enter your Tax ID number."); return; }
-                            taxFileRef.current?.click();
-                          }}
-                          disabled={taxIdUploading}
-                          className="flex items-center gap-2 bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg text-xs hover:bg-blue-700 shadow-sm transition-all disabled:opacity-50"
-                        >
-                          <Upload className="w-3.5 h-3.5" />
-                          {taxIdUploading ? "Uploading..." : "Upload & Activate"}
-                        </button>
-                      </div>
+                      <button
+                        onClick={async () => {
+                          const id = taxIdNumber.trim();
+                          if (!id) { setTaxIdError("Please enter your Tax ID number."); return; }
+                          // Validate format — must be at least 7 chars, contain digits
+                          const digits = id.replace(/[^0-9]/g, "");
+                          if (digits.length < 7) { setTaxIdError("Invalid Tax ID. Must contain at least 7 digits."); return; }
+                          if (!/\d{2,}[-\s]?\d{3,}/.test(id) && !/[A-Z]{2,}\s*[A-Z]*\s*\d{2,}[-\s]?\d+/.test(id.toUpperCase())) {
+                            setTaxIdError("Invalid format. Enter a valid EIN (XX-XXXXXXX) or state resale certificate number.");
+                            return;
+                          }
+                          setTaxIdError("");
+                          setTaxIdUploading(true);
+                          try {
+                            const res = await fetch("/api/customers/tax-id", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                customerId: user?.id,
+                                taxIdNumber: id,
+                                customerName: `${user?.firstName} ${user?.lastName}`,
+                                customerEmail: user?.email || "",
+                                companyName: user?.company || "",
+                              }),
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              setTaxIdUploaded(true);
+                              setTaxIdFileName(id);
+                              setTaxIdDate(data.uploadDate);
+                              try { localStorage.setItem("mjs_tax_exempt", "true"); } catch {}
+                            } else {
+                              setTaxIdError(data.error || "Failed to save. Please try again.");
+                            }
+                          } catch {
+                            setTaxIdError("Something went wrong. Please try again.");
+                          }
+                          setTaxIdUploading(false);
+                        }}
+                        disabled={taxIdUploading}
+                        className="flex items-center gap-2 bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg text-xs hover:bg-blue-700 shadow-sm transition-all disabled:opacity-50"
+                      >
+                        <Shield className="w-3.5 h-3.5" />
+                        {taxIdUploading ? "Verifying..." : "Submit & Activate"}
+                      </button>
                     </div>
-                    <span className="text-[10px] text-mjs-gray-400 mt-1.5 block">PDF, JPG, or PNG — Max 10MB</span>
+                    <span className="text-[10px] text-mjs-gray-400 mt-1.5 block">EIN format: XX-XXXXXXX &middot; CA Resale: SR GHA XX-XXXXXX</span>
 
                     {taxIdError && (
                       <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-600 font-medium">
@@ -1174,7 +1440,16 @@ export default function AccountDashboard() {
                         </button>
                         <span className="text-mjs-gray-300">|</span>
                         <button
-                          onClick={() => setAddresses(addresses.filter(a => a.id !== addr.id))}
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/customer/addresses", {
+                                method: "DELETE",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ addressId: addr.id }),
+                              });
+                            } catch {}
+                            setAddresses(addresses.filter(a => a.id !== addr.id));
+                          }}
                           className="text-[10px] text-mjs-gray-500 hover:text-red-600 font-medium"
                         >
                           Remove
@@ -1226,12 +1501,61 @@ export default function AccountDashboard() {
                   </div>
                   <div className="flex items-center gap-2 mt-4">
                     <button
-                      onClick={() => {
-                        if (!addressForm.label || !addressForm.address || !addressForm.city || !addressForm.zip) return;
+                      onClick={async () => {
+                        if (!addressForm.address || !addressForm.city || !addressForm.zip) return;
+                        if (!user?.id) return;
+
                         if (editingAddressId) {
-                          setAddresses(addresses.map(a => a.id === editingAddressId ? { ...addressForm, id: editingAddressId } : a));
+                          // Update existing address in BC
+                          try {
+                            const res = await fetch("/api/customer/addresses", {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                addressId: editingAddressId,
+                                company: addressForm.company,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                address: addressForm.address,
+                                city: addressForm.city,
+                                state: addressForm.state,
+                                zip: addressForm.zip,
+                              }),
+                            });
+                            if ((await res.json()).success) {
+                              setAddresses(addresses.map(a => a.id === editingAddressId ? { ...addressForm, id: editingAddressId } : a));
+                            }
+                          } catch {}
                         } else {
-                          setAddresses([...addresses, { ...addressForm, id: Date.now() }]);
+                          // Create new address in BC
+                          try {
+                            const res = await fetch("/api/customer/addresses", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                customerId: user.id,
+                                company: addressForm.company,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                address: addressForm.address,
+                                city: addressForm.city,
+                                state: addressForm.state,
+                                zip: addressForm.zip,
+                              }),
+                            });
+                            const data = await res.json();
+                            if (data.success && data.address) {
+                              setAddresses([...addresses, {
+                                id: data.address.id,
+                                label: addressForm.label || addressForm.company || `${addressForm.city}, ${addressForm.state}`,
+                                company: addressForm.company,
+                                address: addressForm.address,
+                                city: addressForm.city,
+                                state: addressForm.state,
+                                zip: addressForm.zip,
+                              }]);
+                            }
+                          } catch {}
                         }
                         setShowAddressForm(false);
                         setEditingAddressId(null);
@@ -1627,6 +1951,108 @@ export default function AccountDashboard() {
       )}
 
       {/* ═══ ORDER INVOICE MODAL ═══ */}
+      {/* Reward Detail Modal */}
+      {viewingReward && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300" onClick={() => setViewingReward(null)}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[400px] overflow-hidden animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
+            {/* Dark Header */}
+            <div className={`bg-gradient-to-br ${viewingReward.tierColor} p-6 text-center relative overflow-hidden`}>
+              <div className="absolute top-[-30px] right-[-20px] w-[100px] h-[100px] bg-white/10 rounded-full" />
+              <div className="absolute bottom-[-20px] left-[-10px] w-[80px] h-[80px] bg-white/5 rounded-full" />
+              <button onClick={() => setViewingReward(null)} className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors text-sm z-10">&#10005;</button>
+              <div className="relative">
+                <div className="text-4xl mb-2">🎁</div>
+                <div className="text-3xl font-black text-white">${viewingReward.amount}.00</div>
+                <div className="text-sm font-bold text-white/80 mt-1">{viewingReward.brand === "Gift Card" ? "Gift Card" : `${viewingReward.brand} Gift Card`}</div>
+                <div className="text-[10px] text-white/50 mt-1">{viewingReward.tierLabel} Tier Reward</div>
+              </div>
+            </div>
+
+            {/* Brand Card Image */}
+            {(() => {
+              const brandImages: Record<string, string> = {
+                "Amazon": "https://cdn.tremendous.com/product_images/OKMHM2X2OHYV/card",
+                "Apple": "https://cdn.tremendous.com/product_images/DC82VBYLI4CC/card",
+                "Starbucks": "https://cdn.tremendous.com/product_images/2XG0FLQXBDCZ/card",
+                "Southwest": "https://cdn.tremendous.com/product_images/GL3Y4RNQJAQ1/card",
+                "DoorDash": "https://cdn.tremendous.com/product_images/9OEIQ5EWBWT9/card",
+                "Chipotle": "https://cdn.tremendous.com/product_images/CRN0ID07Y2XD/card",
+                "Airbnb": "https://cdn.tremendous.com/product_images/HNFP6TMSPA9W/card",
+                "AMC": "https://cdn.tremendous.com/product_images/DYHLA54LEX11/card",
+                "Chevron": "https://cdn.tremendous.com/product_images/4SAT90Q41D60/card",
+                "Dick": "https://cdn.tremendous.com/product_images/L9SW3VT4MLW4/card",
+              };
+              const imgKey = Object.keys(brandImages).find(k => viewingReward.brand.includes(k));
+              const imgUrl = imgKey ? brandImages[imgKey] : null;
+              if (!imgUrl) return null;
+              return (
+                <div className="px-6 pt-5">
+                  <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                    <img src={imgUrl} alt={viewingReward.brand} className="w-full h-auto" />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Details */}
+            <div className="p-6">
+              {/* Order Info */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="text-[9px] text-mjs-gray-400 uppercase font-bold">Order</div>
+                  <div className="text-xs font-bold text-mjs-dark mt-0.5">{viewingReward.orderId}</div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="text-[9px] text-mjs-gray-400 uppercase font-bold">Order Total</div>
+                  <div className="text-xs font-bold text-mjs-dark mt-0.5">${viewingReward.orderTotal.toFixed(2)}</div>
+                </div>
+              </div>
+
+              {/* Delivery Status */}
+              <div className={`rounded-xl p-4 text-center ${viewingReward.isDelivered ? "bg-emerald-50 border border-emerald-200" : "bg-amber-50 border border-amber-200"}`}>
+                {viewingReward.isDelivered ? (
+                  <div>
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <CheckCircle className="w-5 h-5 text-emerald-600" />
+                      <span className="text-sm font-bold text-emerald-800">Delivered to Your Email</span>
+                    </div>
+                    <div className="text-xs text-emerald-600">Check your inbox for your gift card details</div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <Clock className="w-5 h-5 text-amber-600" />
+                      <span className="text-sm font-bold text-amber-800">Arriving in {viewingReward.hoursLeft}h {viewingReward.minsLeft}m</span>
+                    </div>
+                    <div className="text-xs text-amber-600">Your gift card is being verified and will be emailed to you</div>
+                    {/* Progress bar */}
+                    <div className="w-full h-2 bg-amber-200 rounded-full mt-3 overflow-hidden">
+                      <div
+                        className="h-full bg-amber-500 rounded-full transition-all"
+                        style={{ width: `${Math.max(5, 100 - ((viewingReward.hoursLeft * 60 + viewingReward.minsLeft) / (72 * 60)) * 100)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-[9px] text-amber-500">Order placed</span>
+                      <span className="text-[9px] text-amber-500">72h delivery</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-[10px] text-mjs-gray-400 text-center mt-3">Placed on {viewingReward.orderDate}</div>
+
+              <button
+                onClick={() => setViewingReward(null)}
+                className="w-full mt-4 bg-mjs-dark text-white font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {viewingOrder && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setViewingOrder(null)}>
           <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -1742,8 +2168,8 @@ export default function AccountDashboard() {
           </div>
         </div>
       )}
-      {/* ═══ Buy Again Strip — above footer ═══ */}
-      <BuyAgainStrip orders={displayOrders} addItem={addItem} />
+      {/* ═══ Your Products — Favorites + Buy Again combined ═══ */}
+      <YourProductsStrip favorites={favorites} removeFavorite={removeFavorite} orders={displayOrders} addItem={addItem} />
     </section>
   );
 }

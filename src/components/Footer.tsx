@@ -91,6 +91,7 @@ export default function Footer() {
               <li><a href="/faq" className="hover:text-white transition-colors">FAQ</a></li>
               <li><a href="/quote" className="hover:text-white transition-colors">Get a Quote</a></li>
               <li><a href="/catalogs" className="hover:text-white transition-colors">Catalogs</a></li>
+              <li><a href="/rewards" className="hover:text-white transition-colors">Rewards Program</a></li>
               <li><a href="/resources" className="hover:text-white transition-colors">Forms &amp; SDS</a></li>
             </ul>
           </div>

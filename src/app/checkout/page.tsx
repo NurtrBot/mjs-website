@@ -20,37 +20,47 @@ import {
   Tag,
   Gift,
   CheckCircle,
+  MapPin,
+  Plus,
 } from "lucide-react";
 import { trackPromoCode } from "@/lib/analytics";
 
-// Physical gifts — $500 tier
-const PHYSICAL_GIFTS = [
-  { id: "carhartt-beanie", name: "Carhartt Watch Hat", description: "Acrylic knit beanie — Carhartt Brown", image: "/images/rewards/carhartt-beanie.webp" },
-  { id: "arctic-tumbler", name: "Arctic Tumbler 20oz", description: "Matte black insulated tumbler with straw", image: "/images/rewards/arctic-tumbler.webp" },
-  { id: "jbl-speaker", name: "JBL Charge Essential", description: "Waterproof Bluetooth speaker", image: "/images/rewards/jbl-speaker.avif" },
-];
-
-// Digital gift cards — $1,000+ tiers (from Tremendous campaign)
+// Digital gift cards (from Tremendous production campaign)
 const GIFT_CARDS = [
-  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://testflight.tremendous.com/product_images/OKMHM2X2OHYV/card" },
-  { id: "DC82VBYLI4CC", name: "Apple", image: "https://testflight.tremendous.com/product_images/DC82VBYLI4CC/card" },
-  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://testflight.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
-  { id: "AFO794BZA8LR", name: "Home Depot", image: "https://testflight.tremendous.com/product_images/AFO794BZA8LR/card" },
-  { id: "3VHRRUUEWXR7", name: "Shell Gas", image: "https://testflight.tremendous.com/product_images/3VHRRUUEWXR7/card" },
-  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://testflight.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
-  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://testflight.tremendous.com/product_images/L9SW3VT4MLW4/card" },
-  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://testflight.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
-  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://testflight.tremendous.com/product_images/CRN0ID07Y2XD/card" },
+  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://cdn.tremendous.com/product_images/OKMHM2X2OHYV/card" },
+  { id: "DC82VBYLI4CC", name: "Apple", image: "https://cdn.tremendous.com/product_images/DC82VBYLI4CC/card" },
+  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://cdn.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
+  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://cdn.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
+  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://cdn.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
+  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://cdn.tremendous.com/product_images/CRN0ID07Y2XD/card" },
+  { id: "HNFP6TMSPA9W", name: "Airbnb", image: "https://cdn.tremendous.com/product_images/HNFP6TMSPA9W/card" },
+  { id: "DYHLA54LEX11", name: "AMC Theatres", image: "https://cdn.tremendous.com/product_images/DYHLA54LEX11/card" },
+  { id: "4SAT90Q41D60", name: "Chevron", image: "https://cdn.tremendous.com/product_images/4SAT90Q41D60/card" },
+  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://cdn.tremendous.com/product_images/L9SW3VT4MLW4/card" },
 ];
 
-// Tier thresholds
-const REWARD_TIERS = [
-  { minSpend: 500, label: "Bronze", type: "physical" as const, amount: 0, gifts: PHYSICAL_GIFTS },
-  { minSpend: 1000, label: "Silver", type: "giftcard" as const, amount: 25, gifts: GIFT_CARDS },
+// Guest tiers (not signed in)
+const GUEST_TIERS = [
+  { minSpend: 500, label: "Bronze", type: "giftcard" as const, amount: 10, gifts: GIFT_CARDS },
+  { minSpend: 1000, label: "Silver", type: "giftcard" as const, amount: 20, gifts: GIFT_CARDS },
   { minSpend: 2500, label: "Gold", type: "giftcard" as const, amount: 50, gifts: GIFT_CARDS },
   { minSpend: 3500, label: "Platinum", type: "giftcard" as const, amount: 75, gifts: GIFT_CARDS },
-  { minSpend: 5000, label: "Diamond", type: "giftcard" as const, amount: 100, gifts: GIFT_CARDS },
+  { minSpend: 5000, label: "Diamond", type: "giftcard" as const, amount: 125, gifts: GIFT_CARDS },
 ];
+
+// Customer account tiers (signed in)
+const CUSTOMER_TIERS = [
+  { minSpend: 700, label: "Bronze", type: "giftcard" as const, amount: 10, gifts: GIFT_CARDS },
+  { minSpend: 2000, label: "Silver", type: "giftcard" as const, amount: 25, gifts: GIFT_CARDS },
+  { minSpend: 3500, label: "Gold", type: "giftcard" as const, amount: 50, gifts: GIFT_CARDS },
+  { minSpend: 5000, label: "Platinum", type: "giftcard" as const, amount: 75, gifts: GIFT_CARDS },
+  { minSpend: 7500, label: "Diamond", type: "giftcard" as const, amount: 100, gifts: GIFT_CARDS },
+];
+
+// Select tiers based on login status
+function getRewardTiers(isLoggedIn: boolean) {
+  return isLoggedIn ? CUSTOMER_TIERS : GUEST_TIERS;
+}
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, clearCart } = useCart();
@@ -60,6 +70,31 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [selectedGift, setSelectedGift] = useState<{ id: string; name: string; tier: string; type: "physical" | "giftcard"; amount?: number } | null>(null);
+  const [savedAddresses, setSavedAddresses] = useState<{ id: number; label: string; company: string; address: string; city: string; state: string; zip: string; phone?: string }[]>([]);
+  const [useManualAddress, setUseManualAddress] = useState(false);
+
+  // Fetch saved addresses for logged-in customers
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/customer/addresses?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.addresses?.length > 0) {
+          const addrs = data.addresses.map((a: Record<string, unknown>) => ({
+            id: a.id as number,
+            label: (a.company as string) || `${a.city}, ${a.state}`,
+            company: (a.company as string) || "",
+            address: `${a.address1}${a.address2 ? " " + a.address2 : ""}`,
+            city: a.city as string,
+            state: a.state as string,
+            zip: a.zip as string,
+            phone: (a.phone as string) || "",
+          }));
+          setSavedAddresses(addrs);
+        }
+      })
+      .catch(() => {});
+  }, [user?.id]);
   const [step, setStep] = useState(1);
   const [showOrderSummary, setShowOrderSummary] = useState(false);
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
@@ -561,6 +596,69 @@ export default function CheckoutPage() {
                   </div>
                 ) : (
                 <>
+                {/* Saved Addresses for logged-in customers */}
+                {user?.id && savedAddresses.length > 0 && !useManualAddress ? (
+                  <div>
+                    <div className="text-xs font-semibold text-mjs-gray-500 uppercase tracking-wide mb-3">Select a saved address</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                      {savedAddresses.map((addr) => {
+                        const isSelected = form.address === addr.address && form.city === addr.city && form.zip === addr.zip;
+                        return (
+                          <button
+                            key={addr.id}
+                            type="button"
+                            onClick={() => {
+                              update("company", addr.company);
+                              update("address", addr.address);
+                              update("city", addr.city);
+                              update("state", addr.state);
+                              update("zip", addr.zip);
+                              if (addr.phone) update("phone", addr.phone);
+                              if (user.email) update("email", user.email);
+                              if (user.firstName) update("firstName", user.firstName);
+                              if (user.lastName) update("lastName", user.lastName);
+                            }}
+                            className={`text-left p-3 rounded-xl border-2 transition-all ${
+                              isSelected
+                                ? "border-mjs-red bg-red-50"
+                                : "border-gray-200 hover:border-mjs-red/40 hover:bg-red-50/30"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <MapPin className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isSelected ? "text-mjs-red" : "text-mjs-gray-400"}`} />
+                              <div>
+                                <div className="text-xs font-bold text-mjs-dark">{addr.company || addr.label}</div>
+                                <div className="text-[10px] text-mjs-gray-500 mt-0.5 leading-relaxed">
+                                  {addr.address}<br />
+                                  {addr.city}, {addr.state} {addr.zip}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setUseManualAddress(true)}
+                      className="flex items-center gap-1.5 text-xs text-mjs-red font-semibold hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Use a different address
+                    </button>
+                  </div>
+                ) : (
+                <div>
+                {useManualAddress && savedAddresses.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setUseManualAddress(false)}
+                    className="flex items-center gap-1.5 text-xs text-mjs-red font-semibold hover:underline mb-3"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    Use a saved address
+                  </button>
+                )}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelClass}>Email</label>
@@ -661,6 +759,8 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+                </div>
+                )}
                 </>
                 )}
               </section>
@@ -982,7 +1082,7 @@ export default function CheckoutPage() {
                         freeGift: selectedGift?.name || null,
                         reward: data.reward || null,
                         rewardTier: (() => {
-                          const tier = [...REWARD_TIERS].reverse().find(t => subtotal >= t.minSpend);
+                          const tier = [...getRewardTiers(!!user?.id)].reverse().find(t => subtotal >= t.minSpend);
                           return tier ? { type: tier.type, amount: tier.amount, label: tier.label, minSpend: tier.minSpend, gifts: tier.gifts } : null;
                         })(),
                       }));

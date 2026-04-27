@@ -429,7 +429,7 @@ function ConfirmationContent() {
                       <span className="text-2xl">💳</span>
                     </div>
                   </div>
-                  <div className="text-lg font-black text-mjs-dark mb-1">Generating Your Gift Card...</div>
+                  <div className="text-lg font-black text-mjs-dark mb-1">Reserving Your Gift Card...</div>
                   <div className="flex items-center justify-center gap-1 mt-4">
                     <div className="w-2 h-2 bg-mjs-red rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                     <div className="w-2 h-2 bg-mjs-red rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -470,53 +470,36 @@ function ConfirmationContent() {
             <div className="bg-mjs-dark px-6 py-6 text-center">
               <button onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors text-sm z-10">&#10005;</button>
               <div className="text-4xl mb-2">&#127881;</div>
-              <div className="text-xl font-black text-white">Your Gift Card is Ready!</div>
+              <div className="text-xl font-black text-white">Your Gift Card is Reserved!</div>
               <div className="text-sm text-gray-400 mt-1">${giftCardResult.amount} {giftCardResult.name} Gift Card</div>
               <div className="mt-3 inline-flex items-center gap-2 bg-emerald-500/20 rounded-full px-4 py-1.5">
                 <span className="text-emerald-400 text-xs">&#10003;</span>
-                <span className="text-xs font-semibold text-emerald-400">Delivered Successfully</span>
+                <span className="text-xs font-semibold text-emerald-400">Confirmed</span>
               </div>
             </div>
             <div className="p-6 text-center">
-              {/* Flip Card */}
-              <div className="w-full max-w-[280px] sm:max-w-[340px] mx-auto cursor-pointer" style={{ perspective: "1000px" }} onClick={() => setGiftFlipped(!giftFlipped)}>
-                <div style={{ transition: "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)", transformStyle: "preserve-3d", position: "relative", minHeight: "220px", transform: giftFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}>
-                  {/* Front */}
-                  <div style={{ backfaceVisibility: "hidden", position: "absolute", top: 0, left: 0, width: "100%" }} className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-                    <img src={giftCardResult.image} alt={giftCardResult.name} className="w-full h-auto" />
-                  </div>
-                  {/* Back */}
-                  <div style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", position: "absolute", top: 0, left: 0, width: "100%", minHeight: "220px" }} className="bg-gradient-to-br from-mjs-dark to-gray-800 rounded-2xl shadow-2xl flex flex-col items-center justify-center p-5 text-center">
-                    <div className="text-[9px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Your Reward</div>
-                    <div className="text-3xl font-black text-white">${giftCardResult.amount}.00</div>
-                    <div className="text-sm font-bold text-white/80 mt-1">{giftCardResult.name} Gift Card</div>
-                    {giftCardResult.rewardId && (
-                      <>
-                        <div className="h-px bg-white/10 w-full my-3" />
-                        <div className="text-[9px] text-white/40 uppercase tracking-wider mb-1">Reward Code</div>
-                        <div className="text-base font-mono font-black text-white tracking-[3px]">{giftCardResult.rewardId}</div>
-                      </>
-                    )}
-                    <div className="h-px bg-white/10 w-full my-3" />
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-4 h-4 bg-emerald-500/30 rounded-full flex items-center justify-center">
-                        <span className="text-emerald-400 text-[8px]">&#10003;</span>
-                      </div>
-                      <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Emailed</div>
-                    </div>
-                    <div className="text-xs text-white/70">{user?.email || ""}</div>
-                  </div>
+              {/* Brand Card — front only, no flip */}
+              <div className="w-full max-w-[280px] sm:max-w-[340px] mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                <img src={giftCardResult.image} alt={giftCardResult.name} className="w-full h-auto" />
+              </div>
+
+              <div className="text-lg font-black text-mjs-dark mb-1">${giftCardResult.amount}.00 {giftCardResult.name}</div>
+
+              {/* Delivery timeline */}
+              <div className="bg-gray-50 rounded-xl p-4 mt-4 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Clock className="w-4 h-4 text-mjs-red" />
+                  <span className="text-xs font-bold text-mjs-dark">Arriving in 72 Hours</span>
+                </div>
+                <p className="text-[11px] text-mjs-gray-500 leading-relaxed">
+                  Your gift card will be delivered to your email within 72 hours after your order is verified. Keep an eye on your inbox!
+                </p>
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  <div className="text-[10px] text-mjs-gray-400">Delivering to:</div>
+                  <div className="text-[11px] font-semibold text-mjs-dark">{user?.email || orderDetails?.shippingAddress?.name || ""}</div>
                 </div>
               </div>
-              <button onClick={() => setGiftFlipped(!giftFlipped)} className="mt-3 mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-mjs-gray-500 hover:text-mjs-red transition-colors">
-                &#8635; Tap to flip card
-              </button>
-              <div className="text-[10px] text-mjs-gray-400 mb-4">Also sent to your inbox for safekeeping</div>
-              {giftCardResult.redeemLink && (
-                <a href={giftCardResult.redeemLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-mjs-red text-white font-bold text-sm px-6 py-2.5 rounded-lg hover:bg-red-700 transition-colors mb-3">
-                  Redeem Now &rarr;
-                </a>
-              )}
+
               <button onClick={() => { setGiftCardResult(null); setGiftClaimed(true); }} className="w-full bg-mjs-dark text-white font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors">
                 Close
               </button>

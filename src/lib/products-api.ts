@@ -211,9 +211,32 @@ function transformProduct(bc: BCProduct): ProductData {
     cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
     pack,
     imageFit: "contain",
-    quickBuy: CUSTOM_PRICING[bc.sku] || [
-      { label: "1 Case", qty: 1, unitPrice: Math.round((bc.calculated_price || bc.price) * 100) / 100 },
-    ],
+    quickBuy: CUSTOM_PRICING[bc.sku] || (() => {
+      const basePrice = Math.round((bc.calculated_price || bc.price) * 100) / 100;
+      const tiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
+        { label: "1 Case", qty: 1, unitPrice: basePrice },
+      ];
+      // Include BC bulk pricing rules if available
+      const rules = (bc as unknown as Record<string, unknown>).bulk_pricing_rules as { quantity_min: number; type: string; amount: number }[] | undefined;
+      if (rules && Array.isArray(rules) && rules.length > 0) {
+        const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
+        for (const rule of sorted) {
+          let tierPrice = basePrice;
+          if (rule.type === "percent") tierPrice = basePrice * (1 - rule.amount / 100);
+          else if (rule.type === "price") tierPrice = basePrice - rule.amount;
+          else if (rule.type === "fixed") tierPrice = rule.amount;
+          tierPrice = Math.round(tierPrice * 100) / 100;
+          const savings = Math.round((basePrice - tierPrice) * 100) / 100;
+          tiers.push({
+            label: `${rule.quantity_min}+ Cases`,
+            qty: rule.quantity_min,
+            unitPrice: tierPrice,
+            ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/case` } : {}),
+          });
+        }
+      }
+      return tiers;
+    })(),
     sdsSheet: findSdsSheet(bc.sku || ""),
   };
 }

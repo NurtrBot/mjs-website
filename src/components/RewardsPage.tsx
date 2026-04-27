@@ -1,24 +1,127 @@
 "use client";
 
-import { Gift, Star, ArrowRight, ShoppingCart, CheckCircle, Crown, Zap } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Gift, Star, ArrowRight, ShoppingCart, CheckCircle, Crown, Zap, CreditCard, Shield, Clock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-const GIFTS = [
-  { name: "Carhartt Watch Hat", description: "Acrylic knit beanie — Carhartt Brown", image: "/images/rewards/carhartt-beanie.webp" },
-  { name: "Arctic Tumbler 20oz", description: "Matte black insulated tumbler with straw", image: "/images/rewards/arctic-tumbler.webp" },
-  { name: "JBL Charge Essential", description: "Waterproof Bluetooth speaker", image: "/images/rewards/jbl-speaker.avif" },
+// ── Tier definitions ──
+const GUEST_TIERS = [
+  { minSpend: 500, label: "Bronze", amount: 10, color: "from-amber-600 to-amber-800", icon: Star },
+  { minSpend: 1000, label: "Silver", amount: 20, color: "from-gray-400 to-gray-600", icon: Star },
+  { minSpend: 2500, label: "Gold", amount: 50, color: "from-yellow-400 to-amber-500", icon: Crown },
+  { minSpend: 3500, label: "Platinum", amount: 75, color: "from-indigo-500 to-purple-600", icon: Zap },
+  { minSpend: 5000, label: "Diamond", amount: 125, color: "from-mjs-red to-red-700", icon: Gift },
 ];
 
-const TIERS = [
-  { points: 500, label: "Bronze", color: "from-amber-600 to-amber-800" },
-  { points: 1000, label: "Silver", color: "from-gray-400 to-gray-600" },
-  { points: 2500, label: "Gold", color: "from-yellow-400 to-amber-500" },
-  { points: 3500, label: "Platinum", color: "from-indigo-500 to-purple-600" },
-  { points: 5000, label: "Diamond", color: "from-mjs-red to-red-700" },
+const CUSTOMER_TIERS = [
+  { minSpend: 700, label: "Bronze", amount: 10, color: "from-amber-600 to-amber-800", icon: Star },
+  { minSpend: 2000, label: "Silver", amount: 25, color: "from-gray-400 to-gray-600", icon: Star },
+  { minSpend: 3500, label: "Gold", amount: 50, color: "from-yellow-400 to-amber-500", icon: Crown },
+  { minSpend: 5000, label: "Platinum", amount: 75, color: "from-indigo-500 to-purple-600", icon: Zap },
+  { minSpend: 7500, label: "Diamond", amount: 100, color: "from-mjs-red to-red-700", icon: Gift },
 ];
+
+// ── Hardcoded popular brands (always visible, no API wait) ──
+const POPULAR_BRANDS = [
+  { id: "OKMHM2X2OHYV", name: "Amazon" },
+  { id: "DC82VBYLI4CC", name: "Apple" },
+  { id: "4SAT90Q41D60", name: "Chevron" },
+  { id: "2XG0FLQXBDCZ", name: "Starbucks" },
+  { id: "9OEIQ5EWBWT9", name: "DoorDash" },
+  { id: "CRN0ID07Y2XD", name: "Chipotle" },
+  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines" },
+  { id: "HNFP6TMSPA9W", name: "Airbnb" },
+  { id: "DYHLA54LEX11", name: "AMC Theatres" },
+  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods" },
+];
+
+// Brands to prioritize at top of grid
+const PRIORITY_NAMES = ["Amazon", "Target", "Apple", "Walmart", "Chevron", "Visa", "Starbucks", "Nike", "DoorDash", "Home Depot", "Pizza Hut", "Netflix", "Chipotle", "Southwest Airlines", "Costco"];
+
+interface BrandCard {
+  id: string;
+  name: string;
+  image: string;
+}
+
+// ── Marquee Row ──
+function MarqueeRow({ brands, direction = "left", speed = 35 }: { brands: BrandCard[]; direction?: "left" | "right"; speed?: number }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Double the items for seamless loop
+  const items = [...brands, ...brands];
+  const duration = brands.length * speed;
+
+  return (
+    <div className="overflow-hidden relative group">
+      {/* Edge fades */}
+      <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-mjs-dark to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-mjs-dark to-transparent z-10 pointer-events-none" />
+
+      <div
+        ref={trackRef}
+        className="flex gap-4 w-max"
+        style={{
+          animation: `marquee-${direction} ${duration}s linear infinite`,
+        }}
+      >
+        {items.map((brand, i) => (
+          <div
+            key={`${brand.id}-${i}`}
+            className="flex-shrink-0 w-[180px] h-[115px] rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/25 hover:scale-105 transition-all duration-300 group/card relative"
+          >
+            <img
+              src={brand.image}
+              alt={brand.name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
+            <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
+              <span className="text-[10px] font-bold text-white drop-shadow-lg">{brand.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function RewardsPage() {
   const { isLoggedIn } = useAuth();
+  const [brands, setBrands] = useState<BrandCard[]>([]);
+  const [showCustomerTiers, setShowCustomerTiers] = useState(false);
+  const tiers = showCustomerTiers ? CUSTOMER_TIERS : GUEST_TIERS;
+
+  // Fetch full brand catalog from Tremendous
+  useEffect(() => {
+    // Start with popular brands immediately
+    const initial: BrandCard[] = POPULAR_BRANDS.map(b => ({
+      ...b,
+      image: `https://cdn.tremendous.com/product_images/${b.id}/card`,
+    }));
+    setBrands(initial);
+
+    // Then fetch full catalog
+    fetch("/api/rewards/catalog")
+      .then(r => r.json())
+      .then(data => {
+        if (data.products?.length > 0) {
+          const all: BrandCard[] = data.products.map((p: { id: string; name: string; image: string }) => ({
+            id: p.id,
+            name: p.name,
+            image: p.image || `https://cdn.tremendous.com/product_images/${p.id}/card`,
+          }));
+          setBrands(all);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Split brands into 3 rows
+  const row1 = brands.filter((_, i) => i % 3 === 0);
+  const row2 = brands.filter((_, i) => i % 3 === 1);
+  const row3 = brands.filter((_, i) => i % 3 === 2);
 
   return (
     <section className="bg-gray-50 min-h-screen">
@@ -27,207 +130,259 @@ export default function RewardsPage() {
         <div className="absolute inset-0">
           <div className="absolute top-[-200px] right-[-100px] w-[600px] h-[600px] bg-mjs-red/5 rounded-full" />
           <div className="absolute bottom-[-300px] left-[-200px] w-[800px] h-[800px] bg-mjs-red/3 rounded-full" />
-          <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] bg-white/[0.02] rounded-full" />
+          <div className="absolute top-[30%] left-[55%] w-[400px] h-[400px] bg-white/[0.02] rounded-full" />
         </div>
 
-        <div className="max-w-[1100px] mx-auto px-4 pt-20 pb-28 relative">
+        <div className="max-w-[1100px] mx-auto px-4 pt-20 pb-14 relative">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-mjs-red/10 border border-mjs-red/20 rounded-full px-5 py-2 mb-8">
-              <Gift className="w-4 h-4 text-mjs-red" />
-              <span className="text-xs font-bold text-mjs-red uppercase tracking-widest">MJS Rewards</span>
+              <CreditCard className="w-4 h-4 text-mjs-red" />
+              <span className="text-xs font-bold text-mjs-red uppercase tracking-widest">MJS Rewards Program</span>
             </div>
 
             <h1 className="text-5xl md:text-6xl font-black text-white leading-[1.1] tracking-tight">
-              Get rewarded for<br />
-              <span className="text-mjs-red">every order.</span>
+              Earn a free gift card<br />
+              <span className="text-mjs-red">with every order.</span>
             </h1>
 
             <p className="text-lg text-gray-400 mt-6 leading-relaxed max-w-xl mx-auto">
-              Every order you place unlocks a free premium gift. No points to track, no waiting. Just meet the minimum and choose your reward.
+              Every qualifying order earns you a digital gift card to your favorite brand.
+              No points. No hoops. Just real rewards, delivered to your inbox.
             </p>
 
-            {/* Value prop */}
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 flex items-center gap-4 backdrop-blur-sm">
-                <div className="w-14 h-14 bg-mjs-red/20 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl font-black text-mjs-red">$500</span>
-                </div>
+            {/* Quick stats */}
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
+                <Gift className="w-5 h-5 text-mjs-red" />
                 <div className="text-left">
-                  <div className="text-white font-bold">Minimum Order</div>
-                  <div className="text-xs text-gray-500">to unlock your first free gift</div>
+                  <div className="text-white font-bold text-sm">Up to $125</div>
+                  <div className="text-[10px] text-gray-500">per order</div>
                 </div>
               </div>
-              <div className="text-2xl text-gray-600">&rarr;</div>
-              <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 flex items-center gap-4 backdrop-blur-sm">
-                <div className="w-14 h-14 bg-mjs-red/20 rounded-xl flex items-center justify-center">
-                  <Gift className="w-7 h-7 text-mjs-red" />
-                </div>
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
+                <CreditCard className="w-5 h-5 text-mjs-red" />
                 <div className="text-left">
-                  <div className="text-white font-bold">Pick Your Gift</div>
-                  <div className="text-xs text-gray-500">choose 1 of 3 premium items</div>
+                  <div className="text-white font-bold text-sm">2,500+ Brands</div>
+                  <div className="text-[10px] text-gray-500">to choose from</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
+                <CheckCircle className="w-5 h-5 text-mjs-red" />
+                <div className="text-left">
+                  <div className="text-white font-bold text-sm">Every Order</div>
+                  <div className="text-[10px] text-gray-500">qualifies at $500+</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* ═══ BRAND MARQUEE ═══ */}
+        {brands.length > 0 && (
+          <div className="pb-20 space-y-4">
+            <MarqueeRow brands={row1} direction="left" speed={25} />
+            <MarqueeRow brands={row2} direction="right" speed={30} />
+            <MarqueeRow brands={row3} direction="left" speed={24} />
+          </div>
+        )}
       </div>
 
-      {/* ═══ THE GIFTS — Full Showcase ═══ */}
-      <div className="max-w-[1100px] mx-auto px-4 -mt-16 relative z-10">
+      {/* ═══ TIER BREAKDOWN ═══ */}
+      <div className="max-w-[1100px] mx-auto px-4 -mt-10 relative z-10">
         <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-          {/* Header */}
-          <div className="text-center px-6 pt-10 pb-2">
-            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Your Rewards</div>
-            <h2 className="text-3xl font-black text-mjs-dark">Choose Your Free Gift</h2>
-            <p className="text-sm text-mjs-gray-500 mt-2 max-w-md mx-auto">Every qualifying order lets you pick one of these premium items — on us.</p>
+          <div className="text-center px-6 pt-10 pb-4">
+            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Reward Tiers</div>
+            <h2 className="text-3xl font-black text-mjs-dark">The More You Spend, The More You Earn</h2>
+            <p className="text-sm text-mjs-gray-500 mt-2 max-w-lg mx-auto">
+              Higher order totals unlock bigger gift card values.<br />Pick any brand you love at checkout.
+            </p>
+
+            {/* Toggle: Guest vs Customer */}
+            <div className="mt-6 inline-flex items-center bg-gray-100 rounded-full p-1">
+              <button
+                onClick={() => setShowCustomerTiers(false)}
+                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${!showCustomerTiers ? "bg-mjs-dark text-white shadow-md" : "text-mjs-gray-500 hover:text-mjs-dark"}`}
+              >
+                Guest Checkout
+              </button>
+              <button
+                onClick={() => setShowCustomerTiers(true)}
+                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${showCustomerTiers ? "bg-mjs-dark text-white shadow-md" : "text-mjs-gray-500 hover:text-mjs-dark"}`}
+              >
+                Account Holders
+              </button>
+            </div>
           </div>
 
-          {/* Gift Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-gray-100 px-6 md:px-0 py-8">
-            {GIFTS.map((gift, i) => (
-              <div key={i} className="flex flex-col items-center text-center px-8 py-6">
-                <div className="w-full max-w-[220px] h-[200px] flex items-center justify-center mb-6">
-                  <img src={gift.image} alt={gift.name} className="max-w-full max-h-full object-contain drop-shadow-lg" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 px-4 sm:px-0 py-8">
+            {tiers.map((tier, i) => {
+              const Icon = tier.icon;
+              return (
+                <div key={tier.label} className="flex flex-col items-center text-center px-4 py-6 group relative">
+                  {i === tiers.length - 1 && (
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-mjs-red text-white text-[8px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full">
+                      Best Value
+                    </div>
+                  )}
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${tier.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-widest mb-1">{tier.label}</div>
+                  <div className="text-3xl font-black text-mjs-dark">${tier.amount}</div>
+                  <div className="text-[10px] text-mjs-gray-400 mt-0.5">gift card</div>
+                  <div className="mt-3 bg-gray-50 rounded-lg px-3 py-1.5">
+                    <div className="text-xs font-bold text-mjs-dark">${tier.minSpend.toLocaleString()}+</div>
+                    <div className="text-[9px] text-mjs-gray-400">order minimum</div>
+                  </div>
                 </div>
-                <h3 className="text-lg font-black text-mjs-dark">{gift.name}</h3>
-                <p className="text-sm text-mjs-gray-500 mt-1">{gift.description}</p>
-                <div className="mt-4 inline-flex items-center gap-1.5 bg-mjs-red/5 text-mjs-red text-xs font-bold px-4 py-2 rounded-full">
-                  <Gift className="w-3.5 h-3.5" />
-                  FREE with qualifying order
-                </div>
+              );
+            })}
+          </div>
+
+          {/* Tier progress bar */}
+          <div className="px-8 pb-8">
+            <div className="flex items-center gap-2 max-w-[800px] mx-auto">
+              <div className="text-[10px] text-mjs-gray-400 font-bold">${tiers[0].minSpend}</div>
+              <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden relative">
+                <div className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 via-60% via-indigo-500 to-mjs-red rounded-full w-full" />
+                {tiers.map((tier) => {
+                  const max = tiers[tiers.length - 1].minSpend;
+                  const min = tiers[0].minSpend;
+                  const pct = ((tier.minSpend - min) / (max - min)) * 100;
+                  return (
+                    <div key={tier.label} className="absolute top-1/2 -translate-y-1/2" style={{ left: `${pct}%` }}>
+                      <div className="w-3.5 h-3.5 bg-white rounded-full border-2 border-gray-300 -ml-1.5 shadow-sm" />
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+              <div className="text-[10px] text-mjs-gray-400 font-bold">${tiers[tiers.length - 1].minSpend.toLocaleString()}+</div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <div className="max-w-[1100px] mx-auto px-4 py-20">
-        <div className="text-center mb-14">
-          <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Simple as 1-2-3</div>
-          <h2 className="text-3xl font-black text-mjs-dark">How It Works</h2>
+      <div className="max-w-[1100px] mx-auto px-4 py-24">
+        <div className="text-center mb-16">
+          <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">How It Works</div>
+          <h2 className="text-3xl font-black text-mjs-dark">Three Steps to Free Gift Cards</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[900px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-[900px] mx-auto">
           {[
             {
               step: "1",
               icon: ShoppingCart,
               title: "Place Your Order",
-              desc: "Shop from our full catalog of 10,000+ cleaning products. Build your cart as you normally would.",
+              desc: "Shop from 10,000+ cleaning and janitorial products. Build your cart like normal.",
             },
             {
               step: "2",
-              icon: Star,
-              title: "Hit a Tier",
-              desc: "When your order total reaches $500 or more, you automatically qualify for a free gift at checkout.",
+              icon: CreditCard,
+              title: "Pick Your Brand",
+              desc: "At checkout, choose a gift card from Amazon, Apple, Starbucks, and dozens more top brands.",
             },
             {
               step: "3",
               icon: Gift,
-              title: "Pick Your Gift",
-              desc: "A selection of premium gifts appears. Choose one and we'll include it with your order — completely free.",
+              title: "Get Your Card",
+              desc: "Your digital gift card is delivered to your email within 72 hours. Ready to spend instantly.",
             },
           ].map((item) => (
             <div key={item.step} className="text-center">
-              <div className="relative inline-block mb-5">
-                <div className="w-20 h-20 bg-mjs-dark rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 bg-mjs-dark rounded-2xl flex items-center justify-center mx-auto shadow-xl">
                   <item.icon className="w-9 h-9 text-mjs-red" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 bg-mjs-red rounded-full flex items-center justify-center text-white text-xs font-black shadow-md">
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-mjs-red rounded-full flex items-center justify-center text-white text-sm font-black shadow-md ring-4 ring-gray-50">
                   {item.step}
                 </div>
               </div>
-              <h3 className="text-base font-black text-mjs-dark mb-2">{item.title}</h3>
+              <h3 className="text-lg font-black text-mjs-dark mb-2">{item.title}</h3>
               <p className="text-sm text-mjs-gray-500 leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
+
+        {/* Connecting line (desktop) */}
+        <div className="hidden md:block max-w-[600px] mx-auto mt-[-140px] mb-[80px]">
+          <div className="flex items-center justify-between px-[100px]">
+            <div className="flex-1 h-[2px] bg-gradient-to-r from-mjs-red/30 to-mjs-red/10" />
+            <div className="flex-1 h-[2px] bg-gradient-to-r from-mjs-red/10 to-mjs-red/30" />
+          </div>
+        </div>
       </div>
 
-      {/* ═══ TIER BREAKDOWN ═══ */}
-      <div className="bg-mjs-dark">
+      {/* ═══ BRAND SHOWCASE GRID ═══ */}
+      <div className="bg-white border-t border-gray-100">
         <div className="max-w-[1100px] mx-auto px-4 py-20">
-          <div className="text-center mb-14">
-            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Reward Tiers</div>
-            <h2 className="text-3xl font-black text-white">The More You Order,<br />The Better It Gets</h2>
-            <p className="text-sm text-gray-500 mt-3 max-w-md mx-auto">Every tier gives you access to the same premium gifts. Higher tiers unlock on bigger orders.</p>
+          <div className="text-center mb-12">
+            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Gift Card Library</div>
+            <h2 className="text-3xl font-black text-mjs-dark">Over 2,500+ Top Brands</h2>
+            <p className="text-sm text-mjs-gray-500 mt-2">From everyday essentials to luxury experiences. Pick the brand that fits your life.</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {TIERS.map((tier, i) => (
-              <div key={i} className="relative group">
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 hover:border-white/20 transition-all">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tier.color} flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                    {i === 0 && <Star className="w-7 h-7 text-white" />}
-                    {i === 1 && <Star className="w-7 h-7 text-white" />}
-                    {i === 2 && <Crown className="w-7 h-7 text-white" />}
-                    {i === 3 && <Zap className="w-7 h-7 text-white" />}
-                    {i === 4 && <Gift className="w-7 h-7 text-white" />}
-                  </div>
-                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{tier.label}</div>
-                  <div className="text-2xl font-black text-white">${tier.points.toLocaleString()}</div>
-                  <div className="text-[10px] text-gray-500 mt-1">order minimum</div>
-                  <div className="mt-4 text-[10px] font-bold text-mjs-red">1 Free Gift</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {[...brands].sort((a, b) => {
+              const ai = PRIORITY_NAMES.findIndex(n => a.name.includes(n));
+              const bi = PRIORITY_NAMES.findIndex(n => b.name.includes(n));
+              if (ai !== -1 && bi !== -1) return ai - bi;
+              if (ai !== -1) return -1;
+              if (bi !== -1) return 1;
+              return 0;
+            }).slice(0, 30).map((brand) => (
+              <div
+                key={brand.id}
+                className="rounded-xl overflow-hidden bg-gray-50 border border-gray-100 hover:shadow-lg hover:border-mjs-red/20 hover:scale-[1.03] transition-all duration-200 group relative aspect-[1.6]"
+              >
+                <img
+                  src={brand.image}
+                  alt={brand.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-0 left-0 right-0 p-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[11px] font-bold text-white drop-shadow-lg">{brand.name}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Tier visual strip */}
-          <div className="mt-10 flex items-center gap-2 max-w-[700px] mx-auto">
-            <div className="text-[10px] text-gray-600 font-bold">$0</div>
-            <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden relative">
-              <div className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 via-indigo-500 to-mjs-red rounded-full w-full" />
-              {TIERS.map((tier) => {
-                const pct = (tier.points / 5000) * 100;
-                return (
-                  <div key={tier.points} className="absolute top-1/2 -translate-y-1/2" style={{ left: `${pct}%` }}>
-                    <div className="w-3 h-3 bg-white rounded-full border-2 border-mjs-dark -ml-1.5" />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="text-[10px] text-gray-600 font-bold">$5,000+</div>
-          </div>
         </div>
       </div>
 
-      {/* ═══ GIFT SPOTLIGHT ═══ */}
-      <div className="bg-white">
+      {/* ═══ WHY MJS REWARDS ═══ */}
+      <div className="bg-gray-50 border-t border-gray-100">
         <div className="max-w-[1100px] mx-auto px-4 py-20">
-          <div className="text-center mb-14">
-            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Up Close</div>
-            <h2 className="text-3xl font-black text-mjs-dark">Premium Brands, Premium Quality</h2>
-            <p className="text-sm text-mjs-gray-500 mt-2">We picked gifts that working professionals actually want.</p>
+          <div className="text-center mb-12">
+            <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Why It&apos;s Different</div>
+            <h2 className="text-3xl font-black text-mjs-dark">No Points. No Gimmicks. Just Rewards.</h2>
           </div>
 
-          {/* Large feature cards */}
-          <div className="space-y-6">
-            {GIFTS.map((gift, i) => (
-              <div key={i} className={`rounded-2xl border border-gray-100 overflow-hidden flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
-                <div className="md:w-1/2 bg-gray-50 flex items-center justify-center p-10">
-                  <img src={gift.image} alt={gift.name} className="max-h-[250px] object-contain drop-shadow-xl" />
-                </div>
-                <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                  <div className="inline-flex items-center gap-1.5 bg-mjs-red/5 text-mjs-red text-[10px] font-bold px-3 py-1 rounded-full mb-4 w-fit">
-                    <Gift className="w-3 h-3" />
-                    FREE REWARD
-                  </div>
-                  <h3 className="text-2xl font-black text-mjs-dark">{gift.name}</h3>
-                  <p className="text-sm text-mjs-gray-500 mt-2 leading-relaxed">{gift.description}</p>
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, si) => (
-                        <Star key={si} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                      ))}
-                    </div>
-                    <span className="text-xs text-mjs-gray-400">Top rated by our customers</span>
-                  </div>
-                  <div className="mt-5 text-xs text-mjs-gray-400">
-                    Available at all reward tiers &middot; Orders $500+
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                emoji: "\ud83c\udf81",
+                title: "Every Order Counts",
+                desc: "No loyalty points to accumulate. Every qualifying order earns you a gift card immediately. Place 10 orders, get 10 gift cards.",
+              },
+              {
+                emoji: "\u2764\ufe0f",
+                title: "Real Brands You Love",
+                desc: "Not some generic store credit. Choose from Amazon, Apple, Starbucks, DoorDash, and dozens more brands you actually use.",
+              },
+              {
+                emoji: "\ud83d\udd12",
+                title: "Secure & Instant",
+                desc: "Digital gift cards delivered straight to your email. Redeemable instantly online or in-store. No expiration dates.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-white rounded-2xl border border-gray-100 p-8 hover:shadow-md transition-shadow text-center">
+                <div className="text-4xl mb-5">{item.emoji}</div>
+                <h3 className="text-base font-black text-mjs-dark mb-2">{item.title}</h3>
+                <p className="text-sm text-mjs-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -235,21 +390,21 @@ export default function RewardsPage() {
       </div>
 
       {/* ═══ FAQ ═══ */}
-      <div className="bg-gray-50 border-t border-gray-100">
+      <div className="bg-white border-t border-gray-100">
         <div className="max-w-[800px] mx-auto px-4 py-16">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-black text-mjs-dark">Common Questions</h2>
           </div>
           <div className="space-y-3">
             {[
-              { q: "How do I get a free gift?", a: "When your order total is $500 or more, a gift selection will appear during checkout. Pick one and it's included with your order." },
-              { q: "Can I get a gift on every order?", a: "Yes! Every qualifying order ($500+) earns a gift. Place 10 qualifying orders, get 10 gifts." },
-              { q: "What if I don't want a gift right now?", a: "No problem. You can skip the gift and save your reward points for a future order." },
-              { q: "Do I get better gifts with bigger orders?", a: "The same premium gifts are available at every tier. Higher order totals unlock higher tiers for future perks." },
-              { q: "Do I need an account?", a: "Guest orders qualify too, but we recommend creating an account so we can track your rewards history." },
-              { q: "When will I receive my gift?", a: "Your gift ships with your order, or you can pick it up at our Anaheim warehouse." },
+              { q: "How do I earn a gift card?", a: "Place any order of $500 or more. At checkout, you'll be prompted to choose a gift card brand. It's automatic." },
+              { q: "When will I receive my gift card?", a: "Your digital gift card is delivered to your email within 72 hours of your order being placed." },
+              { q: "Can I earn a gift card on every order?", a: "Yes! Every qualifying order earns a gift card. There's no limit to how many you can earn." },
+              { q: "What brands can I choose from?", a: "We offer 2,500+ brands including Amazon, Apple, Starbucks, DoorDash, Southwest Airlines, Chipotle, and many more." },
+              { q: "Do I need an account?", a: "No. Guest orders of $500+ qualify. Creating a free account lets you track your rewards and order history." },
+              { q: "Can I use my gift card immediately?", a: "Yes. Once delivered to your email, the gift card is ready to use online or in-store at the brand you selected." },
             ].map((faq, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow">
+              <div key={i} className="bg-gray-50 rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow">
                 <h3 className="text-sm font-bold text-mjs-dark">{faq.q}</h3>
                 <p className="text-xs text-mjs-gray-500 mt-2 leading-relaxed">{faq.a}</p>
               </div>
@@ -262,12 +417,17 @@ export default function RewardsPage() {
       <div className="bg-mjs-dark relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-[-100px] right-[-50px] w-[400px] h-[400px] bg-mjs-red/5 rounded-full" />
+          <div className="absolute bottom-[-100px] left-[-50px] w-[300px] h-[300px] bg-mjs-red/3 rounded-full" />
         </div>
         <div className="max-w-[800px] mx-auto px-4 py-16 text-center relative">
-          <div className="text-5xl mb-4">&#127873;</div>
-          <div className="text-3xl font-black text-white mb-3">Your next order could<br />come with a <span className="text-mjs-red">free gift.</span></div>
+          <div className="w-16 h-16 bg-mjs-red/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <CreditCard className="w-8 h-8 text-mjs-red" />
+          </div>
+          <div className="text-3xl font-black text-white mb-3">
+            Your next order comes with a<br /><span className="text-mjs-red">free gift card.</span>
+          </div>
           <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
-            Place an order of $500 or more and choose from our selection of premium rewards. It&apos;s that simple.
+            Place an order of $500 or more and choose from {brands.length}+ top brands. It&apos;s that simple.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {isLoggedIn ? (
@@ -285,9 +445,25 @@ export default function RewardsPage() {
               </>
             )}
           </div>
-          <div className="mt-6 text-xs text-gray-600">Questions? Call us at <a href="tel:7147792640" className="text-mjs-red font-semibold">(714) 779-2640</a></div>
+          <div className="mt-4 inline-flex items-center gap-1.5 text-[10px] text-gray-600">
+            <Clock className="w-3 h-3" />
+            Gift cards delivered within 72 hours of order
+          </div>
+          <div className="mt-3 text-xs text-gray-600">Questions? Call us at <a href="tel:7147792640" className="text-mjs-red font-semibold">(714) 779-2640</a></div>
         </div>
       </div>
+
+      {/* ═══ CSS Marquee Animations ═══ */}
+      <style jsx>{`
+        @keyframes marquee-left {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes marquee-right {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
     </section>
   );
 }

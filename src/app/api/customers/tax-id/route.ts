@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateOrder } from "@/lib/bigcommerce";
 
 // GET — check if customer has uploaded a tax ID
 export async function GET(req: NextRequest) {
@@ -33,36 +32,37 @@ export async function GET(req: NextRequest) {
 // POST — upload tax ID file
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File | null;
-    const customerId = Number(formData.get("customerId"));
-    const customerName = (formData.get("customerName") as string) || "Unknown";
-    const customerEmail = (formData.get("customerEmail") as string) || "";
-    const companyName = (formData.get("companyName") as string) || "";
-    const taxIdNumber = (formData.get("taxIdNumber") as string) || "";
+    // Support both JSON and FormData
+    let customerId: number;
+    let taxIdNumber: string;
+    let customerName: string;
+    let customerEmail: string;
+    let companyName: string;
 
-    if (!file || !customerId) {
-      return NextResponse.json({ error: "Missing file or customer ID" }, { status: 400 });
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      customerId = Number(body.customerId);
+      taxIdNumber = body.taxIdNumber || "";
+      customerName = body.customerName || "Unknown";
+      customerEmail = body.customerEmail || "";
+      companyName = body.companyName || "";
+    } else {
+      const formData = await req.formData();
+      customerId = Number(formData.get("customerId"));
+      taxIdNumber = (formData.get("taxIdNumber") as string) || "";
+      customerName = (formData.get("customerName") as string) || "Unknown";
+      customerEmail = (formData.get("customerEmail") as string) || "";
+      companyName = (formData.get("companyName") as string) || "";
     }
 
-    // Validate file type
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Please upload a PDF or image file (JPG, PNG)" }, { status: 400 });
-    }
-
-    // Max 10MB
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "File must be under 10MB" }, { status: 400 });
+    if (!customerId || !taxIdNumber) {
+      return NextResponse.json({ error: "Missing customer ID or Tax ID number" }, { status: 400 });
     }
 
     const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
     const token = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
     const uploadDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-
-    // Read file to base64 for email
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const fileBase64 = fileBuffer.toString("base64");
 
     // Update customer notes in BC to mark tax ID as uploaded
     const customerRes = await fetch(
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         .replace(/\[TAX_ID_FILE:.*?\]/g, "")
         .replace(/\[TAX_ID_DATE:.*?\]/g, "")
         .trim();
-      notes = `${notes} [TAX_ID_UPLOADED] [TAX_ID_NUMBER:${taxIdNumber}] [TAX_ID_FILE:${file.name}] [TAX_ID_DATE:${uploadDate}]`.trim();
+      notes = `${notes} [TAX_ID_UPLOADED] [TAX_ID_NUMBER:${taxIdNumber}] [TAX_ID_DATE:${uploadDate}]`.trim();
 
       // Use nativeRequest via updateOrder pattern for the PUT
       const { default: https } = await import("https");
@@ -112,23 +112,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Send email notification to MJS team
-    // Using BC's built-in email or staff notification
-    // For now, store the file data and create a staff-visible note
-    try {
-      // Create an internal order note / staff notification
-      // We'll store the base64 file reference and send via available channels
-      console.log(`[TAX_ID] Customer ${customerName} (${customerEmail}) from ${companyName} uploaded tax ID: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
-
-      // Try to send email notification via simple SMTP if configured
-      if (process.env.SMTP_HOST) {
-        // SMTP email sending would go here
-      }
-    } catch {}
-
-    // Suppress unused variable warning
-    void fileBase64;
-    void updateOrder;
+    console.log(`[TAX_ID] Customer ${customerName} (${customerEmail}) from ${companyName} submitted Tax ID: ${taxIdNumber}`);
 
     return NextResponse.json({
       success: true,

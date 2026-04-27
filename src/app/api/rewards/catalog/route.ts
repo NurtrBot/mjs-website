@@ -32,15 +32,19 @@ export async function GET() {
         const hasUS = countries.some((c: Record<string, unknown>) => c.abbr === "US");
         return hasUS && p.images && (p.category === "merchant_card" || p.category === "visa" || p.category === "mastercard");
       })
-      .map((p: Record<string, unknown>) => ({
-        id: p.id,
-        name: p.name,
-        category: p.category,
-        image: (p.images as Record<string, unknown>)?.[0] || (p.images as Record<string, string>)?.url || "",
-        minValue: (p.min_value as number) || 0,
-        maxValue: (p.max_value as number) || 0,
-      }))
-      .slice(0, 20);
+      .map((p: Record<string, unknown>) => {
+        const images = p.images as Record<string, string>[] | undefined;
+        const imageUrl = images?.[0]?.src || images?.[0]?.url || `https://cdn.tremendous.com/product_images/${p.id}/card`;
+        return {
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          image: imageUrl,
+          minValue: (p.min_value as number) || 0,
+          maxValue: (p.max_value as number) || 0,
+        };
+      })
+      .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
 
     return NextResponse.json({ products: giftCards });
   } catch {

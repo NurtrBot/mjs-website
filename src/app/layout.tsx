@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -7,6 +8,7 @@ import { OrderProvider } from "@/context/OrderContext";
 import { ShippingProvider } from "@/context/ShippingContext";
 import { PurchaseProvider } from "@/context/PurchaseContext";
 import CartPanel from "@/components/CartPanel";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -74,27 +76,25 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
-        {/* Google Analytics 4 */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N2DLCDNH9" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-6N2DLCDNH9', {
-                page_title: document.title,
-                send_page_view: true
-              });
-            `,
-          }}
-        />
-        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-6N2DLCDNH9" strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6N2DLCDNH9', {
+              page_title: document.title,
+              send_page_view: true
+            });
+          `}
+        </Script>
+        <Script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" strategy="lazyOnload" />
       </head>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
         <div id="google_translate_element" style={{ display: "none" }} />
         <AuthProvider>
           <PurchaseProvider>
+            <FavoritesProvider>
             <OrderProvider>
               <ShippingProvider>
                 <CartProvider>
@@ -103,6 +103,7 @@ export default function RootLayout({
                 </CartProvider>
               </ShippingProvider>
             </OrderProvider>
+          </FavoritesProvider>
           </PurchaseProvider>
         </AuthProvider>
       </body>
