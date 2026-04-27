@@ -27,16 +27,16 @@ import { trackPromoCode } from "@/lib/analytics";
 
 // Digital gift cards (from Tremendous production campaign)
 const GIFT_CARDS = [
-  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://cdn.tremendous.com/product_images/OKMHM2X2OHYV/card" },
-  { id: "DC82VBYLI4CC", name: "Apple", image: "https://cdn.tremendous.com/product_images/DC82VBYLI4CC/card" },
-  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://cdn.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
-  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://cdn.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
-  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://cdn.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
-  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://cdn.tremendous.com/product_images/CRN0ID07Y2XD/card" },
-  { id: "HNFP6TMSPA9W", name: "Airbnb", image: "https://cdn.tremendous.com/product_images/HNFP6TMSPA9W/card" },
-  { id: "DYHLA54LEX11", name: "AMC Theatres", image: "https://cdn.tremendous.com/product_images/DYHLA54LEX11/card" },
-  { id: "4SAT90Q41D60", name: "Chevron", image: "https://cdn.tremendous.com/product_images/4SAT90Q41D60/card" },
-  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://cdn.tremendous.com/product_images/L9SW3VT4MLW4/card" },
+  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://api.tremendous.com/product_images/OKMHM2X2OHYV/card" },
+  { id: "DC82VBYLI4CC", name: "Apple", image: "https://api.tremendous.com/product_images/DC82VBYLI4CC/card" },
+  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://api.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
+  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://api.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
+  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://api.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
+  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://api.tremendous.com/product_images/CRN0ID07Y2XD/card" },
+  { id: "HNFP6TMSPA9W", name: "Airbnb", image: "https://api.tremendous.com/product_images/HNFP6TMSPA9W/card" },
+  { id: "DYHLA54LEX11", name: "AMC Theatres", image: "https://api.tremendous.com/product_images/DYHLA54LEX11/card" },
+  { id: "4SAT90Q41D60", name: "Chevron", image: "https://api.tremendous.com/product_images/4SAT90Q41D60/card" },
+  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://api.tremendous.com/product_images/L9SW3VT4MLW4/card" },
 ];
 
 // Guest tiers (not signed in)

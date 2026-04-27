@@ -1971,16 +1971,16 @@ export default function AccountDashboard() {
             {/* Brand Card Image */}
             {(() => {
               const brandImages: Record<string, string> = {
-                "Amazon": "https://cdn.tremendous.com/product_images/OKMHM2X2OHYV/card",
-                "Apple": "https://cdn.tremendous.com/product_images/DC82VBYLI4CC/card",
-                "Starbucks": "https://cdn.tremendous.com/product_images/2XG0FLQXBDCZ/card",
-                "Southwest": "https://cdn.tremendous.com/product_images/GL3Y4RNQJAQ1/card",
-                "DoorDash": "https://cdn.tremendous.com/product_images/9OEIQ5EWBWT9/card",
-                "Chipotle": "https://cdn.tremendous.com/product_images/CRN0ID07Y2XD/card",
-                "Airbnb": "https://cdn.tremendous.com/product_images/HNFP6TMSPA9W/card",
-                "AMC": "https://cdn.tremendous.com/product_images/DYHLA54LEX11/card",
-                "Chevron": "https://cdn.tremendous.com/product_images/4SAT90Q41D60/card",
-                "Dick": "https://cdn.tremendous.com/product_images/L9SW3VT4MLW4/card",
+                "Amazon": "https://api.tremendous.com/product_images/OKMHM2X2OHYV/card",
+                "Apple": "https://api.tremendous.com/product_images/DC82VBYLI4CC/card",
+                "Starbucks": "https://api.tremendous.com/product_images/2XG0FLQXBDCZ/card",
+                "Southwest": "https://api.tremendous.com/product_images/GL3Y4RNQJAQ1/card",
+                "DoorDash": "https://api.tremendous.com/product_images/9OEIQ5EWBWT9/card",
+                "Chipotle": "https://api.tremendous.com/product_images/CRN0ID07Y2XD/card",
+                "Airbnb": "https://api.tremendous.com/product_images/HNFP6TMSPA9W/card",
+                "AMC": "https://api.tremendous.com/product_images/DYHLA54LEX11/card",
+                "Chevron": "https://api.tremendous.com/product_images/4SAT90Q41D60/card",
+                "Dick": "https://api.tremendous.com/product_images/L9SW3VT4MLW4/card",
               };
               const imgKey = Object.keys(brandImages).find(k => viewingReward.brand.includes(k));
               const imgUrl = imgKey ? brandImages[imgKey] : null;

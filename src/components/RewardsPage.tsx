@@ -98,7 +98,7 @@ export default function RewardsPage() {
     // Start with popular brands immediately
     const initial: BrandCard[] = POPULAR_BRANDS.map(b => ({
       ...b,
-      image: `https://cdn.tremendous.com/product_images/${b.id}/card`,
+      image: `https://api.tremendous.com/product_images/${b.id}/card`,
     }));
     setBrands(initial);
 
@@ -110,7 +110,7 @@ export default function RewardsPage() {
           const all: BrandCard[] = data.products.map((p: { id: string; name: string; image: string }) => ({
             id: p.id,
             name: p.name,
-            image: p.image || `https://cdn.tremendous.com/product_images/${p.id}/card`,
+            image: p.image || `https://api.tremendous.com/product_images/${p.id}/card`,
           }));
           setBrands(all);
         }

@@ -34,7 +34,7 @@ export async function GET() {
       })
       .map((p: Record<string, unknown>) => {
         const images = p.images as Record<string, string>[] | undefined;
-        const imageUrl = images?.[0]?.src || images?.[0]?.url || `https://cdn.tremendous.com/product_images/${p.id}/card`;
+        const imageUrl = images?.[0]?.src || images?.[0]?.url || `https://api.tremendous.com/product_images/${p.id}/card`;
         return {
           id: p.id,
           name: p.name,
