@@ -48,8 +48,9 @@ interface BrandCard {
 function MarqueeRow({ brands, direction = "left", speed = 35 }: { brands: BrandCard[]; direction?: "left" | "right"; speed?: number }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
-  // Double the items for seamless loop
-  const items = [...brands, ...brands];
+  // Repeat items enough to always overflow viewport for seamless loop
+  const repeats = Math.max(2, Math.ceil(20 / brands.length));
+  const items = Array.from({ length: repeats * 2 }, () => brands).flat();
   const duration = brands.length * speed;
 
   return (
