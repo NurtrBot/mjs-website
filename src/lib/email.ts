@@ -1,9 +1,8 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function sendWelcomeEmail(to: string, firstName: string, lastName: string, email: string) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: "Mobile Janitorial Supply <onboarding@resend.dev>",
       to,
