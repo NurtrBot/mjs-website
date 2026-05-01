@@ -228,8 +228,23 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.product) {
-          setProduct(data.product);
-          trackViewProduct({ sku: data.product.sku, name: data.product.name, price: data.product.price, category: data.product.category, brand: data.product.brand });
+          const bcProduct = data.product;
+          if (!localProduct) {
+            setProduct(bcProduct);
+          } else if (bcProduct.sku === localProduct.sku) {
+            setProduct(bcProduct);
+          } else {
+            // BC returned wrong product — try fetching by SKU instead
+            fetch(`/api/products/search?q=${encodeURIComponent(localProduct.sku)}&limit=1`)
+              .then(r => r.json())
+              .then(d => {
+                const match = (d.products || []).find((p: ProductData) => p.sku === localProduct.sku);
+                if (match) setProduct(match);
+              })
+              .catch(() => {});
+          }
+          const displayProduct = localProduct && bcProduct.sku !== localProduct.sku ? localProduct : bcProduct;
+          trackViewProduct({ sku: displayProduct.sku, name: displayProduct.name, price: displayProduct.price, category: displayProduct.category, brand: displayProduct.brand });
           // Fetch smart related products
           const p = data.product;
           fetch(`/api/products/related?category=${encodeURIComponent(p.category || "")}&subcategory=${encodeURIComponent(p.subcategory || "")}&sku=${encodeURIComponent(p.sku || "")}`)
@@ -402,7 +417,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
           {/* ── LEFT: Image Gallery ── */}
           <div>
             {/* Main Image */}
-            <div className="relative bg-mjs-gray-50 rounded-2xl border border-gray-100 overflow-hidden aspect-square flex items-center justify-center mb-4">
+            <div className="relative bg-white rounded-2xl overflow-hidden aspect-square flex items-center justify-center mb-4">
               {discount > 0 && (
                 <div className="absolute top-4 left-4 z-10 bg-mjs-red text-white text-xs font-bold px-3 py-1.5 rounded-lg">
                   SAVE {discount}%
@@ -411,7 +426,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
               <img
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-4"
               />
             </div>
 
@@ -430,7 +445,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   <img
                     src={img}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-1"
                   />
                 </button>
               ))}
@@ -683,7 +698,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   <div className="flex items-center justify-center gap-2">
                     <MapPin className="w-4 h-4 text-mjs-red flex-shrink-0" />
                     <span className="text-xs font-semibold text-mjs-gray-600 text-center">
-                      Pick up at 3066 E. La Palma Ave, Anaheim &middot; Mon-Fri 6:30 AM - 2:45 PM
+                      Pick up at 3066 E. La Palma Ave, Anaheim &middot; Mon-Fri 6:30 AM - 3:00 PM
                     </span>
                   </div>
                 ) : shipChecked && freeMinimum ? (

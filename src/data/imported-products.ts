@@ -1,4 +1,4 @@
-import type { ProductData } from './products';
+import type { ProductData } from './product-types';
 
 // Auto-generated from active_products.csv on 2026-03-30
 // 716 products imported
@@ -5738,7 +5738,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mosquito-10-qt-hepa-backpack-green-w-tool-kit-101011g',
+    slug: 'janitors-finest-10-qt-hepa-backpack-green-w-tool-kit',
     sku: '101011G',
     name: 'Mosquito, 10 Qt Hepa Backpack Green, W/ Tool Kit',
     brand: 'Mosquito',
@@ -5759,7 +5759,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mosquito-6-qt-hepa-backpack-green-w-tool-kit-06-1062',
+    slug: 'janitors-finest-6-qt-hepa-backpack-green-w-tool-kit',
     sku: '06-1062',
     name: 'Mosquito, 6 Qt Hepa Backpack Green, W/ Tool Kit',
     brand: 'Mosquito',
@@ -5892,7 +5892,7 @@ export const importedProducts: ProductData[] = [
     price: 61.67,
     rating: 4.5,
     reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
+    images: ['/images/product-poly-scrub-brush.png'],
     inStock: false,
     stockQty: 0,
     description: '13” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines. Professional-grade floor care product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
@@ -5913,7 +5913,7 @@ export const importedProducts: ProductData[] = [
     price: 95,
     rating: 4.5,
     reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
+    images: ['/images/product-poly-scrub-brush.png'],
     inStock: false,
     stockQty: 0,
     description: '15” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines. Professional-grade floor care product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
@@ -5934,7 +5934,7 @@ export const importedProducts: ProductData[] = [
     price: 108,
     rating: 4.5,
     reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
+    images: ['/images/product-poly-scrub-brush.png'],
     inStock: false,
     stockQty: 0,
     description: '17” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines. Professional-grade floor care product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
@@ -5955,7 +5955,7 @@ export const importedProducts: ProductData[] = [
     price: 108.33,
     rating: 4.5,
     reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
+    images: ['/images/product-poly-scrub-brush.png'],
     inStock: false,
     stockQty: 0,
     description: '20” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines. Professional-grade floor care product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
@@ -11121,11 +11121,11 @@ export const importedProducts: ProductData[] = [
     price: 49,
     rating: 4.5,
     reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: false,
-    stockQty: 0,
-    description: 'SunnyCare SUNNYCARE 12 JRT, PREMIUM, 2-PLY, WHITE, 3.74 X 2000 FT, 6 ROLLS/CARTON. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 3.74 X 2000', 'Pack: 6 ROLLS/CARTON', 'White color', '2-ply for extra softness'],
+    images: ["/images/5202.png"],
+    inStock: true,
+    stockQty: 100,
+    description: 'SunnyCare #5202 Two-Ply Jumbo Jr. Bathroom Tissue. 3.74" x 2000\', 6 rolls per carton. Professional-grade 2-ply toilet paper for commercial restrooms. Trusted by janitorial professionals for quality and value.',
+    highlights: ['Size: 3.74" x 2000\'', 'Pack: 6 Rolls/Carton', 'White color', '2-ply for extra softness'],
     specs: { 'SKU': '5202', 'Brand': 'SunnyCare', 'Color': 'WHITE', 'Ply': '2' },
     category: 'Paper & Restroom',
     subcategory: 'Toilet Tissue',

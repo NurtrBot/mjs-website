@@ -65,6 +65,50 @@
 </table>
 </td></tr>
 
+<!-- ORDER NOTES / REASON — Try all possible BC variable names -->
+{{#if order.staff_notes}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Note from Our Team</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px;">{{ order.staff_notes }}</div>
+</td></tr>
+{{/if}}
+{{#if order.notes}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Note from Our Team</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px;">{{ order.notes }}</div>
+</td></tr>
+{{/if}}
+{{#if order.comment}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Note from Our Team</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px;">{{ order.comment }}</div>
+</td></tr>
+{{/if}}
+{{#if order.comments}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Note from Our Team</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px;">{{ order.comments }}</div>
+</td></tr>
+{{/if}}
+{{#if order.message}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Note from Our Team</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px;">{{ order.message }}</div>
+</td></tr>
+{{/if}}
+{{#if order.customer_message}}
+<tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#dc2626;margin-bottom:14px;">
+<span style="display:inline-block;width:3px;height:12px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:5px;"></span>Your Order Notes</div>
+<div style="font-size:13px;color:#374151;line-height:1.6;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">{{ order.customer_message }}</div>
+</td></tr>
+{{/if}}
+
 <!-- TRACKING INFORMATION -->
 {{#or (if order.new_status '===' 'Shipped') (if order.new_status '===' 'Partially Shipped') (if order.new_status '===' 'Awaiting Shipment') (if order.new_status '===' 'Completed') (if order.new_status '===' 'Awaiting Fulfillment') (if order.new_status '===' 'Awaiting Pickup')}}
 <tr><td style="background-color:#ffffff;padding:20px 32px;border-bottom:1px solid #eee;">

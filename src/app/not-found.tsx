@@ -44,7 +44,7 @@ export default function NotFound() {
               {[
                 { label: "Paper Products", href: "/shop/paper-restroom" },
                 { label: "Chemicals", href: "/shop/cleaning-chemicals" },
-                { label: "Trash Liners", href: "/shop/trash-liners" },
+                { label: "Trash Liners", href: "/category/trash-liners" },
                 { label: "Gloves & Safety", href: "/shop/gloves-safety" },
                 { label: "Equipment", href: "/shop/equipment-tools" },
                 { label: "Packaging", href: "/shop/packaging-film" },

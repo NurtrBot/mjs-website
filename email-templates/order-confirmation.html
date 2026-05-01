@@ -111,8 +111,7 @@
 <div style="font-size:12px;color:#4b5563;line-height:1.6;">
 <strong>{{ order.shipping.address.first_name }} {{ order.shipping.address.last_name }}</strong><br>
 {{#if order.shipping.address.company '!=' ''}}{{ order.shipping.address.company }}<br>{{/if}}
-{{ order.shipping.address.street_1 }}<br>
-{{#if order.shipping.address.street_2 '!=' ''}}{{ order.shipping.address.street_2 }}<br>{{/if}}
+{{{join order.shipping.address.address_lines '<br>'}}}<br>
 {{ order.shipping.address.city }}, {{ order.shipping.address.state }} {{ order.shipping.address.zip }}<br>
 {{ order.shipping.address.country }}
 {{#if order.shipping.address.phone}}<br>{{ order.shipping.address.phone }}{{/if}}

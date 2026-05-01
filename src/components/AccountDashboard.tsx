@@ -1770,7 +1770,7 @@ export default function AccountDashboard() {
                       <MapPin className="w-5 h-5 text-green-600 flex-shrink-0" />
                       <div>
                         <div className="text-sm font-semibold text-green-700">Anaheim Warehouse</div>
-                        <div className="text-xs text-green-600">3066 E. La Palma Ave &middot; Mon-Fri 6:30 AM - 2:45 PM</div>
+                        <div className="text-xs text-green-600">3066 E. La Palma Ave &middot; Mon-Fri 6:30 AM - 3:00 PM</div>
                       </div>
                     </div>
                   )}

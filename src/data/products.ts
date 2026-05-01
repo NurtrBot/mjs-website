@@ -1,31 +1,6 @@
-export interface ProductData {
-  slug: string;
-  sku: string;
-  name: string;
-  brand: string;
-  price: number;
-  originalPrice?: number;
-  rating: number;
-  reviewCount: number;
-  images: string[];
-  inStock: boolean;
-  stockQty: number;
-  description: string;
-  highlights: string[];
-  specs: Record<string, string>;
-  category: string;
-  subcategory: string;
-  // For card display
-  cardTitle: string;
-  pack: string;
-  badge?: string;
-  badgeColor?: string;
-  imageFit?: "contain" | "cover";
-  // Quick buy options
-  quickBuy: { label: string; qty: number; savings?: string; unitPrice?: number }[];
-  // SDS sheet (chemicals only)
-  sdsSheet?: string;
-}
+import { importedProducts } from "./imported-products";
+export type { ProductData } from "./product-types";
+import type { ProductData } from "./product-types";
 
 export const products: ProductData[] = [
   {
@@ -700,7 +675,7 @@ export const products: ProductData[] = [
     price: 27.99,
     rating: 4.5,
     reviewCount: 163,
-    images: ["/images/product-kraft-multifold-towels.jpg", "/images/product-kraft-multifold-towels.jpg", "/images/product-kraft-multifold-towels.jpg"],
+    images: ["/images/product-kraft-multifold-towels-5302.png", "/images/product-kraft-multifold-towels-5302.png", "/images/product-kraft-multifold-towels-5302.png"],
     inStock: true,
     stockQty: 290,
     description: "Janitors Finest Eco Friendly Natural Multifold Towels. Kraft color, 250 towels per pack, 16 packs per carton (4,000 total). 9.45\" x 9.25\" size fits standard multifold dispensers.",
@@ -911,7 +886,7 @@ export const products: ProductData[] = [
   },
 ];
 
-const allProducts = [...products];
+const allProducts = [...products, ...importedProducts];
 
 export function getProductBySlug(slug: string): ProductData | undefined {
   return allProducts.find((p) => p.slug === slug);

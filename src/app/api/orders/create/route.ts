@@ -248,7 +248,7 @@ export async function POST(req: NextRequest) {
 
       const expiryParts = card.expiry.replace(/\s/g, "").split("/");
       const expiryMonth = parseInt(expiryParts[0]) || 1;
-      let expiryYear = parseInt(expiryParts[1]) || 2026;
+      let expiryYear = parseInt(expiryParts[1]) || new Date().getFullYear();
       if (expiryYear < 100) expiryYear += 2000;
 
       const paymentResult = await processCardPayment(paymentToken, {

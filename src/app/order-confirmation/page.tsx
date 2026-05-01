@@ -332,7 +332,7 @@ function ConfirmationContent() {
                       <div className="font-semibold">Anaheim Warehouse</div>
                       <div>3066 E. La Palma Ave.</div>
                       <div>Anaheim, CA 92806</div>
-                      <div className="mt-1 text-emerald-600 font-medium">Mon–Fri, 6:30 AM – 2:45 PM</div>
+                      <div className="mt-1 text-emerald-600 font-medium">Mon–Fri, 6:30 AM – 3:00 PM</div>
                     </div>
                   ) : orderDetails?.shippingAddress ? (
                     <div className="text-xs text-mjs-gray-600 leading-relaxed">

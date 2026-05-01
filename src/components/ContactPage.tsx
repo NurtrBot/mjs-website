@@ -204,7 +204,7 @@ export default function ContactPage() {
                     <div className="text-xs font-bold text-mjs-dark uppercase">Will Call</div>
                     <div className="text-[10px] text-mjs-gray-400 mt-0.5">Mon - Fri</div>
                   </div>
-                  <div className="text-sm font-bold text-mjs-red">6:30 AM - 2:45 PM</div>
+                  <div className="text-sm font-bold text-mjs-red">6:30 AM - 3:00 PM</div>
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-2 text-xs text-mjs-gray-400">

@@ -585,7 +585,7 @@ export default function CheckoutPage() {
                       <div>
                         <div className="text-sm font-bold text-emerald-700">Will Call — Anaheim Warehouse</div>
                         <div className="text-xs text-emerald-600 mt-1">3066 E. La Palma Ave, Anaheim, CA 92806</div>
-                        <div className="text-xs text-emerald-600 mt-0.5">Mon — Fri, 6:30 AM — 2:45 PM</div>
+                        <div className="text-xs text-emerald-600 mt-0.5">Mon — Fri, 6:30 AM — 3:00 PM</div>
                         <div className="text-xs text-emerald-500 mt-2 font-medium">Your order will be ready for pickup once confirmed.</div>
                         <div className="mt-3 inline-flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
                           <ShieldCheck className="w-3 h-3" />
@@ -902,8 +902,14 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         value={form.cardNumber}
-                        onChange={(e) => update("cardNumber", e.target.value)}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/[^\d]/g, "").slice(0, 19);
+                          const formatted = v.replace(/(\d{4})(?=\d)/g, "$1 ");
+                          update("cardNumber", formatted);
+                        }}
                         placeholder="1234 5678 9012 3456"
+                        inputMode="numeric"
+                        maxLength={23}
                         className={inputClass}
                       />
                     </div>
@@ -929,8 +935,10 @@ export default function CheckoutPage() {
                         <input
                           type="text"
                           value={form.cvv}
-                          onChange={(e) => update("cvv", e.target.value)}
+                          onChange={(e) => update("cvv", e.target.value.replace(/[^\d]/g, "").slice(0, 4))}
                           placeholder="123"
+                          inputMode="numeric"
+                          maxLength={4}
                           className={inputClass}
                         />
                       </div>
@@ -974,6 +982,58 @@ export default function CheckoutPage() {
                       setOrderError("Please select a payment method — Bill to Account or Credit Card.");
                       setPlacing(false);
                       return;
+                    }
+
+                    // Validate card details before submitting
+                    if (payMethod === "card") {
+                      const cardNum = form.cardNumber.replace(/\s/g, "");
+                      // Luhn check
+                      if (!/^\d{13,19}$/.test(cardNum)) {
+                        setOrderError("Please enter a valid card number.");
+                        setPlacing(false);
+                        return;
+                      }
+                      let sum = 0;
+                      for (let i = cardNum.length - 1, alt = false; i >= 0; i--, alt = !alt) {
+                        let n = parseInt(cardNum[i]);
+                        if (alt) { n *= 2; if (n > 9) n -= 9; }
+                        sum += n;
+                      }
+                      if (sum % 10 !== 0) {
+                        setOrderError("Invalid card number. Please double-check and try again.");
+                        setPlacing(false);
+                        return;
+                      }
+                      // CVV validation (3 digits, or 4 for Amex)
+                      const isAmex = cardNum.startsWith("34") || cardNum.startsWith("37");
+                      if (!(isAmex ? /^\d{4}$/ : /^\d{3}$/).test(form.cvv)) {
+                        setOrderError(isAmex ? "Amex CVV must be 4 digits." : "CVV must be 3 digits.");
+                        setPlacing(false);
+                        return;
+                      }
+                      // Expiry date validation
+                      const expParts = form.expiry.replace(/\s/g, "").split("/");
+                      const expMonth = parseInt(expParts[0]);
+                      const expYear = parseInt(expParts[1]);
+                      if (!expMonth || !expYear || expMonth < 1 || expMonth > 12) {
+                        setOrderError("Please enter a valid expiration date (MM / YY).");
+                        setPlacing(false);
+                        return;
+                      }
+                      const fullYear = expYear < 100 ? expYear + 2000 : expYear;
+                      const now = new Date();
+                      const expDate = new Date(fullYear, expMonth); // 1st of month AFTER expiry
+                      if (expDate <= now) {
+                        setOrderError("This card has expired. Please use a different card.");
+                        setPlacing(false);
+                        return;
+                      }
+                      // Cardholder name
+                      if (!form.cardName.trim()) {
+                        setOrderError("Please enter the cardholder name.");
+                        setPlacing(false);
+                        return;
+                      }
                     }
 
                     // Build shipping address — use pickup address for pickup orders
@@ -1082,7 +1142,8 @@ export default function CheckoutPage() {
                         freeGift: selectedGift?.name || null,
                         reward: data.reward || null,
                         rewardTier: (() => {
-                          const tier = [...getRewardTiers(!!user?.id)].reverse().find(t => subtotal >= t.minSpend);
+                          const effectiveSubtotal = subtotal - promoDiscount;
+                          const tier = [...getRewardTiers(!!user?.id)].reverse().find(t => effectiveSubtotal >= t.minSpend);
                           return tier ? { type: tier.type, amount: tier.amount, label: tier.label, minSpend: tier.minSpend, gifts: tier.gifts } : null;
                         })(),
                       }));
