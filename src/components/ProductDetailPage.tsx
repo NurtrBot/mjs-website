@@ -211,9 +211,9 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
 
 /* ───────── main component ───────── */
 
-export default function ProductDetailPage({ slug }: { slug: string }) {
-  const localProduct = getProductBySlug(slug);
-  const [product, setProduct] = useState<ProductData | null>(localProduct || null);
+export default function ProductDetailPage({ slug, initialProduct }: { slug: string; initialProduct?: ProductData | null }) {
+  const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
+  const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const [customPrice, setCustomPrice] = useState<number | null>(null);
@@ -423,18 +423,26 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   SAVE {discount}%
                 </div>
               )}
-              <Image
-                src={product.images[selectedImage]}
-                alt={product.name}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain p-4"
-              />
+              {product.images[selectedImage]?.includes("placeholder") ? (
+                <div className="w-full h-full animate-pulse bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                  <div className="text-gray-300">
+                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  </div>
+                </div>
+              ) : (
+                <Image
+                  src={product.images[selectedImage]}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-contain p-4"
+                />
+              )}
             </div>
 
             {/* Thumbnails */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-full pb-1">
-              {product.images.map((img, i) => (
+              {product.images.filter(img => !img.includes("placeholder")).map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
