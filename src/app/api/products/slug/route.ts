@@ -188,8 +188,28 @@ export async function GET(req: NextRequest) {
         const rules = await getBulkPricingRules(bestMatch.id);
         if (rules.length > 0) {
           const basePrice = bestMatch.calculated_price || bestMatch.price;
+
+          // Determine unit label based on category/product type
+          const cat = (product.category || "").toLowerCase();
+          const subcat = (product.subcategory || "").toLowerCase();
+          const name = (product.name || "").toLowerCase();
+          let unit = "Case";
+          if (subcat.includes("glove") || name.includes("glove")) {
+            unit = "Box";
+          } else if (cat.includes("equipment") || subcat.includes("vacuum") || subcat.includes("machine") || subcat.includes("dispenser")) {
+            unit = "Unit";
+          } else if (name.includes("32 oz") || name.includes("32oz") || name.includes("quart") || name.includes("qt.") || name.includes("qt ")) {
+            unit = "Quart";
+          } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal")) {
+            unit = "Gallon";
+          } else if (subcat.includes("liner") || subcat.includes("trash")) {
+            unit = "Case";
+          } else if (subcat.includes("roll towel") || subcat.includes("tissue")) {
+            unit = "Carton";
+          }
+
           const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
-            { label: "1 Case", qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
+            { label: `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
           ];
           const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
           for (const rule of sorted) {
@@ -204,10 +224,10 @@ export async function GET(req: NextRequest) {
             tierPrice = Math.round(tierPrice * 100) / 100;
             const savings = Math.round((basePrice - tierPrice) * 100) / 100;
             liveTiers.push({
-              label: `${rule.quantity_min}+ Cases`,
+              label: `${rule.quantity_min}+ ${unit === "Box" ? "Boxes" : unit + "s"}`,
               qty: rule.quantity_min,
               unitPrice: tierPrice,
-              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/case` } : {}),
+              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${unit.toLowerCase()}` } : {}),
             });
           }
           product.quickBuy = liveTiers;

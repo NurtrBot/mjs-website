@@ -213,22 +213,14 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
   const localProduct = getProductBySlug(slug);
-  const [product, setProduct] = useState<ProductData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState<ProductData | null>(localProduct || null);
+  const [loading, setLoading] = useState(!localProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const isFavorited = product ? isFavorite(product.sku) : false;
-
-  // Set local product on mount (avoids hydration mismatch)
-  useEffect(() => {
-    if (localProduct) {
-      setProduct(localProduct);
-      setLoading(false);
-    }
-  }, [slug]);
 
   // Fetch from BigCommerce if not found locally (or to get fresher data)
   useEffect(() => {
