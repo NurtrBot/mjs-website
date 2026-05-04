@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { CheckCircle, ShoppingCart } from "lucide-react";
 
@@ -130,7 +131,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         >
           <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 min-w-[280px]">
             <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50">
-              <img src={toast.image} alt="" className="w-full h-full object-cover" />
+              <Image src={toast.image} alt="" width={48} height={48} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">

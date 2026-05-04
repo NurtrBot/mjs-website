@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Clock, Truck, Star, ShieldCheck, Package, Users } from "lucide-react";
+import Image from "next/image";
 
 const deliveryMinimums = [
   { area: "Orange County", code: "OC", minimum: "$399", color: "bg-mjs-red" },
@@ -23,10 +24,12 @@ export default function AboutPage() {
     <section className="bg-mjs-gray-50">
       {/* Hero */}
       <div className="relative h-[380px] overflow-hidden">
-        <img
+        <Image
           src="/images/mjs-storefront.jpg"
           alt="Mobile Janitorial Supply Storefront"
-          className="w-full h-full object-cover"
+          fill
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -62,8 +65,8 @@ export default function AboutPage() {
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Left - Logos */}
           <div className="lg:w-1/3 flex flex-col items-center gap-10">
-            <img src="/images/mjs-logo.png" alt="Mobile Janitorial Supply" className="h-32 object-contain" />
-            <img src="/images/janitors-finest-logo.png" alt="Janitors Finest" className="h-32 object-contain" />
+            <Image src="/images/mjs-logo.png" alt="Mobile Janitorial Supply" width={128} height={128} className="h-32 object-contain" />
+            <Image src="/images/janitors-finest-logo.png" alt="Janitors Finest" width={128} height={128} className="h-32 object-contain" />
           </div>
 
           {/* Right - Content */}
@@ -186,9 +189,11 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="md:w-1/2">
-              <img
+              <Image
                 src="/images/mjs-storefront.jpg"
                 alt="MJS Storefront"
+                width={700}
+                height={467}
                 className="w-full rounded-xl shadow-lg"
               />
             </div>

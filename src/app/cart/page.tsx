@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { trackBeginCheckout } from "@/lib/analytics";
 import TopBar from "@/components/TopBar";
@@ -168,8 +169,8 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {pairings.map((product) => (
               <div key={product.slug} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-2.5 flex flex-col group hover:shadow-md hover:border-gray-200 transition-all">
-                <a href={`/product/${product.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white">
-                  <img src={product.images[0]} alt={product.cardTitle} className="w-full h-full object-cover" />
+                <a href={`/product/${product.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white relative">
+                  <Image src={product.images[0]} alt={product.cardTitle} fill sizes="80px" className="object-cover" />
                 </a>
                 <div className="flex-1 min-h-[36px]">
                   <div className="text-[9px] text-mjs-gray-400 font-medium uppercase truncate">{product.brand}</div>
@@ -469,12 +470,14 @@ export default function CartPage() {
                       <div className="flex items-center gap-4">
                         <Link
                           href={`/product/${item.slug}`}
-                          className="w-20 h-20 bg-mjs-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100"
+                          className="w-20 h-20 bg-mjs-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 relative"
                         >
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="80px"
+                            className="object-cover"
                           />
                         </Link>
                         <div className="min-w-0">
@@ -675,8 +678,8 @@ export default function CartPage() {
                   <div className="grid grid-cols-3 gap-3 mb-6">
                     {pickupSuggestions.map((p) => (
                       <div key={p.sku} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-3 flex flex-col group">
-                        <a href={`/product/${p.slug}`} className="block aspect-square rounded-lg overflow-hidden mb-2 bg-white">
-                          <img src={p.images[0]} alt={p.cardTitle} className="w-full h-full object-cover" />
+                        <a href={`/product/${p.slug}`} className="block aspect-square rounded-lg overflow-hidden mb-2 bg-white relative">
+                          <Image src={p.images[0]} alt={p.cardTitle} fill sizes="80px" className="object-cover" />
                         </a>
                         <div className="text-[10px] font-semibold text-mjs-dark leading-tight line-clamp-2 min-h-[28px]">{p.cardTitle}</div>
                         <div className="text-sm font-black text-mjs-dark mt-1">${p.price.toFixed(2)}</div>

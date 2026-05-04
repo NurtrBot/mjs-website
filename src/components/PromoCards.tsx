@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 const promoCards = [
   {
     title: "Paper & Restroom",
@@ -48,7 +50,7 @@ export default function PromoCards() {
 
               {card.image && (
                 <>
-                  <img src={card.image} alt={card.title} className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: card.imagePosition || "center 70%" }} />
+                  <Image src={card.image} alt={card.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" style={{ objectPosition: card.imagePosition || "center 70%" }} />
                   <div className="absolute inset-0 bg-black/50" />
                 </>
               )}

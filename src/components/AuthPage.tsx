@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Eye, EyeOff, X, FileDown, Package, CheckCircle } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { trackLogin, trackSignUp } from "@/lib/analytics";
 
@@ -123,7 +124,7 @@ export default function AuthPage() {
         <div className="w-full lg:w-1/2 flex flex-col px-6 sm:px-10 py-6 sm:py-8">
           {/* Logo */}
           <a href="/" className="mb-8">
-            <img src="/images/mjs-logo.png" alt="MJS" className="h-8" />
+            <Image src="/images/mjs-logo.png" alt="MJS" width={120} height={32} className="h-8 w-auto" />
           </a>
 
           {/* Content area - fixed height, vertically centered */}
@@ -284,10 +285,12 @@ export default function AuthPage() {
 
         {/* Right - Image side */}
         <div className="hidden lg:block lg:w-1/2 relative rounded-3xl overflow-hidden m-3">
-          <img
+          <Image
             src="/images/auth-hero.png"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
+            fill
+            sizes="50vw"
+            className="object-cover object-[center_20%]"
           />
         </div>
       </div>
@@ -300,7 +303,7 @@ export default function AuthPage() {
               <X className="w-5 h-5" />
             </button>
             <div className="w-24 h-24 flex items-center justify-center mx-auto mb-4">
-              <img src="/images/mjs-sm-logo.png" alt="MJS" className="w-full h-full object-contain" />
+              <Image src="/images/mjs-sm-logo.png" alt="MJS" width={96} height={96} className="w-full h-full object-contain" />
             </div>
             <h3 className="text-xl font-bold text-mjs-dark">Welcome to MJS!</h3>
             <p className="text-sm text-mjs-gray-500 mt-2 leading-relaxed">

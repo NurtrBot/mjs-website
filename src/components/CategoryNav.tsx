@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 const categories = [
   { name: "Reward Program", icon: Gift, highlight: true, image: "/images/rewards-icon.png", href: "/rewards" },
@@ -48,8 +49,8 @@ export default function CategoryNav() {
                 }`}
               >
                 {cat.image ? (
-                  <div className="w-full h-[115px] flex items-center justify-center overflow-hidden">
-                    <img src={cat.image} alt={cat.name} className="max-w-full max-h-[115px] object-contain" />
+                  <div className="w-full h-[115px] flex items-center justify-center overflow-hidden relative">
+                    <Image src={cat.image} alt={cat.name} fill sizes="115px" className="object-contain" />
                   </div>
                 ) : (
                   <div className={`w-8 h-8 flex items-center justify-center transition-colors ${

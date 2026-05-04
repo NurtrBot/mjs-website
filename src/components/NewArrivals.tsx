@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
@@ -51,8 +52,8 @@ function ArrivalCard({ product }: { product: ProductData }) {
           {product.badge}
         </div>
       )}
-      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden">
-        <img src={product.images[0]} alt={product.cardTitle} className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-2" : "object-cover"}`} />
+      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden relative">
+        <Image src={product.images[0]} alt={product.cardTitle} fill sizes="(max-width: 768px) 50vw, 200px" className={product.imageFit === "contain" ? "object-contain p-2" : "object-cover"} />
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>

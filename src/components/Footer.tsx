@@ -2,6 +2,7 @@
 
 import { MapPin, Phone, Mail, Globe, Clock } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Footer() {
   const [translating, setTranslating] = useState(false);
@@ -42,7 +43,7 @@ export default function Footer() {
           {/* Logo + Contact */}
           <div className="col-span-2 md:col-span-1 lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/images/mjs-logo.png" alt="Mobile Janitorial Supply" className="h-10 w-auto" />
+              <Image src="/images/mjs-logo.png" alt="Mobile Janitorial Supply" width={120} height={40} className="h-10 w-auto" />
               <div>
                 <div className="text-sm font-extrabold text-white tracking-tight leading-none">MOBILE JANITORIAL SUPPLY</div>
                 <div className="text-[10px] text-gray-500 mt-0.5">Google&apos;s #1 Rated &amp; Reviewed</div>
@@ -141,10 +142,10 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Secure Checkout</span>
               <div className="flex items-center gap-1.5">
-                <img src="/images/master-card.png" alt="MasterCard" className="h-6" />
-                <img src="/images/visa.png" alt="Visa" className="h-6" />
-                <img src="/images/american-express.png" alt="Amex" className="h-6" />
-                <img src="/images/discover.png" alt="Discover" className="h-6" />
+                <Image src="/images/master-card.png" alt="MasterCard" width={38} height={24} className="h-6 w-auto" />
+                <Image src="/images/visa.png" alt="Visa" width={38} height={24} className="h-6 w-auto" />
+                <Image src="/images/american-express.png" alt="Amex" width={38} height={24} className="h-6 w-auto" />
+                <Image src="/images/discover.png" alt="Discover" width={38} height={24} className="h-6 w-auto" />
               </div>
             </div>
 

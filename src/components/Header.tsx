@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Search,
   ShoppingCart,
@@ -131,9 +132,11 @@ export default function Header() {
 
           {/* Logo */}
           <a href="/" className="flex items-center gap-2.5 flex-shrink-0">
-            <img
+            <Image
               src="/images/mjs-logo.png"
               alt="Mobile Janitorial Supply"
+              width={120}
+              height={52}
               className="h-[52px] w-auto"
             />
             <div className="hidden md:block">
@@ -207,7 +210,7 @@ export default function Header() {
                       className="flex items-center gap-3 px-4 py-2.5 hover:bg-mjs-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       <div className="w-12 h-12 bg-mjs-gray-50 rounded-lg overflow-hidden flex-shrink-0">
-                        <img src={p.images[0]} alt={p.cardTitle} className="w-full h-full object-cover" />
+                        <Image src={p.images[0]} alt={p.cardTitle} width={48} height={48} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-semibold text-mjs-gray-800 line-clamp-2 leading-snug">{p.name}</div>

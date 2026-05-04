@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import {
@@ -236,8 +237,8 @@ function ConfirmationContent() {
                   <div className="divide-y divide-gray-50">
                     {orderDetails.items.map((item, i) => (
                       <div key={i} className="flex items-center gap-4 py-3">
-                        <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                        <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 relative">
+                          <Image src={item.image} alt={item.name} fill sizes="64px" className="object-contain p-1" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-semibold text-mjs-dark truncate">{item.name}</div>
@@ -446,8 +447,8 @@ function ConfirmationContent() {
                         onClick={() => handleGiftSelect(gift)}
                         className="text-center bg-white rounded-xl border-2 border-gray-100 p-3 hover:border-mjs-red hover:shadow-xl transition-all duration-300 group hover:scale-[1.03]"
                       >
-                        <div className="w-full h-[60px] overflow-hidden rounded-lg mb-2 flex items-center justify-center">
-                          <img src={gift.image} alt={gift.name} className="w-full h-full object-contain" />
+                        <div className="w-full h-[60px] overflow-hidden rounded-lg mb-2 flex items-center justify-center relative">
+                          <Image src={gift.image} alt={gift.name} fill sizes="64px" className="object-contain" />
                         </div>
                         <div className="text-[11px] font-bold text-mjs-dark group-hover:text-mjs-red transition-colors">{gift.name}</div>
                         <div className="text-xs font-black text-mjs-red mt-0.5">${orderDetails.rewardTier!.amount} FREE</div>
@@ -479,8 +480,8 @@ function ConfirmationContent() {
             </div>
             <div className="p-6 text-center">
               {/* Brand Card — front only, no flip */}
-              <div className="w-full max-w-[280px] sm:max-w-[340px] mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-                <img src={giftCardResult.image} alt={giftCardResult.name} className="w-full h-auto" />
+              <div className="w-full max-w-[280px] sm:max-w-[340px] mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 relative h-[180px]">
+                <Image src={giftCardResult.image} alt={giftCardResult.name} fill sizes="64px" className="object-cover" />
               </div>
 
               <div className="text-lg font-black text-mjs-dark mb-1">${giftCardResult.amount}.00 {giftCardResult.name}</div>

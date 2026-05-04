@@ -5,7 +5,7 @@ import type { ProductData } from './product-types';
 
 export const importedProducts: ProductData[] = [
   {
-    slug: 'genuine-joe-impact-manual-soap-dispenser-46-fl-oz-whiteclear-each-gjo85133-gjo85133',
+    slug: 'item-9346-clearvu-bulk-lotion-soap-dispensers',
     sku: 'GJO85133',
     name: 'GENUINE JOE (IMPACT) MANUAL SOAP DISPENSER, 46 FL OZ, WHITE/CLEAR, EACH (GJO85133)',
     brand: 'Genuine Joe',
@@ -26,7 +26,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-421-whi-33-oz-wall-mount-liquid-soap-dispenser-automatic-white-421whi',
+    slug: 'alpine-industries-421-whi-33-oz-wall-mount-liquid-soap-dispenser-automatic-white',
     sku: '421WHI',
     name: 'Alpine Industries 421-WHI 33 oz Wall-Mount Liquid Soap Dispenser - Automatic, White',
     brand: 'Alpine Industries',
@@ -47,7 +47,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-422-whi-33-oz-wall-mount-foam-soap-dispenser-automatic-white-422whi',
+    slug: 'alpine-industries-422-whi-33-oz-wall-mount-foam-soap-dispenser-automatic-white',
     sku: '422WHI',
     name: 'Alpine Industries 422-WHI 33 oz Wall-Mount Foam Soap Dispenser - Automatic, White',
     brand: 'Alpine Industries',
@@ -68,7 +68,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-27-oz-wall-mount-liquid-soap-hand-sanitizer-dispenser-manual-g-425gry',
+    slug: 'alpine-industries-425-gry-27-oz-wall-mount-liquid-soap-hand-sanitizer-dispenser-manual-gray',
     sku: '425GRY',
     name: 'Alpine Industries 27 oz Wall-Mount Liquid Soap & Hand Sanitizer Dispenser, Manual, Gray (425GRY)',
     brand: 'Alpine Industries',
@@ -89,7 +89,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-27-oz-wall-mount-liquid-soap-hand-sanitizer-dispenser-manual-w-425whi',
+    slug: 'alpine-industries-425-whi-27-oz-wall-mount-liquid-soap-hand-sanitizer-dispenser-manual-white',
     sku: '425WHI',
     name: 'Alpine Industries 27 oz Wall-Mount Liquid Soap & Hand Sanitizer Dispenser, Manual, White (425WHI)',
     brand: 'Alpine Industries',
@@ -110,7 +110,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'foam-eeze-bulk-foam-soap-dispenser-with-refillable-bottle-1000-ml-488-x-475-x-11-imp9325',
+    slug: 'impact-foam-soap-dispenser-smoke-white',
     sku: 'IMP9325',
     name: 'Foam-eeze Bulk Foam Soap Dispenser with Refillable Bottle, 1,000 mL, 4.88 x 4.75 x 11, White/Gray',
     brand: 'Foam-eeze',
@@ -131,7 +131,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-40-oz-wall-mount-liquid-soap-dispenser-manual-stainless-424ssb-424ssb',
+    slug: 'alpine-industries-424-ssb-40-oz-wall-mount-liquid-soap-dispenser-manual-stainless',
     sku: '424SSB',
     name: 'Alpine Industries 40 oz Wall-Mount Liquid Soap Dispenser - Manual, Stainless (424SSB)',
     brand: 'Alpine Industries',
@@ -152,7 +152,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-40-oz-wall-mount-liquid-soap-dispenser-manual-stainless-423ssb-423ssb',
+    slug: 'alpine-industries-423-ssb-40-oz-wall-mount-liquid-soap-dispenser-manual-stainless',
     sku: '423SSB',
     name: 'Alpine Industries 40 oz Wall-Mount Liquid Soap Dispenser - Manual, Stainless (423SSB)',
     brand: 'Alpine Industries',
@@ -173,7 +173,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-fold-toilet-seat-cover-dispenser-chrome-scd50ch',
+    slug: '1-2-fold-toilet-seat-cover-dispenser-chrome',
     sku: 'SCD50CH',
     name: '1/2 Fold Toilet Seat Cover Dispenser, Chrome',
     brand: 'MJS',
@@ -194,7 +194,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-fold-toilet-seat-cover-dispenser-white-scd50whp',
+    slug: '1-2-fold-toilet-seat-cover-dispenser-white',
     sku: 'SCD50WHP',
     name: '1/2 Fold Toilet Seat Cover Dispenser, White',
     brand: 'MJS',
@@ -215,7 +215,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-fold-toilet-seat-cover-dispenser-smoke-scd50sm',
+    slug: '1-2-fold-toilet-seat-cover-dispenser-smoke',
     sku: 'SCD50SM',
     name: '1/2 Fold Toilet Seat Cover Dispenser, Smoke',
     brand: 'MJS',
@@ -236,7 +236,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-fold-toilet-seat-cover-dispenser-stainless-steel-satin-finish-483',
+    slug: '1-2-fold-toilet-seat-cover-dispenser-stainless-steel-satin-finish',
     sku: '483',
     name: '1/2 Fold Toilet Seat Cover Dispenser, Stainless Steel ,Satin Finish',
     brand: 'MJS',
@@ -257,7 +257,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stainless-steel-2-roll-tissue-dispenser-6-116-x-5-1516-x-11-stainless-steel-bob2888',
+    slug: 'stainless-steel-2-roll-tissue-dispenser',
     sku: 'BOB2888',
     name: 'Stainless Steel 2-Roll Tissue Dispenser, 6 1/16 x 5 15/16 x 11, Stainless Steel',
     brand: 'Stainless',
@@ -278,7 +278,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'td-120s-jumbo-roll-toilet-paper-dispenser-11-td120s',
+    slug: 'td-120s-jumbo-roll-toilet-paper-dispenser-11',
     sku: 'TD120S',
     name: 'TD-120S Jumbo Roll Toilet Paper Dispenser 11',
     brand: 'TD-120S',
@@ -299,7 +299,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'jumbo-toilet-tissue-dispenser-stainless-steel-482',
+    slug: 'jumbo-toilet-tissue-dispenser-stainless-steel',
     sku: '482',
     name: 'Jumbo Toilet Tissue Dispenser, Stainless Steel',
     brand: 'MJS',
@@ -320,7 +320,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'td-120-senior-jumbo-roll-toilet-paper-dispenser-14-td120',
+    slug: 'td-120-senior-jumbo-roll-toilet-paper-dispenser-14',
     sku: 'TD120',
     name: 'TD-120 Senior Jumbo Roll Toilet Paper Dispenser 14',
     brand: 'TD-120',
@@ -341,7 +341,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'td-220-double-roll-jumbo-toilet-paper-dispenser-td220',
+    slug: 'td-220-double-roll-jumbo-toilet-paper-dispenser',
     sku: 'TD220',
     name: 'TD-220 Double Roll Jumbo Toilet Paper Dispenser',
     brand: 'TD-220',
@@ -362,7 +362,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'td-500-roll-paper-towel-dispenser-with-lever-action-td500',
+    slug: 'td-500-roll-paper-towel-dispenser-with-lever-action',
     sku: 'TD500',
     name: 'TD-500 Roll Paper Towel Dispenser with Lever-Action',
     brand: 'TD-500',
@@ -383,7 +383,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'td-330-center-pull-paper-towel-dispenser-td330',
+    slug: 'td-330-center-pull-paper-towel-dispenser',
     sku: 'TD330',
     name: 'TD-330 Center Pull Paper Towel Dispenser',
     brand: 'TD-330',
@@ -404,7 +404,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'winco-surface-mount-paper-towel-dispenser-for-m-fold-c-fold-plastic-black-td300-td300',
+    slug: 'td-300-paper-towel-dispenser-m-fold-c-fold',
     sku: 'TD300',
     name: 'Winco Surface Mount Paper Towel Dispenser for M Fold & C Fold - Plastic, Black (TD300)',
     brand: 'Winco',
@@ -425,7 +425,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'winco-surface-mount-paper-towel-dispenser-iron-white-td600-td600',
+    slug: 'cfold-multifold-disp-white',
     sku: 'TD600',
     name: 'Winco Surface Mount Paper Towel Dispenser , Iron, White (TD600)',
     brand: 'Winco',
@@ -446,7 +446,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'surface-mounted-paper-towel-dispenser-1075-x-4-x-14-stainless-steel-bob262',
+    slug: 'surface-mounted-paper-towel-dispenser-10-3-4-x-4-x-14-stainless-steel',
     sku: 'BOB262',
     name: 'Surface-Mounted Paper Towel Dispenser, 10.75 x 4 x 14, Stainless Steel',
     brand: 'Surface-Mounted',
@@ -467,7 +467,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-wall-mount-paper-towel-dispenser-stainless-480-480',
+    slug: 'alpine-industries-480-wall-mount-manual-paper-towel-dispenser-11-2-x-14-5-stainless',
     sku: '480',
     name: 'Alpine Industries Wall Mount Paper Towel Dispenser, Stainless (480)',
     brand: 'Alpine Industries',
@@ -488,7 +488,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-wall-mount-paper-towel-dispenser-stainless-481s-481s',
+    slug: 'alpine-industries-481s-wall-mount-towel-dispenser-10-8w-x-7h-stainless-steel',
     sku: '481S',
     name: 'Alpine Industries Wall Mount Paper Towel Dispenser, Stainless (481S)',
     brand: 'Alpine Industries',
@@ -509,7 +509,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-wall-mount-paper-towel-dispenser-acrylic-clear-432-clr-432-clr',
+    slug: 'alpine-industries-432-wall-mount-folded-paper-towel-dispenser-w-150-towel-capacity-acrylic-clear',
     sku: '432-CLR',
     name: 'Alpine Industries Wall Mount Paper Towel Dispenser, Acrylic, Clear (432-CLR)',
     brand: 'Alpine Industries',
@@ -530,7 +530,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-center-pull-hand-towels-2-ply-perforated-8-x-12-white-600rl-6-rl-5505',
+    slug: 'janitors-finest-center-pull-hand-towels-2-ply-perforated-8-x-12-white-600-rl-6-rl-ct-5505',
     sku: '5505',
     name: 'JANITORS FINEST, CENTER-PULL HAND TOWELS, 2-PLY, PERFORATED, 8 X 12, WHITE, 600/RL, 6 RL/CT (5505)',
     brand: 'Janitors Finest',
@@ -551,7 +551,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-premium-1-ply-white-multifold-towels-16-packs250-sheets-4000-tow-5300',
+    slug: 'janitors-finest-5300-premium-2-ply-white-multifold-towels-16-packs-250-sheets-4000-towels',
     sku: '5300',
     name: 'Janitors Finest® Premium 1 Ply White Multifold Towels, 16 Packs/250 Sheets 4000 Towels (5300)',
     brand: 'Janitors Finest',
@@ -572,49 +572,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-multifold-paper-towels-kraft-945-x-925-250-towelspack-16-packsca-5302',
-    sku: '5302',
-    name: 'JANITORS FINEST, MULTIFOLD PAPER TOWELS, KRAFT, 9.45 X 9.25, 250 TOWELS/PACK, 16 PACKS/CARTON',
-    brand: 'Janitors Finest',
-    price: 27.99,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: false,
-    stockQty: 0,
-    description: 'Janitors Finest JANITORS FINEST, MULTIFOLD PAPER TOWELS, KRAFT, 9.45 X 9.25, 250 TOWELS/PACK, 16 PACKS/CARTON. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 9.45 X 9.25', 'Category: Paper & Restroom', 'Professional-grade quality'],
-    specs: { 'SKU': '5302', 'Brand': 'Janitors Finest' },
-    category: 'Paper & Restroom',
-    subcategory: 'Multifolds',
-    cardTitle: 'MULTIFOLD PAPER TOWELS',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'genuine-joe-multifold-towels-1-ply-950-x-910-white-interfolded-embossed-250-quan-gjo21100',
-    sku: 'GJO21100',
-    name: 'Genuine Joe Multifold Towels, 1 Ply - 9.50 x 9.10 - White - Interfolded, Embossed, 250 Quantity Per Bundle - 4000 / Carton (GJO21100)',
-    brand: 'Genuine Joe',
-    price: 39.99,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 185,
-    description: 'Genuine Joe Genuine Joe Multifold Towels, 1 Ply - 9.50 x 9.10 - White - Interfolded, Embossed, 250 Quantity Per Bundle - 4000 / Carton. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 9.50 x 9.10', 'Pack: 4000 / Carton', 'White color', '1-ply economical option'],
-    specs: { 'SKU': 'GJO21100', 'Brand': 'Genuine Joe', 'Color': 'White', 'Ply': '1' },
-    category: 'Paper & Restroom',
-    subcategory: 'Multifolds',
-    cardTitle: 'Multifold Towels',
-    pack: '4000 / Carton',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'singlefold-towels-white-250pack-16-packs-per-carton-sf4000w-sf4000w',
+    slug: 'singlefold-towels-white-250-pack-16-packs-per-carton',
     sku: 'SF4000W',
     name: 'Singlefold Towels, White, 250/Pack, 16 Packs Per Carton (SF4000W)',
     brand: 'Singlefold',
@@ -635,49 +593,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-2-ply-toilet-tissue-43-x-35-500-sheets-per-roll-96-rolls-per-cas-5602',
-    sku: '5602',
-    name: 'Janitors Finest, 2 Ply Toilet Tissue (4.3 X 3.5) 500 Sheets Per Roll, 96 Rolls Per Case (5602)',
-    brand: 'Janitors Finest',
-    price: 48.99,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 55,
-    description: 'Janitors Finest Janitors Finest, 2 Ply Toilet Tissue (4.3 X 3.5) 500 Sheets Per Roll, 96 Rolls Per Case. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 4.3 X 3.5', '2-ply for extra softness', 'Category: Paper & Restroom', 'Professional-grade quality'],
-    specs: { 'SKU': '5602', 'Brand': 'Janitors Finest', 'Ply': '2' },
-    category: 'Paper & Restroom',
-    subcategory: 'Toilet Tissue',
-    cardTitle: '2 Ply Toilet Tissue (4.3 X 3.5) Per Roll',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'janitors-finest-9-premium-jumbo-bath-tissue-2-ply-12-rolls-carton-5200-5200',
-    sku: '5200',
-    name: 'Janitors Finest 9 Premium Jumbo Bath Tissue, 2 Ply, 12 Rolls/ Carton (5200)',
-    brand: 'Janitors Finest',
-    price: 36.99,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 49,
-    description: 'Janitors Finest Janitors Finest 9 Premium Jumbo Bath Tissue, 2 Ply, 12 Rolls/ Carton. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Pack: 12 Rolls/ Carton', '2-ply for extra softness', 'Category: Paper & Restroom', 'Professional-grade quality'],
-    specs: { 'SKU': '5200', 'Brand': 'Janitors Finest', 'Ply': '2' },
-    category: 'Paper & Restroom',
-    subcategory: 'Toilet Tissue',
-    cardTitle: '9 Premium Jumbo Bath Tissue',
-    pack: '12 Rolls/ Carton',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'premium-2-ply-spilt-core-toilet-tissue-48-carton-similar-to-gpc027-spc750-spc750',
+    slug: 'premium-2-ply-spilt-core-toilet-tissue-48-rolls-per-case',
     sku: 'SPC750',
     name: 'Premium,  2 Ply,  Spilt Core,  Toilet Tissue, 48 /Carton, Similar to GPC027 (SPC750)',
     brand: 'MJS',
@@ -698,7 +614,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'coreless-toilet-tissue-2-ply-36-rls-1000-per-roll-5675',
+    slug: 'coreless-toilet-tissue-2-ply-36-rls-1000-per-roll',
     sku: '5675',
     name: 'Coreless Toilet Tissue,  2 Ply 36 Rls/ 1000\' Per Roll',
     brand: 'Coreless',
@@ -719,49 +635,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-5701-boxed-facial-tissue-2-ply-white-100-sheetsbox-30cs-5701',
-    sku: '5701',
-    name: 'Janitors Finest® # 5701, Boxed Facial Tissue, 2-Ply, White, 100 Sheets/Box 30/Cs',
-    brand: 'Janitors Finest',
-    price: 25.25,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 245,
-    description: 'Janitors Finest Janitors Finest® # 5701, Boxed Facial Tissue, 2-Ply, White, 100 Sheets/Box 30/Cs. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['White color', '2-ply for extra softness', 'Category: Paper & Restroom', 'Professional-grade quality'],
-    specs: { 'SKU': '5701', 'Brand': 'Janitors Finest', 'Color': 'White', 'Ply': '2' },
-    category: 'Paper & Restroom',
-    subcategory: 'Facial Tissue',
-    cardTitle: '# 5701',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'janitors-finest-premium-half-fold-toilet-seat-covers-250-coverssleeve-20-sleeves-5800',
-    sku: '5800',
-    name: 'Janitor\'s Finest Premium, Half-fold Toilet Seat Covers, 250 Covers/sleeve, 20 Sleeves/carton (5800)',
-    brand: 'Janitor\'s',
-    price: 50.59,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 45,
-    description: 'Janitor\'s Janitor\'s Finest Premium, Half-fold Toilet Seat Covers, 250 Covers/sleeve, 20 Sleeves/carton. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Category: Paper & Restroom', 'Professional-grade quality'],
-    specs: { 'SKU': '5800', 'Brand': 'Janitor\'s' },
-    category: 'Paper & Restroom',
-    subcategory: 'Seat Covers',
-    cardTitle: 'Janitor\'s Finest Premium',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'lifeguard-premium-toilet-seat-covers-250-sheets-per-pack-20-packs-per-carton-450-4500',
+    slug: 'lifeguard-4500-premium-toilet-seat-covers-250-sheets-per-pack-20-packs-per-carton',
     sku: '4500',
     name: 'Lifeguard Premium Toilet Seat Covers, 250 sheets Per Pack, 20 Packs Per Carton (4500)',
     brand: 'MJS',
@@ -782,7 +656,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lifeguard-premium-toilet-seat-covers-250-sheets-per-pack-4-packs-per-carton-4504-4504',
+    slug: 'lifeguard-4500-premium-toilet-seat-covers-250-sheets-per-pack-4-packs-per-carton',
     sku: '4504',
     name: 'Lifeguard Premium Toilet Seat Covers, 250 sheets Per Pack, 4 Packs Per Carton (4504)',
     brand: 'MJS',
@@ -803,7 +677,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'napkin-receptacle-liners-75-x-3-x-105-brown-500carton-hos260',
+    slug: 'napkin-receptacle-liner-kraft-waxed-paper-500-carton',
     sku: 'HOS260',
     name: 'Napkin Receptacle Liners, 7.5 x 3 x 10.5, Brown, 500/Carton',
     brand: 'MJS',
@@ -824,7 +698,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-451-ssb-wall-mount-sanitary-napkin-receptacle-75l-x-375w-x-10h-451ssb',
+    slug: 'alpine-industries-451-ssb-wall-mount-sanitary-napkin-receptacle-7-5l-x-3-75w-x-10h-brushed-stainless',
     sku: '451SSB',
     name: 'Alpine Industries 451-SSB Wall-Mount Sanitary Napkin Receptacle - 7.5L x 3.75W x 10H, Brushed Stainless',
     brand: 'Alpine Industries',
@@ -845,7 +719,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-451-whi-wall-mount-sanitary-napkin-receptacle-9-x-5-x-10-plast-451whi',
+    slug: 'alpine-industries-451-whi-wall-mount-sanitary-napkin-receptacle-9-x-5-x-10-plastic-white',
     sku: '451WHI',
     name: 'Alpine Industries 451-WHI Wall-Mount Sanitary Napkin Receptacle - 9 x 5 x 10, Plastic, White',
     brand: 'Alpine Industries',
@@ -866,7 +740,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-451-bla-wall-mount-sanitary-napkin-receptacle-9-x-5-x-10-plast-451bla',
+    slug: 'alpine-industries-451-bla-wall-mount-sanitary-napkin-receptacle-9-x-5-x-10-plastic-black',
     sku: '451BLA',
     name: 'Alpine Industries 451-BLA Wall-Mount Sanitary Napkin Receptacle - 9 x 5 x 10, Plastic, Black',
     brand: 'Alpine Industries',
@@ -887,7 +761,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'teri-bar-mop-towels-new-20-lb-fnwtt20b',
+    slug: 'teri-bar-mop-towels-new-20-lb',
     sku: 'FNWTT20B',
     name: 'Teri Bar Mop Towels New, 20 LB',
     brand: 'Teri',
@@ -908,7 +782,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'surgical-towels-blue-20-lb-fnbst20b',
+    slug: 'surgical-towels-blue-20-lb',
     sku: 'FNBST20B',
     name: 'Surgical Towels Blue, 20 LB',
     brand: 'Surgical',
@@ -929,7 +803,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'teri-bar-mop-used-20-lb-frwt20b',
+    slug: 'teri-bar-mop-used-20-lb',
     sku: 'FRWT20B',
     name: 'Teri Bar Mop Used, 20 LB',
     brand: 'Teri',
@@ -950,7 +824,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'colored-knit-rags-50-lb-fck50b',
+    slug: 'colored-knit-rags-50-lb',
     sku: 'FCK50B',
     name: 'Colored Knit Rags, 50 LB',
     brand: 'Colored',
@@ -971,7 +845,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'teri-towels-new-dozen-t5812',
+    slug: 'teri-towels-new-dozen',
     sku: 'T5812',
     name: 'Teri Towels New Dozen',
     brand: 'Teri',
@@ -992,7 +866,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'blue-surgical-towels-dozen-n6012',
+    slug: 'blue-surgical-towels-dozen',
     sku: 'N6012',
     name: 'Blue Surgical Towels Dozen',
     brand: 'MJS',
@@ -1013,7 +887,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'smartrags-microfiber-towels-12-x-12-blue-50carton-m950b',
+    slug: 'smartrags-microfiber-towels-12-x-12-blue-50-carton',
     sku: 'M950B',
     name: 'Smartrags, Microfiber Towels 12” x 12”, Blue, 50/Carton',
     brand: 'MJS',
@@ -1034,7 +908,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'smartrags-microfiber-towels-12-x-12-green-50carton-m950g',
+    slug: 'smartrags-microfiber-towels-12-x-12-green-50-carton',
     sku: 'M950G',
     name: 'Smartrags, Microfiber Towels 12” x 12”, Green, 50/Carton',
     brand: 'MJS',
@@ -1055,7 +929,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'smartrags-microfiber-towels-12-x-12-red-50carton-m950r',
+    slug: 'smartrags-microfiber-towels-12-x-12-red-50-carton',
     sku: 'M950R',
     name: 'Smartrags, Microfiber Towels 12” x 12”, Red, 50/Carton',
     brand: 'MJS',
@@ -1076,7 +950,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'smartrags-microfiber-towels-12-x-12-yellow-50carton-m950y',
+    slug: 'smartrags-microfiber-towels-12-x-12-yellow-50-carton',
     sku: 'M950Y',
     name: 'Smartrags, Microfiber Towels 12” x 12”, Yellow, 50/Carton',
     brand: 'MJS',
@@ -1097,7 +971,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'standard-microfiber-towel-blue-300-gsm-16-x-16-dozen-m915100b',
+    slug: 'standard-microfiber-towel-blue-300-gsm-16-x-16-dozen',
     sku: 'M915100B',
     name: 'Standard Microfiber Towel Blue- 300 gsm - 16 x 16, Dozen',
     brand: 'MJS',
@@ -1118,7 +992,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'standard-microfiber-towel-yellow-300-gsm-16-x-16-dozen-m915100y',
+    slug: 'standard-microfiber-towel-yellow-300-gsm-16-x-16-dozen',
     sku: 'M915100Y',
     name: 'Standard Microfiber Towel Yellow- 300 Gsm - 16 X 16, Dozen',
     brand: 'MJS',
@@ -1139,7 +1013,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'standard-microfiber-towel-green-300-gsm-16-x-16-dozen-m915100g',
+    slug: 'standard-microfiber-towel-green-300-gsm-16-x-16-dozen',
     sku: 'M915100G',
     name: 'Standard Microfiber Towel Green- 300 Gsm - 16 X 16, Dozen',
     brand: 'MJS',
@@ -1160,7 +1034,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'non-para-urinal-screens-12carton-dribble10002',
+    slug: 'non-para-urinal-screens-12-carton',
     sku: 'DRIBBLE10002',
     name: 'Non-Para Urinal Screens, 12/Carton',
     brand: 'Non-Para',
@@ -1181,7 +1055,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-stone-countertop-cleaner-17-oz-aerosol-4385137ea-4385137ea',
+    slug: 'chase-products-5137-champion-sprayon-stone-countertop-cleaner-17-oz-aerosol',
     sku: '4385137EA',
     name: 'Chase Products, Champion Sprayon® Stone Countertop Cleaner, 17 oz Aerosol (4385137EA)',
     brand: 'Chase Products',
@@ -1202,7 +1076,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-x-it-out-vandal-mark-remover-175-oz-aerosol-4385-4385149ea',
+    slug: 'chase-products-5149-champion-sprayon-x-it-out-vandal-mark-remover-17-5-oz-aerosol',
     sku: '4385149EA',
     name: 'Chase Products, Champion Sprayon® X It Out Vandal Mark Remover, 17.5 oz Aerosol (4385149EA)',
     brand: 'Chase Products',
@@ -1223,7 +1097,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-furniture-polish-lemon-17oz-aerosol-4385136ea-4385136ea',
+    slug: 'chase-products-5136-champion-sprayon-furniture-polish-lemon-17oz-aerosol',
     sku: '4385136EA',
     name: 'CHASE PRODUCTS, CHAMPION SPRAYON FURNITURE POLISH, LEMON, 17OZ, AEROSOL (4385136EA)',
     brand: 'Chase Products',
@@ -1244,7 +1118,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-glass-cleaner-with-ammonia-19oz-aerosol-4385151e-4385151ea',
+    slug: 'chase-products-5151-champion-sprayon-glass-cleaner-with-ammonia-19oz-aerosol',
     sku: '4385151EA',
     name: 'Chase Products, Champion Sprayon Glass Cleaner with Ammonia, 19oz Aerosol (4385151EA)',
     brand: 'Chase Products',
@@ -1265,7 +1139,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-water-base-stainless-steel-cleaner-18oz-aerosol--4385153ea',
+    slug: 'chase-products-5153-champion-sprayon-water-base-stainless-steel-cleaner-18oz-aerosol',
     sku: '4385153EA',
     name: 'Chase Products, Champion Sprayon Water Base Stainless Steel Cleaner, 18oz, Aerosol (4385153EA)',
     brand: 'Chase Products',
@@ -1286,7 +1160,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-oil-base-stainless-steel-cleaner-16oz-aerosol-43-4385197ea',
+    slug: 'chase-products-5197-champion-sprayon-oil-base-stainless-steel-cleaner-16oz-aerosol',
     sku: '4385197EA',
     name: 'Chase Products, Champion Sprayon Oil Base Stainless Steel Cleaner, 16oz, Aerosol (4385197EA)',
     brand: 'Chase Products',
@@ -1307,7 +1181,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-baseboard-and-floor-stripper-19-oz-aerosol-43851-4385156ea',
+    slug: 'chase-products-5156-champion-sprayon-baseboard-and-floor-stripper-19-oz-aerosol',
     sku: '4385156EA',
     name: 'Chase Products, Champion Sprayon Baseboard and Floor Stripper, 19 oz Aerosol (4385156EA)',
     brand: 'Chase Products',
@@ -1328,7 +1202,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-spray-disinfectant-165oz-4385157ea-4385157ea',
+    slug: 'chase-products-5157-champion-sprayon-spray-disinfectant-16-5oz-aerosol',
     sku: '4385157EA',
     name: 'Chase Products, Champion Sprayon Spray Disinfectant, 16.5oz (4385157EA)',
     brand: 'Chase Products',
@@ -1349,7 +1223,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-chewing-gum-and-candle-wax-remover-55-oz-aerosol-4385165ea',
+    slug: 'chase-products-5165-champion-sprayon-chewing-gum-and-candle-wax-remover-5-5-oz-aerosol',
     sku: '4385165EA',
     name: 'Chase Products, Champion Sprayon® Chewing Gum and Candle Wax Remover, 5.5 oz Aerosol (4385165EA)',
     brand: 'Chase Products',
@@ -1370,7 +1244,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-dust-n-more-18-oz-aerosol-4385152ea-4385152ea',
+    slug: 'chase-products-5152-champion-sprayon-dust-n-more-18-oz-aerosol',
     sku: '4385152EA',
     name: 'Chase Products, Champion Sprayon® Dust N More 18 oz Aerosol (4385152EA)',
     brand: 'Chase Products',
@@ -1391,7 +1265,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-spring-linen-water-based-air-freshener-15-oz-aer-4385359ea',
+    slug: 'chase-products-5176-champion-sprayon-spring-linen-water-based-air-freshener-15-oz-aerosol',
     sku: '4385359EA',
     name: 'Chase Products, Champion Sprayon® Spring Linen Water Based Air Freshener, 15 oz Aerosol (4385176EA)',
     brand: 'Chase Products',
@@ -1412,7 +1286,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-mango-mango-water-based-air-freshener-15-oz-aero-4385323ea',
+    slug: 'chase-products-5323-champion-sprayon-mango-mango-water-based-air-freshener-15-oz-aerosol',
     sku: '4385323EA',
     name: 'Chase Products, Champion Sprayon® Mango Mango Water Based Air Freshener, 15 oz Aerosol (4385323EA)',
     brand: 'Chase Products',
@@ -1433,7 +1307,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-champion-sprayon-lemon-zest-water-based-air-freshener-15-oz-aeros-4385325ea',
+    slug: 'chase-products-5325-champion-sprayon-lemon-zest-water-based-air-freshener-15-oz-aerosol',
     sku: '4385325EA',
     name: 'Chase Products, Champion Sprayon® Lemon Zest, Water Based Air Freshener, 15 oz Aerosol (4385325EA)',
     brand: 'Chase Products',
@@ -1454,28 +1328,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-heavy-duty-green-degreaser-gallon-3180ea-3180ea',
-    sku: '3180EA',
-    name: 'Janitors Finest®, Heavy Duty Green Degreaser, Gallon (3180EA)',
-    brand: 'Janitors Finest',
-    price: 11.5,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: false,
-    stockQty: 0,
-    description: 'Janitors Finest Janitors Finest®, Heavy Duty Green Degreaser, Gallon. Professional-grade cleaning chemicals product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Pack: Gallon', 'Heavy-duty construction', 'Category: Cleaning Chemicals', 'Professional-grade quality'],
-    specs: { 'SKU': '3180EA', 'Brand': 'Janitors Finest', 'Color': 'Green' },
-    category: 'Cleaning Chemicals',
-    subcategory: 'Degreasers',
-    cardTitle: 'Heavy Duty Green Degreaser',
-    pack: 'Gallon',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'janitors-finest-lemon-neutral-floor-cleaner-gallon-3158ea-3158ea',
+    slug: 'janitors-finest-3158-lemon-neutral-floor-cleaner',
     sku: '3158EA',
     name: 'Janitors Finest® Lemon Neutral Floor Cleaner, Gallon (3158EA)',
     brand: 'Janitors Finest',
@@ -1496,7 +1349,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-rtu-ammoniated-glass-cleaner-gallon-3187ea-3187ea',
+    slug: 'janitors-finest-3187-ammoniated-glass-cleaner',
     sku: '3187EA',
     name: 'Janitors Finest®, RTU Ammoniated Glass Cleaner, Gallon (3187EA)',
     brand: 'Janitors Finest',
@@ -1517,7 +1370,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-pink-cherry-hand-soap-gallon-25630ea-25630ea',
+    slug: 'janitors-finest-25630-pink-cherry-hand-soap',
     sku: '25630EA',
     name: 'Janitors Finest®, Pink Cherry Hand Soap - Gallon (25630EA)',
     brand: 'Janitors Finest',
@@ -1538,7 +1391,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-pearly-white-lotion-hand-soap-gallon-51301ea-51301ea',
+    slug: 'janitors-finest-51301-pearly-white-lotion-hand-soap',
     sku: '51301EA',
     name: 'Janitors Finest®, Pearly White Lotion Hand Soap - Gallon (51301EA)',
     brand: 'Janitors Finest',
@@ -1559,7 +1412,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'antibacterial-liquid-hand-soap-gallon-50401ea-50401ea',
+    slug: 'antibacterial-liquid-hand-soap-gallon-50401ea',
     sku: '50401EA',
     name: 'ANTIBACTERIAL LIQUID HAND SOAP, GALLON (50401EA)',
     brand: 'ANTIBACTERIAL',
@@ -1580,7 +1433,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-foaming-hand-soap-gallon-3265ea-3265ea',
+    slug: 'janitors-finest-foaming-hand-soap-gallon-3265ea',
     sku: '3265EA',
     name: 'JANITORS FINEST®, FOAMING HAND SOAP, GALLON (3265EA)',
     brand: 'Janitors Finest',
@@ -1601,7 +1454,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-pine-cleaner-deodorizer-gallon-12520ea-12520ea',
+    slug: 'janitors-finest-12520-pine-cleaner-deodorizer',
     sku: '12520EA',
     name: 'Janitors Finest® Pine Cleaner & Deodorizer, Gallon (12520EA)',
     brand: 'Janitors Finest',
@@ -1622,28 +1475,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-lavender-cleaner-gallon-3162ea-3162ea',
-    sku: '3162EA',
-    name: 'Janitors Finest® Lavender Cleaner, Gallon (3162EA)',
-    brand: 'Janitors Finest',
-    price: 13.75,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 16,
-    description: 'Janitors Finest Janitors Finest® Lavender Cleaner, Gallon. Professional-grade cleaning chemicals product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Pack: Gallon', 'Category: Cleaning Chemicals', 'Professional-grade quality'],
-    specs: { 'SKU': '3162EA', 'Brand': 'Janitors Finest' },
-    category: 'Cleaning Chemicals',
-    subcategory: 'General Cleaners',
-    cardTitle: 'Lavender Cleaner',
-    pack: 'Gallon',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'pink-lotion-hand-soap-800-ml-7015sp',
+    slug: 'pink-lotion-hand-soap-800-ml',
     sku: '7015SP',
     name: 'Pink Lotion Hand Soap 800 Ml',
     brand: 'Pink',
@@ -1664,7 +1496,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'technichem-hand-sanitizer-gel-800-ml-12-per-case-7019d-7019d',
+    slug: 'hand-sanitizer-800-ml',
     sku: '7019D',
     name: 'Technichem Hand Sanitizer, Gel, 800 ML, 12 Per Case (7019D)',
     brand: 'Technichem',
@@ -1685,7 +1517,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'technichem-antimicrobial-hand-soap-800-ml-12-per-case-1090-12-1090-12',
+    slug: 'antimicrobial-hand-soap-800-ml',
     sku: '1090-12',
     name: 'Technichem Antimicrobial Hand Soap 800 ML, 12 Per Case (1090-12)',
     brand: 'Technichem',
@@ -1706,7 +1538,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-blue-hand-lotion-soap-gallon-50901ea-50901ea',
+    slug: 'blue-hand-lotion-soap',
     sku: '50901EA',
     name: 'Chemcor Blue Hand Lotion Soap - Gallon (50901EA)',
     brand: 'Chemcor',
@@ -1727,7 +1559,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'hand-sanitizing-wipes-6-x-8-white-fresh-citrus-scent-1200refill-pouch-2-refillsc-goj911802',
+    slug: 'hand-sanitizing-wipes-6-x-8-white-1200-refill-pouch-2-refills-carton',
     sku: 'GOJ911802',
     name: 'Hand Sanitizing Wipes, 6 x 8, White, Fresh Citrus Scent, 1200/Refill Pouch, 2 Refills/Carton',
     brand: 'Hand',
@@ -1748,7 +1580,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-squeege-shine-32-oz-81312ea-81312ea',
+    slug: 'squeege-shine',
     sku: '81312EA',
     name: 'Chemcor Squeege Shine, 32 OZ (81312EA)',
     brand: 'Chemcor',
@@ -1769,7 +1601,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'window-cleaner-concentrate-50-1-82201',
+    slug: 'window-cleaner-concentrate-50-1',
     sku: '82201',
     name: 'Window Cleaner Concentrate 50-1',
     brand: 'Window',
@@ -1790,7 +1622,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-orange-x-treme-heavy-duty-degreaser-gal-80601ea-80601ea',
+    slug: 'janitors-finest-orange-x-treme-heavy-duty-degreaser-gal-80601ea',
     sku: '80601EA',
     name: 'Janitors Finest,  Orange X-treme Heavy Duty  Degreaser, Gal (80601EA)',
     brand: 'Janitors Finest',
@@ -1811,7 +1643,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-emulsion-bowl-cleaner-23-gallon-40201ea-40201ea',
+    slug: 'emulsion-bowl-cleaner-23',
     sku: '40201EA',
     name: 'Chemcor Emulsion Bowl Cleaner 23%, Gallon (40201EA)',
     brand: 'Chemcor',
@@ -1832,7 +1664,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-bowl-cling-10-bowl-cleaner-gallon-40401ea-40401ea',
+    slug: 'bowl-cling-10-bowl-cleaner',
     sku: '40401EA',
     name: 'Chemcor Bowl Cling 10% Bowl Cleaner, Gallon (40401EA)',
     brand: 'Chemcor',
@@ -1853,7 +1685,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-ringside-bowl-cleaner-gallon-40101ea-40101ea',
+    slug: 'ringside-bowl-cleaner',
     sku: '40101EA',
     name: 'Chemcor Ringside Bowl Cleaner, Gallon (40101EA)',
     brand: 'Chemcor',
@@ -1874,7 +1706,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-spot-off-hd-acid-based-hard-water-spot-remover-3280232',
+    slug: 'janitors-finest-spot-off-hd-acid-based-hard-water-spot-remover',
     sku: '3280232',
     name: 'Janitors Finest, Spot Off Hd Acid Based Hard Water Spot Remover',
     brand: 'Janitors Finest',
@@ -1895,7 +1727,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wax-stripper-non-ammoniated-20501ea',
+    slug: 'wax-stripper-non-ammoniated',
     sku: '20501EA',
     name: 'Wax Stripper Non Ammoniated',
     brand: 'Wax',
@@ -1916,7 +1748,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-super-stripper-ammoniated-gallon-20701ea-20701ea',
+    slug: 'super-stripper-ammoniated',
     sku: '20701EA',
     name: 'Chemcor Super Stripper Ammoniated, Gallon (20701EA)',
     brand: 'Chemcor',
@@ -1937,7 +1769,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-strip-force-floor-stripper-gallon-21201ea-21201ea',
+    slug: 'strip-force-floor-stripper',
     sku: '21201EA',
     name: 'Chemcor Strip Force Floor Stripper, Gallon (21201EA)',
     brand: 'Chemcor',
@@ -1958,7 +1790,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-neutralizer-rinse-gallon-21001ea-21001ea',
+    slug: 'neutralizer-rinse',
     sku: '21001EA',
     name: 'Chemcor Neutralizer Rinse, Gallon (21001EA)',
     brand: 'Chemcor',
@@ -1979,7 +1811,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-floor-sealer-gallon-20401ea-20401ea',
+    slug: 'floor-sealer',
     sku: '20401EA',
     name: 'Chemcor Floor Sealer, Gallon (20401EA)',
     brand: 'Chemcor',
@@ -2000,7 +1832,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'finish-gloss-floor-wax-16-20001ea',
+    slug: 'finish-gloss-floor-wax-16',
     sku: '20001EA',
     name: 'Finish Gloss Floor Wax 16%',
     brand: 'Finish',
@@ -2021,7 +1853,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-finish-gloss-floor-wax-23-gallon-20201ea-20201ea',
+    slug: 'finish-gloss-floor-wax-23',
     sku: '20201EA',
     name: 'Chemcor Finish Gloss Floor Wax 23%, Gallon (20201EA)',
     brand: 'Chemcor',
@@ -2042,7 +1874,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-premium-gloss-floor-finish-29-gallon-21101ea-21101ea',
+    slug: 'premium-gloss-floor-finish-29',
     sku: '21101EA',
     name: 'Chemcor Premium Gloss Floor Finish 29%, Gallon (21101EA)',
     brand: 'Chemcor',
@@ -2063,7 +1895,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-spray-buff-gallon-20301ea-20301ea',
+    slug: 'spray-buff',
     sku: '20301EA',
     name: 'Chemcor Spray Buff, Gallon (20301EA)',
     brand: 'Chemcor',
@@ -2084,7 +1916,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-tile-and-grout-cleaner-gallon-41101ea-41101ea',
+    slug: 'tile-grout-cleaner',
     sku: '41101EA',
     name: 'Chemcor Tile and Grout Cleaner, Gallon (41101EA)',
     brand: 'Chemcor',
@@ -2105,7 +1937,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-carpet-extraction-cleaner-gallon-30401ea-30401ea',
+    slug: 'carpet-extraction-cleaner',
     sku: '30401EA',
     name: 'Chemcor Carpet Extraction Cleaner, Gallon (30401EA)',
     brand: 'Chemcor',
@@ -2126,7 +1958,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-carpet-extraction-emulsifier-gallon-30301ea-30301ea',
+    slug: 'carpet-extraction-emlsifier',
     sku: '30301EA',
     name: 'Chemcor Carpet Extraction Emulsifier, Gallon (30301EA)',
     brand: 'Chemcor',
@@ -2147,7 +1979,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dry-foam-carpet-shampoo-30101ea',
+    slug: 'dry-foam-carpet-shampoo',
     sku: '30101EA',
     name: 'Dry Foam Carpet Shampoo',
     brand: 'Dry',
@@ -2168,7 +2000,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-carpet-defoamer-gallon-30701ea-30701ea',
+    slug: 'carpet-defoamer',
     sku: '30701EA',
     name: 'Chemcor Carpet Defoamer, Gallon (30701EA)',
     brand: 'Chemcor',
@@ -2189,7 +2021,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'steam-pro-plus-powdered-shampoo-30606ea',
+    slug: 'steam-pro-plus-powdered-shampoo',
     sku: '30606EA',
     name: 'Steam Pro Plus Powdered Shampoo',
     brand: 'Steam',
@@ -2210,7 +2042,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-lift-out-carpet-spot-remover-gallon-31801ea-30801ea',
+    slug: 'lift-out-carpet-spot-remover',
     sku: '30801EA',
     name: 'Chemcor Lift Out Carpet Spot Remover, Gallon (31801EA)',
     brand: 'Chemcor',
@@ -2231,7 +2063,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-traffic-lane-cleaner-gallon-30901ea-30901ea',
+    slug: 'traffic-lane-cleaner',
     sku: '30901EA',
     name: 'Chemcor Traffic Lane Cleaner, Gallon (30901EA)',
     brand: 'Chemcor',
@@ -2252,7 +2084,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-odorzyme-plus-odor-eliminator-spotter-gallon-31801ea-31801ea',
+    slug: 'janitors-finest-odorzyme-plus-odor-eliminator-spotter-gallon-31801ea',
     sku: '31801EA',
     name: 'Janitors Finest  Odorzyme Plus  Odor Eliminator & Spotter, Gallon (31801EA)',
     brand: 'Janitors Finest',
@@ -2273,7 +2105,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-green-lemon-scented-dish-wash-gallon-60001ea-60001ea',
+    slug: 'green-lemon-scented-dish-wash',
     sku: '60001EA',
     name: 'Janitors Finest® Green Lemon Scented Dish Wash, Gallon (60001EA)',
     brand: 'Janitors Finest',
@@ -2294,7 +2126,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-dishmolive-dishwash-soap-gallon-62901ea-62901ea',
+    slug: 'dishmolive-dishwash-soap',
     sku: '62901EA',
     name: 'Chemcor Dishmolive Dishwash Soap, Gallon (62901EA)',
     brand: 'Chemcor',
@@ -2315,7 +2147,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-ammoniated-oven-grill-cleaner-61301ea',
+    slug: 'janitors-finest-ammoniated-oven-grill-cleaner',
     sku: '61301EA',
     name: 'Janitors Finest Ammoniated Oven & Grill Cleaner',
     brand: 'Janitors Finest',
@@ -2336,7 +2168,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'strike-bac-lemon-odor-disinfectant-cleaner-gallon-91101ea-91101ea',
+    slug: 'strike-bac-lemon-odor-disinfectant-cleaner-gallon-91101ea',
     sku: '91101EA',
     name: 'Strike Bac® Lemon Odor Disinfectant Cleaner GALLON (91101EA)',
     brand: 'Strike Bac',
@@ -2357,7 +2189,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-clear-ammonia-82901ea-82901',
+    slug: 'clear-ammonia',
     sku: '82901',
     name: 'Chemcor Clear Ammonia (82901EA)',
     brand: 'Chemcor',
@@ -2378,7 +2210,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-hi-efficiency-liquid-laundry-detergent-gallon-71501ea-71501ea',
+    slug: 'laundry-force-liquid-detergent',
     sku: '71501EA',
     name: 'Janitors Finest® Hi Efficiency  Liquid Laundry Detergent, Gallon (71501EA)',
     brand: 'Janitors Finest',
@@ -2399,7 +2231,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'universal-laundry-powder-50-lbbx-70250',
+    slug: 'universal-laundry-powder',
     sku: '70250',
     name: 'Universal Laundry Powder, 50 Lb/Bx',
     brand: 'MJS',
@@ -2420,7 +2252,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ajax-oxygen-bleach-powder-cleanser-21oz-can-24carton-cpc14278ct-cpc14278ct',
+    slug: 'ajax-oxygen-bleach-powder-cleanser-21oz-can-24-carton-cpc14278ct',
     sku: 'CPC14278CT',
     name: 'Ajax Oxygen Bleach Powder Cleanser, 21oz Can, 24/Carton (CPC14278CT)',
     brand: 'Ajax',
@@ -2441,7 +2273,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-all-clean-all-purpose-cleaner-gallon-80301ea',
+    slug: 'janitors-finest-all-clean-all-purpose-cleaner-gallon',
     sku: '80301EA',
     name: 'Janitors Finest All Clean All Purpose Cleaner, Gallon',
     brand: 'Janitors Finest',
@@ -2462,7 +2294,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'old-fashion-lemon-oil-10201',
+    slug: 'old-fashion-lemon-oil',
     sku: '10201',
     name: 'Old Fashion Lemon Oil',
     brand: 'Old',
@@ -2483,7 +2315,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mirrotone-stainless-steel-cleaner-62001',
+    slug: 'mirrotone-stainless-steel-cleaner',
     sku: '62001',
     name: 'Mirrotone Stainless Steel Cleaner',
     brand: 'Mirrotone',
@@ -2504,7 +2336,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'protector-rubber-vinyl-10501',
+    slug: 'protector-rubber-vinyl',
     sku: '10501',
     name: 'Protector Rubber & Vinyl',
     brand: 'Protector',
@@ -2525,7 +2357,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-pine-disinfectant-neutral-cleaner-epa-reg-gallon-91301ea-91301ea',
+    slug: 'pine-disinfectant',
     sku: '91301EA',
     name: 'CHEMCOR PINE DISINFECTANT NEUTRAL CLEANER, EPA REG, GALLON - (91301EA)',
     brand: 'Chemcor',
@@ -2546,7 +2378,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-sani-10-food-grade-epa-reg-gallon-91001ea-91001ea',
+    slug: 'sani-10-epa-sanitizer',
     sku: '91001EA',
     name: 'CHEMCOR SANI 10%, FOOD GRADE, EPA REG - GALLON (91001EA)',
     brand: 'Chemcor',
@@ -2567,7 +2399,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drain-force-drain-opener-10612ea',
+    slug: 'drain-force-drain-opener',
     sku: '10612EA',
     name: 'Drain Force Drain Opener',
     brand: 'Drain',
@@ -2588,7 +2420,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'red-sweeping-compound-50-bag-130550',
+    slug: 'red-sweeping-compound-50-bag',
     sku: '130550',
     name: 'Red Sweeping Compound 50 # Bag',
     brand: 'MJS',
@@ -2609,7 +2441,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'red-sweeping-compound-250-drum-1300noil-250',
+    slug: 'red-sweeping-compound-250-drum',
     sku: '1300NOIL-250',
     name: 'Red Sweeping Compound 250 # Drum',
     brand: 'MJS',
@@ -2630,7 +2462,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'all-purpose-absorbant-496779',
+    slug: 'all-purpose-absorbant',
     sku: '496779',
     name: 'All Purpose Absorbant',
     brand: 'All',
@@ -2651,7 +2483,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'spill-master-absorbent-6430',
+    slug: 'spill-master-absorbent',
     sku: '6430',
     name: 'Spill Master Absorbent',
     brand: 'Spill',
@@ -2672,7 +2504,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'black-ashtray-sand-50-lb-sack-non-shippable-item-1355bs',
+    slug: 'black-ashtray-sand-50-lb-sack',
     sku: '1355BS',
     name: 'Black Ashtray Sand, 50 Lb Sack - NON SHIPPABLE ITEM',
     brand: 'MJS',
@@ -2693,7 +2525,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'white-ashtray-sand-50-lb-sack-1355',
+    slug: 'white-ashtray-sand-50-lb-sack',
     sku: '1355',
     name: 'White Ashtray Sand, 50 Lb Sack',
     brand: 'MJS',
@@ -2714,7 +2546,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-24-x-24-6-micron-7-10-gallon-1000cs-cl242406-cl242406',
+    slug: 'janitors-finest-can-liners-clear-24-x-24-6-micron-7-10-gallon-1000-cs-cl242406',
     sku: 'CL242406',
     name: 'JANITORS FINEST®, Can Liners Clear, 24 X 24, 6 Micron, 7-10 Gallon, 1000/CS (CL242406)',
     brand: 'Janitors Finest',
@@ -2735,7 +2567,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-24-x-33-6-micron-12-16-gallon-1000cs-cl243306-cl243306',
+    slug: 'janitors-finest-can-liners-clear-24-x-33-6-micron-12-16-gallon-1000-cs-cl243306',
     sku: 'CL243306',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 24 X 33, 6 MICRON, 12-16 GALLON, 1000/CS (CL243306)',
     brand: 'Janitors Finest',
@@ -2756,7 +2588,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-24-x-33-8-micron-12-16-gallon-1000cs-cl243308-cl243308',
+    slug: 'janitors-finest-can-liners-clear-24-x-33-8-micron-12-16-gallon-1000-cs-cl243308',
     sku: 'CL243308',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 24 X 33, 8 MICRON, 12-16 GALLON, 1000/CS (CL243308)',
     brand: 'Janitors Finest',
@@ -2777,7 +2609,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-30-x-37-8-micron-20-30-gallon-500cs-cl303708-cl303708',
+    slug: 'janitors-finest-can-liners-clear-30-x-37-8-micron-20-30-gallon-500-cs-cl303708',
     sku: 'CL303708',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 30 X 37, 8 MICRON, 20-30 GALLON, 500/CS (CL303708)',
     brand: 'Janitors Finest',
@@ -2798,7 +2630,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-30-x-37-10-micron-20-30-gallon-500cs-cl303710-cl303710',
+    slug: 'janitors-finest-can-liners-clear-30-x-37-10-micron-20-30-gallon-500-cs-cl303710',
     sku: 'CL303710',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 30 X 37, 10 MICRON, 20-30 GALLON, 500/CS (CL303710)',
     brand: 'Janitors Finest',
@@ -2819,7 +2651,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-33-x-40-16-micron-33-gallon-250cs-cl334016-cl334016',
+    slug: 'janitors-finest-can-liners-clear-33-x-40-16-micron-33-gallon-250-cs-cl334016',
     sku: 'CL334016',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 33 X 40, 16 MICRON, 33 GALLON, 250/CS (CL334016)',
     brand: 'Janitors Finest',
@@ -2840,7 +2672,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-40-x-48-12-micron-40-45-gallon-250cs-cl404812-cl404812',
+    slug: 'janitors-finest-can-liners-clear-40-x-48-12-micron-40-45-gallon-250-cs-cl404812',
     sku: 'CL404812',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 40 X 48, 12 MICRON, 40-45 GALLON, 250/CS (CL404812)',
     brand: 'Janitors Finest',
@@ -2861,28 +2693,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-40-x-48-14-micron-40-45-gallon-250cs-cl404814-cl404814',
-    sku: 'CL404814',
-    name: 'JANITORS FINEST®, CAN LINERS CLEAR, 40 X 48, 14 MICRON, 40-45 GALLON, 250/CS (CL404814)',
-    brand: 'Janitors Finest',
-    price: 37.95,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 1,
-    description: 'Janitors Finest JANITORS FINEST®, CAN LINERS CLEAR, 40 X 48, 14 MICRON, 40-45 GALLON, 250/CS. Professional-grade trash liners product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 40 X 48', '45 GALLON size', 'Pack: Gallon', 'Category: Trash Liners'],
-    specs: { 'SKU': 'CL404814', 'Brand': 'Janitors Finest', 'Color': 'CLEAR', 'Volume': '45 GALLON' },
-    category: 'Trash Liners',
-    subcategory: 'High Density Liners',
-    cardTitle: 'CAN LINERS CLEAR',
-    pack: 'Gallon',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'janitors-finest-can-liners-clear-40-x-48-16-micron-40-45-gallon-250cs-cl404816-cl404816',
+    slug: 'janitors-finest-can-liners-clear-40-x-48-16-micron-40-45-gallon-250-cs-cl404816',
     sku: 'CL404816',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 40 X 48, 16 MICRON, 40-45 GALLON, 250/CS (CL404816)',
     brand: 'Janitors Finest',
@@ -2903,7 +2714,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-40-x-48-22-micron-40-45-gallon-150cs-cl404822k-cl404822k',
+    slug: 'janitors-finest-can-liners-black-40-x-48-22-micron-40-45-gallon-150-cs-cl404822k',
     sku: 'CL404822K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 40 X 48, 22 MICRON, 40-45 GALLON, 150/CS (CL404822K)',
     brand: 'Janitors Finest',
@@ -2924,7 +2735,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-43-x-48-14-micron-56-gallon-200cs-cl434814-cl434814',
+    slug: 'janitors-finest-can-liners-clear-43-x-48-14-micron-56-gallon-200-cs-cl434814',
     sku: 'CL434814',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 43 X 48, 14 MICRON, 56 GALLON, 200/CS (CL434814)',
     brand: 'Janitors Finest',
@@ -2945,7 +2756,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-43-x-48-16-micron-56-gallon-200cs-cl434816-cl434816',
+    slug: 'janitors-finest-can-liners-clear-43-x-48-16-micron-56-gallon-200-cs-cl434816',
     sku: 'CL434816',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 43 X 48, 16 MICRON, 56 GALLON, 200/CS (CL434816)',
     brand: 'Janitors Finest',
@@ -2966,7 +2777,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-36-x-60-14-micron-55-gallon-200cs-cl366014-cl366014',
+    slug: 'janitors-finest-can-liners-clear-36-x-60-14-micron-55-gallon-200-cs-cl366014',
     sku: 'CL366014',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 36 X 60, 14 MICRON, 55 GALLON, 200/CS (CL366014)',
     brand: 'Janitors Finest',
@@ -2987,7 +2798,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-38-x-60-14-micron-60-gallon-200cs-cl386014-cl386014',
+    slug: 'janitors-finest-can-liners-clear-38-x-60-14-micron-60-gallon-200-cs-cl386014',
     sku: 'CL386014',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 38 X 60, 14 MICRON, 60 GALLON, 200/CS (CL386014)',
     brand: 'Janitors Finest',
@@ -3008,7 +2819,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-38-x-60-17-micron-60-gallon-200cs-cl386017-cl386017',
+    slug: 'janitors-finest-can-liners-clear-38-x-60-17-micron-60-gallon-200-cs-cl386017',
     sku: 'CL386017',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 38 X 60, 17 MICRON, 60 GALLON, 200/CS (CL386017)',
     brand: 'Janitors Finest',
@@ -3029,7 +2840,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-24-x-23-45-mil-7-10-gallon-500cs-ld2423045k-ld2423045k',
+    slug: 'janitors-finest-can-liners-black-24-x-23-.45-mil-7-10-gallon-500-cs-ld2423045k',
     sku: 'LD2423045K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 24 X 23, .45 MIL, 7-10 GALLON, 500/CS (LD2423045K)',
     brand: 'Janitors Finest',
@@ -3050,7 +2861,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-24-x-32-45-mil-12-16-gallon-500cs-ld2432045k-ld2432045k',
+    slug: 'janitors-finest-can-liners-black-24-x-32-.45-mil-12-16-gallon-500-cs-ld2432045k',
     sku: 'LD2432045K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 24 X 32, .45 MIL, 12-16 GALLON, 500/CS (LD2432045K)',
     brand: 'Janitors Finest',
@@ -3071,7 +2882,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-24-x-32-80-mil-12-16-gallon-500cs-ld243208k-ld243208k',
+    slug: 'janitors-finest-can-liners-black-24-x-32-.80-mil-12-16-gallon-500-cs-ld243208k',
     sku: 'LD243208K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 24 X 32, .80 MIL, 12-16 GALLON, 500/CS (LD243208K)',
     brand: 'Janitors Finest',
@@ -3092,7 +2903,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-30-x-36-80-mil-20-30-gallon-250cs-ld303608k-ld303608k',
+    slug: 'janitors-finest-can-liners-black-30-x-36-.80-mil-20-30-gallon-250-cs-ld303608k',
     sku: 'LD303608K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 30 X 36, .80 MIL, 20-30 GALLON, 250/CS (LD303608K)',
     brand: 'Janitors Finest',
@@ -3113,7 +2924,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-33-x-39-15-mil-33-gallon-100cs-ld333915k-ld333915k',
+    slug: 'janitors-finest-can-liners-black-33-x-39-1.5-mil-33-gallon-100-cs-ld333915k',
     sku: 'LD333915K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 33 X 39, 1.5 MIL, 33 GALLON, 100/CS (LD333915K)',
     brand: 'Janitors Finest',
@@ -3134,7 +2945,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-33-x-39-12-mil-33-gallon-100cs-ld333912k-ld333912k',
+    slug: 'janitors-finest-can-liners-black-33-x-39-1.2-mil-33-gallon-100-cs-ld333912k',
     sku: 'LD333912K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 33 X 39, 1.2 MIL, 33 GALLON, 100/CS (LD333912K)',
     brand: 'Janitors Finest',
@@ -3155,7 +2966,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-40-x-46-11-mil-40-45-gallon-200cs-ld404611k-ld404611k',
+    slug: 'janitors-finest-can-liners-black-40-x-46-1.1-mil-40-45-gallon-200-cs-ld404611k',
     sku: 'LD404611K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 40 X 46, 1.1 MIL, 40-45 GALLON, 200/CS (LD404611K)',
     brand: 'Janitors Finest',
@@ -3176,7 +2987,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-40-x-46-12-mil-40-45-gallon-100cs-ld404612k-ld404612k',
+    slug: 'janitors-finest-can-liners-black-40-x-46-1.2-mil-40-45-gallon-100-cs-ld404612k',
     sku: 'LD404612K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 40 X 46, 1.2 MIL, 40-45 GALLON, 100/CS (LD404612K)',
     brand: 'Janitors Finest',
@@ -3197,7 +3008,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-40-x-46-10-mil-40-45-gallon-100cs-ld404610k-ld404610k',
+    slug: 'janitors-finest-can-liners-black-40-x-46-1-0-mil-40-45-gallon-100-cs-ld404610k',
     sku: 'LD404610K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 40 X 46, 1.0 MIL, 40-45 GALLON, 100/CS (LD404610K)',
     brand: 'Janitors Finest',
@@ -3218,7 +3029,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-40-x-46-15-mil-40-45-gallon-100cs-ld404615k-ld404615k',
+    slug: 'janitors-finest-can-liners-black-40-x-46-1.5-mil-40-45-gallon-100-cs-ld404615k',
     sku: 'LD404615K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 40 X 46, 1.5 MIL, 40-45 GALLON, 100/CS (LD404615K)',
     brand: 'Janitors Finest',
@@ -3239,7 +3050,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-36-x-58-15-mil-55-gallon-100cs-ld365815k-ld365815k',
+    slug: 'janitors-finest-can-liners-black-36-x-58-1.5-mil-55-gallon-100-cs-ld365815k',
     sku: 'LD365815K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 36 X 58, 1.5 MIL, 55 GALLON, 100/CS (LD365815K)',
     brand: 'Janitors Finest',
@@ -3260,7 +3071,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-42-x-47-15-mil-56-gallon-100cs-ld424715k-ld424715k',
+    slug: 'janitors-finest-can-liners-black-42-x-47-1.5-mil-56-gallon-100-cs-ld424715k',
     sku: 'LD424715K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 42 X 47, 1.5 MIL, 56 GALLON, 100/CS (LD424715K)',
     brand: 'Janitors Finest',
@@ -3281,7 +3092,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-38-x-58-15-mil-60-gallon-100cs-ld385815k-ld385815k',
+    slug: 'janitors-finest-can-liners-black-38-x-58-1.5-mil-60-gallon-100-cs-ld385815k',
     sku: 'LD385815K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 38 X 58, 1.5 MIL, 60 GALLON, 100/CS (LD385815K)',
     brand: 'Janitors Finest',
@@ -3302,7 +3113,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'plastic-lobby-broom-2221p',
+    slug: 'plastic-lobby-broom',
     sku: '2221P',
     name: 'Plastic Lobby Broom',
     brand: 'Plastic',
@@ -3323,7 +3134,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-metal-dust-pan-16-wide-2-handle-black-gjo85151-gjo85151',
+    slug: 'metal-dust-pan-16',
     sku: 'GJO85151',
     name: 'GENUINE JOE METAL DUST PAN, 16 WIDE, 2 HANDLE, BLACK (GJO85151)',
     brand: 'Genuine Joe',
@@ -3344,7 +3155,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lobby-dust-pan-12w-30-handle-plastic-black-gjo85136-ldpc12bp',
+    slug: 'lobby-dust-pan-12w-30-handle-plastic-black-gjo85136',
     sku: 'LDPC12BP',
     name: 'Lobby Dust Pan, 12W, 30 Handle, Plastic, Black (GJO85136)',
     brand: 'Lobby',
@@ -3365,7 +3176,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'soft-sided-wastebasket-28-qt-black-bwk28qtwbbla',
+    slug: 'commercial-soft-molded-plastic-wastebaskets-28-quart-gray',
     sku: 'BWK28QTWBBLA',
     name: 'Soft-Sided Wastebasket, 28 qt, Black',
     brand: 'Soft-Sided',
@@ -3386,7 +3197,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'soft-sided-wastebasket-41-qt-plastic-black-bwk41qtwbbla',
+    slug: 'commercial-soft-molded-plastic-wastebaskets-41-quart-gray',
     sku: 'BWK41QTWBBLA',
     name: 'Soft-Sided Wastebasket, 41 qt, Plastic, Black',
     brand: 'Soft-Sided',
@@ -3407,7 +3218,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'trash-can-dolly-18-diameter-x-6-height-black-400-lb-capacity-dlr18',
+    slug: 'trash-can-dolly-18-diameter-x-6-height-black-400-lb-capacity',
     sku: 'DLR18',
     name: 'Trash Can Dolly, 18 Diameter x 6 Height, Black, 400 Lb Capacity',
     brand: 'MJS',
@@ -3428,7 +3239,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3175-yellow-vinyl-caddy-bag-3175',
+    slug: '3175-yellow-vinyl-caddy-bag',
     sku: '3175',
     name: '#3175 Yellow, Vinyl Caddy Bag',
     brand: 'MJS',
@@ -3449,7 +3260,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-or-special-event-trash-can-white-18-x-18-x-28-10bundle-193382',
+    slug: 'temporary-or-special-event-trash-can-white-18-x-18-x-28',
     sku: '193382',
     name: 'Temporary or Special Event Trash Can White 18 x 18 x 28 , 10/Bundle',
     brand: 'MJS',
@@ -3470,7 +3281,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-special-event-trash-can-w-recycled-logo-print-18-x-18-x-28-10bundle-193382r',
+    slug: 'temporary-special-event-trash-can-w-recycled-logo-print-18-x-18-x-28',
     sku: '193382R',
     name: 'Temporary / Special Event Trash Can W/ Recycled Logo Print 18 x 18 x 28 , 10/Bundle',
     brand: 'MJS',
@@ -3491,7 +3302,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-blue-color-for-bottle-cans-10b-642259blu',
+    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-blue-color-for-bottle-cans',
     sku: '642259BLU',
     name: 'Temporary or Special Event Trash Can 18 x 18 x 28 Blue Color For Bottle & Cans , 10/Bundle',
     brand: 'MJS',
@@ -3512,7 +3323,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-green-for-food-paper-10bundle-642425grn',
+    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-green-for-food-paper',
     sku: '642425GRN',
     name: 'Temporary or Special Event Trash Can 18 x 18 x 28 Green For Food & Paper , 10/Bundle',
     brand: 'MJS',
@@ -3533,7 +3344,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-black-color-for-landfill-10bun-642426blk',
+    slug: 'temporary-or-special-event-trash-can-18-x-18-x-28-black-color-for-landfill-10-bundle-t',
     sku: '642426BLK',
     name: 'Temporary or Special Event Trash Can 18 x 18 x 28 Black Color For Landfill, 10/Bundle  T',
     brand: 'MJS',
@@ -3554,7 +3365,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'temporary-trash-can-lid-white-193414',
+    slug: 'temporary-trash-can-lid-white',
     sku: '193414',
     name: 'Temporary Trash Can Lid White',
     brand: 'MJS',
@@ -3575,7 +3386,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'microfiber-duster-28-white-w-plastic-handle-a219mfw',
+    slug: 'microfiber-duster-28-white-w-plastic-handle',
     sku: 'A219MFW',
     name: 'Microfiber Duster 28 White W/ Plastic Handle',
     brand: 'Microfiber',
@@ -3596,7 +3407,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'microfiber-duster-28-blue-w-plastic-handle-a219mfb',
+    slug: 'microfiber-duster-28-blue-w-plastic-handle',
     sku: 'A219MFB',
     name: 'Microfiber Duster 28 Blue W/ Plastic Handle',
     brand: 'Microfiber',
@@ -3617,7 +3428,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sp50-34-50-synthetic-polyester-fiber-flex-duster-telescopic-handle-sp50',
+    slug: 'synthetic-polyester-fiber-flex-duster-telescopic-handle',
     sku: 'SP50',
     name: '# SP50, 34-50, Synthetic Polyester Fiber Flex Duster - Telescopic Handle',
     brand: 'MJS',
@@ -3638,7 +3449,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sp81-45-80-polyester-fiber-flex-duster-double-telescopic-handle-sp81',
+    slug: 'telescopic-polyester-fiber-flex-duster-double-telescopic-handle',
     sku: 'SP81',
     name: '# SP81, 45-80, Polyester Fiber-Flex Duster - Double Telescopic Handle',
     brand: 'MJS',
@@ -3659,7 +3470,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sp85-55-85-polyester-extendable-duster-plastic-handle-sp85',
+    slug: '55-85-polyester-extendable-duster-plastic-handle',
     sku: 'SP85',
     name: '# SP85, 55-85 Polyester Extendable Duster Plastic Handle',
     brand: 'MJS',
@@ -3680,7 +3491,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-economy-ostrich-feather-duster-3312p',
+    slug: '12-economy-ostrich-feather-duster',
     sku: '3312P',
     name: '12 Economy Ostrich Feather Duster',
     brand: 'MJS',
@@ -3701,7 +3512,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '20-economy-ostrich-feather-duster-3320p',
+    slug: '20-economy-ostrich-feather-duster',
     sku: '3320P',
     name: '20 Economy Ostrich Feather Duster',
     brand: 'MJS',
@@ -3722,7 +3533,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '23-economy-ostrich-feather-duster-3323p',
+    slug: '23-economy-ostrich-feather-duster',
     sku: '3323P',
     name: '23 Economy Ostrich Feather Duster',
     brand: 'MJS',
@@ -3743,7 +3554,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'retractable-feather-duster-10-14-uns914fd',
+    slug: 'retractable-feather-duster-10-14',
     sku: 'UNS914FD',
     name: 'Retractable Feather Duster 10-14',
     brand: 'MJS',
@@ -3764,7 +3575,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'deluxe-long-reach-cob-web-duster-w-extension-handle-cwb01/thi',
+    slug: 'deluxe-long-reach-cob-web-duster',
     sku: 'CWB01/THI',
     name: 'Deluxe Long Reach Cob Web Duster W/ Extension Handle',
     brand: 'Deluxe',
@@ -3785,7 +3596,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dust-mop-head-cottonsynthetic-fibers-24-x-5-blue-92524b',
+    slug: '24-x-5-blue-dust-mop-head',
     sku: '92524B',
     name: 'DUST MOP HEAD, COTTON/SYNTHETIC FIBERS, 24 X 5, BLUE',
     brand: 'MJS',
@@ -3806,7 +3617,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dust-mop-head-cottonsynthetic-fibers-36-x-5-blue-92536b',
+    slug: '36-x-5-blue-dust-mop-head',
     sku: '92536B',
     name: 'DUST MOP HEAD, COTTON/SYNTHETIC FIBERS, 36 X 5, BLUE',
     brand: 'MJS',
@@ -3827,7 +3638,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dust-mop-head-cottonsynthetic-fibers-48-x-5-blue-92548b',
+    slug: '48-x-5-blue-dust-mop-head',
     sku: '92548B',
     name: 'DUST MOP HEAD, COTTON/SYNTHETIC FIBERS, 48 X 5, BLUE',
     brand: 'MJS',
@@ -3848,7 +3659,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dust-mop-head-cottonsynthetic-fibers-60-x-5-blue-92560b',
+    slug: '60-x-5-blue-dust-mop-head',
     sku: '92560B',
     name: 'DUST MOP HEAD, COTTON/SYNTHETIC FIBERS, 60 X 5, BLUE',
     brand: 'MJS',
@@ -3869,7 +3680,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-dust-mop-frame-9524f',
+    slug: '24-dust-mop-frame',
     sku: '9524F',
     name: '24 Dust Mop Frame',
     brand: 'MJS',
@@ -3890,7 +3701,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '36-dust-mop-frame-9536f',
+    slug: '36-dust-mop-frame',
     sku: '9536F',
     name: '36 Dust Mop Frame',
     brand: 'MJS',
@@ -3911,7 +3722,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '48-dust-mop-frame-9548f',
+    slug: '48-dust-mop-frame',
     sku: '9548F',
     name: '48 Dust Mop Frame',
     brand: 'MJS',
@@ -3932,7 +3743,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '60-dust-mop-frame-9560f',
+    slug: '60-dust-mop-frame',
     sku: '9560F',
     name: '60 Dust Mop Frame',
     brand: 'MJS',
@@ -3953,7 +3764,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clip-on-dust-mop-handle-wood-9000',
+    slug: 'clip-on-dust-mop-handle-wood',
     sku: '9000',
     name: 'Clip On Dust Mop Handle Wood',
     brand: 'Clip',
@@ -3974,7 +3785,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clip-on-dust-mop-handle-fiberglass-9000f',
+    slug: 'clip-on-dust-mop-handle-fiberglass',
     sku: '9000F',
     name: 'Clip On Dust Mop Handle Fiberglass',
     brand: 'Clip',
@@ -3995,7 +3806,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '18-blue-microfiber-mop-head-refill-m830018b',
+    slug: '18-blue-microfiber-mop-head-refill',
     sku: 'M830018B',
     name: '18 Blue, Microfiber Mop Head, Refill',
     brand: 'MJS',
@@ -4016,7 +3827,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-blue-microfiber-mop-head-refill-m830024b',
+    slug: '24-blue-microfiber-mop-head-refill',
     sku: 'M830024B',
     name: '24 Blue, Microfiber Mop Head, Refill',
     brand: 'MJS',
@@ -4037,7 +3848,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '18-inch-microfiber-mop-frame-and-telescopic-pole-complete-m8300comp',
+    slug: '18-inch-microfiber-mop-frame-and-telescopic-pole-complete',
     sku: 'M8300COMP',
     name: '18 Inch Microfiber Mop Frame and Telescopic Pole Complete',
     brand: 'MJS',
@@ -4058,7 +3869,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-inch-microfiber-mop-frame-and-telescopic-pole-complete-m7000comp',
+    slug: '24-inch-microfiber-mop-frame-and-telescopic-pole-complete',
     sku: 'M7000COMP',
     name: '24 Inch Microfiber Mop Frame and Telescopic Pole Complete',
     brand: 'MJS',
@@ -4079,7 +3890,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '18-inch-flow-mop-microfiber-wet-mop-system-complete-m70009018comp',
+    slug: '18-inch-flow-mop-microfiber-wet-mop-system-complete',
     sku: 'M70009018COMP',
     name: '18 Inch Flow Mop Microfiber Wet Mop System Complete',
     brand: 'MJS',
@@ -4100,7 +3911,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-inch-flow-mop-microfiber-wet-mop-system-complete-m70009024comp',
+    slug: '24-inch-flow-mop-microfiber-wet-mop-system-complete',
     sku: 'M70009024COMP',
     name: '24 Inch Flow Mop Microfiber Wet Mop System Complete',
     brand: 'MJS',
@@ -4121,7 +3932,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-head-cotton-no-16-white-8011716',
+    slug: 'cut-end-wet-mop-head-cotton-no-16-white',
     sku: '8011716',
     name: 'Cut-End Wet Mop Head, Cotton, No. 16, White',
     brand: 'MJS',
@@ -4142,7 +3953,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-head-cotton-no-24-white-8011724',
+    slug: 'cut-end-wet-mop-head-cotton-no-24-white',
     sku: '8011724',
     name: 'Cut-End Wet Mop Head, Cotton, No. 24, White',
     brand: 'MJS',
@@ -4163,7 +3974,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-head-cotton-no-32-white-8012532',
+    slug: 'cut-end-wet-mop-head-cotton-no-32-white',
     sku: '8012532',
     name: 'Cut-End Wet Mop Head, Cotton, No. 32, White',
     brand: 'MJS',
@@ -4184,7 +3995,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-heads-rayon-16-oz-white-8852016',
+    slug: 'cut-end-wet-mop-heads-rayon-16-oz-white',
     sku: '8852016',
     name: 'Cut-End Wet Mop Heads, Rayon, 16-oz., White',
     brand: 'MJS',
@@ -4205,7 +4016,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-heads-rayon-24-oz-white-8852024',
+    slug: 'cut-end-wet-mop-heads-rayon-24-oz-white',
     sku: '8852024',
     name: 'Cut-End Wet Mop Heads, Rayon, 24-oz., White',
     brand: 'MJS',
@@ -4226,7 +4037,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'cut-end-wet-mop-heads-rayon-32-oz-white-8852832',
+    slug: 'cut-end-wet-mop-heads-rayon-32-oz-white',
     sku: '8852832',
     name: 'Cut-End Wet Mop Heads, Rayon, 32-oz., White',
     brand: 'MJS',
@@ -4247,7 +4058,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-loop-wet-mop-head-cottonsynthetic-large-size-blue-8997lg5blu',
+    slug: 'super-loop-wet-mop-head-cotton-synthetic-large-size-blue',
     sku: '8997LG5BLU',
     name: 'Super Loop Wet Mop Head, Cotton/Synthetic, Large Size, Blue',
     brand: 'MJS',
@@ -4268,7 +4079,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-loop-wet-mop-head-cottonsynthetic-large-size-green-8997lg5grn',
+    slug: 'super-loop-wet-mop-head-cotton-synthetic-large-size-green',
     sku: '8997LG5GRN',
     name: 'Super Loop Wet Mop Head, Cotton/synthetic, Large Size, Green',
     brand: 'MJS',
@@ -4289,7 +4100,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-loop-wet-mop-head-cottonsynthetic-large-size-red-8997lg5red',
+    slug: 'super-loop-wet-mop-head-cotton-synthetic-large-size-red',
     sku: '8997LG5RED',
     name: 'Super Loop Wet Mop Head, Cotton/Synthetic, Large Size, Red',
     brand: 'MJS',
@@ -4310,7 +4121,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-loop-wet-mop-head-cottonsynthetic-large-size-orange-8997lg5or',
+    slug: 'super-loop-wet-mop-head-cotton-synthetic-large-size-orange',
     sku: '8997LG5OR',
     name: 'Super Loop Wet Mop Head, Cotton/Synthetic, Large Size, Orange',
     brand: 'MJS',
@@ -4331,7 +4142,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'quick-change-side-latch-plastic-mop-head-handle-60-plastic-handle-yellow-1015f',
+    slug: 'quick-change-side-latch-plastic-mop-head-handle-60-plastic-handle-yellow',
     sku: '1015F',
     name: 'Quick Change Side-Latch Plastic Mop Head Handle, 60 Plastic Handle, Yellow',
     brand: 'MJS',
@@ -4352,7 +4163,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'quick-change-metal-head-wooden-mop-handle-20-and-up-1-18-dia-x-63-1015',
+    slug: 'quick-change-metal-head-wooden-mop-handle-20-and-up-1-1-8-dia-x-63',
     sku: '1015',
     name: 'Quick Change Metal Head Wooden Mop Handle, #20 and Up, 1 1/8 Dia. x 63',
     brand: 'MJS',
@@ -4373,7 +4184,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'commercial-janitorial-cart-with-yellow-vinyl-bag-gray-611',
+    slug: 'commercial-janitorial-cart-with-yellow-vinyl-bag-gray',
     sku: '611',
     name: 'Commercial Janitorial Cart with Yellow Vinyl Bag, Gray',
     brand: 'MJS',
@@ -4394,28 +4205,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mop-bucketwringer-combos-side-press-35-qt-plastic-yellow-8036',
-    sku: '8036',
-    name: 'MOP BUCKET/WRINGER COMBOS, SIDE-PRESS, 35 QT, PLASTIC, YELLOW',
-    brand: 'MJS',
-    price: 44.95,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 393,
-    description: 'MOP BUCKET/WRINGER COMBOS, SIDE-PRESS, 35 QT, PLASTIC, YELLOW. Professional-grade equipment & tools product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Category: Equipment & Tools', 'Professional-grade quality'],
-    specs: { 'SKU': '8036', 'Brand': 'MJS', 'Color': 'YELLOW' },
-    category: 'Equipment & Tools',
-    subcategory: 'Buckets & Wringers',
-    cardTitle: 'MOP BUCKET/WRINGER COMBOS',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'medium-duty-scour-pad-96-6-x-9-green-20carton-96-601',
+    slug: 'medium-duty-scour-pad-96-6-x-9-green-20-carton',
     sku: '96-601',
     name: 'Medium Duty Scour Pad, # 96, 6 x 9, Green, 20/Carton',
     brand: 'MJS',
@@ -4436,7 +4226,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'winco-toilet-bowl-brush-br15-br15',
+    slug: 'toilet-bowl-brush',
     sku: 'BR15',
     name: 'Winco Toilet Bowl Brush (BR15)',
     brand: 'Winco',
@@ -4457,7 +4247,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'latex-powder-free-industrial-grade-gloves-100bx-size-small-lpf-56sea',
+    slug: 'diamond-if56-latex-powder-free-industrial-grade-gloves-100-bx-size-small',
     sku: 'LPF-56SEA',
     name: 'Latex Powder Free Industrial Grade Gloves 100/bx, Size Small',
     brand: 'MJS',
@@ -4478,7 +4268,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'latex-powder-free-industrial-grade-gloves-100bx-size-medium-lpf-56mea',
+    slug: 'diamond-if56-latex-powder-free-industrial-grade-gloves-100-bx-size-medium',
     sku: 'LPF-56MEA',
     name: 'Latex Powder Free Industrial Grade Gloves 100/bx, Size Medium',
     brand: 'MJS',
@@ -4499,7 +4289,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'latex-powder-free-industrial-grade-gloves-100bx-size-large-lpf-56lea',
+    slug: 'diamond-if56-latex-powder-free-industrial-grade-gloves-100-bx-size-large',
     sku: 'LPF-56LEA',
     name: 'Latex Powder Free Industrial Grade Gloves 100/bx, Size Large',
     brand: 'MJS',
@@ -4520,7 +4310,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'latex-powder-free-industrial-grade-gloves-100bx-size-x-large-lpf-56xlea',
+    slug: 'diamond-if56-latex-powder-free-industrial-grade-gloves-100-bx-size-x-large',
     sku: 'LPF-56XLEA',
     name: 'Latex Powder Free Industrial Grade Gloves 100/bx, Size X-Large',
     brand: 'MJS',
@@ -4541,7 +4331,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'vinyl-powder-free-general-purpose-gloves-100bx-size-small-vcpf-48sea',
+    slug: 'diamond-if48-vinyl-powder-free-exam-grade-gloves-100-bx-size-small',
     sku: 'VCPF-48SEA',
     name: 'Vinyl Powder Free General Purpose Gloves 100/bx, Size Small',
     brand: 'MJS',
@@ -4562,7 +4352,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'vinyl-powder-free-general-purpose-gloves-100bx-size-medium-vcpf-48mea',
+    slug: 'diamond-if48-vinyl-powder-free-exam-grade-gloves-100-bx-size-medium',
     sku: 'VCPF-48MEA',
     name: 'Vinyl Powder Free General Purpose Gloves 100/bx, Size Medium',
     brand: 'MJS',
@@ -4583,7 +4373,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'vinyl-powder-free-general-purpose-gloves-100bx-size-large-vcpf-48lea',
+    slug: 'diamond-if48-vinyl-powder-free-exam-grade-gloves-100-bx-size-large',
     sku: 'VCPF-48LEA',
     name: 'Vinyl Powder Free General Purpose Gloves 100/bx, Size Large',
     brand: 'MJS',
@@ -4604,7 +4394,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'vinyl-powder-free-general-purpose-gloves-100bx-size-x-large-vcpf-48xlea',
+    slug: 'diamond-if48-vinyl-powder-free-exam-grade-gloves-100-bx-size-x-large',
     sku: 'VCPF-48XLEA',
     name: 'Vinyl Powder Free General Purpose Gloves 100/bx, Size X- Large',
     brand: 'MJS',
@@ -4625,7 +4415,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-902-01-wall-mount-glove-dispenser-w-1-box-capacity-acrylic-cle-90201',
+    slug: 'alpine-industries-902-01-wall-mount-glove-dispenser-w-1-box-capacity-acrylic-clear',
     sku: '90201',
     name: 'Alpine Industries 902-01 Wall-Mount Glove Dispenser w/ (1) Box Capacity - Acrylic, Clear',
     brand: 'Alpine Industries',
@@ -4646,7 +4436,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-902-02-wall-mount-glove-dispenser-w-2-box-capacity-acrylic-cle-90202',
+    slug: 'alpine-industries-902-02-wall-mount-glove-dispenser-w-2-box-capacity-acrylic-clear',
     sku: '90202',
     name: 'Alpine Industries 902-02 Wall-Mount Glove Dispenser w/ (2) Box Capacity - Acrylic, Clear',
     brand: 'Alpine Industries',
@@ -4667,7 +4457,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-902-03-wall-mount-glove-dispenser-w-3-box-capacity-acrylic-cle-90203',
+    slug: 'alpine-industries-902-03-wall-mount-glove-dispenser-w-3-box-capacity-acrylic-clear',
     sku: '90203',
     name: 'Alpine Industries 902-03 Wall-Mount Glove Dispenser w/ (3) Box Capacity - Acrylic, Clear',
     brand: 'Alpine Industries',
@@ -4688,7 +4478,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-902-04-wall-mount-glove-dispenser-w-4-box-capacity-acrylic-cle-90204',
+    slug: 'alpine-industries-902-04-wall-mount-glove-dispenser-w-4-box-capacity-acrylic-clear',
     sku: '90204',
     name: 'Alpine Industries 902-04 Wall-Mount Glove Dispenser w/ (4) Box Capacity - Acrylic, Clear',
     brand: 'Alpine Industries',
@@ -4709,7 +4499,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'poly-disposable-arm-sleeves-blue-18-inch-1000carton-4018b',
+    slug: 'poly-disposable-arm-sleeves-blue-18-inch-1000-carton',
     sku: '4018B',
     name: 'Poly Disposable Arm Sleeves, Blue, 18 Inch, 1000/Carton',
     brand: 'Poly',
@@ -4730,7 +4520,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'poly-disposable-aprons-white-1-mil-28-x-46-1000carton-2846',
+    slug: 'poly-disposable-aprons-white-1-mil-28-x-46-1000-carton',
     sku: '2846',
     name: 'Poly Disposable Aprons, White, 1 Mil, 28 x 46, 1000/Carton',
     brand: 'Poly',
@@ -4751,7 +4541,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lifeguard-white-beard-covers-1000carton-4320-4320',
+    slug: 'white-beard-covers-1000-carton',
     sku: '4320',
     name: 'LifeGuard White Beard Covers, 1000/Carton (4320)',
     brand: 'MJS',
@@ -4772,7 +4562,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bouffant-caps-24-inch-green-1000carton-6624gr-6624gr',
+    slug: 'bouffant-caps-24-inch-green-1000-carton',
     sku: '6624GR',
     name: 'Bouffant Caps, 24 Inch, Green, 1000/Carton (6624GR)',
     brand: 'MJS',
@@ -4793,7 +4583,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bouffant-caps-24-inch-red-1000carton-6624r-6624r',
+    slug: 'bouffant-caps-24-inch-red-1000-carton',
     sku: '6624R',
     name: 'Bouffant Caps, 24 Inch, Red 1000/Carton (6624R)',
     brand: 'MJS',
@@ -4814,7 +4604,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bouffant-caps-blue-24-inch-1000carton-6624b-6624b',
+    slug: 'bouffant-caps-blue-24-inch-1000-carton',
     sku: '6624B',
     name: 'Bouffant Caps Blue, 24 Inch, 1000/Carton (6624B)',
     brand: 'MJS',
@@ -4835,7 +4625,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bouffant-caps-pink-24-inch-1000carton-6624p',
+    slug: 'bouffant-caps-pink-24-inch-1000-carton',
     sku: '6624P',
     name: 'Bouffant Caps Pink, 24 Inch, 1000/Carton',
     brand: 'MJS',
@@ -4856,7 +4646,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bouffant-caps-yellow-24-inch-1000carton-6624y-6624y',
+    slug: 'bouffant-caps-yellow-24-inch-1000-carton',
     sku: '6624Y',
     name: 'Bouffant Caps Yellow, 24 Inch, 1000/Carton (6624Y)',
     brand: 'MJS',
@@ -4877,7 +4667,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ear-loop-face-masks-3-ply-blue-non-medical-50box-4330-4330',
+    slug: 'ear-loop-face-masks-blue-50-Per-Bag',
     sku: '4330',
     name: 'Ear Loop Face Masks, 3 Ply, Blue, Non Medical, 50/Box (4330)',
     brand: 'Ear',
@@ -4898,7 +4688,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'standard-nuisance-dust-masks-50bx-dm',
+    slug: 'standard-nuisance-dust-masks',
     sku: 'DM',
     name: 'Standard nuisance dust masks, 50/Bx',
     brand: 'MJS',
@@ -4919,7 +4709,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mlightweight-particulate-respirator-8210-n95-20box-mmm8210',
+    slug: '3m-particulate-respirator-8210-n95-20-bx',
     sku: 'MMM8210',
     name: '3M™Lightweight Particulate Respirator 8210, N95, 20/box',
     brand: 'MJS',
@@ -4940,7 +4730,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'shoe-covers-spun-woven-blue-100pk-4350n',
+    slug: 'shoe-covers-spun-woven-blue-100-pk',
     sku: '4350N',
     name: 'Shoe Covers Spun Woven, Blue 100/Pk',
     brand: 'Shoe',
@@ -4961,7 +4751,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3-x-1000-stretch-film-80-ga-18-rolls-per-case-1000-per-roll-flm803',
+    slug: '3-x-1000-stretch-film-80-gu-18-rolls-per-case-1000-per-roll',
     sku: 'FLM803',
     name: '3 X 1000\' Stretch Film 80 Ga 18 Rolls Per Case 1000\' Per Roll',
     brand: 'MJS',
@@ -4982,7 +4772,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '5-x-1000-stretch-film-80-ga-12-rolls-per-case-1000-per-roll-flm805',
+    slug: '5-x-1000-stretch-film-80-gu-12-rolls-per-case-1000-per-roll',
     sku: 'FLM805',
     name: '5 X 1000\' Stretch Film 80 Ga 12 Rolls Per Case 1000\' Per Roll',
     brand: 'MJS',
@@ -5003,7 +4793,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'carton-sealing-tape-3-x-110-yards-clear-18-mil-24-rlscarton-tapgp318c',
+    slug: 'carton-sealing-tape-3-x-110-yards-clear-1-8-mil-24-rls-carton',
     sku: 'TAPGP318C',
     name: 'Carton Sealing Tape, 3 X 110 yards, Clear, 1.8 Mil, 24 Rls/Carton',
     brand: 'MJS',
@@ -5024,7 +4814,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'left-handed-2-in-side-load-tape-dispenser-jmc103l',
+    slug: 'left-handed-2-in-side-load-tape-dispenser',
     sku: 'JMC103L',
     name: 'Left Handed 2 In Side Load Tape Dispenser',
     brand: 'Left',
@@ -5045,7 +4835,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tape-dispenser-economy-2-handheld-jmc203',
+    slug: 'tape-dispenser-economy-2-handheld',
     sku: 'JMC203',
     name: 'Tape Dispenser, Economy 2 Handheld',
     brand: 'MJS',
@@ -5066,7 +4856,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'styrofoam-white-packing-peanuts-14-cu-spacepak-w',
+    slug: 'styrofoam-white-packing-peanuts-14-cu',
     sku: 'SPACEPAK-W',
     name: 'Styrofoam White Packing Peanuts 14 Cu\'',
     brand: 'Styrofoam',
@@ -5087,7 +4877,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'antistatic-pink-packing-peanuts-14-cu-spacepak-p',
+    slug: 'antistatic-pink-packing-peanuts-14-cu',
     sku: 'SPACEPAK-P',
     name: 'Antistatic Pink Packing Peanuts 14 Cu\'',
     brand: 'Antistatic',
@@ -5108,7 +4898,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '12-x-020-steel-strapping-855537',
+    slug: '1-2-x-020-steel-strapping',
     sku: '855537',
     name: '1/2 X .020 Steel Strapping',
     brand: 'MJS',
@@ -5129,7 +4919,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '34-x-020-steel-strapping-748209',
+    slug: '3-4-x-020-steel-strapping',
     sku: '748209',
     name: '3/4 X .020 Steel Strapping',
     brand: 'MJS',
@@ -5150,7 +4940,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-12-x-250-4-rolls-per-bundle-perf-12-bbl48412',
+    slug: 'bubble-cushioning-wrap-12-x-250-4-rolls-per-bundle-perf-12',
     sku: 'BBL48412',
     name: 'Bubble Cushioning Wrap, 12 x 250,\' 4 Rolls Per Bundle, Perf 12',
     brand: 'MJS',
@@ -5171,7 +4961,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-24-x-250-2-rolls-per-bundle-perf-12-bbl48212',
+    slug: 'bubble-cushioning-wrap-24-x-250-2-rolls-per-bundle-perf-12',
     sku: 'BBL48212',
     name: 'Bubble Cushioning Wrap, 24 x 250\', 2 Rolls Per Bundle, Perf 12',
     brand: 'MJS',
@@ -5192,7 +4982,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-48-x-250-1-rolls-per-bundle-perf-12-bbl48112',
+    slug: 'bubble-cushioning-wrap-48-x-250-1-rolls-per-bundle-perf-12',
     sku: 'BBL48112',
     name: 'Bubble Cushioning Wrap, 48 x 250\', 1 Rolls Per Bundle, Perf 12',
     brand: 'MJS',
@@ -5213,7 +5003,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-12-x-750-4-rolls-per-bundle-perf-12-bbl484316',
+    slug: 'bubble-cushioning-wrap-12-x-750-4-rolls-per-bundle-perf-12',
     sku: 'BBL484316',
     name: 'Bubble Cushioning Wrap, 12 x 750\', 4 Rolls Per Bundle, Perf 12',
     brand: 'MJS',
@@ -5234,7 +5024,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-24-x-750-2-rolls-per-bundle-perf-12-bbl482316',
+    slug: 'bubble-cushioning-wrap-24-x-750-2-rolls-per-bundle-perf-12',
     sku: 'BBL482316',
     name: 'Bubble Cushioning Wrap, 24 x 750\', 2 Rolls Per Bundle, Perf 12',
     brand: 'MJS',
@@ -5255,7 +5045,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bubble-cushioning-wrap-48-x-750-1-rolls-per-bundle-perf-12-bbl481316',
+    slug: 'bubble-cushioning-wrap-48-x-750-1-rolls-per-bundle-perf-12',
     sku: 'BBL481316',
     name: 'Bubble Cushioning Wrap, 48 x 750\' ,1 Rolls Per Bundle ,Perf 12',
     brand: 'MJS',
@@ -5276,7 +5066,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tolco-32-oz-value-check-3-pack-spray-bottle-130136-130136',
+    slug: '32-oz-value-check-3-pack-spray-bottle',
     sku: '130136',
     name: 'Tolco 32 Oz Value Check 3 Pack Spray Bottle (130136)',
     brand: 'Tolco',
@@ -5297,7 +5087,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-oz-spray-bottle-110244',
+    slug: '24-oz-spray-bottle',
     sku: '110244',
     name: '24 Oz Spray Bottle',
     brand: 'MJS',
@@ -5318,7 +5108,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '32-oz-spray-bottle-120125',
+    slug: '32-oz-spray-bottle',
     sku: '120125',
     name: '32 Oz Spray Bottle',
     brand: 'MJS',
@@ -5339,7 +5129,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'whitered-heavy-duty-trigger-sprayer-9-14-dip-tube-28mm-28-400-110246',
+    slug: 'white-red-heavy-duty-trigger-sprayer-9-1-4-dip-tube-28mm-28-400',
     sku: '110246',
     name: 'White/Red Heavy-Duty Trigger Sprayer, 9-1/4 Dip Tube, 28mm 28-400',
     brand: 'White/Red',
@@ -5360,7 +5150,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'whitegreen-heavy-duty-trigger-sprayer-9-14-dip-tube-28mm-28-400-110248',
+    slug: 'white-green-heavy-duty-trigger-sprayer-9-1-4-dip-tube-28mm-28-400',
     sku: '110248',
     name: 'White/Green Heavy-Duty Trigger Sprayer, 9-1/4 Dip Tube, 28mm 28-400',
     brand: 'White/Green',
@@ -5381,7 +5171,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bluewhite-heavy-duty-trigger-sprayer-9-14-dip-tube-28mm-28-400-110249',
+    slug: 'white-yellow-heavy-duty-trigger-sprayer-9-1-4-dip-tube-28mm-28-400',
     sku: '110249',
     name: 'Blue/White Heavy-Duty Trigger Sprayer, 9-1/4 Dip Tube, 28mm 28-400',
     brand: 'Blue/White',
@@ -5402,7 +5192,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'grey-extra-heavy-duty-trigger-sprayer-9-14-dip-tube-28mm-28-400t-chemical-resist-110542',
+    slug: 'grey-extra-heavy-duty-trigger-sprayer-9-1-4-dip-tube-28mm-28-400t-chemical-resistant-sprayer',
     sku: '110542',
     name: 'Grey Extra Heavy-Duty Trigger Sprayer, 9-1/4 Dip Tube, 28mm 28-400t Chemical Resistant Sprayer',
     brand: 'MJS',
@@ -5423,7 +5213,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-translucent-plastic-cold-cups-35-oz-polypropylene-25-cupssleeve-100-sleeve-drink35t2500',
+    slug: 'drink-translucent-plastic-cold-cups-3.5-oz-polypropylene-25-cups-sleeve-100-sleeves-carton',
     sku: 'DRINK35T2500',
     name: 'Drink, Translucent Plastic Cold Cups, 3.5 oz, Polypropylene, 25 Cups/Sleeve, 100 Sleeves/Carton',
     brand: 'MJS',
@@ -5444,7 +5234,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-translucent-plastic-cold-cups-5-oz-polypropylene-25-cupssleeve-100-sleeves-drink5t2500',
+    slug: 'drink-translucent-plastic-cold-cups-5-oz-polypropylene-25-cups-sleeve-100-sleeves-carton',
     sku: 'DRINK5T2500',
     name: 'Drink, Translucent Plastic Cold Cups, 5 oz, Polypropylene, 25 Cups/Sleeve, 100 Sleeves/Carton',
     brand: 'MJS',
@@ -5465,7 +5255,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-translucent-plastic-cold-cups-7-oz-polypropylene-25-cupssleeve-100-sleeves-drink7t2500',
+    slug: 'drink-translucent-plastic-cold-cups-7-oz-polypropylene-25-cups-sleeve-100-sleeves-carton',
     sku: 'DRINK7T2500',
     name: 'Drink, Translucent Plastic Cold Cups, 7 oz, Polypropylene, 25 Cups/Sleeve, 100 Sleeves/Carton',
     brand: 'MJS',
@@ -5486,7 +5276,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '8-oz-double-wall-paper-cup-500carton-dw08',
+    slug: '8-oz-double-wall-paper-cup-500-carton',
     sku: 'DW08',
     name: '8 Oz Double Wall Paper Cup, 500/Carton',
     brand: 'MJS',
@@ -5507,7 +5297,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mediumweight-polypropylene-forks-white-1000carton-mefo10',
+    slug: 'mediumweight-polypropylene-forks-white-1-000-carton',
     sku: 'MEFO10',
     name: 'Mediumweight Polypropylene Forks, White, 1,000/Carton',
     brand: 'Mediumweight',
@@ -5528,7 +5318,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mediumweight-polypropylene-spoons-white-1000carton-mesp10',
+    slug: 'mediumweight-polypropylene-spoons-white-1-000-carton',
     sku: 'MESP10',
     name: 'Mediumweight Polypropylene Spoons, White, 1,000/carton',
     brand: 'Mediumweight',
@@ -5549,7 +5339,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mediumweight-polypropylene-knives-white-1000carton-mekn10',
+    slug: 'mediumweight-polypropylene-knives-white-1-000-carton',
     sku: 'MEKN10',
     name: 'Mediumweight Polypropylene Knives, White, 1,000/carton',
     brand: 'Mediumweight',
@@ -5570,7 +5360,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavyweight-polypropylene-spoons-white-1000carton-hesp-hesp',
+    slug: 'heavyweight-polypropylene-spoons-white-1-000-carton',
     sku: 'HESP',
     name: 'Heavyweight Polypropylene Spoons, White, 1,000/carton (HESP)',
     brand: 'Heavyweight',
@@ -5591,7 +5381,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavyweight-polypropylene-forks-white-1000carton-hefo-hefo',
+    slug: 'heavyweight-polypropylene-forks-white-1-000-carton',
     sku: 'HEFO',
     name: 'Heavyweight Polypropylene Forks, White, 1,000/carton (HEFO)',
     brand: 'Heavyweight',
@@ -5612,7 +5402,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavyweight-polypropylene-knives-white-1000carton-hekn-hekn',
+    slug: 'heavyweight-polypropylene-knives-white-1-000-carton',
     sku: 'HEKN',
     name: 'Heavyweight Polypropylene Knives, White, 1,000/carton (HEKN)',
     brand: 'Heavyweight',
@@ -5633,7 +5423,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-aa-batteries-24box-durpc1500bkd',
+    slug: 'duracell-procell-batteries-aa',
     sku: 'DURPC1500BKD',
     name: 'Procell®Alkaline Aa Batteries, 24/box',
     brand: 'Procell',
@@ -5654,7 +5444,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-aaa-batteries-24box-durpc2400bkd',
+    slug: 'duracell-procell-batteries-aaa',
     sku: 'DURPC2400BKD',
     name: 'Procell®Alkaline Aaa Batteries, 24/box',
     brand: 'Procell',
@@ -5675,7 +5465,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-c-batteries-12box-durpc1400',
+    slug: 'duracell-procell-batteries-c',
     sku: 'DURPC1400',
     name: 'Procell®Alkaline C Batteries, 12/box',
     brand: 'Procell',
@@ -5696,7 +5486,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-d-batteries-12box-durpc1300',
+    slug: 'duracell-procell-batteries-d',
     sku: 'DURPC1300',
     name: 'Procell®Alkaline D Batteries, 12/box',
     brand: 'Procell',
@@ -5717,7 +5507,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-9v-batteries-12box-durpc1604bkd',
+    slug: 'duracell-procell-batteries-9-volt',
     sku: 'DURPC1604BKD',
     name: 'Procell®Alkaline 9v Batteries, 12/box',
     brand: 'Procell',
@@ -5780,7 +5570,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '10-qt-cloth-replacement-bag-for-backpack-vacuum-9010001',
+    slug: '10-qt-cloth-replacement-bag-for-backpack-vacuum',
     sku: '9010001',
     name: '10 Qt Cloth Replacement Bag For Backpack Vacuum',
     brand: 'MJS',
@@ -5801,7 +5591,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sanitaire-st-synthetic-bag-warm-hammer-inside-eur6321310',
+    slug: 'sanitaire-st-synthetic-bag-w-arm-hammer-inside',
     sku: 'EUR6321310',
     name: 'Sanitaire® ST Synthetic Bag w/Arm & Hammer® Inside',
     brand: 'Sanitaire',
@@ -5822,7 +5612,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'eureka-commercial-eursc-684-upright-vacuum-with-vibra-groomer-ii-16-lbs-red-eursc684f',
+    slug: 'eureka-commercial-eursc-684-upright-vacuum-with-vibra-groomer-ii-16-lbs-red',
     sku: 'EURSC684F',
     name: 'Eureka Commercial , # EURSC 684, Upright Vacuum with Vibra-Groomer II, 16 lbs, Red',
     brand: 'Eureka',
@@ -5843,7 +5633,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mercury-h-17e-hercules-17-inch-floor-machine-175-rpm-15-hp-pad-driver-included-h17e',
+    slug: 'mercury-h-17e-hercules-17-inch-floor-machine-175-rpm-1-5-hp-pad-driver-included',
     sku: 'H17E',
     name: 'Mercury H-17E Hercules 17 Inch Floor Machine, 175 RPM, 1.5 HP, Pad Driver Included',
     brand: 'Mercury',
@@ -5864,7 +5654,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mercury-h-20e-hercules-20-inch-floor-machine-175-rpm-15-hp-pad-driver-included-h20e',
+    slug: 'mercury-h-20e-hercules-20-inch-floor-machine-175-rpm-1-5-hp-pad-driver-included',
     sku: 'H20E',
     name: 'Mercury H-20E Hercules 20 Inch Floor Machine, 175 RPM, 1.5 HP, Pad Driver Included',
     brand: 'Mercury',
@@ -5885,7 +5675,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '13-pad-driver-wpolypropylene-bristles-for-rotary-floor-machines-ec2513',
+    slug: '13-pad-driver-w-polypropylene-bristles-for-rotary-floor-machines',
     sku: 'EC2513',
     name: '13” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines',
     brand: 'MJS',
@@ -5906,7 +5696,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '15-pad-driver-wpolypropylene-bristles-for-rotary-floor-machines-ec2515',
+    slug: '15-pad-driver-w-polypropylene-bristles-for-rotary-floor-machines',
     sku: 'EC2515',
     name: '15” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines',
     brand: 'MJS',
@@ -5927,7 +5717,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-pad-driver-wpolypropylene-bristles-for-rotary-floor-machines-ec2517',
+    slug: '17-pad-driver-w-polypropylene-bristles-for-rotary-floor-machines',
     sku: 'EC2517',
     name: '17” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines',
     brand: 'MJS',
@@ -5948,7 +5738,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '20-pad-driver-wpolypropylene-bristles-for-rotary-floor-machines-ec2520',
+    slug: '20-pad-driver-w-polypropylene-bristles-for-rotary-floor-machines',
     sku: 'EC2520',
     name: '20” Pad Driver W/Polypropylene Bristles for Rotary Floor Machines',
     brand: 'MJS',
@@ -5969,7 +5759,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '15-polypropylene-rotary-floor-brush-ec2115',
+    slug: '15-polypropylene-rotary-floor-brush',
     sku: 'EC2115',
     name: '15 Polypropylene Rotary Floor Brush',
     brand: 'MJS',
@@ -5990,7 +5780,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-polypropylene-rotary-floor-brush-ec2117',
+    slug: '17-polypropylene-rotary-floor-brush',
     sku: 'EC2117',
     name: '17 Polypropylene Rotary Floor Brush',
     brand: 'MJS',
@@ -6011,7 +5801,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '20-polypropylene-rotary-floor-brush-ec2120a',
+    slug: '20-polypropylene-rotary-floor-brush',
     sku: 'EC2120A',
     name: '20 Polypropylene Rotary Floor Brush',
     brand: 'MJS',
@@ -6032,7 +5822,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '14-tampico-rotary-floor-brush-ec2314',
+    slug: '14-tampico-rotary-floor-brush',
     sku: 'EC2314',
     name: '14 Tampico Rotary Floor Brush',
     brand: 'MJS',
@@ -6053,7 +5843,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-tampico-rotary-floor-brush-ec2317',
+    slug: '17-tampico-rotary-floor-brush',
     sku: 'EC2317',
     name: '17 Tampico Rotary Floor Brush',
     brand: 'MJS',
@@ -6074,7 +5864,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '19-tampico-rotary-floor-brush-ec2319a',
+    slug: '19-tampico-rotary-floor-brush',
     sku: 'EC2319A',
     name: '19 Tampico Rotary Floor Brush',
     brand: 'MJS',
@@ -6095,7 +5885,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '14-nylon-rotary-floor-brush-ec2614',
+    slug: '14-nylon-rotary-floor-brush',
     sku: 'EC2614',
     name: '14 Nylon Rotary Floor Brush',
     brand: 'MJS',
@@ -6116,7 +5906,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-nylon-rotary-floor-brush-ec2617',
+    slug: '17-nylon-rotary-floor-brush',
     sku: 'EC2617',
     name: '17 Nylon Rotary Floor Brush',
     brand: 'MJS',
@@ -6137,7 +5927,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '19-nylon-rotary-floor-brush-ec2619a',
+    slug: '19-nylon-rotary-floor-brush',
     sku: 'EC2619A',
     name: '19 Nylon Rotary Floor Brush',
     brand: 'MJS',
@@ -6158,7 +5948,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-80-2100-sniper-12-gallon-light-duty-carpet-extractor-100-psi-pump-dual-2--80-2100',
+    slug: 'sandia-80-2100-sniper-12-gallon-light-duty-carpet-extractor-100-psi-pump-dual-2-stage-vacuum-motors-w-hoses-wand-kit-included',
     sku: '80-2100',
     name: 'Sandia 80-2100, Sniper 12 Gallon Light Duty Carpet Extractor, 100 Psi Pump, Dual 2 Stage Vacuum Motors W/ Hoses & Wand Kit Included',
     brand: 'Sandia',
@@ -6179,7 +5969,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-80-2100-h-sniper-12-gallon-light-duty-carpet-extractor-with-heat-100-psi--80-2100h',
+    slug: 'sandia-80-2100-h-sniper-12-gallon-light-duty-carpet-extractor-with-heat-100-psi-pump-dual-2-stage-vacuum-motors-w-hoses-wand-kit-included',
     sku: '80-2100H',
     name: 'Sandia 80-2100-H, Sniper 12 Gallon Light Duty Carpet Extractor With Heat, 100 Psi Pump, Dual 2 Stage Vacuum Motors W/ Hoses & Wand Kit Included',
     brand: 'Sandia',
@@ -6200,7 +5990,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-80-2500-h-sniper-12-gallon-heavy-duty-carpet-extractor-with-heat-500-psi--80-2500h',
+    slug: 'sandia-80-2500-h-sniper-12-gallon-heavy-duty-carpet-extractor-with-heat-500-psi-adjustable-pump-dual-2-stage-vacuum-motors-w-hoses-wand-kit-included',
     sku: '80-2500H',
     name: 'Sandia 80-2500-H, Sniper 12 Gallon Heavy Duty Carpet Extractor With Heat, 500 Psi Adjustable Pump, Dual 2 Stage Vacuum Motors W/ Hoses & Wand Kit Included',
     brand: 'Sandia',
@@ -6221,7 +6011,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-90-0000-genair-3-speed-air-mover-115-volt-vacuum-motor-12-hp-2500-cfm-car-90-0000',
+    slug: 'sandia-90-0000-genair-3-speed-air-mover-115-volt-vacuum-motor-1-2-hp-2500-cfm-carpet-dryer',
     sku: '90-0000',
     name: 'Sandia 90-0000, Genair 3-speed Air Mover, 115 Volt Vacuum Motor, 1/2 Hp, 2500 Cfm, Carpet Dryer',
     brand: 'Sandia',
@@ -6242,7 +6032,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mercury-storm-wvp-20-wetdry-tank-vacuum-20-gallon-twin-motors-powerful-dual-267--wvp20',
+    slug: 'mercury-storm-wvp-20-wet-dry-tank-vacuum-20-gallon-twin-motors-powerful-dual-2-67-hp-2000-watt-vacuum-motors-w-tool-kit',
     sku: 'WVP20',
     name: 'Mercury Storm Wvp-20 Wet/dry Tank Vacuum, (20) Gallon, Twin Motors, Powerful Dual 2.67 Hp, 2000 Watt Vacuum Motors W/ Tool Kit',
     brand: 'Mercury',
@@ -6263,7 +6053,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '15-carpet-bonnet-w-scrubbers-202-21',
+    slug: '15-carpet-bonnet-w-scrubbers',
     sku: '202-21',
     name: '15 Carpet Bonnet W/ Scrubbers',
     brand: 'MJS',
@@ -6284,7 +6074,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-carpet-bonnet-w-scrubbers-202-17',
+    slug: '17-carpet-bonnet-w-scrubbers',
     sku: '202-17',
     name: '17 Carpet Bonnet W/ Scrubbers',
     brand: 'MJS',
@@ -6305,7 +6095,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '19-carpet-bonnet-w-scrubbers-202-19',
+    slug: '19-carpet-bonnet-w-scrubbers',
     sku: '202-19',
     name: '19 Carpet Bonnet W/ Scrubbers',
     brand: 'MJS',
@@ -6326,7 +6116,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '21-carpet-bonnet-w-scrubbers-53721',
+    slug: '21-carpet-bonnet-w-scrubbers',
     sku: '53721',
     name: '21 Carpet Bonnet W/ Scrubbers',
     brand: 'MJS',
@@ -6347,7 +6137,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '15-spin-rite-blend-bonnet-53815',
+    slug: '15-spin-rite-blend-bonnet',
     sku: '53815',
     name: '15 Spin Rite Blend Bonnet',
     brand: 'MJS',
@@ -6368,7 +6158,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '17-spin-rite-blend-bonnet-53817',
+    slug: '17-spin-rite-blend-bonnet',
     sku: '53817',
     name: '17 Spin Rite Blend Bonnet',
     brand: 'MJS',
@@ -6389,7 +6179,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '19-spin-rite-blend-bonnet-53819',
+    slug: '19-spin-rite-blend-bonnet',
     sku: '53819',
     name: '19 Spin Rite Blend Bonnet',
     brand: 'MJS',
@@ -6410,7 +6200,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '21-spin-rite-blend-bonnet-53821',
+    slug: '21-spin-rite-blend-bonnet',
     sku: '53821',
     name: '21 Spin Rite Blend Bonnet',
     brand: 'MJS',
@@ -6431,7 +6221,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'beverage-napkins-white-1-ply-475-x-45-4000carton-5930',
+    slug: 'beverage-napkins-white-1-ply-4-75-x-4-5-4000-carton',
     sku: '5930',
     name: 'Beverage Napkins, White, 1 Ply, 4.75 x 4.5 4000/Carton',
     brand: 'Beverage',
@@ -6452,7 +6242,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'kwik-nap-dispenser-napkins-interfolded-2-ply-886-x-63-white-6000-carton-5963p',
+    slug: 'kwik-nap-dispenser-napkins-interfolded-2-ply-8-86-x-6-3-white-6000-carton',
     sku: '5963P',
     name: 'KWIK NAP, DISPENSER NAPKINS, INTERFOLDED, 2-PLY, 8.86 X 6.3, WHITE, 6000, CARTON',
     brand: 'KWIK',
@@ -6473,7 +6263,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1144-18-channel-replacement-with-rubber-1144',
+    slug: '18-channel-replacement-with-rubber',
     sku: '1144',
     name: 'Ettore, # 1144 18 Channel Replacement With Rubber',
     brand: 'Ettore',
@@ -6494,7 +6284,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1324-master-brass-handle-1324',
+    slug: 'master-brass-handle',
     sku: '1324',
     name: 'Ettore, # 1324, Master Brass Handle',
     brand: 'Ettore',
@@ -6515,7 +6305,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1343-master-stainless-quick-release-handle-1343',
+    slug: 'master-stainless-quick-release-handle',
     sku: '1343',
     name: 'Ettore, # 1343, Master Stainless Quick release Handle',
     brand: 'Ettore',
@@ -6536,7 +6326,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-2020-pro-plus-handle-2020',
+    slug: 'ettore-pro-plus-handle',
     sku: '2020',
     name: 'Ettore, # 2020,  Pro Plus Handle',
     brand: 'Ettore',
@@ -6557,7 +6347,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '85000-ettore-super-bucket-with-handle-85000',
+    slug: 'ettore-super-bucket-with-handle',
     sku: '85000',
     name: '# 85000,  Ettore Super Bucket With Handle',
     brand: 'Ettore',
@@ -6578,7 +6368,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-82222-3-12-gallon-bucket-82222',
+    slug: 'ettore-3-1-2-gallon-bucket',
     sku: '82222',
     name: 'Ettore, # 82222,  3 1/2 Gallon Bucket',
     brand: 'Ettore',
@@ -6599,7 +6389,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1044-pro-plus-contour-scraper-1044',
+    slug: 'pro-plus-contour-scraper',
     sku: '1044',
     name: 'Ettore, # 1044, Pro Plus Contour Scraper',
     brand: 'Ettore',
@@ -6620,7 +6410,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1995-scrapemaster-carbon-razor-scraper-1995',
+    slug: 'ettore-scrapemaster-carbon-razor-scraper',
     sku: '1995',
     name: 'Ettore, # 1995,  Scrapemaster Carbon Razor Scraper',
     brand: 'Ettore',
@@ -6641,7 +6431,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1999-scrapemaster-4-inch-stainless-steel-replacement-blades-6-pack-1999',
+    slug: 'ettore-scrapemaster-4-inch-stainless-steel-replacement-blades-6-pack',
     sku: '1999',
     name: 'Ettore, # 1999,  ScrapeMaster 4-inch Stainless Steel Replacement Blades, 6 Pack',
     brand: 'Ettore',
@@ -6662,7 +6452,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-20291-heavy-duty-floor-scraper-replacement-blades-4-inch-width-20291',
+    slug: 'ettore-heavy-duty-floor-scraper-replacement-blades-4-inch-width',
     sku: '20291',
     name: 'Ettore, # 20291, Heavy Duty Floor Scraper Replacement Blades, 4-Inch Width',
     brand: 'Ettore',
@@ -6683,7 +6473,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-42102-2-reach-1-section-extionsion-pole-42102',
+    slug: '2-reach-1-section-extionsion-pole',
     sku: '42102',
     name: 'Ettore, # 42102, 2\' Reach 1 Section Extionsion Pole',
     brand: 'Ettore',
@@ -6704,7 +6494,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-42104-4-reach-2-section-extention-pole-42104',
+    slug: '4-reach-2-section-extention-pole',
     sku: '42104',
     name: 'Ettore, # 42104, 4\' Reach 2 Section Extention Pole',
     brand: 'Ettore',
@@ -6725,7 +6515,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-42108-8-reach-2-section-extention-pole-42108',
+    slug: '8-reach-2-section-extention-pole',
     sku: '42108',
     name: 'Ettore, # 42108, 8\' Reach 2 Section Extention Pole',
     brand: 'Ettore',
@@ -6746,7 +6536,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-42112-12-reach-2-section-extention-pole-42112',
+    slug: '12-reach-2-section-extention-pole',
     sku: '42112',
     name: 'Ettore, # 42112, 12\' Reach 2 Section Extention Pole',
     brand: 'Ettore',
@@ -6767,7 +6557,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1692-18-reach-3-section-extension-pole-1692',
+    slug: '18-reach-3-section-extension-pole',
     sku: '1692',
     name: 'Ettore, # 1692 , 18\' Reach 3 Section Extension Pole',
     brand: 'Ettore',
@@ -6788,7 +6578,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1695-24-reach-3-section-extension-pole-1695',
+    slug: '24-reach-3-section-extension-pole',
     sku: '1695',
     name: 'Ettore, # 1695, 24\' Reach 3 Section Extension Pole',
     brand: 'Ettore',
@@ -6809,7 +6599,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-alp-499-24-caution-wet-floor-sign-alp-499',
+    slug: 'alpine-alp499-24-caution-wet-floor-sign',
     sku: 'ALP-499',
     name: 'Alpine ALP-499 24 Caution Wet Floor Sign',
     brand: 'Alpine',
@@ -6830,7 +6620,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-487-b-double-roll-toilet-paper-dispenser-wall-mount-stainless--487-b',
+    slug: 'alpine-industries-487-b-double-roll-toilet-paper-dispenser-wall-mount-stainless-steel',
     sku: '487-B',
     name: 'Alpine Industries 487-B Double Roll Toilet Paper Dispenser - Wall Mount, Stainless Steel',
     brand: 'Alpine Industries',
@@ -6851,7 +6641,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-487-1-b-single-roll-toilet-paper-dispenser-wall-mount-stainles-487-1b',
+    slug: 'alpine-industries-487-1-b-single-roll-toilet-paper-dispenser-wall-mount-stainless-steel',
     sku: '487-1B',
     name: 'Alpine Industries 487-1-B Single Roll Toilet Paper Dispenser - Wall Mount, Stainless Steel',
     brand: 'Alpine Industries',
@@ -6872,7 +6662,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-alpsgn-2-men-restroom-sign-6-x-9-blackwhite-alpsgn-2',
+    slug: 'alpine-industries-alpsgn-2-men-restroom-sign-6-x-9-black-white',
     sku: 'ALPSGN-2',
     name: 'Alpine Industries ALPSGN-2 Men Restroom Sign - 6 x 9, Black/White',
     brand: 'Alpine Industries',
@@ -6893,7 +6683,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-alpsgn-3-men-restroom-sign-6-x-9-blackwhite-alpsgn-3',
+    slug: 'alpine-industries-alpsgn-3-men-restroom-sign-6-x-9-black-white',
     sku: 'ALPSGN-3',
     name: 'Alpine Industries ALPSGN-3 Men Restroom Sign 6 x 9, Black/White',
     brand: 'Alpine Industries',
@@ -6914,7 +6704,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-alpsgn-4-restrooms-sign-6-x-9-blackwhite-alpsgn-4',
+    slug: 'alpine-industries-alpsgn-4-restrooms-sign-6-x-9-black-white',
     sku: 'ALPSGN-4',
     name: 'Alpine Industries ALPSGN-4 Restrooms Sign 6 x 9, Black/White',
     brand: 'Alpine Industries',
@@ -6935,7 +6725,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-alpsgn-5-women-sign-6-x-9-blackwhite-alpsgn-5',
+    slug: 'alpine-industries-alpsgn-5-women-sign-6-x-9-black-white',
     sku: 'ALPSGN-5',
     name: 'Alpine Industries ALPSGN-5 Women Sign 6 x 9, Black/White',
     brand: 'Alpine Industries',
@@ -6956,7 +6746,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-alpsgn-6-women-sign-6-x-9-blackwhite-alpsgn-6',
+    slug: 'alpine-industries-alpsgn-6-women-sign-6-x-9-black-white',
     sku: 'ALPSGN-6',
     name: 'Alpine Industries ALPSGN-6 Women Sign 6 x 9, Black/White',
     brand: 'Alpine Industries',
@@ -6977,7 +6767,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-1640-pro-plus-squeege-handle-1640',
+    slug: 'ettore-1640-pro-plus-squeege-handle',
     sku: '1640',
     name: 'Ettore, # 1640, Pro Plus Squeege Handle',
     brand: 'Ettore',
@@ -6998,7 +6788,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-2042-single-leather-squeege-holster-2042',
+    slug: 'ettore-2042-single-leather-squeege-holster',
     sku: '2042',
     name: 'Ettore, # 2042, Single Leather Squeege Holster',
     brand: 'Ettore',
@@ -7019,7 +6809,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-2044-tool-belt-2044',
+    slug: 'ettore-2044-tool-belt',
     sku: '2044',
     name: 'Ettore, # 2044, Tool Belt',
     brand: 'Ettore',
@@ -7040,7 +6830,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-2046-dual-squeege-holster-2046',
+    slug: 'ettore-2046-dual-squeege-holster',
     sku: '2046',
     name: 'Ettore, # 2046, Dual Squeege Holster',
     brand: 'Ettore',
@@ -7061,7 +6851,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-30130-16-oz-squeegee-off-window-cleaning-soap-30130',
+    slug: 'ettore-30130-16-oz-squeegee-off-window-cleaning-soap',
     sku: '30130',
     name: 'Ettore, # 30130, 16 oz. Squeegee Off Window Cleaning Soap',
     brand: 'Ettore',
@@ -7082,7 +6872,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-30161-16-oz-scrub-off-spot-remover-30161',
+    slug: 'ettore-30161-16-oz-scrub-off-spot-remover',
     sku: '30161',
     name: 'Ettore, # 30161, 16 oz. Scrub Off Spot Remover',
     brand: 'Ettore',
@@ -7103,7 +6893,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-50130-double-loop-nylon-holster-50130',
+    slug: 'ettore-50130-double-loop-nylon-holster',
     sku: '50130',
     name: 'Ettore, # 50130, Double Loop Nylon Holster',
     brand: 'Ettore',
@@ -7124,7 +6914,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-50135-multi-use-utility-pouch-50135',
+    slug: 'ettore-50135-multi-use-utility-pouch',
     sku: '50135',
     name: 'Ettore, # 50135, Multi Use Utility Pouch',
     brand: 'Ettore',
@@ -7145,7 +6935,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-4286-pocket-scraper-metal-case-4286',
+    slug: 'ettore-4286-pocket-screaper-metal-case',
     sku: '4286',
     name: 'Ettore, # 4286, Pocket Scraper Metal Case',
     brand: 'Ettore',
@@ -7166,7 +6956,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-02041-sidekick-with-detachable-clip-2041',
+    slug: 'ettore-02041-sidekick-with-detachable-clip',
     sku: '2041',
     name: 'Ettore, # 02041, Sidekick With Detachable Clip',
     brand: 'Ettore',
@@ -7187,7 +6977,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-13930-super-channel-quick-release-stainless-handle-13930',
+    slug: 'ettore-13930-super-channel-quick-release-stainless-handle',
     sku: '13930',
     name: 'Ettore, # 13930, Super Channel Quick Release Stainless Handle',
     brand: 'Ettore',
@@ -7208,7 +6998,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-32-x-50-30-mil-contractors-50-gallon-100cs-ld32-ld325030k',
+    slug: 'janitors-finest-can-liners-black-32-x-50-3-0-mil-contractors-50-gallon-100-cs-ld325030k',
     sku: 'LD325030K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 32 X 50, 3.0 MIL, CONTRACTORS, 50 GALLON, 100/CS (LD325030K)',
     brand: 'Janitors Finest',
@@ -7229,7 +7019,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-shower-sauce-bathroom-cleaner-32-oz-41212ea-41212ea',
+    slug: 'janitors-finest-shower-sauce-bathroom-cleaner-32-oz-41212ea',
     sku: '41212EA',
     name: 'Janitors Finest Shower Sauce Bathroom Cleaner, 32 OZ (41212EA)',
     brand: 'Janitors Finest',
@@ -7250,7 +7040,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-toilet-sauce-heavy-duty-23-emulsion-bowl-cleaner-32-oz-40212ea-40212ea',
+    slug: 'janitors-finest-toilet-sauce-heavy-duty-23-emulsion-bowl-cleaner-32-oz-40212ea',
     sku: '40212EA',
     name: 'JANITORS FINEST®,  TOILET SAUCE, HEAVY DUTY 23%  EMULSION BOWL CLEANER, 32 OZ (40212EA)',
     brand: 'Janitors Finest',
@@ -7271,7 +7061,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-bowl-cling-10-bowl-cleaner-32-oz-40412ea-40412ea',
+    slug: 'bowl-cling-10-bowl-cleaner-32-oz',
     sku: '40412EA',
     name: 'Chemcor Bowl Cling 10% Bowl Cleaner, 32 OZ (40412EA)',
     brand: 'Chemcor',
@@ -7292,7 +7082,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-bonnet-clean-carpet-shampoo-gallon-30201ea-30201ea',
+    slug: 'bonnet-clean-carpet-shampoo',
     sku: '30201EA',
     name: 'Chemcor Bonnet Clean Carpet Shampoo, Gallon (30201EA)',
     brand: 'Chemcor',
@@ -7313,7 +7103,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tile-and-grout-brightener-40501',
+    slug: 'tile-grout-brightener',
     sku: '40501',
     name: 'TILE  AND GROUT BRIGHTENER',
     brand: 'TILE',
@@ -7334,7 +7124,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-pre-spotter-gallon-31001ea-31001ea',
+    slug: 'pre-spotter',
     sku: '31001EA',
     name: 'Chemcor Pre Spotter, Gallon (31001EA)',
     brand: 'Chemcor',
@@ -7355,7 +7145,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-drain-maintainer-fat-grease-emulsifier-gallon-10701ea-10701ea',
+    slug: 'drain-maintainer-fat-grease-emulsifier',
     sku: '10701EA',
     name: 'Chemcor Drain Maintainer Fat & Grease Emulsifier, Gallon (10701EA)',
     brand: 'Chemcor',
@@ -7376,7 +7166,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-spot-off-hd-acid-based-hard-water-spot-remover-gallon-32800ea-32800ea',
+    slug: 'janitors-finest-spot-off-hd-acid-based-hard-water-spot-remover-gallon-32800ea',
     sku: '32800EA',
     name: 'Janitors Finest, Spot Off Hd Acid Based Hard Water Spot Remover, Gallon (32800EA)',
     brand: 'Janitors Finest',
@@ -7397,7 +7187,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'floor-sealer-5-gal-20405',
+    slug: 'floor-sealer-5-gal',
     sku: '20405',
     name: 'Floor Sealer, 5 GAL',
     brand: 'MJS',
@@ -7418,7 +7208,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'premium-gloss-floor-finish-29-gal-21105',
+    slug: 'premium-gloss-floor-finish-29-gal',
     sku: '21105',
     name: 'Premium Gloss Floor Finish 29%. GAL',
     brand: 'MJS',
@@ -7439,7 +7229,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'finish-gloss-floor-wax-23-5-gal-20205',
+    slug: 'finish-gloss-florr-wax-23-5-gal',
     sku: '20205',
     name: 'Finish Gloss Floor Wax 23%, 5 GAL',
     brand: 'Finish',
@@ -7460,7 +7250,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'finish-gloss-floor-wax-16-5-gal-20005',
+    slug: 'finish-gloss-floor-wax-16-5-gal',
     sku: '20005',
     name: 'Finish Gloss Floor Wax 16%, 5 GAL',
     brand: 'Finish',
@@ -7481,7 +7271,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-stripper-ammoniated-5-gal-20705',
+    slug: 'super-stripper-ammoniated-5-gal',
     sku: '20705',
     name: 'Super Stripper Ammoniated, 5 GAL',
     brand: 'MJS',
@@ -7502,7 +7292,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wax-stripper-non-ammoniated-5-gal-20505',
+    slug: 'wax-stripper-non-ammoniated-5-gal',
     sku: '20505',
     name: 'Wax Stripper Non Ammoniated, 5 GAL',
     brand: 'Wax',
@@ -7523,7 +7313,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-descaler-plus-lime-scale-remover-gallon-40901ea-40901ea',
+    slug: 'descaler-plus-lime-scale-remover',
     sku: '40901EA',
     name: 'Chemcor Descaler Plus Lime & Scale Remover, Gallon (40901EA)',
     brand: 'Chemcor',
@@ -7544,7 +7334,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'back-support-belt-w-suspenders-500',
+    slug: 'back-support-belt-w-suspenders',
     sku: '500',
     name: 'BACK SUPPORT BELT W/ SUSPENDERS',
     brand: 'BACK',
@@ -7565,7 +7355,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-471-40-sil-40-gal-outdoor-decorative-trash-can-metal-silver-471-40sil',
+    slug: 'alpine-industries-471-40-sil-40-gal-outdoor-decorative-trash-can-metal-silver',
     sku: '471-40SIL',
     name: 'Alpine Industries 471-40-SIL 40 gal Outdoor Decorative Trash Can - Metal, Silver',
     brand: 'Alpine Industries',
@@ -7586,7 +7376,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-471-40-sto-40-gal-outdoor-decorative-trash-can-metal-stone-471-40-sto',
+    slug: 'alpine-industries-471-40-sto-40-gal-outdoor-decorative-trash-can-metal-stone',
     sku: '471-40-STO',
     name: 'Alpine Industries 471-40-STO 40 gal Outdoor Decorative Trash Can - Metal, Stone',
     brand: 'Alpine Industries',
@@ -7607,7 +7397,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-472-40-sil-40-gal-outdoor-decorative-trash-can-with-ash-tray-m-472-40-sil',
+    slug: 'alpine-industries-472-40-sil-40-gal-outdoor-decorative-trash-can-with-ash-tray-metal-silver',
     sku: '472-40-SIL',
     name: 'Alpine Industries 472-40-SIL 40 gal Outdoor Decorative Trash Can , With Ash Tray- Metal, Silver',
     brand: 'Alpine Industries',
@@ -7628,7 +7418,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-472-40-sto-40-gal-outdoor-decorative-trash-can-with-ash-tray-m-472-40-sto',
+    slug: 'alpine-industries-472-40-sto-40-gal-outdoor-decorative-trash-can-with-ash-tray-metal-stone',
     sku: '472-40-STO',
     name: 'Alpine Industries 472-40-STO 40 gal Outdoor Decorative Trash Can , with Ash tray- Metal, Stone',
     brand: 'Alpine Industries',
@@ -7649,7 +7439,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-plates-9-dia-white-uncoated-100pack-12-packscarton-plate91200u-plate91200u',
+    slug: 'paper-plates-9-dia-white-uncoated-100-pack-12-packs-carton-plate91200u',
     sku: 'PLATE91200U',
     name: 'Paper Plates, 9 dia, White, Uncoated 100/Pack, 12 Packs/Carton (PLATE91200U)',
     brand: 'MJS',
@@ -7670,7 +7460,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'classicseries-surface-mounted-soap-dispenser-40-oz-475-x-35-x-813-stainless-stee-bob2111',
+    slug: 'classicseries-surface-mounted-soap-dispenser-40oz-stainless-steel',
     sku: 'BOB2111',
     name: 'ClassicSeries Surface-Mounted Soap Dispenser, 40 oz, 4.75 x 3.5 x 8.13, Stainless Steel',
     brand: 'ClassicSeries',
@@ -7691,7 +7481,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'classicseries-surface-mounted-liquid-soap-dispenser-40-oz-813-x-275-x-475-stainl-bob2112',
+    slug: 'classicseries-surface-mounted-liquid-soap-dispenser-40-oz-metal',
     sku: 'BOB2112',
     name: 'ClassicSeries Surface-Mounted Liquid Soap Dispenser, 40 oz, 8.13 x 2.75 x 4.75, Stainless Steel',
     brand: 'ClassicSeries',
@@ -7712,7 +7502,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'contura-sanitary-napkin-receptacle-rectangular-1-gal-stainless-steel-bob270',
+    slug: 'contura-sanitary-napkin-receptacle-rectangular-stainless-steel-1gal',
     sku: 'BOB270',
     name: 'Contura Sanitary Napkin Receptacle, Rectangular, 1 gal, Stainless Steel',
     brand: 'Contura',
@@ -7733,7 +7523,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'classicseries-surface-mounted-liquid-soap-dispenser-40-oz-581-x-331-x-688-blackg-bob40',
+    slug: 'classicseries-surface-mounted-soap-dispenser-40oz-black-gray',
     sku: 'BOB40',
     name: 'ClassicSeries Surface-Mounted Liquid Soap Dispenser, 40 oz, 5.81 x 3.31 x 6.88, Black/Gray',
     brand: 'ClassicSeries',
@@ -7754,7 +7544,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'conturaseries-surface-mounted-liquid-soap-dispenser-40-oz-7-x-331-x-613-stainles-bob4112',
+    slug: 'conturaseries-surface-mounted-liquid-soap-dispenser-40oz-stainless-steel-satin',
     sku: 'BOB4112',
     name: 'ConturaSeries Surface-Mounted Liquid Soap Dispenser, 40 oz, 7 x 3.31 x 6.13, Stainless Steel Satin',
     brand: 'ConturaSeries',
@@ -7775,7 +7565,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'contura-lavatory-mounted-soap-dispenser-34-oz-331-x-4-x-1763-chromestainless-ste-bob822',
+    slug: 'lavatory-mounted-soap-dispenser-34oz',
     sku: 'BOB822',
     name: 'Contura Lavatory-Mounted Soap Dispenser, 34 oz, 3.31 x 4 x 17.63, Chrome/Stainless Steel',
     brand: 'Contura',
@@ -7796,7 +7586,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-metal-dust-pan-12-wide-2-handle-black-gjo58143-gjo58143',
+    slug: 'metal-dust-pan-12-wide-2-handle-black',
     sku: 'GJO58143',
     name: 'Genuine Joe Metal Dust Pan, 12 Wide, 2 Handle, Black (GJO58143)',
     brand: 'Genuine Joe',
@@ -7817,7 +7607,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'metal-tip-threaded-hardwood-broom-handle-1-18-dia-x-60-long-3170',
+    slug: 'metal-tip-threaded-hardwood-broom-handle-15-16-dia-x-60-long',
     sku: '3170',
     name: 'Metal Tip Threaded Hardwood Broom Handle, 1 1/8 Dia x 60 Long',
     brand: 'Metal',
@@ -7838,7 +7628,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavy-duty-scour-pad-green-6-x-9-18carton-86-606',
+    slug: 'heavy-duty-scour-pad-green-6-x-9-18-carton',
     sku: '86-606',
     name: 'Heavy-Duty Scour Pad, Green, 6 x 9, 18/Carton',
     brand: 'Heavy-Duty',
@@ -7859,7 +7649,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'light-duty-scour-pad-white-6-x-9-20carton-98-600',
+    slug: 'light-duty-scour-pad-white-6-x-9-20-carton',
     sku: '98-600',
     name: 'Light Duty Scour Pad, White, 6 x 9, 20/Carton',
     brand: 'MJS',
@@ -7880,7 +7670,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'round-waste-receptacle-lldpe-32-gal-gray-bwk32glwrgra',
+    slug: 'round-waste-receptacle-lldpe-32-gal-gray',
     sku: 'BWK32GLWRGRA',
     name: 'Round Waste Receptacle, LLDPE, 32 gal, Gray',
     brand: 'MJS',
@@ -7901,7 +7691,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'round-waste-receptacle-plastic-44-gal-gray-bwk44glwrgra',
+    slug: 'round-waste-receptacle-plastic-44-gal-gray',
     sku: 'BWK44GLWRGRA',
     name: 'Round Waste Receptacle, Plastic, 44 gal, Gray',
     brand: 'MJS',
@@ -7922,7 +7712,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bowl-clip-cotton-blossom-blue-12box-bwkclipcbl',
+    slug: 'bowl-clip-cotton-blossom-blue-12-box',
     sku: 'BWKCLIPCBL',
     name: 'Bowl Clip, Cotton Blossom, Blue, 12/Box',
     brand: 'MJS',
@@ -7943,7 +7733,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bowl-clip-cucumber-melon-green-12box-bwkclipcme',
+    slug: 'bowl-clip-cucumber-melon-green-12-box',
     sku: 'BWKCLIPCME',
     name: 'Bowl Clip, Cucumber Melon, Green, 12/Box',
     brand: 'MJS',
@@ -7964,7 +7754,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bowl-clip-mango-scent-orange-12box-bwkclipman',
+    slug: 'bowl-clip-mango-scent-orange-12-box',
     sku: 'BWKCLIPMAN',
     name: 'Bowl Clip, Mango Scent, Orange, 12/Box',
     brand: 'MJS',
@@ -7985,7 +7775,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'bowl-clip-spiced-apple-scent-red-12box-bwkclipsap',
+    slug: 'bowl-clip-spiced-apple-scent-red-12-box',
     sku: 'BWKCLIPSAP',
     name: 'Bowl Clip, Spiced Apple Scent, Red, 12/Box',
     brand: 'MJS',
@@ -8006,7 +7796,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'small-cellulose-sponge-3-35-x-6-12-910-thick-pink-2pack-24-packsct-bwkcs1a',
+    slug: 'small-cellulose-sponge-3-3-5-x-6-1-2-9-10-thick-pink-2-pack-24-packs-ct',
     sku: 'BWKCS1A',
     name: 'Small Cellulose Sponge, 3 3/5 x 6 1/2, 9/10 Thick, Pink, 2/Pack, 24 Packs/CT',
     brand: 'MJS',
@@ -8027,7 +7817,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'medium-cellulose-sponge-3-23-x-6-225-155-thick-yellow-24carton-bwkcs2',
+    slug: 'medium-cellulose-sponge-3-2-3-x-6-2-25-1-55-thick-yellow-24-carton',
     sku: 'BWKCS2',
     name: 'Medium Cellulose Sponge, 3 2/3 x 6 2/25, 1.55 Thick, Yellow, 24/Carton',
     brand: 'MJS',
@@ -8048,7 +7838,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lambswool-extendable-duster-plastic-handle-extends-35-to-48-assorted-colors-bwkl3850',
+    slug: 'lambswool-extendable-duster-plastic-handle-extends-35-to-48-assorted-colors',
     sku: 'BWKL3850',
     name: 'Lambswool Extendable Duster, Plastic Handle Extends 35 to 48, Assorted Colors',
     brand: 'Lambswool',
@@ -8069,7 +7859,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-clear-plastic-squat-cold-cups-1214-oz-pet-20-cupssleeve-50-sleevescarton-drink12s1000',
+    slug: 'drink-clear-plastic-squat-cold-cups-12-14-oz-pet-20-cups-sleeve-50-sleeves-carton',
     sku: 'DRINK12S1000',
     name: 'Drink, Clear Plastic Squat Cold Cups, 12/14 oz, PET, 20 Cups/Sleeve, 50 Sleeves/Carton',
     brand: 'MJS',
@@ -8090,7 +7880,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-clear-plastic-cold-cups-16-oz-pet-20-cupssleeve-50-sleevescarton-drink161000',
+    slug: 'drink-clear-plastic-cold-cups-16-oz-pet-20-cups-sleeve-50-sleeves-carton',
     sku: 'DRINK161000',
     name: 'Drink, Clear Plastic Cold Cups, 16 oz, PET, 20 Cups/Sleeve, 50 Sleeves/Carton',
     brand: 'MJS',
@@ -8111,7 +7901,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-clear-plastic-cold-cups-24-oz-pet-12-cupssleeve-50-sleevescarton-drink24600',
+    slug: 'drink-clear-plastic-cold-cups-24-oz-pet-12-cups-sleeve-50-sleeves-carton',
     sku: 'DRINK24600',
     name: 'Drink, Clear Plastic Cold Cups, 24 oz, PET, 12 Cups/Sleeve, 50 Sleeves/Carton',
     brand: 'MJS',
@@ -8132,7 +7922,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-clear-plastic-squat-cold-cups-9-oz-pet-20-cupssleeve-50-sleevescarton-drink9s1000',
+    slug: 'drink-clear-plastic-squat-cold-cups-9-oz-pet-20-cups-sleeve-50-sleeves-carton',
     sku: 'DRINK9S1000',
     name: 'Drink, Clear Plastic Squat Cold Cups, 9 oz, PET, 20 Cups/Sleeve, 50 Sleeves/Carton',
     brand: 'MJS',
@@ -8153,7 +7943,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-translucent-plastic-cold-cups-10-oz-polypropylene-10-cupssleeve-100-sleeve-drink10t1000',
+    slug: 'drink-translucent-plastic-cold-cups-10-oz-polypropylene-10-cups-sleeve-100-sleeves-carton',
     sku: 'DRINK10T1000',
     name: 'Drink, Translucent Plastic Cold Cups, 10 oz, Polypropylene, 10 Cups/Sleeve, 100 Sleeves/Carton',
     brand: 'MJS',
@@ -8174,7 +7964,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'drink-translucent-plastic-cold-cups-12-oz-polypropylene-20-cupssleeve-50-sleeves-drink12t1000',
+    slug: 'drink-translucent-plastic-cold-cups-12-oz-polypropylene-20-cups-sleeve-50-sleeves-carton',
     sku: 'DRINK12T1000',
     name: 'Drink, Translucent Plastic Cold Cups, 12 oz, Polypropylene, 20 Cups/Sleeve, 50 Sleeves/Carton',
     brand: 'MJS',
@@ -8195,7 +7985,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-spring-water-169-oz-bottle-35case-cgw35001ct',
+    slug: 'alpine-spring-water-16-9-oz-bottle-35-case',
     sku: 'CGW35001CT',
     name: 'Alpine Spring Water, 16.9 oz Bottle, 35/Case',
     brand: 'Alpine',
@@ -8216,7 +8006,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-champion-sprayon-oven-cleaner-18oz-aerosol-4385177ea',
+    slug: 'chase-champion-sprayon-oven-cleaner-18oz-aerosol',
     sku: '4385177EA',
     name: 'Chase Champion Sprayon Oven Cleaner, 18oz, Aerosol',
     brand: 'Chase',
@@ -8237,7 +8027,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'toilet-bowl-cleaner-with-bleach-fresh-scent-24-oz-bottle-12carton-clo00031ct',
+    slug: 'toilet-bowl-cleaner-with-bleach-fresh-scent-24oz-bottle-12-carton',
     sku: 'CLO00031CT',
     name: 'Toilet Bowl Cleaner with Bleach, Fresh Scent, 24 oz Bottle, 12/Carton',
     brand: 'MJS',
@@ -8258,7 +8048,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'disinfecting-wipes-7-x-8-crisp-lemon-35canister-clo01594ea',
+    slug: 'disinfecting-wipes-7-x-8-crisp-lemon-35-canister',
     sku: 'CLO01594EA',
     name: 'Disinfecting Wipes, 7 x 8, Crisp Lemon, 35/Canister',
     brand: 'MJS',
@@ -8279,7 +8069,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clorox-disinfecting-wipes-7-x-8-fresh-scentcitrus-blend-75canister-3pk-clo30208pk',
+    slug: 'clorox-disinfecting-wipes-7-x-8-fresh-scent-citrus-blend-75-canister-3-pk',
     sku: 'CLO30208PK',
     name: 'Clorox, Disinfecting Wipes, 7 x 8, Fresh Scent/Citrus Blend, 75/Canister, 3/Pk',
     brand: 'Clorox',
@@ -8300,7 +8090,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clorox-concentrated-germicidal-bleach-regular-121-oz-bottle-3carton-clo30966ct',
+    slug: 'clorox-concentrated-germicidal-bleach-regular-121-oz-bottle-3-carton',
     sku: 'CLO30966CT',
     name: 'Clorox Concentrated Germicidal Bleach, Regular, 121 oz Bottle, 3/Carton',
     brand: 'Clorox',
@@ -8321,7 +8111,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'formula-409-cleaner-degreaser-disinfectant-refill-128-oz-refill-4carton-clo35300ct',
+    slug: 'formula-409-cleaner-degreaser-disinfectant-refill-128-oz-refill-4-carton',
     sku: 'CLO35300CT',
     name: 'Formula 409 Cleaner Degreaser Disinfectant, Refill, 128 oz Refill, 4/Carton',
     brand: 'Formula',
@@ -8342,7 +8132,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clorox-clean-up-disinfectant-cleaner-with-bleach-32-oz-smart-tube-spray-9carton-clo35417ct',
+    slug: 'clorox-clean-up-disinfectant-cleaner-with-bleach-32-oz-smart-tube-spray-9-carton',
     sku: 'CLO35417CT',
     name: 'Clorox Clean-Up Disinfectant Cleaner with Bleach, 32 oz Smart Tube Spray, 9/Carton',
     brand: 'Clorox',
@@ -8363,7 +8153,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clean-up-disinfectant-cleaner-with-bleach-fresh-128-oz-refill-bottle-4carton-clo35420ct',
+    slug: 'clean-up-disinfectant-cleaner-with-bleach-fresh-128-oz-refill-bottle-4-carton',
     sku: 'CLO35420CT',
     name: 'Clean-Up Disinfectant Cleaner with Bleach, Fresh, 128 oz Refill Bottle, 4/Carton',
     brand: 'Clean-Up',
@@ -8384,7 +8174,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'gold-antibacterial-liquid-hand-soap-floral-1-gal-4carton-dia88047ct',
+    slug: 'gold-antimicrobial-liquid-hand-soap-floral-fragrance-1-gal-bottle-4-carton',
     sku: 'DIA88047CT',
     name: 'Gold Antibacterial Liquid Hand Soap, Floral, 1 gal, 4/Carton',
     brand: 'Gold',
@@ -8405,7 +8195,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-upright-vacuum-sc679j-12-cleaning-path-grayredblack-eursc679k',
+    slug: 'tradition-upright-vacuum-with-shake-out-bag-12-lb-gray-red',
     sku: 'EURSC679K',
     name: 'TRADITION Upright Vacuum SC679J, 12 Cleaning Path, Gray/Red/Black',
     brand: 'MJS',
@@ -8426,7 +8216,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-upright-vacuum-sc684f-12-cleaning-path-red-eursc684g',
+    slug: 'tradition-upright-vacuum-with-shake-out-bag-16-lb-red',
     sku: 'EURSC684G',
     name: 'TRADITION Upright Vacuum SC684F, 12 Cleaning Path, Red',
     brand: 'MJS',
@@ -8447,7 +8237,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-upright-vacuum-sc689a-12-cleaning-path-grayredblack-eursc689b',
+    slug: 'tradition-upright-vacuum-with-dust-cup-5-amp-14-lb-gray-red',
     sku: 'EURSC689B',
     name: 'TRADITION Upright Vacuum SC689A, 12 Cleaning Path, Gray/Red/Black',
     brand: 'MJS',
@@ -8468,7 +8258,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-upright-vacuum-sc886f-12-cleaning-path-red-eursc886g',
+    slug: 'tradition-upright-vacuum-with-shake-out-bag-17-5-lb-red',
     sku: 'EURSC886G',
     name: 'TRADITION Upright Vacuum SC886F, 12 Cleaning Path, Red',
     brand: 'MJS',
@@ -8489,7 +8279,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-upright-vacuum-sc888k-12-cleaning-path-chromered-eursc888n',
+    slug: 'tradition-bagged-upright-vacuum-7-amp-17-5-lb-chrome-red',
     sku: 'EURSC888N',
     name: 'TRADITION Upright Vacuum SC888K, 12 Cleaning Path, Chrome/Red',
     brand: 'MJS',
@@ -8510,7 +8300,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wave-3d-urinal-deodorizer-screen-green-cucumber-melon-fragrance10-screensbox-frs3wds60cme',
+    slug: 'wave-3d-urinal-deodorizer-screen-green-cucumber-melon-fragrance-10-screens-box',
     sku: 'FRS3WDS60CME',
     name: 'Wave 3D Urinal Deodorizer Screen, Green, Cucumber Melon Fragrance,10 Screens/Box',
     brand: 'Wave',
@@ -8531,7 +8321,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wave-3d-urinal-deodorizer-screen-orange-mango-fragrance-10-screensbox-frs3wds60man',
+    slug: 'wave-3d-urinal-deodorizer-screen-orange-mango-fragrance-10-screens-box',
     sku: 'FRS3WDS60MAN',
     name: 'Wave 3D Urinal Deodorizer Screen, Orange, Mango Fragrance, 10 Screens/Box',
     brand: 'Wave',
@@ -8552,7 +8342,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wave-3d-urinal-deodorizer-screen-red-spiced-apple-fragrance-10-screensbox-frs3wds60sap',
+    slug: 'wave-3d-urinal-deodorizer-screen-red-spiced-apple-fragrance-10-screens-box',
     sku: 'FRS3WDS60SAP',
     name: 'Wave 3D Urinal Deodorizer Screen, Red, Spiced Apple Fragrance, 10 Screens/Box',
     brand: 'Wave',
@@ -8573,7 +8363,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tidal-wave-urinal-screens-cotton-blossom-scent-6box-frstwdscb',
+    slug: 'tidal-wave-urinal-screens-cotton-blossom-scent-6-box',
     sku: 'FRSTWDSCB',
     name: 'Tidal Wave, Urinal Screens, Cotton Blossom Scent, 6/Box',
     brand: 'Tidal',
@@ -8594,7 +8384,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tidal-wave-urinal-screens-cucumber-melon-scent-6box-frstwdscm',
+    slug: 'tidal-wave-urinal-screens-cucumber-melon-scent-6-box',
     sku: 'FRSTWDSCM',
     name: 'Tidal Wave, Urinal Screens, Cucumber Melon Scent, 6/Box',
     brand: 'Tidal',
@@ -8615,7 +8405,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tidal-wave-urinal-screens-mango-scent-6box-frstwdsmg',
+    slug: 'tidal-wave-urinal-screens-mango-scent-6-box',
     sku: 'FRSTWDSMG',
     name: 'Tidal Wave, Urinal Screens, Mango Scent, 6/Box',
     brand: 'Tidal',
@@ -8636,7 +8426,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tidal-wave-urinal-screen-apple-scent-6box-frstwdssa',
+    slug: 'tidal-wave-urinal-screen-apple-scent-6-box',
     sku: 'FRSTWDSSA',
     name: 'Tidal Wave, Urinal Screen, Apple Scent, 6/Box',
     brand: 'Tidal',
@@ -8657,7 +8447,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'medium-weight-cutlery-soup-spoon-white-1000carton-meso',
+    slug: 'medium-weight-cutlery-soup-spoon-white-1000-carton',
     sku: 'MESO',
     name: 'Medium-Weight Cutlery, Soup Spoon, White, 1000/Carton',
     brand: 'Medium-Weight',
@@ -8678,7 +8468,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'georgia-pacific-blue-select-multi-fold-2-ply-paper-towel-9-15-x-9-25-white125pk--gpc21000',
+    slug: 'blue-select-multi-fold-2-ply-paper-towel-9-1-5-x-9-2-5-white-125-pk-16-pk-ct',
     sku: 'GPC21000',
     name: 'Georgia Pacific Blue Select Multi-Fold 2 Ply Paper Towel, 9 1/5 x 9 2/5, White,125/PK, 16 PK/CT',
     brand: 'Georgia',
@@ -8699,7 +8489,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'maxithins-vended-sanitary-napkins-4-maxi-250-individually-boxed-napkinscarton-hosmt4',
+    slug: 'maxithins-vended-sanitary-napkins-4-250-individually-boxed-napkins-carton',
     sku: 'HOSMT4',
     name: 'Maxithins Vended Sanitary Napkins #4, Maxi, 250 Individually Boxed Napkins/Carton',
     brand: 'Maxithins',
@@ -8720,7 +8510,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'calcium-lime-and-rust-remover-1-gal-bottle-jelcl4proea',
+    slug: 'calcium-lime-and-rust-remover-1-gal-bottle',
     sku: 'JELCL4PROEA',
     name: 'Calcium, Lime and Rust Remover, 1 gal Bottle',
     brand: 'Calcium',
@@ -8741,7 +8531,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'kleenex-boutique-white-facial-tissue-2-ply-pop-up-box-36carton-kcc21271ct-kcc21271ct',
+    slug: 'boutique-white-facial-tissue-2-ply-pop-up-box-36-carton',
     sku: 'KCC21271CT',
     name: 'Kleenex Boutique White Facial Tissue, 2-Ply, Pop-Up Box, 36/Carton (KCC21271CT)',
     brand: 'Kleenex',
@@ -8762,7 +8552,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'white-facial-tissue-2-ply-white-pop-up-box-100-sheetsbox-36-boxescarton-kcc21400',
+    slug: 'white-facial-tissue-2-ply-pop-up-box-100-box-36-boxes-carton',
     sku: 'KCC21400',
     name: 'White Facial Tissue, 2-Ply, White, Pop-Up Box, 100 Sheets/Box, 36 Boxes/Carton',
     brand: 'MJS',
@@ -8783,7 +8573,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mn95-particle-respirator-8200-mask-20box-mmm8200',
+    slug: 'n95-particle-respirator-8200-mask-20-box',
     sku: 'MMM8200',
     name: '3M™N95 Particle Respirator 8200 Mask, 20/box',
     brand: 'MJS',
@@ -8804,7 +8594,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mparticulate-respirator-8210v-n95-cool-flow-valve-10box-mmm8210v',
+    slug: 'particulate-respirator-8210v-n95-cool-flow-valve-10-box',
     sku: 'MMM8210V',
     name: '3M™Particulate Respirator 8210v, N95, Cool Flow Valve, 10/box',
     brand: 'MJS',
@@ -8825,7 +8615,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mn100-particulate-respirator-mmm8233',
+    slug: 'n100-particulate-respirator',
     sku: 'MMM8233',
     name: '3M™N100 Particulate Respirator',
     brand: 'MJS',
@@ -8846,7 +8636,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mr95-particulate-respirator-wnuisance-level-organic-vapor-relief-20box-mmm8247',
+    slug: 'r95-particulate-respirator-w-nuisance-level-organic-vapor-relief-20-box',
     sku: 'MMM8247',
     name: '3M™R95 Particulate Respirator W/nuisance-Level Organic Vapor Relief, 20/box',
     brand: 'MJS',
@@ -8867,7 +8657,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mparticulate-respirator-wcool-flow-exhalation-valve-10-masksbox-mmm8511',
+    slug: 'particulate-respirator-w-cool-flow-exhalation-valve-10-masks-box',
     sku: 'MMM8511',
     name: '3M™Particulate Respirator W/cool Flow Exhalation Valve, 10 Masks/box',
     brand: 'MJS',
@@ -8888,7 +8678,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '3mparticulate-respirator-8577-p95-10box-mmm8577',
+    slug: 'particulate-respirator-8577-p95-10-box',
     sku: 'MMM8577',
     name: '3M™Particulate Respirator 8577, P95, 10/box',
     brand: 'MJS',
@@ -8909,28 +8699,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'no-rinse-sanitizing-multi-surface-wipes-9-x-8-white-72-wipespk-12carton-nicm30472',
-    sku: 'NICM30472',
-    name: 'No-Rinse Sanitizing  Multi-Surface Wipes, 9 x 8, White, 72 Wipes/PK, 12/Carton',
-    brand: 'No-Rinse',
-    price: 109.34,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 2737,
-    description: 'No-Rinse No-Rinse Sanitizing  Multi-Surface Wipes, 9 x 8, White, 72 Wipes/PK, 12/Carton. Professional-grade cleaning chemicals product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 9 x 8', 'Pack: 12/Carton', 'White color', 'Category: Cleaning Chemicals'],
-    specs: { 'SKU': 'NICM30472', 'Brand': 'No-Rinse', 'Color': 'White' },
-    category: 'Cleaning Chemicals',
-    subcategory: 'Wipes',
-    cardTitle: 'No-Rinse Sanitizing Multi-Surface Wipes',
-    pack: '12/Carton',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'disinfecting-multi-surface-wipes-7-12-x-5-38-200canister-6carton-nicp22884ct',
+    slug: 'disinfecting-multi-surface-wipes-7-1-2-x-5-3-8-200-canister-6-carton',
     sku: 'NICP22884CT',
     name: 'Disinfecting Multi-Surface Wipes, 7 1/2 x 5 3/8, 200/Canister, 6/Carton',
     brand: 'MJS',
@@ -8951,7 +8720,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'no-rinse-sanitizing-multi-surface-wipes-white-175container-6carton-nicp66784',
+    slug: 'no-rinse-sanitizing-multi-surface-wipes-white-175-container-6-carton',
     sku: 'NICP66784',
     name: 'No-Rinse Sanitizing Multi-Surface Wipes, White, 175/Container, 6/Carton',
     brand: 'No-Rinse',
@@ -8972,7 +8741,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tampons-for-vending-original-regular-absorbency-500carton-pgc025001',
+    slug: 'tampons-for-vending-original-regular-absorbency-500-carton',
     sku: 'PGC025001',
     name: 'Tampons for Vending, Original, Regular Absorbency, 500/Carton',
     brand: 'Tampons',
@@ -8993,7 +8762,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'manual-potpan-dish-detergent-original-4carton-pgc57445ct',
+    slug: 'manual-pot-pan-dish-detergent-original-4-carton',
     sku: 'PGC57445CT',
     name: 'Manual Pot/Pan Dish Detergent, Original, 4/Carton',
     brand: 'MJS',
@@ -9014,7 +8783,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lysol-disinfectant-toilet-bowl-cleaner-32oz-bottle-12carton-rac74278ct',
+    slug: 'lysol-disinfectant-toilet-bowl-cleaner-32oz-bottle-12-carton',
     sku: 'RAC74278CT',
     name: 'Lysol Disinfectant Toilet Bowl Cleaner, 32oz Bottle, 12/Carton',
     brand: 'Lysol',
@@ -9035,7 +8804,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clean-and-fresh-multi-surface-cleaner-sparkling-lemon-and-sunflower-essence-144--rac77617',
+    slug: 'clean-fresh-multisurface-cleaner-sparkling-lemon-sunflower-144oz-bottle-4-ct',
     sku: 'RAC77617',
     name: 'Clean and Fresh Multi-Surface Cleaner, Sparkling Lemon and Sunflower Essence, 144 oz Bottle, 4/Carton',
     brand: 'Clean',
@@ -9056,7 +8825,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'disinfecting-wipes-7-x-725-lemon-and-lime-blossom-80-wipescanister-3-canisterspa-rac84251ct',
+    slug: 'disinfecting-wipes-7x8-lemon-and-lime-blossom-80-canister-3-pack-2-packs-ct',
     sku: 'RAC84251CT',
     name: 'Disinfecting Wipes, 7 x 7.25, Lemon and Lime Blossom, 80 Wipes/Canister, 3 Canisters/Pack, 2 Packs/Carton',
     brand: 'MJS',
@@ -9077,7 +8846,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'disinfecting-wipes-7-x-725-lemon-and-lime-blossom-80-wipescanister-3-canisterspa-rac84251pk',
+    slug: 'disinfecting-wipes-7-x-8-lemon-and-lime-blossom-80-canister-3-pack',
     sku: 'RAC84251PK',
     name: 'Disinfecting Wipes, 7 x 7.25, Lemon and Lime Blossom, 80 Wipes/Canister, 3 Canisters/Pack',
     brand: 'MJS',
@@ -9098,7 +8867,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'enriched-hand-soap-with-moisturizers-floral-scent-800-ml-refill-4carton-rcp4013111',
+    slug: 'enriched-hand-soap-with-moisturizers-floral-scent-800ml-refill-4-carton',
     sku: 'RCP4013111',
     name: 'Enriched Hand Soap with Moisturizers, Floral Scent, 800 mL Refill, 4/Carton',
     brand: 'MJS',
@@ -9119,7 +8888,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'green-seal-certified-lotion-soap-honeysuckle-scent-800-ml-refill-4carton-rcp4013131',
+    slug: 'green-seal-certified-lotion-soap-honeysuckle-scent-800ml-refill-4-carton',
     sku: 'RCP4013131',
     name: 'Green Seal Certified Lotion Soap, Honeysuckle Scent, 800 mL Refill, 4/Carton',
     brand: 'MJS',
@@ -9140,7 +8909,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'simple-green-industrial-cleaner-and-degreaser-concentrated-1-gal-bottle-6carton-smp13005ct',
+    slug: 'simple-green-industrial-cleaner-and-degreaser-concentrated-1-gal-bottle-6-carton',
     sku: 'SMP13005CT',
     name: 'Simple Green, Industrial Cleaner and Degreaser, Concentrated, 1 gal Bottle, 6/Carton',
     brand: 'Simple Green',
@@ -9161,7 +8930,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'industrial-cleaner-and-degreaser-concentrated-1-gal-bottle-smp13005ea',
+    slug: 'industrial-cleaner-and-degreaser-concentrated-1-gal-bottle',
     sku: 'SMP13005EA',
     name: 'Industrial Cleaner and Degreaser, Concentrated, 1 gal Bottle',
     brand: 'MJS',
@@ -9182,7 +8951,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'industrial-cleaner-and-degreaser-concentrated-5-gal-pail-smp13006',
+    slug: 'industrial-cleaner-and-degreaser-concentrated-5-gal-pail',
     sku: 'SMP13006',
     name: 'Industrial Cleaner and Degreaser, Concentrated, 5 gal, Pail',
     brand: 'MJS',
@@ -9203,7 +8972,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'industrial-cleaner-and-degreaser-concentrated-55-gal-drum-smp13008',
+    slug: 'industrial-cleaner-and-degreaser-concentrated-55-gal-drum',
     sku: 'SMP13008',
     name: 'Industrial Cleaner and Degreaser, Concentrated, 55 gal Drum',
     brand: 'MJS',
@@ -9224,7 +8993,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'industrial-cleaner-and-degreaser-concentrated-24-oz-spray-bottle-smp13012',
+    slug: 'industrial-cleaner-and-degreaser-concentrated-24-oz-spray-bottle',
     sku: 'SMP13012',
     name: 'Industrial Cleaner and Degreaser, Concentrated, 24 oz Spray Bottle',
     brand: 'MJS',
@@ -9245,7 +9014,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'industrial-cleaner-and-degreaser-concentrated-24-oz-spray-bottle-12carton-smp13012ct',
+    slug: 'industrial-cleaner-and-degreaser-concentrated-24-oz-bottle-12-carton',
     sku: 'SMP13012CT',
     name: 'Industrial Cleaner and Degreaser, Concentrated, 24 oz Spray Bottle, 12/Carton',
     brand: 'MJS',
@@ -9266,7 +9035,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'one-shot-enriched-lotion-soap-refill-passion-flower-1600-ml-4carton-tec4015411',
+    slug: 'one-shot-enriched-lotion-soap-refill-passion-flower-1600ml-4-carton',
     sku: 'TEC4015411',
     name: 'One Shot Enriched Lotion Soap Refill, Passion Flower, 1,600 mL, 4/Carton',
     brand: 'One',
@@ -9287,7 +9056,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lf125-15-lambswool-duster-w-plastic-handle-lf125',
+    slug: 'lf125-15-lambswool-duster-w-plastic-handle',
     sku: 'LF125',
     name: '#LF125, 15 LAMBSWOOL DUSTER,  W/ PLASTIC HANDLE',
     brand: 'MJS',
@@ -9308,7 +9077,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lf17-17-lambswool-duster-w-plastic-handle-lf17',
+    slug: 'lf17-17-lambswool-duster-w-plastic-handle',
     sku: 'LF17',
     name: '#LF17, 17 LAMBSWOOL DUSTER, W/ PLASTIC HANDLE',
     brand: 'MJS',
@@ -9329,7 +9098,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lf2410-28-lambswool-duster-w-plastic-handle-lf2410',
+    slug: 'lf2410-28-lambswool-duster-w-plastic-handle',
     sku: 'LF2410',
     name: '#LF2410, 28 LAMBSWOOL DUSTER, W/ PLASTIC HANDLE',
     brand: 'MJS',
@@ -9350,7 +9119,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lfh1610-20-flex-head-lambswool-duster-lfh1610',
+    slug: 'lfh1610-20-flex-head-lambswool-duster',
     sku: 'LFH1610',
     name: '#LFH1610, 20 FLEX HEAD, LAMBSWOOL DUSTER',
     brand: 'MJS',
@@ -9371,7 +9140,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '2314ep-14-ostrich-feather-duster-plastic-handle-2314ep',
+    slug: '2314ep-14-ostrich-feather-duster-plastic-handle',
     sku: '2314EP',
     name: '#2314EP, 14 OSTRICH FEATHER DUSTER, PLASTIC HANDLE',
     brand: 'MJS',
@@ -9392,7 +9161,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '2320ep-20-ostrich-feather-duster-plastic-handle-2320ep',
+    slug: '2320ep-20-ostrich-feather-duster-plastic-handle',
     sku: '2320EP',
     name: '#2320EP, 20\' OSTRICH FEATHER DUSTER, PLASTIC HANDLE',
     brand: 'MJS',
@@ -9413,7 +9182,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '2328ep-28-ostrich-feather-duster-plastic-handle-2328ep',
+    slug: '2328ep-28-ostrich-feather-duster-plastic-handle',
     sku: '2328EP',
     name: '# 2328EP, 28 OSTRICH FEATHER DUSTER, PLASTIC HANDLE',
     brand: 'MJS',
@@ -9434,7 +9203,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '322wc-rf175-5-wall-ceiling-18-x-6-dusting-pom-wire-frame-ext-handle-included-322wc-rf/175-5',
+    slug: '322wc-rf-175-5-wall-ceiling-18-x-6-dusting-pom-wire-frame-ext-handle-included',
     sku: '322wc-rf/175-5',
     name: '# 322WC-RF/175-5, Wall & Ceiling 18 x 6 Dusting Pom, wire frame, Ext Handle Included',
     brand: 'MJS',
@@ -9455,7 +9224,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sp23-polyester-fiber-flex-duster-plastic-handle-sp23',
+    slug: 'sp23-polyester-fiber-flex-duster-plastic-handle',
     sku: 'SP23',
     name: '# SP23 POLYESTER, FIBER FLEX DUSTER, PLASTIC HANDLE',
     brand: 'MJS',
@@ -9476,7 +9245,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'oasis-tad-premium-roll-towel-5112p',
+    slug: 'sunnycare-tad-premium-roll-towel-1-ply-10-x-700-ft-white-6-rolls-carton-5112p',
     sku: '5112P',
     name: 'Oasis TAD Premium Roll Towel',
     brand: 'Oasis',
@@ -9497,7 +9266,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-toilet-sauce-bowl-cleaner-32-oz-40112ea-40112ea',
+    slug: 'janitors-finest-toilet-sauce-bowl-cleaner-32-oz-40112ea',
     sku: '40112EA',
     name: 'Janitors Finest Toilet Sauce Bowl Cleaner, 32 OZ (40112EA)',
     brand: 'Janitors Finest',
@@ -9518,7 +9287,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '1114-blue-seal-trap-liquid-for-all-non-water-using-urinals-32-oz-1114',
+    slug: '1114-blue-seal-trap-liquid-for-all-non-water-using-urinals-32-oz',
     sku: '1114',
     name: '# 1114, Blue Seal, Trap Liquid for all Non-Water Using Urinals, 32 oz',
     brand: 'MJS',
@@ -9539,7 +9308,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-drain-force-drain-opener-gallon-10601ea-10601ea',
+    slug: 'drain-force-drain-opener-gal',
     sku: '10601EA',
     name: 'Chemcor Drain Force Drain Opener, Gallon (10601EA)',
     brand: 'Chemcor',
@@ -9560,7 +9329,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-loop-wet-mop-head-cottonsynthetic-large-size-white-8997lg5whi',
+    slug: 'super-loop-wet-mop-head-cotton-synthetic-large-size-white-1',
     sku: '8997LG5WHI',
     name: 'Super Loop Wet Mop Head, Cotton/Synthetic, Large Size, White,',
     brand: 'MJS',
@@ -9581,7 +9350,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clear-lotion-hand-soap-unscented-dye-free-gallon-51401ea-51401ea',
+    slug: 'clear-lotion-hand-soap-unscented-dye-free-gallon-51401ea',
     sku: '51401EA',
     name: 'Clear Lotion Hand Soap, Unscented, Dye Free - Gallon (51401EA)',
     brand: 'MJS',
@@ -9602,7 +9371,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lifeguard-high-risk-14-mil-exam-disposable-gloves-powder-free-latex-blue-size-me-1243',
+    slug: 'lifeguard-1243-high-risk-14-mil-exam-disposable-gloves-powder-free-latex-blue-size-medium-50-bx-10-carton',
     sku: '1243',
     name: 'Lifeguard, High Risk 14 Mil Exam Disposable Gloves, Powder Free Latex, Blue, Size Medium, 50/Bx, 10/Carton (1243)',
     brand: 'MJS',
@@ -9623,7 +9392,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavy-duty-3-in-tape-dispenser-with-side-load-adjustable-brake-and-retractable-s-jmc323',
+    slug: 'heavy-duty-3-in-tape-dispenser-with-side-load-adjustable-brake-and-retractable-safety-blade',
     sku: 'JMC323',
     name: 'Heavy Duty, 3 In Tape Dispenser, With Side Load Adjustable Brake And Retractable Safety Blade',
     brand: 'MJS',
@@ -9644,7 +9413,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-lobby-jumbo-debris-dust-pan-14-yellow-8497y-8497y',
+    slug: 'super-lobby-jumbo-debris-dust-pan-14-yellow',
     sku: '8497Y',
     name: 'Super Lobby Jumbo Debris Dust Pan 14 Yellow (8497Y)',
     brand: 'MJS',
@@ -9665,7 +9434,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-lobby-jumbo-debris-dust-pan-14-blue-8497b-8497b',
+    slug: 'super-lobby-jumbo-debris-dust-pan-14-blue',
     sku: '8497B',
     name: 'Super Lobby Jumbo Debris Dust Pan 14 Blue (8497B)',
     brand: 'MJS',
@@ -9686,7 +9455,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-lobby-jumbo-debris-dust-pan-14-red-8497r-8497r',
+    slug: 'super-lobby-jumbo-debris-dust-pan-14-red',
     sku: '8497R',
     name: 'Super Lobby Jumbo Debris Dust Pan 14 Red (8497R)',
     brand: 'MJS',
@@ -9707,7 +9476,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'blue-denim-apron-14-oz-357004',
+    slug: 'blue-denim-apron-14-oz',
     sku: '357004',
     name: 'Blue Denim Apron, 14 oz',
     brand: 'MJS',
@@ -9728,7 +9497,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'copy-paper-20-lb-high-whitness-85-x-11-white-5000-sheets-202310-202310',
+    slug: 'copy-paper-20-lb-high-whitness-8-5-x-11-white-5000-sheets-202310',
     sku: '202310',
     name: 'COPY PAPER, 20 LB, HIGH WHITNESS , 8.5 X 11, WHITE 5000 SHEETS (202310)',
     brand: 'COPY',
@@ -9749,7 +9518,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'medium-duty-blue-utility-pads-4-x-10-5-padspack-626',
+    slug: 'x-heavy-duty-blue-utility-pads-4-x-10-20-pads-carton',
     sku: '626',
     name: 'Medium  Duty Blue Utility Pads, 4 x 10, 5 Pads/Pack',
     brand: 'MJS',
@@ -9770,7 +9539,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'light-duty-white-utility-pads-4-x-10-5-padspack-621',
+    slug: 'light-duty-white-utility-pads-4-x-10-20-pads-carton',
     sku: '621',
     name: 'Light  Duty White Utility Pads, 4 x 10, 5 Pads/Pack',
     brand: 'MJS',
@@ -9791,7 +9560,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavy-duty-black-utility-pads-4-x-10-5-padspack-672',
+    slug: 'heavy-duty-black-utility-pads-4-x-10-20-pads-carton',
     sku: '672',
     name: 'Heavy Duty Black Utility Pads, 4 x 10, 5 Pads/Pack',
     brand: 'MJS',
@@ -9812,7 +9581,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'medium-light-red-utility-pads-4-x-10-5-padspack-651',
+    slug: 'medium-light-red-utility-pads-4-x-10-20-pads-carton',
     sku: '651',
     name: 'Medium Light, Red Utility Pads, 4 x 10, 5 Pads/Pack',
     brand: 'MJS',
@@ -9833,7 +9602,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-tile-cling-41001ea-41001ea',
+    slug: 'tile-cling',
     sku: '41001EA',
     name: 'CHEMCOR TILE CLING (41001EA)',
     brand: 'Chemcor',
@@ -9854,7 +9623,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-wall-mount-paper-towel-dispenser-acrylic-black-432-blk-432-blk',
+    slug: 'alpine-industries-432-wall-mount-folded-paper-towel-dispenser-w-150-towel-capacity-acrylic-black',
     sku: '432-BLK',
     name: 'Alpine Industries Wall Mount Paper Towel Dispenser, Acrylic, Black (432-BLK)',
     brand: 'Alpine Industries',
@@ -9875,7 +9644,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'members-mark-printed-ultra-paper-bowls-20-oz-150-ct-980089707-980089707',
+    slug: 'paper-bowl-20oz-150-sl',
     sku: '980089707',
     name: 'Member\'s Mark Printed Ultra Paper Bowls, 20 oz, 150 ct (980089707)',
     brand: 'Member\'s',
@@ -9896,7 +9665,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'brite-touch-metal-polish-100012',
+    slug: 'brite-touch-metal-polish',
     sku: '100012',
     name: 'BRITE TOUCH METAL POLISH',
     brand: 'BRITE',
@@ -9938,7 +9707,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-coach-pro-10-10-qt-backpack-vacuum-w-xover-multi-surface-telescoping-wand--107303',
+    slug: 'super-coach-pro-10-10-qt-backpack-vacuum-w-xover-multi-surface-telescoping-wand-tool-kit-107303',
     sku: '107303',
     name: 'Super Coach Pro 10, 10 qt. Backpack Vacuum w/ Xover Multi-Surface Telescoping Wand Tool Kit (107303)',
     brand: 'MJS',
@@ -9959,7 +9728,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-coach-pro-6-6-qt-backpack-vacuum-w-xover-multi-surface-telescoping-wand-to-107310',
+    slug: 'super-coach-pro-6-6-qt-backpack-vacuum-w-xover-multi-surface-telescoping-wand-tool-kit-107310',
     sku: '107310',
     name: 'Super Coach Pro 6, 6 qt. Backpack Vacuum w/ Xover Multi-Surface Telescoping Wand Tool Kit (107310)',
     brand: 'MJS',
@@ -9980,7 +9749,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '18-master-stainless-steel-channel-with-rubber-1181',
+    slug: '18-master-stainless-steel-channel-with-rubber',
     sku: '1181',
     name: '18 MASTER STAINLESS STEEL CHANNEL WITH RUBBER',
     brand: 'MJS',
@@ -10001,7 +9770,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'blue-microfiber-loop-end-wet-mop-500g176-oz-each-23502-23502',
+    slug: 'blue-microfiber-loop-end-wet-mop',
     sku: '23502',
     name: 'BLUE MICROFIBER LOOP-END WET MOP, 500G/17.6 OZ, EACH (23502)',
     brand: 'MJS',
@@ -10022,7 +9791,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'metal-tip-wood-handle-3170lmt',
+    slug: 'metal-tip-wood-handle',
     sku: '3170LMT',
     name: 'METAL TIP WOOD HANDLE',
     brand: 'METAL',
@@ -10043,7 +9812,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'yellow-doorway-hanging-sign-331',
+    slug: 'yellow-doorway-hanging-sign',
     sku: '331',
     name: 'YELLOW DOORWAY HANGING SIGN',
     brand: 'MJS',
@@ -10064,7 +9833,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'life-guard-premium-toilet-seat-covers-quarter-fold-4525-4525',
+    slug: 'premium-toilet-seat-covers-quarter-fold',
     sku: '4525',
     name: 'LIFE GUARD PREMIUM TOILET SEAT COVERS QUARTER FOLD (4525)',
     brand: 'MJS',
@@ -10085,7 +9854,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '10-mighty-strip-washer-whandle-50010',
+    slug: '10-mighty-strip-washer-w-handle',
     sku: '50010',
     name: '10 MIGHTY STRIP WASHER W/HANDLE',
     brand: 'MJS',
@@ -10106,7 +9875,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '14-mighty-strip-washer-whandle-50014',
+    slug: '14-mighty-strip-washer-w-handle',
     sku: '50014',
     name: '14 MIGHTY STRIP WASHER W/HANDLE',
     brand: 'MJS',
@@ -10127,7 +9896,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '18-mighty-strip-washer-whandle-50018',
+    slug: '18-mighty-strip-washer-w-handle',
     sku: '50018',
     name: '18 MIGHTY STRIP WASHER W/HANDLE',
     brand: 'MJS',
@@ -10148,7 +9917,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-hardwound-paper-roll-towels-8-x-350-white-12-rollscase-5101-5101',
+    slug: 'hardwound-paper-roll-towels-8-x-350-white-12-rolls-case-5101',
     sku: '5101',
     name: 'JANITORS FINEST HARDWOUND PAPER ROLL TOWELS, 8 X 350`, WHITE , 12 ROLLS/CASE (5101)',
     brand: 'Janitors Finest',
@@ -10169,7 +9938,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'premium-coreless-jrt-septic-safe-2-ply-white-1150-ft-12-rollscarton-5210-5210',
+    slug: 'sunnycare-premium-coreless-9-jr-jumbo-bath-tissue-2-ply',
     sku: '5210',
     name: 'Premium Coreless JRT, Septic Safe, 2-Ply, White, 1150 ft, 12 Rolls/Carton (5210)',
     brand: 'MJS',
@@ -10190,7 +9959,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-pro-bathroom-tissue-2-ply-white-45-x-35-sheet-500-sheetsroll-96c-5603p',
+    slug: 'janitors-finest-pro-bathroom-tissue-2-ply-white-4-5-x-3-5-sheet-500-sheets-roll-96-carton-soft-touch-replacement',
     sku: '5603P',
     name: 'JANITORS FINEST PRO, BATHROOM TISSUE, 2-PLY, WHITE, 4.5 X 3.5 SHEET, 500 SHEETS/ROLL, 96/CARTON (SOFT TOUCH REPLACEMENT)',
     brand: 'Janitors Finest',
@@ -10211,7 +9980,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-bathroom-tissue-2-ply-white-43-x-35-sheet-500-sheetsroll-96carto-5608',
+    slug: 'janitors-finest-bathroom-tissue-2-ply-white-4-3-x-3-5-sheet-500-sheets-roll-96-carton',
     sku: '5608',
     name: 'JANITORS FINEST, BATHROOM TISSUE, 2-PLY, WHITE, 4.3 X 3.5 SHEET, 500 SHEETS/ROLL, 96/CARTON',
     brand: 'Janitors Finest',
@@ -10232,7 +10001,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-2-ply-18-fold-white-dinner-napkin-15-x-17-3000cs-5900',
+    slug: 'sunnycare-2-ply-1-8-fold-white-dinner-napkin-15-x-17-3000-cs',
     sku: '5900',
     name: 'SUNNYCARE, 2-PLY, 1/8 FOLD, WHITE, DINNER NAPKIN 15 X 17 - 3000/CS',
     brand: 'SunnyCare',
@@ -10253,7 +10022,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'luncheon-napkins-white-6000-carton-5940',
+    slug: 'luncheon-napkins-white-6000-carton',
     sku: '5940',
     name: 'LUNCHEON NAPKINS, WHITE , 6000 , CARTON',
     brand: 'LUNCHEON',
@@ -10274,7 +10043,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-2-ply-brown-dinner-napkin-15-x-17-3000cs-5990',
+    slug: 'sunnycare-2-ply-brown-dinner-napkin-15-x-17-3000-cs',
     sku: '5990',
     name: 'SUNNYCARE, 2-PLY BROWN DINNER NAPKIN 15 X 17 - 3000/CS',
     brand: 'SunnyCare',
@@ -10295,7 +10064,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-c-fold-paper-towels-white-10-x-13-200pack-12carton-6002-6002',
+    slug: 'janitors-finest-c-fold-paper-towels-white-10-x-13-200-pack-12-carton-6002',
     sku: '6002',
     name: 'JANITORS FINEST, C-FOLD PAPER TOWELS, WHITE, 10 X 13, 200/PACK, 12/CARTON (6002)',
     brand: 'Janitors Finest',
@@ -10316,7 +10085,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'heavy-duty-brown-utility-pads-4-x-10-5-pads-631',
+    slug: 'heavy-duty-utility-pads-brown-4-5-x-10',
     sku: '631',
     name: 'Heavy Duty Brown Utility Pads, 4 x 10, 5 Pads',
     brand: 'MJS',
@@ -10337,7 +10106,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'blueforce-heavy-duty-degreaser-80201ea-80201ea',
+    slug: 'blueforce-heavy-duty-degreaser-80201ea',
     sku: '80201EA',
     name: 'BLUEFORCE HEAVY DUTY DEGREASER (80201EA)',
     brand: 'BLUEFORCE',
@@ -10358,7 +10127,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'floorzyme-83501',
+    slug: 'floorzyme',
     sku: '83501',
     name: 'FLOORZYME',
     brand: 'FLOORZYME',
@@ -10379,7 +10148,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'super-lobby-jumbo-debris-dust-pan-14-black-8497k-8497k',
+    slug: 'super-lobby-jumbo-dust-pan-black',
     sku: '8497K',
     name: 'SUPER LOBBY JUMBO DEBRIS DUST PAN 14 BLACK (8497K)',
     brand: 'MJS',
@@ -10421,7 +10190,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-medium-5-mil-100bx-6303ea',
+    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-medium-5-mil-100-bx',
     sku: '6303EA',
     name: 'LIFE GUARD BLUE NITRILE EXAM GLOVES POWDER FREE MEDIUM 5 MIL 100/BX',
     brand: 'MJS',
@@ -10442,7 +10211,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-large-5-mil-100bx-6304ea',
+    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-large-5-mil-100-bx',
     sku: '6304EA',
     name: 'LIFE GUARD BLUE NITRILE EXAM GLOVES POWDER FREE LARGE 5 MIL 100/BX',
     brand: 'MJS',
@@ -10463,7 +10232,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-x-large-5-mil-100bx-6305ea',
+    slug: 'life-guard-blue-nitrile-exam-gloves-powder-free-x-large-5-mil-100-bx',
     sku: '6305EA',
     name: 'LIFE GUARD BLUE NITRILE EXAM GLOVES POWDER FREE X-LARGE 5 MIL 100/BX',
     brand: 'MJS',
@@ -10568,7 +10337,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'four-ply-floor-finish-looped-end-mop-heads-large-size-blue-white-8997lg1',
+    slug: 'four-ply-floor-finish-looped-end-mop-heads-large-size-blue-white',
     sku: '8997LG1',
     name: 'Four-Ply Floor Finish Looped-End Mop Heads, Large Size, Blue / White',
     brand: 'Four-Ply',
@@ -10589,7 +10358,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dome-filter-replacement-for-10-qt-backpack-vacuum-900-0031',
+    slug: 'dome-filter-replacement-for-10-qt-backpack-vacuum',
     sku: '900-0031',
     name: 'DOME FILTER REPLACEMENT FOR 10 QT BACKPACK VACUUM',
     brand: 'DOME',
@@ -10610,7 +10379,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-stop-odor-eliminator-deodorizer-32-oz-90012ea-90012ea',
+    slug: 'stop-odor-eliminator-deodorizer',
     sku: '90012EA',
     name: 'CHEMCOR STOP ODOR ELIMINATOR & DEODORIZER, 32 OZ (90012EA)',
     brand: 'Chemcor',
@@ -10631,7 +10400,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dust-cloths-24-x-24-yellow-500carton-9092424',
+    slug: '24-x-24-treated-yellow-dusting-cloths',
     sku: '9092424',
     name: 'Dust Cloths, 24 x 24, Yellow, 500/Carton',
     brand: 'MJS',
@@ -10652,7 +10421,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-24-x-24-8-micron-7-10-gallon-1000cs-cl242408-cl242408',
+    slug: 'janitors-finest-can-liners-clear-24-x-24-8-micron-7-10-gallon-1000-cs-cl242408',
     sku: 'CL242408',
     name: 'JANITORS FINEST®, Can Liners Clear, 24 X 24, 8 Micron, 7-10 Gallon, 1000/CS (CL242408)',
     brand: 'Janitors Finest',
@@ -10673,7 +10442,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'eurekasanitaire-upright-vaccum-belt-each-eur52100-eur52100',
+    slug: 'eureka-vacuum-belts',
     sku: 'EUR52100',
     name: 'EUREKA/SANITAIRE , UPRIGHT VACCUM BELT,  EACH (EUR52100)',
     brand: 'EUREKA/SANITAIRE',
@@ -10694,7 +10463,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'machine-grade-stretch-film-20-x-63-gauge-x-5000-sold-by-the-pallet-50-rolls-flm2063m',
+    slug: '20-machine-stretch-film-x-5000-63-gauge',
     sku: 'FLM2063M',
     name: 'MACHINE GRADE STRETCH FILM 20 X 63 GAUGE X 5000\' (SOLD BY THE PALLET, 50 ROLLS)',
     brand: 'MJS',
@@ -10715,7 +10484,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'machine-grade-stretch-film-20-x-80-gauge-x-5000-sold-by-the-pallet-50-rolls-flm80205m',
+    slug: 'machine-grade-stretch-film-20-x-80-gauge-5000',
     sku: 'FLM80205M',
     name: 'MACHINE GRADE STRETCH FILM 20 X 80  GAUGE X 5000\' (SOLD BY THE PALLET, 50 ROLLS)',
     brand: 'MJS',
@@ -10736,7 +10505,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'disposable-urinal-floor-mat-nonslip-fresh-blast-scent-17-12-x-20-38-black-6carto-imp15255',
+    slug: 'urnial-mat-fresh-scent',
     sku: 'IMP15255',
     name: 'Disposable Urinal Floor Mat, Nonslip, Fresh Blast Scent, 17 1/2 x 20 3/8, Black, 6/Carton',
     brand: 'Disposable',
@@ -10757,7 +10526,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-33-x-39-60-mil-33-gallon-250cs-ld333906c-ld333906c',
+    slug: 'janitors-finest-can-liners-clear-33-x-39-.60-mil-33-gallon-250-cs-ld333906c',
     sku: 'LD333906C',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 33 X 39, .60 MIL, 33 GALLON, 250/CS (LD333906C)',
     brand: 'Janitors Finest',
@@ -10778,7 +10547,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-40-x-46-11-mil-40-45-gallon-100cs-ld404611c-ld404611c',
+    slug: 'janitors-finest-can-liners-clear-40-x-46-1.1-mil-40-45-gallon-100-cs-ld404611c',
     sku: 'LD404611C',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 40 X 46, 1.1 MIL, 40-45 GALLON, 100/CS (LD404611C)',
     brand: 'Janitors Finest',
@@ -10799,7 +10568,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'standard-microfiber-towel-red-300-gsm-16-x-16-dozen-m915100r',
+    slug: 'standard-microfiber-towel-red-300-gsm-16-x-16-dozen',
     sku: 'M915100R',
     name: 'Standard Microfiber Towel Red- 300 Gsm - 16 X 16, Dozen',
     brand: 'MJS',
@@ -10820,7 +10589,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '8-oz-ripple-paper-hot-cups-kraft-500-ct-r8pck-r8pck',
+    slug: '8-oz-kraft-ripple-cup',
     sku: 'R8PCK',
     name: '8 oz Ripple Paper Hot Cups, Kraft, 500 ct (R8PCK)',
     brand: 'MJS',
@@ -10841,28 +10610,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'soft-touch-kitchen-roll-towels-perforated-2-ply-11-x-9-white-85-sheetsroll-30-rl-st852',
-    sku: 'ST852',
-    name: 'SOFT TOUCH, KITCHEN ROLL TOWELS, PERFORATED, 2-PLY, 11 X 9, WHITE, 85 SHEETS/ROLL, 30 RLS/CT (ST852)',
-    brand: 'Soft Touch',
-    price: 37.95,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: false,
-    stockQty: 0,
-    description: 'Soft Touch SOFT TOUCH, KITCHEN ROLL TOWELS, PERFORATED, 2-PLY, 11 X 9, WHITE, 85 SHEETS/ROLL, 30 RLS/CT. Professional-grade paper & restroom product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Size: 11 X 9', 'White color', '2-ply for extra softness', 'Category: Paper & Restroom'],
-    specs: { 'SKU': 'ST852', 'Brand': 'Soft Touch', 'Color': 'WHITE', 'Ply': '2' },
-    category: 'Paper & Restroom',
-    subcategory: 'Roll Towels',
-    cardTitle: 'KITCHEN ROLL TOWELS',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'chemcor-alcohol-free-liquid-foaming-hand-sanitizer-gallon-51901ea-51901ea',
+    slug: 'alcohol-free-foaming-hand-sanitizer-gallon',
     sku: '51901EA',
     name: 'Chemcor Alcohol - Free, Liquid, Foaming Hand Sanitizer, Gallon (51901EA)',
     brand: 'Chemcor',
@@ -10883,7 +10631,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-20010-1-gallon-surespray-sprayer-20010',
+    slug: 'chapin-20010-1-gallon-surespray-sprayer',
     sku: '20010',
     name: 'Chapin 20010 1-Gallon SureSpray Sprayer',
     brand: 'Chapin',
@@ -10904,7 +10652,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-20020-2-gallon-surespray-sprayer-20020',
+    slug: 'chapin-20020-2-gallon-surespray-sprayer',
     sku: '20020',
     name: 'Chapin 20020 2-Gallon SureSpray Sprayer',
     brand: 'Chapin',
@@ -10925,7 +10673,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-20030-3-gallon-surespray-sprayer-20030',
+    slug: 'chapin-20030-3-gallon-surespray-sprayer',
     sku: '20030',
     name: 'Chapin 20030 3-Gallon SureSpray Sprayer',
     brand: 'Chapin',
@@ -10946,7 +10694,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-16100-1-gallon-home-and-garden-sprayer-16100',
+    slug: 'chapin-16100-1-gallon-home-and-garden-sprayer',
     sku: '16100',
     name: 'Chapin 16100 1-Gallon Home and Garden Sprayer',
     brand: 'Chapin',
@@ -10967,7 +10715,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-16200-2-gallon-home-and-garden-sprayer-16200',
+    slug: 'chapin-16200-2-gallon-home-and-garden-sprayer',
     sku: '16200',
     name: 'Chapin 16200 2-Gallon Home and Garden Sprayer',
     brand: 'Chapin',
@@ -10988,7 +10736,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-20003-3-gallon-lawn-and-garden-sprayer-20003',
+    slug: 'chapin-20003-3-gallon-lawn-and-garden-sprayer',
     sku: '20003',
     name: 'Chapin 20003 3-Gallon Lawn and Garden Sprayer',
     brand: 'Chapin',
@@ -11009,7 +10757,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-1380-3-gallon-premier-pro-tri-poxy-steel-sprayer-1380',
+    slug: 'chapin-1380-3-gallon-premier-pro-tri-poxy-steel-sprayer',
     sku: '1380',
     name: 'Chapin 1380 3-Gallon Premier Pro Tri-Poxy Steel Sprayer',
     brand: 'Chapin',
@@ -11030,7 +10778,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chapin-10030-2-liter-multi-purpose-sprayer-10030',
+    slug: 'chapin-10030-2-liter-multi-purpose-sprayer',
     sku: '10030',
     name: 'Chapin 10030 2-Liter Multi-Purpose Sprayer',
     brand: 'Chapin',
@@ -11051,7 +10799,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-86000-3-gal-super-bucket-w-handle-86000',
+    slug: 'ettore-86000-3-gal-super-bucket-w-handle',
     sku: '86000',
     name: 'ETTORE, #86000, 3 GAL SUPER BUCKET W/ HANDLE',
     brand: 'Ettore',
@@ -11072,7 +10820,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ear-loop-face-masks-3-ply-black-non-medical-50box-4331-4331',
+    slug: 'ear-loop-face-masks-3-ply-black-non-medical-50-box',
     sku: '4331',
     name: 'EAR LOOP FACE MASKS, 3 PLY, BLACK, NON MEDICAL, 50/BOX (4331)',
     brand: 'EAR',
@@ -11093,28 +10841,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'marathon-automated-paper-towel-dispenser-black-980144024',
-    sku: '980144024',
-    name: 'Marathon® Automated Paper Towel Dispenser, Black',
-    brand: 'Marathon',
-    price: 89.95,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 100,
-    description: 'Marathon Marathon® Automated Paper Towel Dispenser, Black. Professional-grade equipment & tools product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Black color', 'Category: Equipment & Tools', 'Professional-grade quality'],
-    specs: { 'SKU': '980144024', 'Brand': 'Marathon', 'Color': 'Black' },
-    category: 'Equipment & Tools',
-    subcategory: 'Towel Dispensers',
-    cardTitle: 'Marathon® Automated Paper Towel Dispe...',
-    pack: 'Each',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'sunnycare-12-jrt-premium-2-ply-white-374-x-2000-ft-6-rollscarton-5202-5202',
+    slug: 'sunnycare-12-jrt-premium-2-ply-white-374-x-2000-ft-6-rollscarton-5202',
     sku: '5202',
     name: 'SUNNYCARE 12 JRT, PREMIUM, 2-PLY, WHITE, 3.74 X 2000 FT, 6 ROLLS/CARTON (5202)',
     brand: 'SunnyCare',
@@ -11135,7 +10862,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'rubber-boots-steel-toe-size-12-8620712',
+    slug: 'rubber-boots-steel-toe-size-12',
     sku: '8620712',
     name: 'RUBBER BOOTS STEEL TOE SIZE 12',
     brand: 'RUBBER',
@@ -11282,7 +11009,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'professional-lysol-branddisinfectant-spray-crisp-linen-19-oz-aerosol-spray-12car-rac74828ct',
+    slug: 'lysol-disinfectant-spray-crisp-linen',
     sku: 'RAC74828CT',
     name: 'Professional LYSOL® BrandDisinfectant Spray, Crisp Linen, 19 Oz Aerosol Spray, 12/carton',
     brand: 'MJS',
@@ -11324,7 +11051,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'disinfectant-spray-original-scent-19-oz-aerosol-spray-12carton-rac04650ct',
+    slug: 'lysol-original-scent',
     sku: 'RAC04650CT',
     name: 'Disinfectant Spray, Original Scent, 19 oz Aerosol Spray, 12/Carton',
     brand: 'Disinfectant',
@@ -11387,7 +11114,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-drawstring-trash-liners-24-x-27-13-gallon-10-mil-white-100bx-ld2-ld242710wd',
+    slug: 'janitors-finest-drawstring-trash-liners-24-x-27-13-gallon-1-0-mil-white-250-bx-ld242410wd',
     sku: 'LD242710WD',
     name: 'Janitors Finest ®, Drawstring Trash Liners 24 x 27, 13 Gallon, 1.0 Mil, White, 100/BX (LD242410WD)',
     brand: 'Janitors Finest',
@@ -11408,7 +11135,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-janitorial-cleaning-cart-with-3-shelves-463-463',
+    slug: 'alpine-industries-janitorial-cleaning-cart-with-3-shelves-463',
     sku: '463',
     name: 'Alpine Industries Janitorial Cleaning Cart with 3 Shelves (463)',
     brand: 'Alpine Industries',
@@ -11429,28 +11156,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-value-scents-metered-spray-lavender-617-oz-12ct-4385370-4385370',
-    sku: '4385370',
-    name: 'Chase Products Value Scents, Metered Spray, Lavender, 6.17 OZ, 12/CT (4385370)',
-    brand: 'Chase Products',
-    price: 54.28,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: false,
-    stockQty: 0,
-    description: 'Chase Products Chase Products Value Scents, Metered Spray, Lavender, 6.17 OZ, 12/CT. Professional-grade cleaning chemicals product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['6.17 OZ capacity', 'Pack: 12/CT', 'Category: Cleaning Chemicals', 'Professional-grade quality'],
-    specs: { 'SKU': '4385370', 'Brand': 'Chase Products', 'Volume': '6.17 OZ' },
-    category: 'Cleaning Chemicals',
-    subcategory: 'Air Fresheners',
-    cardTitle: 'Value Scents',
-    pack: '12/CT',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'chase-products-value-scents-metered-spray-clean-linen-617-oz-12ct-4385374-4385374',
+    slug: 'chase-products-value-scents-metered-spray-clean-linen-6-17-oz-12-ct-4385374',
     sku: '4385374',
     name: 'CHASE PRODUCTS VALUE SCENTS, METERED SPRAY, CLEAN LINEN, 6.17 OZ, 12/CT (4385374)',
     brand: 'Chase Products',
@@ -11471,7 +11177,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-value-scents-metered-spray-citrus-617-oz-12ct-4385375-4385375',
+    slug: 'chase-products-value-scents-metered-spray-citrus-6-17-oz-12-ct-4385375',
     sku: '4385375',
     name: 'CHASE PRODUCTS VALUE SCENTS, METERED SPRAY, CITRUS, 6.17 OZ, 12/CT (4385375)',
     brand: 'Chase Products',
@@ -11492,7 +11198,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-value-scents-metered-spray-cinnamon-apple-617-oz-12ct-4385373-4385373',
+    slug: 'chase-products-value-scents-metered-spray-cinnamon-apple-6-17-oz-12-ct-4385373',
     sku: '4385373',
     name: 'CHASE PRODUCTS VALUE SCENTS, METERED SPRAY, CINNAMON APPLE, 6.17 OZ, 12/CT (4385373)',
     brand: 'Chase Products',
@@ -11513,7 +11219,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chase-products-value-scents-metered-spray-tropic-punch-617-oz-12ct-4385371-4385371',
+    slug: 'chase-products-value-scents-metered-spray-tropic-punch-6-17-oz-12-ct-4385371',
     sku: '4385371',
     name: 'CHASE PRODUCTS VALUE SCENTS, METERED SPRAY, TROPIC PUNCH, 6.17 OZ, 12/CT (4385371)',
     brand: 'Chase Products',
@@ -11534,7 +11240,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'general-purpose-hand-pad-6-x-9-maroon-20-pk-7447-617-20',
+    slug: 'general-purpose-hand-pad-6-x-9-maroon-20-pk-7447',
     sku: '617-20',
     name: 'General Purpose Hand Pad, 6 x 9, Maroon, 20 PK, (7447)',
     brand: 'General',
@@ -11555,7 +11261,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-industries-double-soap-hand-sanitizer-dispenser-surface-mounted-2-x-185-o-426gry',
+    slug: 'alpine-industries-double-soap-hand-sanitizer-dispenser-surface-mounted-2-x-18-5-oz-capacity-gray-426gry',
     sku: '426GRY',
     name: 'ALPINE INDUSTRIES DOUBLE SOAP & HAND SANITIZER DISPENSER, SURFACE MOUNTED, 2 X 18.5 OZ CAPACITY GRAY (426GRY)',
     brand: 'Alpine Industries',
@@ -11576,7 +11282,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'scotch-brite-heavy-duty-scour-pads-20-ct-79529-79529',
+    slug: 'scotch-brite-heavy-duty-scour-pads-20-ct-79529',
     sku: '79529',
     name: 'Scotch-Brite Heavy Duty Scour Pads, 20 CT (79529)',
     brand: 'Scotch-Brite',
@@ -11597,7 +11303,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-2-ply-mini-jumbo-roll-bath-tissue-size-36-x-751-12-rollscarton-5275-5275',
+    slug: 'sunnycare-2-ply-mini-jumbo-roll-bath-tissue-size-3-6-x-751-12-rolls-carton-5275',
     sku: '5275',
     name: 'Sunnycare 2-ply Mini Jumbo Roll Bath Tissue, Size 3.6 X 751\', 12 Rolls/Carton (5275)',
     brand: 'SunnyCare',
@@ -11618,7 +11324,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'nifty-nabber-extension-arm-wclaw-36-blackblue-grb1-grb1',
+    slug: 'nifty-nabber-extension-arm-w-claw-36-black-blue-grb1',
     sku: 'GRB1',
     name: 'NIFTY NABBER EXTENSION ARM W/CLAW, 36, BLACK/BLUE (GRB1)',
     brand: 'MJS',
@@ -11639,7 +11345,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-tsp-cleaner-81925',
+    slug: 'chemcor-tsp-cleaner',
     sku: '81925',
     name: 'Chemcor TSP Cleaner',
     brand: 'Chemcor',
@@ -11660,7 +11366,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-carpet-brightner-powder-31305ea',
+    slug: 'chemcor-carpet-brightner-powder',
     sku: '31305EA',
     name: 'Chemcor Carpet Brightner Powder',
     brand: 'Chemcor',
@@ -11681,7 +11387,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-old-fashion-lemon-oil-10201ea',
+    slug: 'chemcor-old-fashion-lemon-oil',
     sku: '10201EA',
     name: 'Chemcor Old Fashion Lemon Oil',
     brand: 'Chemcor',
@@ -11702,7 +11408,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-anti-shock-carpet-31201ea',
+    slug: 'chemcor-anti-shock-carpet',
     sku: '31201EA',
     name: 'Chemcor Anti Shock Carpet',
     brand: 'Chemcor',
@@ -11723,7 +11429,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-old-fashion-lemon-oil-32-oz-10112ea',
+    slug: 'chemcor-old-fashion-lemon-oil-32-oz',
     sku: '10112EA',
     name: 'Chemcor Old Fashion Lemon Oil 32 OZ',
     brand: 'Chemcor',
@@ -11744,7 +11450,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-furniture-polish-gallon-10101ea',
+    slug: 'chemcor-furniture-polish-gallon',
     sku: '10101EA',
     name: 'Chemcor Furniture Polish Gallon',
     brand: 'Chemcor',
@@ -11765,7 +11471,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-freezer-cleaner-82801ea',
+    slug: 'chemcor-freezer-cleaner',
     sku: '82801EA',
     name: 'Chemcor Freezer Cleaner',
     brand: 'Chemcor',
@@ -11786,7 +11492,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'chemcor-floorzyme-floor-cleaner-83501ea',
+    slug: 'chemcor-floorzyme-floor-cleaner',
     sku: '83501EA',
     name: 'Chemcor Floorzyme Floor Cleaner',
     brand: 'Chemcor',
@@ -11807,7 +11513,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-crystal-clean-ready-to-use-pint-16-oz-c-ccrtu16-c-ccrtu16',
+    slug: 'stone-pro-crystal-clean-ready-to-use-pint-16-oz-c-ccrtu16',
     sku: 'C-CCRTU16',
     name: 'Stone Pro Crystal Clean Ready to Use Pint 16 oz (C-CCRTU16)',
     brand: 'Stone Pro',
@@ -11828,7 +11534,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-crystal-clean-concentrate-quart-c-ccq-c-ccq',
+    slug: 'stone-pro-crystal-clean-concentrate-quart-c-ccq',
     sku: 'C-CCQ',
     name: 'Stone Pro Crystal Clean Concentrate Quart (C-CCQ)',
     brand: 'Stone Pro',
@@ -11849,7 +11555,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-finishing-touch-spray-16-oz-c-fts16-c-fts16',
+    slug: 'stone-pro-finishing-touch-spray-16-oz-c-fts16',
     sku: 'C-FTS16',
     name: 'Stone Pro Finishing Touch Spray 16 OZ (C-FTS16)',
     brand: 'Stone Pro',
@@ -11870,7 +11576,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-ultimate-pro-sealer-quart-s-upsq-s-upsq',
+    slug: 'stone-pro-ultimate-pro-sealer-quart-s-upsq',
     sku: 'S-UPSQ',
     name: 'Stone Pro Ultimate Pro Sealer Quart (S-UPSQ)',
     brand: 'Stone Pro',
@@ -11891,7 +11597,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-pro-sealer-quart-s-psq-s-psq',
+    slug: 'stone-pro-pro-sealer-quart-s-psq',
     sku: 'S-PSQ',
     name: 'Stone Pro Pro Sealer Quart (S-PSQ)',
     brand: 'Stone Pro',
@@ -11912,7 +11618,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-pro-sealer-gallon-s-psg-s-psg',
+    slug: 'stone-pro-pro-sealer-gallon-s-psg',
     sku: 'S-PSG',
     name: 'Stone Pro, Pro Sealer Gallon (S-PSG)',
     brand: 'Stone Pro',
@@ -11933,7 +11639,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-quartz-nano-guard-protector-quart-s-qzpq-s-qzpq',
+    slug: 'stone-pro-quartz-nano-guard-protector-quart-s-qzpq',
     sku: 'S-QZPQ',
     name: 'Stone Pro Quartz Nano Guard Protector Quart (S-QZPQ)',
     brand: 'Stone Pro',
@@ -11954,7 +11660,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-quartz-cleaner-32-oz-spray-c-qzcq-s-qzcq',
+    slug: 'stone-pro-quartz-cleaner-32-oz-spray-c-qzcq',
     sku: 'S-QZCQ',
     name: 'Stone Pro Quartz Cleaner 32 OZ Spray (C-QZCQ)',
     brand: 'Stone Pro',
@@ -11975,7 +11681,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-travertine-traverfill-dark-1-lb-tf-d1-tf-d1',
+    slug: 'stone-pro-travertine-traverfill-dark-1-lb-tf-d1',
     sku: 'TF-D1',
     name: 'Stone Pro Travertine Traverfill Dark 1 LB (TF-D1)',
     brand: 'Stone Pro',
@@ -11996,7 +11702,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-travertine-traverfill-light-1-lb-tf-l1-tf-l1',
+    slug: 'stone-pro-travertine-traverfill-light-1-lb-tf-l1',
     sku: 'TF-L1',
     name: 'Stone Pro Travertine Traverfill Light 1 LB (TF-L1)',
     brand: 'Stone Pro',
@@ -12017,7 +11723,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-travertine-traverfill-dark-3-lbs-tf-d3-tf-d3',
+    slug: 'stone-pro-travertine-traverfill-dark-3-lbs-tf-d3',
     sku: 'TF-D3',
     name: 'Stone Pro Travertine Traverfill Dark 3 LBS (TF-D3)',
     brand: 'Stone Pro',
@@ -12038,7 +11744,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-travertine-traverfill-3-lbs-tf-l3-tf-l3',
+    slug: 'stone-pro-travertine-traverfill-3-lbs-tf-l3',
     sku: 'TF-L3',
     name: 'Stone Pro Travertine Traverfill 3 LBS (TF-L3)',
     brand: 'Stone Pro',
@@ -12059,7 +11765,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-deep-clean-gallon-c-dcg-c-dcg',
+    slug: 'stone-pro-deep-clean-gallon-c-dcg',
     sku: 'C-DCG',
     name: 'Stone Pro Deep Clean Gallon (C-DCG)',
     brand: 'Stone Pro',
@@ -12080,7 +11786,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'stone-pro-deep-clean-quart-c-dcq-c-dcq',
+    slug: 'stone-pro-deep-clean-quart-c-dcq',
     sku: 'C-DCQ',
     name: 'Stone Pro Deep Clean Quart (C-DCQ)',
     brand: 'Stone Pro',
@@ -12101,7 +11807,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'breeze-low-profile-contoured-handle-with-13-pom-27-overall-333b',
+    slug: 'breeze-low-profile-contoured-handle-with-13-pom-27-overall',
     sku: '333B',
     name: 'Breeze Low Profile - Contoured handle with 13” Pom, 27” overall',
     brand: 'Breeze',
@@ -12122,7 +11828,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sample-not-for-sale-black-white-1250-x-125-circle-on-roll-2500-labels-removable--49525',
+    slug: 'sample-not-for-sale-black-white-1-250-x-1-25-circle-on-roll-2500-labels-removable-adhesive',
     sku: '49525',
     name: 'Sample Not For Sale Black & White, 1.250 x 1.25 Circle , On Roll , 2500 Labels,  Removable Adhesive',
     brand: 'MJS',
@@ -12143,7 +11849,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'micro-cloth-fltr-trailbl-azer-xl-dust-bg-10c-apcjanpt100565',
+    slug: 'micro-cloth-fltr-trailbl-azer-xl-dust-bg-10-c',
     sku: 'APCJANPT100565',
     name: 'Micro Cloth Fltr Trailbl Azer Xl Dust Bg 10/C',
     brand: 'MJS',
@@ -12164,7 +11870,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'shelf-24-length-bob683x24',
+    slug: 'shelf-24-length',
     sku: 'BOB683X24',
     name: 'SHELF, 24 LENGTH',
     brand: 'MJS',
@@ -12185,7 +11891,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'lavatory-mntd-soap-dis-p-lqd-bob8221',
+    slug: 'lavatory-mntd-soap-dis-p-lqd',
     sku: 'BOB8221',
     name: 'LAVATORY MNTD SOAP DIS P LQD',
     brand: 'LAVATORY',
@@ -12206,7 +11912,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'durable-packagingaluminum-cater-trays-7-compartment-lazy-susan-16-diameter-x-081-dpk16ls',
+    slug: 'durable-packagingaluminum-cater-trays-7-compartment-lazy-susan-16-diameter-x-0-81h-silver-50-carton',
     sku: 'DPK16LS',
     name: 'Durable PackagingAluminum Cater Trays, 7 Compartment Lazy Susan, 16 Diameter X 0.81h, Silver, 50/carton',
     brand: 'Durable Packaging',
@@ -12227,7 +11933,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'procellalkaline-9v-batteries-72carton-durpc1604ct',
+    slug: 'procell-alkaline-9v-batteries-72-carton',
     sku: 'DURPC1604CT',
     name: 'Procell®Alkaline 9v Batteries, 72/carton',
     brand: 'Procell',
@@ -12248,7 +11954,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'carpet-clnr-kit-8ft-hose-fsc6080sc6090-eursc81b',
+    slug: 'carpet-clnr-kit-8ft-hose-f-sc6080-sc6090',
     sku: 'EURSC81B',
     name: 'CARPET CLNR KIT 8FT HOSE  F/SC6080/SC6090',
     brand: 'MJS',
@@ -12269,7 +11975,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'conqueror-103-liq-deo-spring-41gl-frs1wbst',
+    slug: 'conqueror-103-liq-deo-spring-4-1gl',
     sku: 'FRS1WBST',
     name: 'CONQUEROR 103 LIQ DEO SPRING 4/1GL',
     brand: 'CONQUEROR',
@@ -12290,7 +11996,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'purellsloan-green-certified-foam-hand-cleanser-fragrance-free-1500-ml-2carton-goj856502n6300',
+    slug: 'purell-sloan-green-certified-foam-hand-cleanser-fragrance-free-1-500-ml-2-carton',
     sku: 'GOJ856502N6300',
     name: 'PURELL®Sloan Green Certified Foam Hand Cleanser, Fragrance-Free, 1,500 Ml, 2/carton',
     brand: 'Purell',
@@ -12311,7 +12017,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'las-totally-awesome-all-purpose-concentrated-cleaner-128-oz-128ea',
+    slug: 'la-s-totally-awesome-all-purpose-concentrated-cleaner-128-oz',
     sku: '128EA',
     name: 'LA\'S TOTALLY AWESOME All Purpose Concentrated Cleaner (128 oz)',
     brand: 'LA\'s Totally Awesome',
@@ -12332,7 +12038,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-43012-extension-pole-12-silver-blue-43012',
+    slug: 'ettore-43012-extension-pole-12-silver-blue',
     sku: '43012',
     name: 'Ettore 43012 Extension Pole, 12\', Silver, Blue',
     brand: 'Ettore',
@@ -12353,7 +12059,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-63010-progrip-window-washer-10-inch-blue-63010',
+    slug: 'ettore-63010-progrip-window-washer-10-inch-blue',
     sku: '63010',
     name: 'Ettore 63010 ProGrip Window Washer, 10-Inch, Blue',
     brand: 'Ettore',
@@ -12374,7 +12080,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-progrip-14-in-window-washer-scrubber-63015',
+    slug: 'ettore-progrip-14-in-window-washer-scrubber',
     sku: '63015',
     name: 'Ettore ProGrip 14 in. Window Washer Scrubber',
     brand: 'Ettore',
@@ -12395,7 +12101,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ettore-18-in-progrip-window-washer-scrubber-63018',
+    slug: 'ettore-18-in-progrip-window-washer-scrubber-questions-answers',
     sku: '63018',
     name: 'Ettore 18 in. ProGrip Window Washer Scrubber',
     brand: 'Ettore',
@@ -12416,7 +12122,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-plates-9-dia-white-coated-100pack-12-packscarton-plate91200c-plate91200c',
+    slug: 'paper-plates-9-dia-white-coated-100-pack-12-packs-carton-plate91200c',
     sku: 'PLATE91200C',
     name: 'Paper Plates, 9 Dia, White, Coated, 100/pack, 12 Packs/carton (PLATE91200C)',
     brand: 'MJS',
@@ -12437,7 +12143,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-10-qt-super-coachmegavac-10-apcjanptmv2',
+    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-10-qt-super-coach-megavac-10-ct-apcjanptmv2',
     sku: 'APCJANPTMV2',
     name: 'Janitized, Vacuum Filter Bags Designed To Fit Proteam 10 Qt. Super Coach/megavac, 10/ct (APCJANPTMV2)',
     brand: 'Janitized',
@@ -12458,7 +12164,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-6-qt-quartervac-10ct-apcjan-apcjanptqv2',
+    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-6-qt-quartervac-100-ct-apcjanptqv2',
     sku: 'APCJANPTQV2',
     name: 'Janitized, Vacuum Filter Bags Designed To Fit Proteam 6 Qt. Quartervac, 10/ct (APCJANPTQV2)',
     brand: 'Janitized',
@@ -12479,7 +12185,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-super-coach-pro-10-10ct-apc-apcjanptscp102',
+    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-super-coach-pro-10-10-ct-apcjanptscp102',
     sku: 'APCJANPTSCP102',
     name: 'Janitized, Vacuum Filter Bags Designed To Fit Proteam Super Coach Pro 10, 10/ct (APCJANPTSCP102)',
     brand: 'Janitized',
@@ -12500,7 +12206,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-super-coach-pro-6gofree-pro-apcjanptscp62',
+    slug: 'janitized-vacuum-filter-bags-designed-to-fit-proteam-super-coach-pro-6-gofree-pro-100-ct-apcjanptscp62',
     sku: 'APCJANPTSCP62',
     name: 'Janitized, Vacuum Filter Bags Designed To Fit Proteam Super Coach Pro 6/gofree Pro, 10/ct (APCJANPTSCP62)',
     brand: 'Janitized',
@@ -12521,7 +12227,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'boardwalk-cup-carrier-tray-8-oz-to-32-oz-four-cups-kraft-300carton-bwk4cupcarrie-bwk4cupcarrier',
+    slug: 'boardwalk-cup-carrier-tray-8-oz-to-32-oz-four-cups-kraft-300-carton-bwk4cupcarrier',
     sku: 'BWK4CUPCARRIER',
     name: 'Boardwalk, Cup Carrier Tray, 8 Oz To 32 Oz, Four Cups, Kraft, 300/carton (BWK4CUPCARRIER)',
     brand: 'Boardwalk',
@@ -12542,7 +12248,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'classic-metered-air-freshener-dispenser-white-ads08w',
+    slug: 'classic-metered-air-freshener-dispenser-white',
     sku: 'ADS08W',
     name: 'Classic Metered Air Freshener Dispenser, White',
     brand: 'MJS',
@@ -12563,7 +12269,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-hot-cups-10-oz-white-20-cupssleeve-50-sleevescarton-sip101000-sip101000',
+    slug: 'paper-hot-cups-10-oz-white-20-cups-sleeve-50-sleeves-carton-sip101000',
     sku: 'SIP101000',
     name: 'Paper Hot Cups, 10 Oz, White, 20 Cups/sleeve, 50 Sleeves/carton (SIP101000)',
     brand: 'MJS',
@@ -12584,7 +12290,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-hot-cups-12-oz-white-20-cupssleeve-50-sleevescarton-sip121000-sip121000',
+    slug: 'paper-hot-cups-12-oz-white-20-cups-sleeve-50-sleeves-carton-sip121000',
     sku: 'SIP121000',
     name: 'Paper Hot Cups, 12 Oz, White, 20 Cups/sleeve, 50 Sleeves/carton (SIP121000)',
     brand: 'MJS',
@@ -12605,7 +12311,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-hot-cups-16-oz-white-20-cupssleeve-50-sleevescarton-bwkwht16hcup-sip161000',
+    slug: 'boardwalk-paper-hot-cups-16-oz-white-20-cups-sleeve-50-sleeves-carton-bwkwht16hcup',
     sku: 'SIP161000',
     name: 'Paper Hot Cups, 16 Oz, White, 20 Cups/sleeve, 50 Sleeves/carton (BWKWHT16HCUP)',
     brand: 'MJS',
@@ -12626,7 +12332,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-hot-cups-20-oz-white-12-cupssleeve-50-sleevescarton-sip20600-sip12600',
+    slug: 'paper-hot-cups-20-oz-white-12-cups-sleeve-50-sleeves-carton-sip20600',
     sku: 'SIP12600',
     name: 'Paper Hot Cups, 20 Oz, White, 12 Cups/sleeve, 50 Sleeves/carton (SIP20600)',
     brand: 'MJS',
@@ -12647,7 +12353,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'paper-hot-cups-8-oz-white-20-cupssleeve-50-sleevescarton-sip81000-sip81000',
+    slug: 'paper-hot-cups-8-oz-white-20-cups-sleeve-50-sleeves-carton-sip81000',
     sku: 'SIP81000',
     name: 'Paper Hot Cups, 8 Oz, White, 20 Cups/sleeve, 50 Sleeves/carton (SIP81000)',
     brand: 'MJS',
@@ -12668,7 +12374,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'crystal-geyser-alpine-spring-water-169-oz-bottle-24case-84-casespallet-cgw24514--cgw24514',
+    slug: 'crystal-geyser-alpine-spring-water-16-9-oz-bottle-24-case-84-cases-pallet-cgw24514-crv-included-in-price',
     sku: 'CGW24514',
     name: 'Crystal Geyser, Alpine Spring Water, 16.9 Oz Bottle, 24/case, 84 Cases/pallet (CGW24514) CRV Included In Price',
     brand: 'Crystal',
@@ -12689,7 +12395,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'clorox-disinfecting-wipes-7x8-fresh-scentcitrus-blend-75canister-3pk-4-packsct-c-clo30208',
+    slug: 'clorox-disinfecting-wipes-7x8-fresh-scent-citrus-blend-75-canister-3-pk-4-packs-ct-clo30208',
     sku: 'CLO30208',
     name: 'Clorox, Disinfecting Wipes, 7x8, Fresh Scent/citrus Blend, 75/canister, 3/pk, 4 Packs/ct (CLO30208)',
     brand: 'Clorox',
@@ -12710,7 +12416,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'fabuloso-multi-use-cleaner-lavender-scent-1-gal-bottle-4carton-cpc53058-cpc53058',
+    slug: 'fabuloso-multi-use-cleaner-lavender-scent-1-gal-bottle-4-carton-cpc53058',
     sku: 'CPC53058',
     name: 'Fabuloso, Multi-Use Cleaner, Lavender Scent, 1 Gal Bottle, 4/carton (CPC53058)',
     brand: 'Fabuloso',
@@ -12731,7 +12437,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'freshprod-eco-air-30-day-air-freshener-refill-cotton-blossom-289-oz-solid-6box-f-frsea36cb',
+    slug: 'freshprod-eco-air-30-day-air-freshener-refill-cotton-blossom-2-89-oz-solid-6-box-frsea36cb',
     sku: 'FRSEA36CB',
     name: 'FreshProd, Eco Air 30-Day Air Freshener Refill, Cotton Blossom, 2.89 Oz Solid, 6/box (FRSEA36CB)',
     brand: 'MJS',
@@ -12752,7 +12458,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'freshprod-eco-air-30-day-air-freshener-refill-cucumber-melon-289-oz-solid-6box-f-frsea36cme',
+    slug: 'freshprod-eco-air-30-day-air-freshener-refill-cucumber-melon-2-89-oz-solid-6-box-frsea36cme',
     sku: 'FRSEA36CME',
     name: 'FreshProd, Eco Air 30-Day Air Freshener Refill, Cucumber Melon, 2.89 Oz Solid, 6/box (FRSEA36CME)',
     brand: 'MJS',
@@ -12773,7 +12479,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'freshprod-eco-air-30-day-air-freshener-refill-citrus-scent-289-oz-solid-6box-frs-frsea36ct30',
+    slug: 'freshprod-eco-air-30-day-air-freshener-refill-citrus-scent-2-89-oz-solid-6-box-frsea36ct30',
     sku: 'FRSEA36CT30',
     name: 'FreshProd, Eco Air 30-Day Air Freshener Refill, Citrus Scent, 2.89 Oz Solid, 6/box (FRSEA36CT30)',
     brand: 'MJS',
@@ -12794,7 +12500,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'freshprod-eco-air-30-day-air-freshener-refill-mango-289-oz-solid-6box-frsea36mg3-frsea36mg30',
+    slug: 'freshprod-eco-air-30-day-air-freshener-refill-mango-2-89-oz-solid-6-box-frsea36mg30',
     sku: 'FRSEA36MG30',
     name: 'FreshProd, Eco Air 30 Day Air Freshener Refill, Mango, 2.89 Oz, Solid, 6/box (FRSEA36MG30)',
     brand: 'MJS',
@@ -12815,7 +12521,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'freshprod-eco-air-30-day-air-freshener-refill-spiced-apple-solid-6box-frsea36sap-frsea36sap',
+    slug: 'freshprod-eco-air-30-day-air-freshener-refill-spiced-apple-solid-6-box-frsea36sap',
     sku: 'FRSEA36SAP',
     name: 'FreshProd, Eco Air 30-Day Air Freshener Refill, Spiced Apple, Solid, 6/box (FRSEA36SAP)',
     brand: 'MJS',
@@ -12836,7 +12542,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-single-fold-paper-towels-1-ply-kraft-905-x-1013-16carton-5402',
+    slug: 'janitors-finest-single-fold-paper-towels-1-ply-kraft-9.05-x-10.13-16-carton',
     sku: '5402',
     name: 'JANITORS FINEST®, Single-Fold Paper Towels, 1-Ply, Kraft, 9.05 X 10.13, 16/carton',
     brand: 'Janitors Finest',
@@ -12857,7 +12563,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'georgiapac-sofpull-center-pull-perforated-paper-towels7-45x15-white320roll6-roll-gpc28124',
+    slug: 'georgiapac-sofpull-center-pull-perforated-paper-towels-7-4-5x15-white-320-roll-6-rolls-ctn-gpc28124',
     sku: 'GPC28124',
     name: 'GeorgiaPac, Sofpull Center-Pull Perforated Paper Towels,7 4/5x15, White,320/roll,6 Rolls/ctn (GPC28124)',
     brand: 'GeorgiaPac',
@@ -12878,7 +12584,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dixie-interfold-napkin-refills-two-ply-6-12-x-9-78-white-6000carton-gpc32006-gpc32006',
+    slug: 'dixie-interfold-napkin-refills-two-ply-6-1-2-x-9-7-8-white-6000-carton-gpc32006',
     sku: 'GPC32006',
     name: 'Dixie, Interfold Napkin Refills Two-Ply, 6 1/2 X 9 7/8, White, 6000/carton (GPC32006)',
     brand: 'Dixie',
@@ -12899,7 +12605,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'empress-rolled-rim-paper-cone-cups-45-oz-white-5000carton-emp45cone-emp4.5cone',
+    slug: 'empress-rolled-rim-paper-cone-cups-4-5-oz-white-5-000-carton-emp4-5cone',
     sku: 'EMP4.5CONE',
     name: 'Empress, Rolled Rim Paper Cone Cups, 4.5 Oz, White, 5,000/carton (EMP4.5CONE)',
     brand: 'Empress',
@@ -12920,7 +12626,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mercury-mercury-carpet-spot-extractor-with-hand-tool-3-gal-capacity-20-ft-cord-50-1001',
+    slug: 'mercury-mercury-carpet-spot-extractor-with-hand-tool-3-gal-capacity-20-ft-cord',
     sku: '50-1001',
     name: 'Mercury, Mercury Carpet Spot Extractor With Hand Tool, 3 Gal Capacity, 20 Ft Cord',
     brand: 'Mercury',
@@ -12941,7 +12647,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '7th-genpro-toilet-bowl-cleaner-empress-cypress-and-fir-32-oz-bottle-sev44727ea-sev44727ea',
+    slug: '7th-genpro-toilet-bowl-cleaner-empress-cypress-and-fir-32-oz-bottle-sev44727ea',
     sku: 'SEV44727EA',
     name: '7th GenPro, Toilet Bowl Cleaner, Empress Cypress And Fir, 32 Oz Bottle (SEV44727EA)',
     brand: 'MJS',
@@ -12962,7 +12668,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-quart-size-food-storage-bags-gjo11573-gjo11573',
+    slug: 'genuine-joe-quart-size-food-storage-bags-gjo11573',
     sku: 'GJO11573',
     name: 'Genuine Joe, Quart Size , Food Storage Bags (GJO11573)',
     brand: 'Genuine Joe',
@@ -12983,7 +12689,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-one-gallon-food-storage-bags-gjo11574-gjo11574',
+    slug: 'genuine-joe-one-gallon-food-storage-bags-gjo11574',
     sku: 'GJO11574',
     name: 'Genuine Joe,  One Gallon Food Storage Bags (GJO11574)',
     brand: 'Genuine Joe',
@@ -13004,7 +12710,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-sandwich-size-food-storage-bags-gjo11575-gjo11575',
+    slug: 'genuine-joe-sandwich-size-food-storage-bags-gjo11575',
     sku: 'GJO11575',
     name: 'Genuine Joe,  Sandwich Size ,Food Storage Bags (GJO11575)',
     brand: 'Genuine Joe',
@@ -13025,7 +12731,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-quart-size-food-storage-bags-gjo11576-gjo11576',
+    slug: 'genuine-joe-quart-size-food-storage-bags-gjo11576',
     sku: 'GJO11576',
     name: 'Genuine Joe, Quart Size Food Storage Bags (GJO11576)',
     brand: 'Genuine Joe',
@@ -13046,7 +12752,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-food-storage-bags-gjo11577-gjo11577',
+    slug: 'genuine-joe-food-storage-bags-gjo11577',
     sku: 'GJO11577',
     name: 'Genuine Joe, Food Storage Bags (GJO11577)',
     brand: 'Genuine Joe',
@@ -13067,7 +12773,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'genuine-joe-freezer-storage-bags-gjo11579-gjo11579',
+    slug: 'genuine-joe-freezer-storage-bags-gjo11579',
     sku: 'GJO11579',
     name: 'Genuine Joe, Freezer Storage Bags (GJO11579)',
     brand: 'Genuine Joe',
@@ -13088,7 +12794,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ate-3-pc-mini-wire-brush-40387-40387',
+    slug: 'ate-3-pc-mini-wire-brush-40387',
     sku: '40387',
     name: 'ATE, 3 Pc Mini Wire Brush 40387',
     brand: 'ATE',
@@ -13109,7 +12815,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-5110',
+    slug: 'sunnycare-1-ply-10-x-800-ft-white-6-rolls-carton-5110',
     sku: '5110',
     name: 'SunnyCare',
     brand: 'SunnyCare',
@@ -13130,7 +12836,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'alpine-spring-water-1-gal-bottle-6case-48-casespallet-cgw12514',
+    slug: 'alpine-spring-water-1-gal-bottle-6-case-48-cases-pallet',
     sku: 'CGW12514',
     name: 'Alpine Spring Water, 1 Gal Bottle, 6/case, 48 Cases/pallet',
     brand: 'Alpine',
@@ -13151,7 +12857,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'maids-caddy-mega-size-plastic-dura-tote-lime-green-dt6limegreen',
+    slug: 'maids-caddy-mega-size-plastic-dura-tote-navy',
     sku: 'DT6LIMEGREEN',
     name: 'MAIDS CADDY, MEGA SIZE PLASTIC DURA TOTE, LIME GREEN',
     brand: 'MAIDS',
@@ -13172,7 +12878,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'maids-caddy-mega-size-plastic-dura-tote-navy-dt6navy',
+    slug: 'maids-caddy-mega-size-plastic-dura-tote-navy-1',
     sku: 'DT6NAVY',
     name: 'MAIDS CADDY, MEGA SIZE PLASTIC DURA TOTE, NAVY',
     brand: 'MAIDS',
@@ -13193,7 +12899,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'maids-caddy-mega-size-plastic-dura-tote-red-dt6red',
+    slug: 'maids-caddy-mega-size-plastic-dura-tote-red',
     sku: 'DT6RED',
     name: 'MAIDS CADDY, MEGA SIZE PLASTIC DURA TOTE, RED',
     brand: 'MAIDS',
@@ -13214,7 +12920,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sierra-soft-hand-and-body-foam-wash-blue-125-liter-4carton-hsg0125-ob-hsg0125-ob',
+    slug: 'sierra-soft-hand-and-body-foam-wash-blue-1-25-liter-4-carton-hsg0125-ob',
     sku: 'HSG0125-OB',
     name: 'Sierra Soft, Hand and  Body Foam Wash (Blue) 1.25 Liter, 4/Carton (HSG0125-OB)',
     brand: 'Sierra',
@@ -13235,7 +12941,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sierra-soft-anti-bacterial-foam-wash-green-1-liter-6carton-hsab001-hsab001',
+    slug: 'sierra-soft-anti-bacterial-foam-wash-green-1-liter-6-carton-hsab001',
     sku: 'HSAB001',
     name: 'Sierra Soft, Anti-Bacterial Foam Wash (Green)   1 Liter, 6/Carton (HSAB001)',
     brand: 'Sierra',
@@ -13256,7 +12962,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sierra-soft-manual-hand-soap-dispenser-1-liter-black-dp862-bk-dp862-bk',
+    slug: 'sierra-soft-manual-hand-soap-dispenser-1-liter-black-dp862-bk',
     sku: 'DP862-BK',
     name: 'Sierra Soft, Manual, Hand Soap  Dispenser 1 Liter, Black  (DP862-BK)',
     brand: 'Sierra',
@@ -13277,7 +12983,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mop-bucketwringer-combos-side-press-26-qt-plastic-yellow-8028',
+    slug: 'mop-bucket-wringer-combos-side-press-26-qt-plastic-yellow',
     sku: '8028',
     name: 'MOP BUCKET/WRINGER COMBOS, SIDE-PRESS, 26 QT, PLASTIC, YELLOW',
     brand: 'MJS',
@@ -13298,7 +13004,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mop-bucketwringer-combos-side-press-19-qt-plastic-yellow-8019',
+    slug: 'mop-bucket-wringer-combos-side-press-19-qt-plastic-yellow',
     sku: '8019',
     name: 'MOP BUCKET/WRINGER COMBOS, SIDE-PRESS, 19 QT, PLASTIC, YELLOW',
     brand: 'MJS',
@@ -13319,7 +13025,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-33-x-39-10-mil-33-gallon-100cs-ld333910k-ld333910k',
+    slug: 'janitors-finest-can-liners-black-33-x-39-1.0-mil-33-gallon-100-cs-ld333910k',
     sku: 'LD333910K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 33 X 39, 1.0 MIL, 33 GALLON, 100/CS (LD333910K)',
     brand: 'Janitors Finest',
@@ -13340,7 +13046,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-38-x-58-20-mil-60-gallon-100cs-ld385820k-ld385820k',
+    slug: 'janitors-finest-can-liners-black-38-x-58-2.0-mil-60-gallon-100-cs-ld385820k',
     sku: 'LD385820K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 38 X 58, 2.0 MIL, 60 GALLON, 100/CS (LD385820K)',
     brand: 'Janitors Finest',
@@ -13361,7 +13067,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dribble-urinal-deodorizer-screen-citrus-10carton-dribbleoc',
+    slug: 'dribble-urinal-deodorizer-screen-citrus-10-carton',
     sku: 'DRIBBLEOC',
     name: 'DRIBBLE, URINAL DEODORIZER SCREEN, CITRUS, 10/CARTON',
     brand: 'DRIBBLE',
@@ -13382,7 +13088,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dribble-urinal-deodorizer-screen-cherry-10carton-dribblerc',
+    slug: 'dribble-urinal-deodorizer-screen-cherry-10-carton',
     sku: 'DRIBBLERC',
     name: 'DRIBBLE, URINAL DEODORIZER SCREEN, CHERRY, 10/CARTON',
     brand: 'DRIBBLE',
@@ -13403,7 +13109,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dribble-urinal-deodorizer-screen-apple-10carton-dribblega',
+    slug: 'dribble-urinal-deodorizer-screen-apple-10-carton',
     sku: 'DRIBBLEGA',
     name: 'DRIBBLE, URINAL DEODORIZER SCREEN, APPLE, 10/CARTON',
     brand: 'DRIBBLE',
@@ -13424,28 +13130,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'dribble-urinal-deodorizer-screen-ocean-mist-10carton-dribbleom',
-    sku: 'DRIBBLEOM',
-    name: 'DRIBBLE, URINAL DEODORIZER SCREEN, OCEAN MIST, 10/CARTON',
-    brand: 'DRIBBLE',
-    price: 23.95,
-    rating: 4.5,
-    reviewCount: 0,
-    images: ["/images/placeholder-product.svg"],
-    inStock: true,
-    stockQty: 1,
-    description: 'DRIBBLE DRIBBLE, URINAL DEODORIZER SCREEN, OCEAN MIST, 10/CARTON. Professional-grade cleaning chemicals product for commercial and industrial use. Trusted by janitorial professionals for quality and value.',
-    highlights: ['Pack: 10/CARTON', 'Category: Cleaning Chemicals', 'Professional-grade quality'],
-    specs: { 'SKU': 'DRIBBLEOM', 'Brand': 'DRIBBLE' },
-    category: 'Cleaning Chemicals',
-    subcategory: 'Restroom Cleaners',
-    cardTitle: 'DRIBBLE',
-    pack: '10/CARTON',
-    imageFit: 'contain',
-    quickBuy: [],
-  },
-  {
-    slug: 'wrap-it-all-machine-grade-stretch-film-20-x-80-gauge-x-5000-each-individually-bo-flm80205mea',
+    slug: 'wrap-it-all-machine-grade-stretch-film-20-x-80-gauge-x-5000-each-individually-boxed',
     sku: 'FLM80205MEA',
     name: 'WRAP IT ALL, MACHINE GRADE STRETCH FILM 20 X 80  GAUGE X 5000\', EACH, Individually Boxed',
     brand: 'WRAP',
@@ -13466,7 +13151,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-black-stripping-pads-5-per-carton-72-15',
+    slug: 'janitors-finest-black-stripping-pads-5-per-carton',
     sku: '72-15',
     name: 'JANITORS FINEST®,  BLACK STRIPPING PADS,   5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13487,7 +13172,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-red-buffing-pads-5-per-carton-51-15',
+    slug: 'janitors-finest-red-buffing-pads-5-per-carton',
     sku: '51-15',
     name: 'JANITORS FINEST®, RED BUFFING PADS, 5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13508,7 +13193,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-white-polishing-pads-5-per-carton-41-15',
+    slug: 'janitors-finest-white-polishing-pads-5-per-carton',
     sku: '41-15',
     name: 'JANITORS FINEST®,  WHITE POLISHING PADS,   5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13529,7 +13214,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-natural-blend-light-pads-5-per-carton-33-19',
+    slug: 'janitors-finest-natural-blend-light-pads-5-per-carton',
     sku: '33-19',
     name: 'JANITORS FINEST®, NATURAL BLEND LIGHT  PADS, 5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13550,7 +13235,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-green-scrubbing-pads-5-per-carton-55-17',
+    slug: 'janitors-finest-green-scrubbing-pads-5-per-carton',
     sku: '55-17',
     name: 'JANITORS FINEST®,  GREEN SCRUBBING PADS, 5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13571,7 +13256,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-razorback-super-stripping-pads-5-per-carton-75-19',
+    slug: 'janitors-finest-razorback-super-stripping-pads-5-per-carton',
     sku: '75-19',
     name: 'JANITORS FINEST®,  RAZORBACK SUPER STRIPPING PADS, 5 PER CARTON',
     brand: 'Janitors Finest',
@@ -13592,7 +13277,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-toilet-sauce-non-acid-toilet-bowl-cleaner-gal-4011',
+    slug: 'janitors-finest-toilet-sauce-non-acid-toilet-bowl-cleaner-gal',
     sku: '4011',
     name: 'JANITORS FINEST®, TOILET SAUCE, NON ACID TOILET BOWL CLEANER, GAL',
     brand: 'Janitors Finest',
@@ -13613,7 +13298,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-toilet-sauce-heavy-duty-23-emulsion-bowl-cleaner-gal-4021',
+    slug: 'janitors-finest-toilet-sauce-heavy-duty-23-emulsion-bowl-cleaner-gal',
     sku: '4021',
     name: 'JANITORS FINEST®,  TOILET SAUCE, HEAVY DUTY 23%  EMULSION BOWL CLEANER, GAL',
     brand: 'Janitors Finest',
@@ -13634,7 +13319,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-shower-sauce-shower-and-tub-cleaner-gal-4121',
+    slug: 'janitors-finest-shower-sauce-shower-and-tub-cleaner-gal',
     sku: '4121',
     name: 'JANITORS FINEST®,  SHOWER SAUCE, SHOWER AND TUB CLEANER, GAL',
     brand: 'Janitors Finest',
@@ -13655,7 +13340,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'empress-tad-premium-roll-towel-rt680011',
+    slug: 'empress-tad-premium-roll-towel-1-ply-7-875-x-800-ft-white-6-rolls-carton-rt680011',
     sku: 'RT680011',
     name: 'EMPRESS TAD PREMIUM ROLL TOWEL',
     brand: 'EMPRESS',
@@ -13676,7 +13361,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-33-x-39-20-mil-33-gallon-100cs-ld333920k-ld333920k',
+    slug: 'janitors-finest-can-liners-black-33-x-39-2-0-mil-33-gallon-100-cs-ld333920k',
     sku: 'LD333920K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 33 X 39, 2.0 MIL, 33 GALLON, 100/CS (LD333920K)',
     brand: 'Janitors Finest',
@@ -13697,7 +13382,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-50-x-60-15-mil-65-gallon-50cs-ld506015k-ld506015k',
+    slug: 'janitors-finest-can-liners-black-50-x-60-1-5-mil-65-gallon-50-cs-ld506015k',
     sku: 'LD506015K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 50 X 60, 1.5 MIL, 65 GALLON, 50/CS (LD506015K)',
     brand: 'Janitors Finest',
@@ -13718,7 +13403,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-black-61-x-68-15-mil-95-gallon-25cs-ld616815k-ld616815k',
+    slug: 'janitors-finest-can-liners-black-61-x-68-1-5-mil-95-gallon-25-cs-ld616815k',
     sku: 'LD616815K',
     name: 'JANITORS FINEST®, CAN LINERS BLACK, 61 X 68, 1.5 MIL, 95 GALLON, 25/CS (LD616815K)',
     brand: 'Janitors Finest',
@@ -13739,7 +13424,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-can-liners-clear-24-x-24-50-mil-7-10-gallon-500cs-ld242450c-ld242450c',
+    slug: 'janitors-finest-can-liners-clear-24-x-24-50-mil-7-10-gallon-500-cs-ld242450c',
     sku: 'LD242450C',
     name: 'JANITORS FINEST®, CAN LINERS CLEAR, 24 X 24, .50 MIL, 7-10 GALLON, 500/CS (LD242450C)',
     brand: 'Janitors Finest',
@@ -13760,7 +13445,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-medium-8302ea',
+    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-medium',
     sku: '8302EA',
     name: 'SUNNYCARE, ORANGE, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, MEDIUM',
     brand: 'SunnyCare',
@@ -13781,7 +13466,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-large-8303ea',
+    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-large',
     sku: '8303EA',
     name: 'SUNNYCARE, ORANGE, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, LARGE',
     brand: 'SunnyCare',
@@ -13802,7 +13487,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-x-large-8304ea',
+    slug: 'sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-x-large',
     sku: '8304EA',
     name: 'SUNNYCARE, ORANGE, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, X-LARGE',
     brand: 'SunnyCare',
@@ -13823,7 +13508,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-medium-8402ea',
+    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-medium',
     sku: '8402EA',
     name: 'SUNNYCARE, BLACK, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, MEDIUM',
     brand: 'SunnyCare',
@@ -13844,7 +13529,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-large-8403ea',
+    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-large',
     sku: '8403EA',
     name: 'SUNNYCARE, BLACK, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, LARGE',
     brand: 'SunnyCare',
@@ -13865,7 +13550,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-x-large-8404ea',
+    slug: 'sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-x-large',
     sku: '8404EA',
     name: 'SUNNYCARE, BLACK, DIAMOND TEXTURED NITRILE GLOVES, 8 MIL, 100 PER BOX, X-LARGE',
     brand: 'SunnyCare',
@@ -13886,7 +13571,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '11-nylon-cable-zip-ties-natural-42-lb-tensile-1000-bag-3628011whi',
+    slug: '11-nylon-cable-zip-ties-natural-42-lb-tensile-1000-bag',
     sku: '3628011WHI',
     name: '11 NYLON CABLE ZIP TIES, NATURAL, 42 LB TENSILE, 1000, BAG',
     brand: 'MJS',
@@ -13907,7 +13592,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '11-nylon-cable-zip-ties-green-50-lb-tensile-1000-bag-4828011gre',
+    slug: '11-nylon-cable-zip-ties-green-50-lb-tensile-1000-bag',
     sku: '4828011GRE',
     name: '11 NYLON, CABLE  ZIP TIES, GREEN, 50 LB TENSILE, 1000, BAG',
     brand: 'MJS',
@@ -13928,7 +13613,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '11-nylon-cable-zip-ties-red-50-lb-tensile-1000-bag-4828011red',
+    slug: '11-nylon-cable-zip-ties-red-50-lb-tensile-1000-bag',
     sku: '4828011RED',
     name: '11 NYLON, CABLE  ZIP TIES, RED, 50 LB TENSILE, 1000, BAG',
     brand: 'MJS',
@@ -13949,7 +13634,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '11-nylon-cable-zip-ties-yellow-50-lb-tensile-1000-bag-4828011yel',
+    slug: '11-nylon-cable-zip-ties-yellow-50-lb-tensile-1000-bag',
     sku: '4828011YEL',
     name: '11 NYLON, CABLE ZIP TIES, YELLOW, 50 LB TENSILE, 1000, BAG',
     brand: 'MJS',
@@ -13970,7 +13655,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-feeling-peachy-lotion-hand-soap-gal-25640ea',
+    slug: 'janitors-finest-feeling-peachy-lotion-hand-soap-gal',
     sku: '25640EA',
     name: 'JANITORS FINEST, FEELING PEACHY, LOTION HAND SOAP, GAL',
     brand: 'Janitors Finest',
@@ -13991,7 +13676,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-defender-carpet-upholstery-protector-gal-03025ea',
+    slug: 'janitors-finest-defender-carpet-upholstery-protector-gal',
     sku: '03025EA',
     name: 'JANITORS FINEST, DEFENDER, CARPET & UPHOLSTERY PROTECTOR, GAL',
     brand: 'Janitors Finest',
@@ -14012,7 +13697,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'spill-master-absorbent-1-gallon-jug-6430-2jug',
+    slug: 'spill-master-absorbent-1-gallon-jug',
     sku: '6430-2JUG',
     name: 'SPILL MASTER™, ABSORBENT, 1 GALLON JUG',
     brand: 'SPILL',
@@ -14033,7 +13718,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-fresh-lemon-lotion-hand-soap-gallon-25625ea',
+    slug: 'janitors-finest-fresh-lemon-lotion-hand-soap-gallon',
     sku: '25625EA',
     name: 'JANITORS FINEST, FRESH LEMON LOTION HAND SOAP, GALLON',
     brand: 'Janitors Finest',
@@ -14054,7 +13739,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'open-metal-seals-for-34-steel-strap-5000-carton-340',
+    slug: 'open-metal-seals-for-3-4-steel-strap-5000-carton',
     sku: '340',
     name: 'Open Metal Seals for 3/4 Steel Strap, 5000 / CARTON',
     brand: 'MJS',
@@ -14075,7 +13760,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'open-metal-seals-for-12-steel-strap-5000-carton-120',
+    slug: 'open-metal-seals-for-1-2-steel-strap-5000-carton',
     sku: '120',
     name: 'Open Metal Seals for 1/2 Steel Strap, 5000, CARTON',
     brand: 'MJS',
@@ -14096,7 +13781,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'tradition-quietclean-upright-vacuum-sc889a-12-cleaning-path-grayredblack-eursc889d',
+    slug: 'tradition-quietclean-upright-vacuum-sc889a-12-cleaning-path-gray-red-black',
     sku: 'EURSC889D',
     name: 'Tradition Quietclean Upright Vacuum Sc889a, 12 Cleaning Path, Gray/red/black',
     brand: 'MJS',
@@ -14117,7 +13802,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'pinesol-multi-surface-cleaner-concentrated-lemon-fresh-scent-80-oz-bottle-3carto-clo60607ct',
+    slug: 'pinesol-multi-surface-cleaner-concentrated-lemon-fresh-scent-80-oz-bottle-3-carton-clo60607ct',
     sku: 'CLO60607CT',
     name: 'PineSol Multi-surface Cleaner Concentrated, Lemon Fresh Scent, 80 Oz Bottle, 3/carton (CLO60607CT)',
     brand: 'PineSol',
@@ -14138,7 +13823,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'perfect-p100m-heavy-duty-commercial-upright-vacuum-81-amp-motor-p100m',
+    slug: 'perfect-p100m-heavy-duty-commercial-upright-vacuum-8-1-amp-motor',
     sku: 'P100M',
     name: 'Perfect P100M Heavy Duty Commercial Upright Vacuum, 8.1 Amp Motor',
     brand: 'Perfect',
@@ -14159,7 +13844,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'perfect-p99-heavy-duty-commercial-upright-vacuum-5-amp-motor-p99',
+    slug: 'perfect-p99-heavy-duty-commercial-upright-vacuum-5-amp-motor',
     sku: 'P99',
     name: 'Perfect P99 Heavy Duty Commercial Upright Vacuum, 5 Amp Motor',
     brand: 'Perfect',
@@ -14180,7 +13865,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'gofit-6-cordless-8ah-6-qt-commercial-backpack-vacuum-w-xover-multi-surface-teles-107786',
+    slug: 'gofit-6-cordless-8ah-6-qt-commercial-backpack-vacuum-w-xover-multi-surface-telescoping-wand-tool-kit-107786',
     sku: '107786',
     name: 'GoFit 6 Cordless 8Ah, 6 qt. Commercial Backpack Vacuum w/ Xover Multi-Surface Telescoping Wand Tool Kit (107786)',
     brand: 'GoFit',
@@ -14201,7 +13886,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'proforce-1200xp-commercial-upright-vacuum-cleaner-with-on-board-tools-107251-107251',
+    slug: 'proforce-1200xp-commercial-upright-vacuum-cleaner-with-on-board-tools-107251',
     sku: '107251',
     name: 'ProForce 1200XP Commercial Upright Vacuum Cleaner with On-Board Tools (107251)',
     brand: 'ProForce',
@@ -14222,7 +13907,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'proguard-4-portable-wetdry-vacuum-with-tool-kit-107128-107128',
+    slug: 'proguard-4-portable-wet-dry-vacuum-with-tool-kit-107128',
     sku: '107128',
     name: 'ProGuard 4 Portable Wet/Dry Vacuum with Tool Kit (107128)',
     brand: 'ProGuard',
@@ -14243,7 +13928,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'proguard-20-gal-commercial-wetdry-vacuum-with-tool-kit-and-front-mount-squeegee--107360',
+    slug: 'proguard-20-gal-commercial-wet-dry-vacuum-with-tool-kit-and-front-mount-squeegee-107360',
     sku: '107360',
     name: 'ProGuard 20 Gal. Commercial Wet/Dry Vacuum with Tool Kit and Front Mount Squeegee (107360)',
     brand: 'ProGuard',
@@ -14264,7 +13949,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'gofit-3-cordless-8ah-3-qt-commercial-backpack-vacuum-w-xover-multi-surface-teles-107778',
+    slug: 'gofit-3-cordless-8ah-3-qt-commercial-backpack-vacuum-w-xover-multi-surface-telescoping-wand-tool-kit-107778',
     sku: '107778',
     name: 'GoFit 3 Cordless 8Ah, 3 qt. Commercial Backpack Vacuum w/ Xover Multi-Surface Telescoping Wand Tool Kit (107778)',
     brand: 'GoFit',
@@ -14285,7 +13970,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'gofit-3-3-qt-commercial-backpack-vacuum-w-xover-multi-surface-telescoping-wand-t-107713',
+    slug: 'gofit-3-3-qt-commercial-backpack-vacuum-w-xover-multi-surface-telescoping-wand-tool-kit-107713',
     sku: '107713',
     name: 'GoFit 3, 3 qt. Commercial Backpack Vacuum w/ Xover Multi-Surface Telescoping Wand Tool Kit (107713)',
     brand: 'GoFit',
@@ -14306,7 +13991,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'virtue-household-paper-towel-2-ply-2-ply-11-x-9-100-sheets-per-roll-24-rolls-per-tc16501',
+    slug: 'virtue-household-paper-towel-2-ply-2-ply-11-x-9-100-sheets-per-roll-24-rolls-per-case',
     sku: 'TC16501',
     name: 'Virtue Household Paper Towel, 2 Ply, 2 Ply, 11 x 9, 100 Sheets per Roll, 24 Rolls Per Case',
     brand: 'Virtue',
@@ -14327,7 +14012,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'royal-platinum-ii-hard-wound-towel-800-white-6-rolls-per-case-34725-34725',
+    slug: 'royal-platinum-ii-hard-wound-towel-800-white-6-rolls-per-case-34725',
     sku: '34725',
     name: 'Royal Platinum® II Hard Wound Towel - 800\', White, 6 rolls Per Case (34725)',
     brand: 'Royal',
@@ -14348,7 +14033,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-9-jumbo-2-ply-bath-tissue-33-x-1000-12-per-case-5201-5201',
+    slug: 'sunnycare-premium-9-jr-jumbo-bath-tissue-2-ply',
     sku: '5201',
     name: 'Janitors Finest 9 Jumbo 2 Ply Bath Tissue - 3.3 x 1000\', 12 Per case (5201)',
     brand: 'Janitors Finest',
@@ -14369,7 +14054,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-80-7000-12-gal-dragon-restroom-cleaner-1200-psi-3-stage-motor-wwand-spray-80-7000',
+    slug: 'sandia-80-7000-12-gal-dragon-restroom-cleaner-1200-psi-3-stage-motor-w-wand-spray-gun-hoses-and-cord',
     sku: '80-7000',
     name: 'Sandia 80-7000 12 Gal. Dragon Restroom Cleaner, 1200 PSI, 3 Stage Motor, W/Wand, Spray Gun , Hoses and Cord',
     brand: 'Sandia',
@@ -14390,7 +14075,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-80-3500h-sniper-12-gallon-500-psi-dual-3-stage-corded-carpet-extractor-ho-80-3500h',
+    slug: 'sandia-80-3500h-sniper-12-gallon-500-psi-dual-3-stage-corded-carpet-extractor-hoses-and-wand-included',
     sku: '80-3500H',
     name: 'Sandia 80-3500H Sniper 12 Gallon 500 PSI Dual 3-Stage Corded Carpet Extractor, Hoses and Wand Included',
     brand: 'Sandia',
@@ -14411,7 +14096,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-86-4000-h-sniper-indy-automotive-3-stage-heated-corded-carpet-extractor-1-86-4000h',
+    slug: 'sandia-86-4000-h-sniper-indy-automotive-3-stage-heated-corded-carpet-extractor-12-gallon-hoses-and-wand-included',
     sku: '86-4000H',
     name: 'Sandia 86-4000-H Sniper Indy Automotive 3-Stage Heated Corded Carpet Extractor - 12 Gallon, Hoses  and wand Included',
     brand: 'Sandia',
@@ -14432,7 +14117,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-stainless-steel-dual-jet-wand-and-hoses-80-0500',
+    slug: 'sandia-stainless-steel-dual-jet-wand-and-hoses',
     sku: '80-0500',
     name: 'Sandia Stainless Steel Dual Jet Wand and Hoses',
     brand: 'Sandia',
@@ -14453,7 +14138,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sandia-50-7000-indy-automotive-3-stage-heated-corded-spot-extractor-with-4-stain-50-7000',
+    slug: 'sandia-50-7000-indy-automotive-3-stage-heated-corded-spot-extractor-with-4-stainless-steel-upholstery-tool-3-gallon',
     sku: '50-7000',
     name: 'Sandia 50-7000 Indy Automotive 3-Stage Heated Corded Spot Extractor with 4 Stainless Steel Upholstery Tool - 3 Gallon',
     brand: 'Sandia',
@@ -14474,7 +14159,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'mercury-storm-20-gallon-wet-dry-vac-wvc-20-chromed-stainless-steel-tank-wvc20',
+    slug: 'mercury-storm-20-gallon-wet-dry-vac-wvc-20-chromed-stainless-steel-tank',
     sku: 'WVC20',
     name: 'MERCURY STORM 20-GALLON WET / DRY VAC, WVC-20 CHROMED STAINLESS STEEL TANK',
     brand: 'Mercury',
@@ -14495,7 +14180,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'vol430-17-walk-behind-floor-scrubber-machine-360-degree-rotating-head-cordless-r-vol-430',
+    slug: 'vol430-17-walk-behind-floor-scrubber-machine-360-degree-rotating-head-cordless-rechargeable-lithium-battery',
     sku: 'VOL-430',
     name: 'VOL430 17 Walk-behind Floor Scrubber Machine, 360 Degree Rotating Head, Cordless Rechargeable Lithium Battery',
     brand: 'VOL430',
@@ -14642,7 +14327,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'purox-germicidal-liquid-bleach-6-extra-strength-epa-1-gal-bottle-11035ea',
+    slug: 'purox-germicidal-liquid-bleach-6-extra-strength-epa-1-gal-bottle',
     sku: '11035EA',
     name: 'PUROX,  Germicidal Liquid Bleach 6%, Extra Strength, EPA ,1 gal Bottle',
     brand: 'Purox',
@@ -14663,7 +14348,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-24-x-33-compostable-trash-bag-10-mil-250-case-light-green-color-bpi-ce-243310cb',
+    slug: 'sunnycare-24-x-33-compostable-trash-bag-1-0-mil-250-case-light-green-color-bpi-certified',
     sku: '243310CB',
     name: 'SunnyCare® 24 x 33 Compostable trash bag 1.0 Mil, 250/ CAse  (light green Color) BPI Certified',
     brand: 'SunnyCare',
@@ -14684,7 +14369,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-33-x-40-compostable-trash-bag-10-mil-100case-light-green-color-bpi-cer-334010cb',
+    slug: 'sunnycare-33-x-40-compostable-trash-bag-1-0-mil-100-case-light-green-color-bpi-certified',
     sku: '334010CB',
     name: 'SunnyCare® 33 x 40 Compostable trash bag, 1.0 Mil, 100/Case  (light green Color) BPI Certified',
     brand: 'SunnyCare',
@@ -14705,7 +14390,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'sunnycare-40-x-48-compostable-trash-bag-10-mil-100-case-light-green-color-bpi-ce-404810cb',
+    slug: 'sunnycare-40-x-48-compostable-trash-bag-1-0-mil-100-case-light-green-color-bpi-certified',
     sku: '404810CB',
     name: 'SunnyCare® 40 x 48 Compostable trash bag, 1.0 Mil  100/ Case  (light green Color)  BPI Certified',
     brand: 'SunnyCare',
@@ -14726,7 +14411,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'ipc-eagle-color-coded-aluminum-pole-whandle-5-green-prte70160',
+    slug: 'ipc-eagle-color-coded-aluminum-pole-w-handle-5-green',
     sku: 'PRTE70160',
     name: 'IPC Eagle Color-Coded Aluminum Pole w/Handle - 5\', Green',
     brand: 'IPC Eagle',
@@ -14747,7 +14432,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-clear-foaming-hand-soap-unscented-dye-free-gallon-51401fea-51401fea',
+    slug: 'janitors-finest-clear-foaming-hand-soap-unscented-dye-free-gallon-51401fea',
     sku: '51401FEA',
     name: 'Janitors Finest, Clear Foaming Hand Soap, Unscented, Dye Free - Gallon (51401FEA)',
     brand: 'Janitors Finest',
@@ -14768,7 +14453,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '24-oz-round-spray-bottle-only-120119-120119',
+    slug: '24-oz-round-spray-bottle-only-120119',
     sku: '120119',
     name: '24 OZ ROUND SPRAY BOTTLE ONLY (120119)',
     brand: 'MJS',
@@ -14789,7 +14474,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: '36-oz-pet-spray-bottle-120157-120157',
+    slug: '36-oz-pet-spray-bottle-120157',
     sku: '120157',
     name: '36 OZ PET SPRAY BOTTLE (120157)',
     brand: 'MJS',
@@ -14810,7 +14495,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'classic-metered-air-freshener-dispenser-black-ads08b',
+    slug: 'classic-metered-air-freshener-dispenser-black',
     sku: 'ADS08B',
     name: 'Classic Metered Air Freshener Dispenser, Black',
     brand: 'MJS',
@@ -14831,7 +14516,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-baby-powder-auto-air-fresheners-250-ct-wwbabypowder',
+    slug: 'wonder-wafers-baby-powder-auto-air-fresheners-250-ct',
     sku: 'WWBABYPOWDER',
     name: 'WONDER WAFERS, BABY POWDER, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14852,7 +14537,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-black-royale-auto-air-fresheners-250-ct-wwblackroyale',
+    slug: 'wonder-wafers-black-royale-auto-air-fresheners-250-ct',
     sku: 'WWBLACKROYALE',
     name: 'WONDER WAFERS, BLACK ROYALE, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14873,7 +14558,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-fresh-lemon-auto-air-fresheners-250-ct-wwfreshlemon',
+    slug: 'wonder-wafers-fresh-lemon-auto-air-fresheners-250-ct',
     sku: 'WWFRESHLEMON',
     name: 'WONDER WAFERS, FRESH LEMON, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14894,7 +14579,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-lavender-sachet-auto-air-fresheners-250-ct-wwlavendersachet',
+    slug: 'wonder-wafers-lavender-sachet-auto-air-fresheners-250-ct',
     sku: 'WWLAVENDERSACHET',
     name: 'WONDER WAFERS, LAVENDER SACHET, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14915,7 +14600,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-new-car-auto-air-fresheners-250-ct-wwnucar',
+    slug: 'wonder-wafers-new-car-auto-air-fresheners-250-ct',
     sku: 'WWNUCAR',
     name: 'WONDER WAFERS, NEW CAR, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14936,7 +14621,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-pina-colada-auto-air-fresheners-250-ct-wwpinacolada',
+    slug: 'wonder-wafers-pina-colada-auto-air-fresheners-250-ct',
     sku: 'WWPINACOLADA',
     name: 'WONDER WAFERS, PINA COLADA, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14957,7 +14642,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'wonder-wafers-wild-cherry-auto-air-fresheners-250-ct-wwwildcherry',
+    slug: 'wonder-wafers-wild-cherry-auto-air-fresheners-250-ct',
     sku: 'WWWILDCHERRY',
     name: 'WONDER WAFERS, WILD CHERRY, AUTO AIR FRESHENERS, 250 CT',
     brand: 'Wonder Wafers',
@@ -14978,7 +14663,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'janitors-finest-pro-bathroom-tissue-2-ply-white-45-x-40-sheet-500-sheetsroll-96c-5604p',
+    slug: 'janitors-finest-pro-bathroom-tissue-2-ply-white-4-5-x-4-0-sheet-500-sheets-roll-96-carton',
     sku: '5604P',
     name: 'JANITORS FINEST PRO, BATHROOM TISSUE, 2-PLY, WHITE, 4.5 X 4.0 SHEET, 500 SHEETS/ROLL, 96/CARTON',
     brand: 'Janitors Finest',
@@ -14999,7 +14684,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'johnnys-choice-toss-ins-jc25',
+    slug: 'johnny-s-choice-toss-ins',
     sku: 'JC25',
     name: 'Johnny’s Choice Toss-Ins',
     brand: 'Johnny’s',
@@ -15020,7 +14705,7 @@ export const importedProducts: ProductData[] = [
     quickBuy: [],
   },
   {
-    slug: 'johnnys-choice-toss-ins-jc250',
+    slug: 'johnny-s-choice-toss-ins-aebi',
     sku: 'JC250',
     name: 'Johnny’s Choice Toss-Ins',
     brand: 'Johnny’s',

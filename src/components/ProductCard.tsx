@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
@@ -46,11 +47,14 @@ export default function ProductCard({ product }: { product: ProductData }) {
         </div>
       )}
 
-      <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden">
-        <img
+      <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden relative">
+        <Image
           src={product.images[0]}
           alt={product.cardTitle}
-          className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}`}
+          fill
+          unoptimized
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className={product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}
         />
       </a>
 

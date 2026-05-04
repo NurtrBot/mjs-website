@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -112,8 +113,8 @@ function YourProductsStrip({ favorites, removeFavorite, orders, addItem }: {
                 <X className="w-3 h-3" />
               </button>
               <div className="absolute top-2 left-2 z-10 bg-mjs-red text-white text-[7px] font-bold px-1.5 py-0.5 rounded">SAVED</div>
-              <a href={`/product/${fav.slug}`} className="block h-[160px] bg-white overflow-hidden">
-                <img src={fav.image} alt={fav.name} className="w-full h-full object-contain p-2" />
+              <a href={`/product/${fav.slug}`} className="block h-[160px] bg-white overflow-hidden relative">
+                <Image src={fav.image} alt={fav.name} fill sizes="(max-width: 768px) 50vw, 200px" className="object-contain p-2" />
               </a>
               <div className="p-3">
                 <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{fav.sku}</div>
@@ -140,8 +141,8 @@ function BuyAgainCard({ product, addItem }: { product: BuyAgainProduct; addItem:
   const [qty, setQty] = useState(1);
   return (
     <div className="flex-shrink-0 w-[190px] bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative">
-      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden">
-        <img src={product.image} alt={product.name} className="w-full h-full object-contain p-2" />
+      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden relative">
+        <Image src={product.image} alt={product.name} fill sizes="(max-width: 768px) 50vw, 200px" className="object-contain p-2" />
       </a>
       <div className="p-3">
         <div className="flex items-center justify-between">
@@ -1987,8 +1988,8 @@ export default function AccountDashboard() {
               if (!imgUrl) return null;
               return (
                 <div className="px-6 pt-5">
-                  <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                    <img src={imgUrl} alt={viewingReward.brand} className="w-full h-auto" />
+                  <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200 relative" style={{ aspectRatio: "16/9" }}>
+                    <Image src={imgUrl} alt={viewingReward.brand} fill sizes="(max-width: 768px) 100vw, 600px" className="object-cover" />
                   </div>
                 </div>
               );
@@ -2059,7 +2060,7 @@ export default function AccountDashboard() {
             {/* Invoice Header */}
             <div className="bg-mjs-dark rounded-t-2xl px-8 py-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <img src="/images/mjs-logo.png" alt="MJS" className="h-14 object-contain" />
+                <Image src="/images/mjs-logo.png" alt="MJS" width={120} height={56} className="h-14 w-auto object-contain" />
                 <div>
                   <div className="text-white font-extrabold text-lg tracking-tight">MOBILE JANITORIAL SUPPLY</div>
                   <div className="text-gray-300 text-sm mt-0.5">3066 E. La Palma Ave, Anaheim, CA 92806</div>

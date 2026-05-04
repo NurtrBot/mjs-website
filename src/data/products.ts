@@ -4,7 +4,7 @@ import type { ProductData } from "./product-types";
 
 export const products: ProductData[] = [
   {
-    slug: "janitors-finest-2-ply-toilet-tissue-5602",
+    slug: "janitors-finest-2-ply-toilet-tissue-4-3-x-3-5-500-sheets-per-roll-96-rolls-per-case-5602",
     sku: "5602",
     name: '2-Ply Toilet Tissue, 96 Rolls/Case',
     cardTitle: "2-Ply Toilet Tissue",
@@ -44,7 +44,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "genuine-joe-multifold-towels-gjo21100",
+    slug: "genuine-joe-multifold-towels-1-ply-9-50-x-9-10-white-interfolded-embossed-anti-contamination-chlorine-free-250-quantity-per-bundle-4000-carton",
     sku: "GJO21100",
     name: "Multifold Paper Towels, White, 4000/Carton",
     cardTitle: "Multifold Paper Towels",
@@ -82,7 +82,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-jumbo-bath-tissue-5200",
+    slug: "janitors-finest-5200-9jrt-2-ply-premium-jumbo-roll-paper-bathroom-tissue-12-rolls",
     sku: "5200",
     name: '9" Jumbo Bath Tissue, 2-Ply, 12 Rolls/Carton',
     cardTitle: "Jumbo Bath Tissue",
@@ -119,7 +119,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-green-degreaser-3180ea",
+    slug: "janitors-finest-3180-heavy-duty-green-degreaser",
     sku: "3180EA",
     name: "Heavy Duty Green Degreaser, 1 Gallon",
     cardTitle: "Heavy Duty Green Degreaser",
@@ -192,7 +192,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "stretch-film-clear-18-55ga-1500",
+    slug: "stretch-film-clear-18-x-63-ga-x-1500-4-rolls-per-carton",
     sku: "FLM140180",
     name: 'Clear Stretch Film, 18" x 55 GA x 1500\'',
     cardTitle: "Clear Stretch Film",
@@ -269,7 +269,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-toilet-seat-covers-5800",
+    slug: "janitors-finest-5800-premium-half-fold-toilet-seat-covers-250-covers-sleeve-20-sleeves-carton",
     sku: "5800",
     name: "Half-Fold Toilet Seat Covers, 5000/Carton",
     cardTitle: "Half-Fold Toilet Seat Covers",
@@ -305,7 +305,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-roll-towel-5108",
+    slug: "janitors-finest-premium-plus-roll-towel-1-ply-8-x-600-ft-white-12-rolls-carton-5108",
     sku: "5108",
     name: 'Premium Roll Towel, 1-Ply, 12 Rolls/Carton',
     cardTitle: "Premium Roll Towel",
@@ -343,7 +343,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "mop-bucket-wringer-combo-8036",
+    slug: "mop-bucket-and-wringer-combo-35-qt-sidepress-yellow",
     sku: "8036",
     name: "Mop Bucket/Wringer Combo, Side-Press, 35 QT, Plastic, Yellow",
     cardTitle: "Mop Bucket/Wringer Combo",
@@ -378,7 +378,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "dribble-urinal-screen-ocean-mist",
+    slug: "dribble-urinal-deodorizer-screen-ocean-mist-10-carton",
     sku: "DRIBBLEOM",
     name: "Dribble Urinal Deodorizer Screen, Ocean Mist, 10/Carton",
     cardTitle: "Urinal Deodorizer Screen",
@@ -412,7 +412,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "chase-value-scents-lavender-4385370",
+    slug: "chase-products-value-scents-lavender-12-6-17-oz-ct-4385370",
     sku: "4385370",
     name: "Chase Products Value Scents, Metered Spray, Lavender, 6.17 OZ, 12/CT",
     cardTitle: "Value Scents Lavender Spray",
@@ -449,7 +449,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-can-liners-clear-cl404814",
+    slug: "janitors-finest-can-liners-clear-40-x-48-14-micron-40-45-gallon-250-cs-cl404814",
     sku: "CL404814",
     name: "Can Liners Clear, 40 x 48, 14 Micron, 40-45 Gallon, 250/CS",
     cardTitle: "Clear Can Liners 40-45 Gal",
@@ -486,7 +486,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-lavender-cleaner-3162ea",
+    slug: "janitors-finest-3162-lavender-cleaner",
     sku: "3162EA",
     name: "Janitors Finest Lavender Cleaner, Gallon",
     cardTitle: "Fabulous Lavender Cleaner",
@@ -522,7 +522,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-facial-tissue-5701",
+    slug: "janitors-finest-5701-boxed-facial-tissue-2-ply-white-100-sheets-box-30-cs",
     sku: "5701",
     name: "Boxed Facial Tissue, 2-Ply, White, 100 Sheets/Box, 30/Cs",
     cardTitle: "Boxed Facial Tissue",
@@ -557,7 +557,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "soft-touch-kitchen-roll-towels-st852",
+    slug: "soft-touch-kitchen-roll-towels-perforated-2-ply-11-x-9-white-85-sheets-roll-30-rls-ct-st852",
     sku: "ST852",
     name: "Soft Touch Kitchen Roll Towels, Perforated, 2-Ply, 11 x 9, White, 85 Sheets/Roll, 30 Rls/Ct",
     cardTitle: "Kitchen Roll Towels",
@@ -594,7 +594,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "marathon-automated-paper-towel-dispenser-980144024",
+    slug: "marathon-automated-paper-towel-dispenser-black",
     sku: "980144024",
     name: "Marathon Automated Paper Towel Dispenser, Black",
     cardTitle: "Automated Towel Dispenser",
@@ -629,7 +629,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "sani-sanitizing-wipes-nicm30472",
+    slug: "no-rinse-sanitizing-multi-surface-wipes-9-x-8-white-72-wipes-pk-12-carton",
     sku: "NICM30472",
     name: "No-Rinse Sanitizing Multi-Surface Wipes, 9\" x 8\", White, 72 Wipes/PK, 12/Carton",
     cardTitle: "Sanitizing Multi-Surface Wipes",
@@ -666,7 +666,7 @@ export const products: ProductData[] = [
     ],
   },
   {
-    slug: "janitors-finest-kraft-multifold-towels-5302",
+    slug: "janitors-finest-multifold-paper-towels-kraft-9-45-x-9-25-250-towels-pack-16-packs-carton",
     sku: "5302",
     name: "Multifold Paper Towels, Kraft, 9.45 x 9.25, 250 Towels/Pack, 16 Packs/Carton",
     cardTitle: "Natural Multifold Towels",

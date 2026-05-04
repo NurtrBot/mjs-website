@@ -27,6 +27,7 @@ import {
   FileText,
 } from "lucide-react";
 
+import Image from "next/image";
 import { getProductBySlug, type ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -212,8 +213,8 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
   const localProduct = getProductBySlug(slug);
-  const [product, setProduct] = useState<ProductData | null>(localProduct || null);
-  const [loading, setLoading] = useState(!localProduct);
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
@@ -221,9 +222,16 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const isFavorited = product ? isFavorite(product.sku) : false;
 
+  // Set local product on mount (avoids hydration mismatch)
+  useEffect(() => {
+    if (localProduct) {
+      setProduct(localProduct);
+      setLoading(false);
+    }
+  }, [slug]);
+
   // Fetch from BigCommerce if not found locally (or to get fresher data)
   useEffect(() => {
-    if (!localProduct) setLoading(true);
     fetch(`/api/products/slug?slug=${encodeURIComponent(slug)}`)
       .then((res) => res.json())
       .then((data) => {
@@ -423,10 +431,12 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                   SAVE {discount}%
                 </div>
               )}
-              <img
+              <Image
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-contain p-4"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain p-4"
               />
             </div>
 
@@ -436,16 +446,18 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 overflow-hidden flex-shrink-0 transition-all ${
+                  className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 overflow-hidden flex-shrink-0 transition-all ${
                     selectedImage === i
                       ? "border-mjs-red shadow-md"
                       : "border-gray-200 hover:border-gray-400"
                   }`}
                 >
-                  <img
+                  <Image
                     src={img}
                     alt=""
-                    className="w-full h-full object-contain p-1"
+                    fill
+                    sizes="80px"
+                    className="object-contain p-1"
                   />
                 </button>
               ))}
@@ -878,8 +890,8 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                 key={i}
                 className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group"
               >
-                <a href={`/product/${rp.slug}`} className="block bg-mjs-gray-50 h-[170px] overflow-hidden">
-                  <img src={rp.images[0]} alt={rp.name} className="w-full h-full object-contain p-2" />
+                <a href={`/product/${rp.slug}`} className="relative block bg-mjs-gray-50 h-[170px] overflow-hidden">
+                  <Image src={rp.images[0]} alt={rp.name} fill sizes="(max-width: 768px) 50vw, 200px" className="object-contain p-2" />
                 </a>
                 <div className="p-3.5">
                   <a href={`/product/${rp.slug}`}>
