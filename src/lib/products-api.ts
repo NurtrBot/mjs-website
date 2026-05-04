@@ -123,10 +123,10 @@ function transformProduct(bc: BCProduct): ProductData {
   const siteCategory = getSiteCategory(bc.categories);
   const siteCategoryName = getSiteCategoryName(siteCategory);
 
-  // Get the best image
+  // Get the best image — use zoom (full res) with standard as fallback
   const images = (bc.images || [])
     .sort((a, b) => (a.is_thumbnail ? -1 : 1) - (b.is_thumbnail ? -1 : 1))
-    .map((img) => img.url_standard);
+    .map((img) => img.url_zoom || img.url_standard);
   if (images.length === 0) images.push("/images/placeholder-product.svg");
 
   // Build a clean card title (short version of name)

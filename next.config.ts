@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "inline",
+    qualities: [85],
     remotePatterns: [
       {
         protocol: "https",

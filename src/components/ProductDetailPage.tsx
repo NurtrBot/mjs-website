@@ -452,6 +452,8 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                   alt={product.name}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={100}
+                  unoptimized
                   className="object-contain p-4"
                 />
               )}
