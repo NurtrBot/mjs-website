@@ -1503,7 +1503,10 @@ export default function AccountDashboard() {
                   <div className="flex items-center gap-2 mt-4">
                     <button
                       onClick={async () => {
-                        if (!addressForm.address || !addressForm.city || !addressForm.zip) return;
+                        if (!addressForm.address || !addressForm.city || !addressForm.zip) {
+                          alert("Please fill in street address, city, and ZIP code.");
+                          return;
+                        }
                         if (!user?.id) return;
 
                         if (editingAddressId) {
@@ -1555,8 +1558,13 @@ export default function AccountDashboard() {
                                 state: addressForm.state,
                                 zip: addressForm.zip,
                               }]);
+                            } else {
+                              alert(data.error || "Failed to save address. Please try again.");
                             }
-                          } catch {}
+                          } catch (err) {
+                            console.error("Address save error:", err);
+                            alert("Failed to save address. Please try again.");
+                          }
                         }
                         setShowAddressForm(false);
                         setEditingAddressId(null);

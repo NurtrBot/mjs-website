@@ -79,6 +79,26 @@ export async function GET(req: NextRequest) {
   }
 }
 
+const STATE_MAP: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+  MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+  SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+  VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  DC: "District of Columbia",
+};
+
+function resolveState(input: string): string {
+  if (!input) return "California";
+  const upper = input.trim().toUpperCase();
+  return STATE_MAP[upper] || input;
+}
+
 // POST — Create a new address
 export async function POST(req: NextRequest) {
   try {
@@ -98,7 +118,7 @@ export async function POST(req: NextRequest) {
         company: company || "",
         address1: address,
         city,
-        state_or_province: state || "CA",
+        state_or_province: resolveState(state),
         postal_code: zip,
         country_code: "US",
         phone: phone || "",
@@ -150,7 +170,7 @@ export async function PUT(req: NextRequest) {
         company: company || "",
         address1: address,
         city,
-        state_or_province: state || "CA",
+        state_or_province: resolveState(state),
         postal_code: zip,
         country_code: "US",
         phone: phone || "",
