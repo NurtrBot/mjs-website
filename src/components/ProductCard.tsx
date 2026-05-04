@@ -48,14 +48,20 @@ export default function ProductCard({ product }: { product: ProductData }) {
       )}
 
       <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden relative">
-        <Image
-          src={product.images[0]}
-          alt={product.cardTitle}
-          fill
-          unoptimized
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className={product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}
-        />
+        {product.images[0]?.startsWith("http") ? (
+          <Image
+            src={product.images[0]}
+            alt={product.cardTitle}
+            fill
+            unoptimized
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className={product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-mjs-red animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+          </div>
+        )}
       </a>
 
       <div className="p-4 flex flex-col flex-1">

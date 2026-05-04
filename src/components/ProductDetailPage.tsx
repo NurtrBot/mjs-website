@@ -215,6 +215,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
+  const [pricingLoaded, setPricingLoaded] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
@@ -232,14 +233,31 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           if (!localProduct) {
             setProduct(bcProduct);
           } else if (bcProduct.sku === localProduct.sku) {
-            setProduct(bcProduct);
+            // Merge BC data into local product — keep local images/name stable, pull in live pricing & stock
+            setProduct(prev => prev ? {
+              ...prev,
+              price: bcProduct.price || prev.price,
+              quickBuy: bcProduct.quickBuy?.length > 0 ? bcProduct.quickBuy : prev.quickBuy,
+              stockQty: bcProduct.stockQty ?? prev.stockQty,
+              inStock: bcProduct.inStock ?? prev.inStock,
+              description: bcProduct.description || prev.description,
+              images: bcProduct.images?.length > 0 ? bcProduct.images : prev.images,
+            } : bcProduct);
           } else {
             // BC returned wrong product — try fetching by SKU instead
             fetch(`/api/products/search?q=${encodeURIComponent(localProduct.sku)}&limit=1`)
               .then(r => r.json())
               .then(d => {
                 const match = (d.products || []).find((p: ProductData) => p.sku === localProduct.sku);
-                if (match) setProduct(match);
+                if (match) setProduct(prev => prev ? {
+                  ...prev,
+                  price: match.price || prev.price,
+                  quickBuy: match.quickBuy?.length > 0 ? match.quickBuy : prev.quickBuy,
+                  stockQty: match.stockQty ?? prev.stockQty,
+                  inStock: match.inStock ?? prev.inStock,
+                  description: match.description || prev.description,
+                  images: match.images?.length > 0 ? match.images : prev.images,
+                } : match);
               })
               .catch(() => {});
           }
@@ -260,9 +278,10 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               .catch(() => {});
           }
         }
+        setPricingLoaded(true);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => { setPricingLoaded(true); setLoading(false); });
   }, [slug, user?.priceListId]);
 
   const handleAddToCart = () => {
@@ -423,11 +442,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                   SAVE {discount}%
                 </div>
               )}
-              {product.images[selectedImage]?.includes("placeholder") ? (
-                <div className="w-full h-full animate-pulse bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <div className="text-gray-300">
-                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                  </div>
+              {!product.images[selectedImage]?.startsWith("http") ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Loader2 className="w-10 h-10 text-mjs-red animate-spin" />
                 </div>
               ) : (
                 <Image
@@ -442,7 +459,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
             {/* Thumbnails */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-full pb-1">
-              {product.images.filter(img => !img.includes("placeholder")).map((img, i) => (
+              {product.images.filter(img => img.startsWith("http")).map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
@@ -501,6 +518,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
             <div className="h-px bg-gray-200 mb-5" />
 
             {/* Pricing */}
+            {!pricingLoaded ? (
+              <div className="flex items-center gap-3 mb-5 py-4">
+                <Loader2 className="w-6 h-6 text-mjs-red animate-spin" />
+                <span className="text-sm text-mjs-gray-400">Loading pricing...</span>
+              </div>
+            ) : (<>
             <div className="mb-5">
               {customPrice && customPrice !== product.price && (
                 <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full mb-2">
@@ -541,7 +564,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 In Stock
               </div>
               <span className="text-xs text-mjs-gray-600">
-                {product.stockQty}&nbsp;available &nbsp;&middot;&nbsp; Usually ships in 1-2 days
+                Usually ships in 1-2 days
               </span>
             </div>
 
@@ -602,6 +625,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 Add to Cart
               </button>
             </div>
+            </>)}
 
             {/* Shipping & Pickup Options */}
             <div className="border border-gray-200 rounded-xl mb-4 overflow-hidden">
