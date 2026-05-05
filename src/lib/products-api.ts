@@ -213,10 +213,18 @@ function transformProduct(bc: BCProduct): ProductData {
     imageFit: "contain",
     quickBuy: CUSTOM_PRICING[bc.sku] || (() => {
       const basePrice = Math.round((bc.calculated_price || bc.price) * 100) / 100;
+      const nameLow = bc.name.toLowerCase();
+      const subLow = subcategory.toLowerCase();
+      let unit = "Case";
+      if (subLow.includes("glove") || nameLow.includes("glove")) unit = "Box";
+      else if (nameLow.includes("32 oz") || nameLow.includes("32oz") || nameLow.includes("quart") || nameLow.includes("qt.") || nameLow.includes("qt ")) unit = "Quart";
+      else if (nameLow.includes("gallon") || nameLow.includes("gal ") || nameLow.includes("gal.") || nameLow.includes("1 gal")) unit = "Gallon";
+      else if (subLow.includes("vacuum") || subLow.includes("machine") || subLow.includes("dispenser")) unit = "Unit";
+      else if (subLow.includes("roll towel") || subLow.includes("tissue")) unit = "Carton";
+      const plural = unit === "Box" ? "Boxes" : unit + "s";
       const tiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
-        { label: "1 Case", qty: 1, unitPrice: basePrice },
+        { label: `1 ${unit}`, qty: 1, unitPrice: basePrice },
       ];
-      // Include BC bulk pricing rules if available
       const rules = (bc as unknown as Record<string, unknown>).bulk_pricing_rules as { quantity_min: number; type: string; amount: number }[] | undefined;
       if (rules && Array.isArray(rules) && rules.length > 0) {
         const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
@@ -228,10 +236,10 @@ function transformProduct(bc: BCProduct): ProductData {
           tierPrice = Math.round(tierPrice * 100) / 100;
           const savings = Math.round((basePrice - tierPrice) * 100) / 100;
           tiers.push({
-            label: `${rule.quantity_min}+ Cases`,
+            label: `${rule.quantity_min}+ ${plural}`,
             qty: rule.quantity_min,
             unitPrice: tierPrice,
-            ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/case` } : {}),
+            ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${unit.toLowerCase()}` } : {}),
           });
         }
       }

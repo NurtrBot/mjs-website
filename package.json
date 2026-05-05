@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync-bc": "node scripts/sync-bc.js"
   },
   "dependencies": {
     "@formspree/react": "^3.0.0",
