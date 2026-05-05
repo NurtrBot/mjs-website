@@ -215,7 +215,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
-  const [pricingLoaded, setPricingLoaded] = useState(false);
+  const [pricingLoaded, setPricingLoaded] = useState(!!initialProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
