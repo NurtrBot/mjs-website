@@ -1,7 +1,7 @@
 import type { ProductData } from './product-types';
 
 // Auto-synced from BigCommerce on 2026-05-05
-// 754 products
+// 755 products
 
 export const importedProducts: ProductData[] = [
   {
@@ -8172,6 +8172,27 @@ export const importedProducts: ProductData[] = [
     pack: "Each",
     imageFit: 'contain',
     quickBuy: [{"label":"1 Case","qty":1,"unitPrice":20.4}],
+  },
+  {
+    slug: "wall-duster-head-replacement",
+    sku: "CWB01",
+    name: "Cobb Web and Wall Duster Head Replacement",
+    brand: "MJS",
+    price: 9.99,
+    rating: 0,
+    reviewCount: 0,
+    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12591/images/371519/CwB01__06573.1778003087.1280.1280.png?c=1"],
+    inStock: true,
+    stockQty: 0,
+    description: "Flagged polypropylene, round blue duster head, 5\"x7\"dia. fits aluminum extension handle",
+    highlights: ["SKU: CWB01","Weight: 2 lbs","Professional grade quality"],
+    specs: {"SKU":"CWB01","Brand":"MJS","Weight":"2 lbs"},
+    category: "Car Detailing",
+    subcategory: "General",
+    cardTitle: "Cobb Web and Wall Duster Head Replacement",
+    pack: "Each",
+    imageFit: 'contain',
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":9.99}],
   },
   {
     slug: "janitors-finest-can-liners-black-32-x-50-3-0-mil-contractors-50-gallon-100-cs-ld325030k",
