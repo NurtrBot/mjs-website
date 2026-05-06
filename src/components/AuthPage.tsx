@@ -17,6 +17,7 @@ export default function AuthPage() {
   // Form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [accountType, setAccountType] = useState<"business" | "individual">("business");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +52,10 @@ export default function AuthPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupError("");
+    if (accountType === "business" && !company.trim()) {
+      setSignupError("Company name is required for business accounts.");
+      return;
+    }
     setSignupLoading(true);
     try {
       const res = await fetch("/api/customers/create", {
@@ -140,7 +145,7 @@ export default function AuthPage() {
             </h1>
             <p className="text-sm text-mjs-gray-400 mt-1 mb-8">
               {mode === "signup"
-                ? "Welcome to MJS \u2013 Let\u2019s create your business account"
+                ? "Welcome to MJS \u2013 Let\u2019s create your account"
                 : "Welcome to MJS \u2013 Log in to your account"}
             </p>
 
@@ -160,8 +165,37 @@ export default function AuthPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-mjs-gray-600 mb-1">Company Name</label>
-                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} required placeholder="Acme Cleaning Services" className={inputClass} />
+                    <label className="block text-xs font-medium text-mjs-gray-600 mb-2">Account Type</label>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setAccountType("business")}
+                        className={`py-2.5 px-3 rounded-lg border-2 text-sm font-semibold transition-all ${
+                          accountType === "business"
+                            ? "border-mjs-red bg-red-50 text-mjs-red"
+                            : "border-gray-200 text-mjs-gray-500 hover:border-gray-300"
+                        }`}
+                      >
+                        Business
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setAccountType("individual"); setCompany(""); }}
+                        className={`py-2.5 px-3 rounded-lg border-2 text-sm font-semibold transition-all ${
+                          accountType === "individual"
+                            ? "border-mjs-red bg-red-50 text-mjs-red"
+                            : "border-gray-200 text-mjs-gray-500 hover:border-gray-300"
+                        }`}
+                      >
+                        Individual
+                      </button>
+                    </div>
+                    {accountType === "business" && (
+                      <>
+                        <label className="block text-xs font-medium text-mjs-gray-600 mb-1">Company Name</label>
+                        <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} required placeholder="Acme Cleaning Services" className={inputClass} />
+                      </>
+                    )}
                   </div>
 
                   <div>
