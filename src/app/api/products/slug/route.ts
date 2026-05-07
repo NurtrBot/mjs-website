@@ -194,7 +194,9 @@ export async function GET(req: NextRequest) {
           const subcat = (product.subcategory || "").toLowerCase();
           const name = (product.name || "").toLowerCase();
           let unit = "Case";
-          if (subcat.includes("glove") || name.includes("glove")) {
+          if (subcat.includes("liner") || subcat.includes("trash") || name.includes("can liner") || name.includes("trash bag")) {
+            unit = "Case";
+          } else if (subcat.includes("glove") || name.includes("glove")) {
             unit = "Box";
           } else if (cat.includes("equipment") || subcat.includes("vacuum") || subcat.includes("machine") || subcat.includes("dispenser")) {
             unit = "Unit";

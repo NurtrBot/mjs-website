@@ -36,12 +36,7 @@ export const products: ProductData[] = [
     subcategory: "Toilet Tissue",
     badge: "BEST SELLER",
     badgeColor: "bg-mjs-red",
-    quickBuy: [
-      { label: "1 Case", qty: 1, unitPrice: 48.99 },
-      { label: "5 Cases", qty: 5, unitPrice: 46.99, savings: "Save $2/case" },
-      { label: "15 Cases", qty: 15, unitPrice: 43.99, savings: "Save $5/case" },
-      { label: "25 Cases", qty: 25, unitPrice: 39.99, savings: "Save $9/case" },
-    ],
+    quickBuy: [{"label":"1 Carton","qty":1,"unitPrice":48.99},{"label":"5+ Cartons","qty":5,"unitPrice":46.99,"savings":"Save $2.00/carton"},{"label":"15+ Cartons","qty":15,"unitPrice":43.99,"savings":"Save $5.00/carton"},{"label":"25+ Cartons","qty":25,"unitPrice":39.99,"savings":"Save $9.00/carton"}],
   },
   {
     slug: "genuine-joe-multifold-towels-1-ply-9-50-x-9-10-white-interfolded-embossed-anti-contamination-chlorine-free-250-quantity-per-bundle-4000-carton",
@@ -75,11 +70,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Multifolds",
-    quickBuy: [
-      { label: "1 Carton", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-      { label: "5 Cartons", qty: 5, savings: "Save 10%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":39.99},{"label":"5+ Cases","qty":5,"unitPrice":36.99,"savings":"Save $3.00/case"},{"label":"10+ Cases","qty":10,"unitPrice":33.99,"savings":"Save $6.00/case"},{"label":"25+ Cases","qty":25,"unitPrice":29.99,"savings":"Save $10.00/case"}],
   },
   {
     slug: "janitors-finest-5200-9jrt-2-ply-premium-jumbo-roll-paper-bathroom-tissue-12-rolls",
@@ -111,12 +102,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Toilet Tissue",
-    quickBuy: [
-      { label: "1 Case", qty: 1, unitPrice: 36.99 },
-      { label: "24 Cases", qty: 24, unitPrice: 33.99, savings: "Save $3/case" },
-      { label: "48 Cases", qty: 48, unitPrice: 28.99, savings: "Save $8/case" },
-      { label: "54 Cases", qty: 54, unitPrice: 26.99, savings: "Save $10/case" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":36.99},{"label":"5+ Cases","qty":5,"unitPrice":33.99,"savings":"Save $3.00/case"},{"label":"10+ Cases","qty":10,"unitPrice":30.99,"savings":"Save $6.00/case"},{"label":"25+ Cases","qty":25,"unitPrice":26.99,"savings":"Save $10.00/case"}],
   },
   {
     slug: "janitors-finest-3180-heavy-duty-green-degreaser",
@@ -149,10 +135,7 @@ export const products: ProductData[] = [
     category: "Cleaning Chemicals",
     subcategory: "Degreasers",
     sdsSheet: "/sds/3180EA.PDF",
-    quickBuy: [
-      { label: "1 Gallon", qty: 1 },
-      { label: "4 Gallons (Case)", qty: 4, savings: "Save 8%" },
-    ],
+    quickBuy: [{"label":"1 Gallon","qty":1,"unitPrice":12.7},{"label":"4+ Gallons","qty":4,"unitPrice":10.9,"savings":"Save $1.80/gallon"},{"label":"24+ Gallons","qty":24,"unitPrice":9.55,"savings":"Save $3.15/gallon"},{"label":"48+ Gallons","qty":48,"unitPrice":8.5,"savings":"Save $4.20/gallon"}],
   },
   {
     slug: "sunnycare-blue-nitrile-gloves",
@@ -225,11 +208,7 @@ export const products: ProductData[] = [
     subcategory: "Stretch Film",
     badge: "SALE",
     badgeColor: "bg-mjs-green",
-    quickBuy: [
-      { label: "1 Carton (4 Rolls)", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-      { label: "5 Cartons", qty: 5, savings: "Save 12%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":49.99}],
   },
   {
     slug: "sunnycare-black-nitrile-gloves-8902ea",
@@ -299,10 +278,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Restroom Supplies",
-    quickBuy: [
-      { label: "1 Carton", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":37.99},{"label":"5+ Cases","qty":5,"unitPrice":34.99,"savings":"Save $3.00/case"},{"label":"10+ Cases","qty":10,"unitPrice":31.99,"savings":"Save $6.00/case"},{"label":"25+ Cases","qty":25,"unitPrice":27.99,"savings":"Save $10.00/case"}],
   },
   {
     slug: "janitors-finest-premium-plus-roll-towel-1-ply-8-x-600-ft-white-12-rolls-carton-5108",
@@ -336,11 +312,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Roll Towels",
-    quickBuy: [
-      { label: "1 Carton (12 Rolls)", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-      { label: "4 Cartons", qty: 4, savings: "Save 10%" },
-    ],
+    quickBuy: [{"label":"1 Carton","qty":1,"unitPrice":61.35},{"label":"5+ Cartons","qty":5,"unitPrice":58.35,"savings":"Save $3.00/carton"},{"label":"10+ Cartons","qty":10,"unitPrice":55.35,"savings":"Save $6.00/carton"},{"label":"25+ Cartons","qty":25,"unitPrice":52.35,"savings":"Save $9.00/carton"}],
   },
   {
     slug: "mop-bucket-and-wringer-combo-35-qt-sidepress-yellow",
@@ -372,10 +344,7 @@ export const products: ProductData[] = [
     },
     category: "Equipment & Tools",
     subcategory: "Mop Buckets",
-    quickBuy: [
-      { label: "1 Unit", qty: 1 },
-      { label: "2 Units", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":44.95}],
   },
   {
     slug: "dribble-urinal-deodorizer-screen-ocean-mist-10-carton",
@@ -406,10 +375,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Restroom Supplies",
-    quickBuy: [
-      { label: "1 Carton (10)", qty: 1 },
-      { label: "3 Cartons", qty: 3, savings: "Save 8%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":23.95}],
   },
   {
     slug: "chase-products-value-scents-lavender-12-6-17-oz-ct-4385370",
@@ -443,10 +409,7 @@ export const products: ProductData[] = [
     category: "Cleaning Chemicals",
     subcategory: "Air Fresheners",
     sdsSheet: "/sds/4385370.PDF",
-    quickBuy: [
-      { label: "1 Carton (12)", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":54.28}],
   },
   {
     slug: "janitors-finest-can-liners-clear-40-x-48-14-micron-40-45-gallon-250-cs-cl404814",
@@ -480,10 +443,7 @@ export const products: ProductData[] = [
     },
     category: "Trash Liners",
     subcategory: "Hi-Density Liners",
-    quickBuy: [
-      { label: "1 Case (250)", qty: 1 },
-      { label: "3 Cases", qty: 3, savings: "Save 8%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":45.75},{"label":"5+ Cases","qty":5,"unitPrice":38.1,"savings":"Save $7.65/case"},{"label":"10+ Cases","qty":10,"unitPrice":35.25,"savings":"Save $10.50/case"},{"label":"25+ Cases","qty":25,"unitPrice":32.7,"savings":"Save $13.05/case"}],
   },
   {
     slug: "janitors-finest-3162-lavender-cleaner",
@@ -516,10 +476,7 @@ export const products: ProductData[] = [
     category: "Cleaning Chemicals",
     subcategory: "All-Purpose Cleaners",
     sdsSheet: "/sds/3162EA.PDF",
-    quickBuy: [
-      { label: "1 Gallon", qty: 1 },
-      { label: "4 Gallons (Case)", qty: 4, savings: "Save 8%" },
-    ],
+    quickBuy: [{"label":"1 Gallon","qty":1,"unitPrice":11.7},{"label":"4+ Gallons","qty":4,"unitPrice":10.05,"savings":"Save $1.65/gallon"},{"label":"24+ Gallons","qty":24,"unitPrice":8.75,"savings":"Save $2.95/gallon"},{"label":"48+ Gallons","qty":48,"unitPrice":7.8,"savings":"Save $3.90/gallon"}],
   },
   {
     slug: "janitors-finest-5701-boxed-facial-tissue-2-ply-white-100-sheets-box-30-cs",
@@ -551,10 +508,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Facial Tissue",
-    quickBuy: [
-      { label: "1 Case (30 Boxes)", qty: 1 },
-      { label: "2 Cases", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Carton","qty":1,"unitPrice":25.25}],
   },
   {
     slug: "soft-touch-kitchen-roll-towels-perforated-2-ply-11-x-9-white-85-sheets-roll-30-rls-ct-st852",
@@ -588,10 +542,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Roll Towels",
-    quickBuy: [
-      { label: "1 Carton (30 Rolls)", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Carton","qty":1,"unitPrice":37.95}],
   },
   {
     slug: "marathon-automated-paper-towel-dispenser-black",
@@ -623,10 +574,7 @@ export const products: ProductData[] = [
     },
     category: "Equipment & Tools",
     subcategory: "Dispensers",
-    quickBuy: [
-      { label: "1 Unit", qty: 1 },
-      { label: "2 Units", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Unit","qty":1,"unitPrice":89.95}],
   },
   {
     slug: "no-rinse-sanitizing-multi-surface-wipes-9-x-8-white-72-wipes-pk-12-carton",
@@ -660,10 +608,7 @@ export const products: ProductData[] = [
     category: "Cleaning Chemicals",
     subcategory: "Wipes",
     sdsSheet: "/sds/NICM30472.PDF",
-    quickBuy: [
-      { label: "1 Carton (12 Packs)", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":109.34}],
   },
   {
     slug: "janitors-finest-multifold-paper-towels-kraft-9-45-x-9-25-250-towels-pack-16-packs-carton",
@@ -696,11 +641,7 @@ export const products: ProductData[] = [
     },
     category: "Paper & Restroom",
     subcategory: "Multifolds",
-    quickBuy: [
-      { label: "1 Carton", qty: 1 },
-      { label: "2 Cartons", qty: 2, savings: "Save 5%" },
-      { label: "5 Cartons", qty: 5, savings: "Save 10%" },
-    ],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":27.99}],
   },
   {
     slug: "platinum-knight-wash-foam",

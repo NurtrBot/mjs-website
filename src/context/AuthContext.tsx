@@ -11,6 +11,7 @@ export interface UserData {
   phone?: string;
   customerGroupId?: number;
   priceListId?: number | null;
+  priceMap?: Record<string, number>;
 }
 
 interface StoredSession {
@@ -32,6 +33,7 @@ function sanitizeUser(user: UserData): UserData {
     phone: user.phone,
     customerGroupId: user.customerGroupId,
     priceListId: user.priceListId,
+    priceMap: user.priceMap,
   };
 }
 
@@ -40,6 +42,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (user: UserData) => void;
   logout: () => void;
+  getCustomPrice: (sku: string) => number | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -102,8 +105,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  const getCustomPrice = useCallback((sku: string): number | null => {
+    if (!user?.priceMap) return null;
+    return user.priceMap[sku] ?? null;
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, getCustomPrice }}>
       {children}
     </AuthContext.Provider>
   );

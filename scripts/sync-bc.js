@@ -142,6 +142,7 @@ function getSubcategory(bc) {
 function getUnit(name, subcategory) {
   const n = name.toLowerCase();
   const s = subcategory.toLowerCase();
+  if (s.includes("liner") || s.includes("trash") || n.includes("can liner") || n.includes("trash bag")) return "Case";
   if (s.includes("glove") || n.includes("glove")) return "Box";
   if (n.includes("32 oz") || n.includes("32oz") || n.includes("quart") || n.includes("qt.") || n.includes("qt ")) return "Quart";
   if (n.includes("gallon") || n.includes("gal ") || n.includes("gal.") || n.includes("1 gal")) return "Gallon";
@@ -344,6 +345,26 @@ async function main() {
     );
     if (pricePattern.test(updatedContent)) {
       updatedContent = updatedContent.replace(pricePattern, `$1${bcData.price}`);
+    }
+    // Update quickBuy — find the quickBuy array for this SKU by locating it and matching balanced brackets
+    if (bcData.quickBuy && bcData.quickBuy.length > 0) {
+      const skuIdx = updatedContent.indexOf(`sku: "${sku}"`);
+      if (skuIdx > -1) {
+        const qbMarker = "quickBuy: [";
+        const qbStart = updatedContent.indexOf(qbMarker, skuIdx);
+        // Make sure this quickBuy belongs to this product (before next product's sku:)
+        const nextSkuIdx = updatedContent.indexOf('sku: "', skuIdx + 10);
+        if (qbStart > -1 && (nextSkuIdx === -1 || qbStart < nextSkuIdx)) {
+          // Find the matching closing bracket
+          let depth = 0;
+          let qbEnd = qbStart + qbMarker.length - 1; // position of opening [
+          for (let i = qbEnd; i < updatedContent.length; i++) {
+            if (updatedContent[i] === '[') depth++;
+            else if (updatedContent[i] === ']') { depth--; if (depth === 0) { qbEnd = i + 1; break; } }
+          }
+          updatedContent = updatedContent.slice(0, qbStart) + "quickBuy: " + JSON.stringify(bcData.quickBuy) + updatedContent.slice(qbEnd);
+        }
+      }
     }
     curatedUpdated++;
   }

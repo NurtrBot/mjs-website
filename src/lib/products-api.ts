@@ -216,7 +216,8 @@ function transformProduct(bc: BCProduct): ProductData {
       const nameLow = bc.name.toLowerCase();
       const subLow = subcategory.toLowerCase();
       let unit = "Case";
-      if (subLow.includes("glove") || nameLow.includes("glove")) unit = "Box";
+      if (subLow.includes("liner") || subLow.includes("trash") || nameLow.includes("can liner") || nameLow.includes("trash bag")) unit = "Case";
+      else if (subLow.includes("glove") || nameLow.includes("glove")) unit = "Box";
       else if (nameLow.includes("32 oz") || nameLow.includes("32oz") || nameLow.includes("quart") || nameLow.includes("qt.") || nameLow.includes("qt ")) unit = "Quart";
       else if (nameLow.includes("gallon") || nameLow.includes("gal ") || nameLow.includes("gal.") || nameLow.includes("1 gal")) unit = "Gallon";
       else if (subLow.includes("vacuum") || subLow.includes("machine") || subLow.includes("dispenser")) unit = "Unit";

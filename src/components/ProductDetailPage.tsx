@@ -67,6 +67,11 @@ function QuantitySelector({
   qty: number;
   setQty: (n: number) => void;
 }) {
+  const [inputValue, setInputValue] = useState(String(qty));
+
+  // Keep input in sync when qty changes from +/- buttons
+  useEffect(() => { setInputValue(String(qty)); }, [qty]);
+
   return (
     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
       <button
@@ -76,10 +81,21 @@ function QuantitySelector({
         <Minus className="w-4 h-4 text-gray-600" />
       </button>
       <input
-        type="number"
-        value={qty}
-        onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-        className="w-14 h-10 text-center text-sm font-semibold border-x border-gray-300 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        suppressHydrationWarning
+        type="text"
+        inputMode="numeric"
+        value={inputValue}
+        onChange={(e) => {
+          const val = e.target.value.replace(/[^0-9]/g, "");
+          setInputValue(val);
+          const num = parseInt(val);
+          if (num > 0) setQty(num);
+        }}
+        onBlur={() => {
+          const num = parseInt(inputValue);
+          if (!num || num < 1) { setQty(1); setInputValue("1"); }
+        }}
+        className="w-14 h-10 text-center text-sm font-semibold border-x border-gray-300 outline-none"
       />
       <button
         onClick={() => setQty(qty + 1)}
@@ -217,9 +233,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [loading, setLoading] = useState(!localProduct);
   const [pricingLoaded, setPricingLoaded] = useState(!!initialProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
-  const [customPrice, setCustomPrice] = useState<number | null>(null);
   const { addItem } = useCart();
-  const { user } = useAuth();
+  const { user, getCustomPrice } = useAuth();
+  const customPrice = product ? getCustomPrice(product.sku) : null;
   const { isFavorite, toggleFavorite } = useFavorites();
   const isFavorited = product ? isFavorite(product.sku) : false;
 
@@ -270,26 +286,20 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
             .then(rd => { if (rd.products?.length > 0) setRelatedProducts(rd.products); })
             .catch(() => {});
 
-          // Fetch custom price if customer has a price list
-          if (user?.priceListId && data.bcProductId) {
-            fetch(`/api/prices?priceListId=${user.priceListId}&productId=${data.bcProductId}`)
-              .then(r => r.json())
-              .then(pd => { if (pd.price) setCustomPrice(pd.price); })
-              .catch(() => {});
-          }
+          // Custom pricing is now loaded from cached priceMap in AuthContext — no API call needed
         }
         setPricingLoaded(true);
         setLoading(false);
       })
       .catch(() => { setPricingLoaded(true); setLoading(false); });
-  }, [slug, user?.priceListId]);
+  }, [slug]);
 
   const handleAddToCart = () => {
     if (!product) return;
     // Use selected brick's unit price, or match by qty
     const selectedOpt = product.quickBuy[selectedBrick];
     const matchedBulk = selectedOpt || product.quickBuy.find(opt => opt.qty === qty);
-    const unitPrice = matchedBulk?.unitPrice || customPrice || product.price;
+    const unitPrice = customPrice || matchedBulk?.unitPrice || product.price;
     addItem({
       slug: product.slug,
       sku: product.sku,

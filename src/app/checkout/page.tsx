@@ -1240,9 +1240,12 @@ export default function CheckoutPage() {
                             {item.brand}
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-mjs-dark flex-shrink-0">
-                          ${(item.price * item.qty).toFixed(2)}
-                        </span>
+                        <div className="text-right flex-shrink-0">
+                          <span className="text-xs font-bold text-mjs-dark">
+                            ${(item.price * item.qty).toFixed(2)}
+                          </span>
+                          <div className="text-[9px] text-gray-400">${item.price.toFixed(2)}/ea</div>
+                        </div>
                       </div>
                     ))}
 

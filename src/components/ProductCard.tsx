@@ -6,6 +6,7 @@ import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
+import { useAuth } from "@/context/AuthContext";
 import { trackAddToCart } from "@/lib/analytics";
 
 function formatCardName(name: string): string {
@@ -27,7 +28,10 @@ function formatCardName(name: string): string {
 export default function ProductCard({ product }: { product: ProductData }) {
   const { addItem } = useCart();
   const { getPurchaseDate } = usePurchases();
+  const { getCustomPrice } = useAuth();
   const [qty, setQty] = useState(1);
+  const customPrice = getCustomPrice(product.sku);
+  const displayPrice = customPrice || product.price;
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
@@ -77,9 +81,13 @@ export default function ProductCard({ product }: { product: ProductData }) {
         <div className="mt-auto pt-3">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-mjs-dark">
-              ${product.price.toFixed(2)}
+              ${displayPrice.toFixed(2)}
             </span>
-            {product.originalPrice && (
+            {customPrice && customPrice < product.price ? (
+              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                YOUR PRICE
+              </span>
+            ) : product.originalPrice ? (
               <>
                 <span className="text-xs text-mjs-gray-400 line-through">
                   ${product.originalPrice.toFixed(2)}
@@ -88,7 +96,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
                   {discount}% OFF
                 </span>
               </>
-            )}
+            ) : null}
           </div>
 
           <div className="text-[11px] font-medium text-mjs-gray-500 mt-0.5">
@@ -121,11 +129,11 @@ export default function ProductCard({ product }: { product: ProductData }) {
                   sku: product.sku,
                   name: product.cardTitle,
                   brand: product.brand,
-                  price: product.price,
+                  price: displayPrice,
                   image: product.images[0],
                   pack: product.pack,
                 }, qty);
-                trackAddToCart({ sku: product.sku, name: product.cardTitle, price: product.price, quantity: qty, category: product.category, brand: product.brand });
+                trackAddToCart({ sku: product.sku, name: product.cardTitle, price: displayPrice, quantity: qty, category: product.category, brand: product.brand });
                 setQty(1);
               }}
               className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"

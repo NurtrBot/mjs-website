@@ -32,6 +32,7 @@ interface CartContextType {
   updateQty: (slug: string, qty: number) => void;
   removeItem: (slug: string) => void;
   clearCart: () => void;
+  applyCustomPrices: (priceMap: Record<string, number>) => void;
   itemCount: number;
   subtotal: number;
 }
@@ -103,6 +104,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   }, []);
 
+  const applyCustomPrices = useCallback((priceMap: Record<string, number>) => {
+    setItems((prev) =>
+      prev.map((item) => {
+        const customPrice = item.sku ? priceMap[item.sku] : undefined;
+        if (customPrice !== undefined && customPrice !== item.price) {
+          return { ...item, price: customPrice };
+        }
+        return item;
+      })
+    );
+  }, []);
+
   const itemCount = items.reduce((sum, i) => sum + i.qty, 0);
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
 
@@ -118,6 +131,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQty,
         removeItem,
         clearCart,
+        applyCustomPrices,
         itemCount,
         subtotal,
       }}

@@ -269,9 +269,12 @@ export default function CartPanel() {
 
                       {/* Price + Remove */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-mjs-dark">
-                          ${(item.price * item.qty).toFixed(2)}
-                        </span>
+                        <div className="text-right">
+                          <span className="text-sm font-bold text-mjs-dark">
+                            ${(item.price * item.qty).toFixed(2)}
+                          </span>
+                          <div className="text-[10px] text-gray-400">${item.price.toFixed(2)}/ea</div>
+                        </div>
                         <button
                           onClick={() => removeItem(item.slug)}
                           className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"

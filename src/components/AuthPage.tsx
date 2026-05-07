@@ -4,10 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { Eye, EyeOff, X, FileDown, Package, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { trackLogin, trackSignUp } from "@/lib/analytics";
 
 export default function AuthPage() {
   const { login } = useAuth();
+  const { applyCustomPrices } = useCart();
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -96,6 +98,9 @@ export default function AuthPage() {
         return;
       }
       login(data.customer);
+      if (data.customer.priceMap) {
+        applyCustomPrices(data.customer.priceMap);
+      }
       trackLogin("email");
       window.location.href = "/account";
     } catch {

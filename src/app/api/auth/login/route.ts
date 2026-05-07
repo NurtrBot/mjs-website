@@ -92,6 +92,55 @@ export async function POST(req: NextRequest) {
       } catch {}
     }
 
+    // Fetch all price list records if customer has a price list
+    let priceMap: Record<string, number> = {};
+    if (priceListId) {
+      try {
+        const token = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
+        // Step 1: Fetch all price list records (keyed by product_id)
+        const priceByProductId: Record<number, number> = {};
+        const productIds: number[] = [];
+        let page = 1;
+        while (page <= 20) {
+          const plRes = await fetch(
+            `https://api.bigcommerce.com/stores/${storeHash}/v3/pricelists/${priceListId}/records?page=${page}&limit=250`,
+            { headers: { "X-Auth-Token": token, "Accept": "application/json" } }
+          );
+          if (!plRes.ok) break;
+          const plData = await plRes.json();
+          for (const rec of (plData.data || [])) {
+            if (rec.price !== undefined && rec.price !== null && rec.product_id) {
+              priceByProductId[rec.product_id] = Number(rec.price);
+              productIds.push(rec.product_id);
+            }
+          }
+          if (page >= (plData.meta?.pagination?.total_pages || 1)) break;
+          page++;
+        }
+
+        // Step 2: Fetch SKUs for those product IDs in batches
+        if (productIds.length > 0) {
+          const batchSize = 50;
+          for (let i = 0; i < productIds.length; i += batchSize) {
+            const batch = productIds.slice(i, i + batchSize);
+            const idsParam = batch.join(",");
+            const prodRes = await fetch(
+              `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products?id:in=${idsParam}&include_fields=sku&limit=250`,
+              { headers: { "X-Auth-Token": token, "Accept": "application/json" } }
+            );
+            if (prodRes.ok) {
+              const prodData = await prodRes.json();
+              for (const p of (prodData.data || [])) {
+                if (p.sku && priceByProductId[p.id] !== undefined) {
+                  priceMap[p.sku] = priceByProductId[p.id];
+                }
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
     return NextResponse.json({
       customer: {
         id: customer.id,
@@ -102,6 +151,7 @@ export async function POST(req: NextRequest) {
         phone: customer.phone || "",
         customerGroupId: customer.customer_group_id || 0,
         priceListId,
+        priceMap: Object.keys(priceMap).length > 0 ? priceMap : undefined,
       },
     });
   } catch (error: unknown) {
