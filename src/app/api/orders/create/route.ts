@@ -320,7 +320,7 @@ export async function POST(req: NextRequest) {
               payment: { funding_source_id: fundingSourceId || "BALANCE" },
               rewards: [{
                 value: { denomination: reward.amount, currency_code: "USD" },
-                delivery: { method: "EMAIL" },
+                delivery: { method: "LINK" },
                 recipient: {
                   name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
                   email: shippingAddress.email,
