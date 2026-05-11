@@ -233,7 +233,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [loading, setLoading] = useState(!localProduct);
   const [pricingLoaded, setPricingLoaded] = useState(!!initialProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
-  const { addItem } = useCart();
+  const { addItem, updateQty: updateCartQty, removeItem } = useCart();
   const { user, getCustomPrice } = useAuth();
   const customPrice = product ? getCustomPrice(product.sku) : null;
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -300,6 +300,44 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     const selectedOpt = product.quickBuy[selectedBrick];
     const matchedBulk = selectedOpt || product.quickBuy.find(opt => opt.qty === qty);
     const unitPrice = customPrice || matchedBulk?.unitPrice || product.price;
+
+    // Check for upsell opportunity — is there a next tier they're close to?
+    if (!customPrice && product.quickBuy.length > 1) {
+      const sortedTiers = [...product.quickBuy].sort((a, b) => a.qty - b.qty);
+      const nextTier = sortedTiers.find(t => t.qty > qty && t.unitPrice && t.unitPrice < unitPrice);
+      if (nextTier && nextTier.unitPrice) {
+        const addMore = nextTier.qty - qty;
+        // Always show upsell when there's a better tier available
+        if (addMore >= 1) {
+          // Add to cart first at current price
+          addItem({
+            slug: product.slug,
+            sku: product.sku,
+            name: product.cardTitle,
+            brand: product.brand,
+            price: unitPrice,
+            image: product.images[0],
+            pack: product.pack,
+          }, qty);
+          trackAddToCart({ sku: product.sku, name: product.name, price: unitPrice, quantity: qty, category: product.category, brand: product.brand });
+
+          // Show upsell popup
+          setUpsell({
+            currentQty: qty,
+            currentPrice: unitPrice,
+            nextTierQty: nextTier.qty,
+            nextTierPrice: nextTier.unitPrice,
+            addMore,
+            savingsPerUnit: Math.round((unitPrice - nextTier.unitPrice) * 100) / 100,
+            currentTotal: Math.round(qty * unitPrice * 100) / 100,
+            nextTotal: Math.round(nextTier.qty * nextTier.unitPrice * 100) / 100,
+            productName: product.cardTitle,
+          });
+          return;
+        }
+      }
+    }
+
     addItem({
       slug: product.slug,
       sku: product.sku,
@@ -315,6 +353,17 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [qty, setQty] = useState(1);
   const [selectedBrick, setSelectedBrick] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [upsell, setUpsell] = useState<{
+    currentQty: number;
+    currentPrice: number;
+    nextTierQty: number;
+    nextTierPrice: number;
+    addMore: number;
+    savingsPerUnit: number;
+    currentTotal: number;
+    nextTotal: number;
+    productName: string;
+  } | null>(null);
   const [shipZip, setShipZip] = useState("");
   const [shipOption, setShipOption] = useState<"pickup" | "delivery">("delivery");
   const [shipChecked, setShipChecked] = useState(false);
@@ -1062,6 +1111,85 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           </div>
         </div>
       </section>
+
+      {/* Upsell Popup */}
+      {upsell && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setUpsell(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-[420px] w-[92%] mx-4 overflow-hidden animate-[fadeInUp_0.25s_ease-out]" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="bg-mjs-dark px-6 py-5 text-center relative">
+              <button onClick={() => setUpsell(null)} className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                <svg className="w-3.5 h-3.5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+              <div className="w-11 h-11 bg-mjs-red rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div className="text-base font-extrabold text-white tracking-tight">Bulk Savings Available</div>
+              <div className="text-xs text-white/50 mt-1">You&apos;re so close to the next price break</div>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              {/* Comparison cards */}
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="bg-mjs-gray-50 rounded-xl p-4 text-center border border-gray-200">
+                  <div className="text-[9px] font-bold text-mjs-gray-400 uppercase tracking-wider mb-2">Current</div>
+                  <div className="text-2xl font-black text-mjs-dark">{upsell.currentQty}</div>
+                  <div className="text-[10px] font-semibold text-mjs-gray-400 uppercase mt-0.5">cases</div>
+                  <div className="h-px bg-gray-200 my-3" />
+                  <div className="text-sm font-bold text-mjs-dark">${upsell.currentPrice.toFixed(2)}<span className="text-xs font-medium text-mjs-gray-400">/ea</span></div>
+                  <div className="text-[11px] text-mjs-gray-400 mt-1">${upsell.currentTotal.toFixed(2)} total</div>
+                </div>
+                <div className="bg-red-50 rounded-xl p-4 text-center border-2 border-mjs-red relative">
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-mjs-red text-white text-[8px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full">Best Value</div>
+                  <div className="text-[9px] font-bold text-mjs-red uppercase tracking-wider mb-2">Better Deal</div>
+                  <div className="text-2xl font-black text-mjs-dark">{upsell.nextTierQty}</div>
+                  <div className="text-[10px] font-semibold text-mjs-gray-400 uppercase mt-0.5">cases</div>
+                  <div className="h-px bg-red-200 my-3" />
+                  <div className="text-sm font-bold text-mjs-red">${upsell.nextTierPrice.toFixed(2)}<span className="text-xs font-medium text-mjs-red/60">/ea</span></div>
+                  <div className="text-[11px] text-mjs-red/70 mt-1">${upsell.nextTotal.toFixed(2)} total</div>
+                </div>
+              </div>
+
+              {/* Savings callout */}
+              <div className="bg-mjs-dark rounded-xl px-4 py-3 mb-5 text-center">
+                <span className="text-sm font-bold text-white">
+                  Add {upsell.addMore} more &mdash; save <span className="text-mjs-red">${upsell.savingsPerUnit.toFixed(2)}</span> on every case
+                </span>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={() => {
+                  if (!product) return;
+                  removeItem(product.slug);
+                  addItem({
+                    slug: product.slug,
+                    sku: product.sku,
+                    name: product.cardTitle,
+                    brand: product.brand,
+                    price: upsell.nextTierPrice,
+                    image: product.images[0],
+                    pack: product.pack,
+                  }, upsell.nextTierQty);
+                  setUpsell(null);
+                }}
+                className="w-full bg-mjs-red hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Add {upsell.addMore} More & Save
+              </button>
+
+              <button
+                onClick={() => setUpsell(null)}
+                className="w-full text-center text-[11px] text-mjs-gray-400 font-medium mt-3 py-1 hover:text-mjs-dark transition-colors"
+              >
+                No thanks, keep {upsell.currentQty} cases
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

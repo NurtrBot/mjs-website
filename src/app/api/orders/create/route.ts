@@ -310,6 +310,7 @@ export async function POST(req: NextRequest) {
           : "https://api.tremendous.com";
 
         if (tremendousKey) {
+          console.log("[Tremendous] Sending gift card:", { amount: reward.amount, name: reward.name, productId: reward.id, recipient: shippingAddress.email });
           const tRes = await fetch(`${baseUrl}/api/v2/orders`, {
             method: "POST",
             headers: {
@@ -339,10 +340,16 @@ export async function POST(req: NextRequest) {
               amount: reward.amount,
               name: reward.name,
             };
+            console.log("[Tremendous] Gift card created successfully:", tReward?.id);
+          } else {
+            const errText = await tRes.text();
+            console.error("[Tremendous] API error:", tRes.status, errText);
           }
+        } else {
+          console.error("[Tremendous] No API key found in environment");
         }
-      } catch {
-        // Non-critical — order still succeeds without gift card
+      } catch (err) {
+        console.error("[Tremendous] Exception:", err);
       }
     }
 
