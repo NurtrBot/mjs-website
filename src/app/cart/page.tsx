@@ -378,6 +378,7 @@ export default function CartPage() {
     setTimeout(() => setAnimateBar(true), 50);
   };
 
+  // Tax estimated at checkout based on shipping zip
   const taxRate = 0.0775;
   const tax = subtotal * taxRate;
   const total = subtotal + tax;
@@ -612,7 +613,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">
-                        Sales Tax (7.75%)
+                        Est. Sales Tax
                       </span>
                       <span className="font-semibold text-mjs-gray-700">
                         ${tax.toFixed(2)}

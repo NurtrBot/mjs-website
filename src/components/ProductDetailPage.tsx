@@ -28,7 +28,8 @@ import {
 } from "lucide-react";
 
 import Image from "next/image";
-import { getProductBySlug, type ProductData } from "@/data/products";
+import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
+import { getSmartPairings } from "@/lib/product-pairings";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -232,7 +233,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
   const [pricingLoaded, setPricingLoaded] = useState(!!initialProduct);
-  const [relatedProducts, setRelatedProducts] = useState<ProductData[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<ProductData[]>(
+    localProduct ? getSmartPairings(localProduct, allProducts, 6) : []
+  );
   const { addItem, updateQty: updateCartQty, removeItem } = useCart();
   const { user, getCustomPrice } = useAuth();
   const customPrice = product ? getCustomPrice(product.sku) : null;
@@ -257,7 +260,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               stockQty: bcProduct.stockQty ?? prev.stockQty,
               inStock: bcProduct.inStock ?? prev.inStock,
               description: bcProduct.description || prev.description,
-              images: bcProduct.images?.length > 0 ? bcProduct.images : prev.images,
+              images: prev.images[0]?.startsWith("http") ? prev.images : (bcProduct.images?.length > 0 ? bcProduct.images : prev.images),
             } : bcProduct);
           } else {
             // BC returned wrong product — try fetching by SKU instead
@@ -279,12 +282,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           }
           const displayProduct = localProduct && bcProduct.sku !== localProduct.sku ? localProduct : bcProduct;
           trackViewProduct({ sku: displayProduct.sku, name: displayProduct.name, price: displayProduct.price, category: displayProduct.category, brand: displayProduct.brand });
-          // Fetch smart related products
-          const p = data.product;
-          fetch(`/api/products/related?category=${encodeURIComponent(p.category || "")}&subcategory=${encodeURIComponent(p.subcategory || "")}&sku=${encodeURIComponent(p.sku || "")}`)
-            .then(r => r.json())
-            .then(rd => { if (rd.products?.length > 0) setRelatedProducts(rd.products); })
-            .catch(() => {});
+          // Related products are computed from local data — no API call needed
 
           // Custom pricing is now loaded from cached priceMap in AuthContext — no API call needed
         }

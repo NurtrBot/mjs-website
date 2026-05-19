@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductImage from "@/components/ProductImage";
 
 const hasRealImage = (p: ProductData) =>
   p.images.length > 0 && !p.images[0].includes("placeholder");
@@ -55,11 +56,13 @@ function CollectionCard({ product }: { product: ProductData }) {
           {product.badge}
         </div>
       )}
-      <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden">
-        <img
+      <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden relative">
+        <ProductImage
           src={product.images[0]}
           alt={product.name}
-          className={`w-full h-full ${product.imageFit === "contain" ? "object-contain p-4" : "object-cover"}`}
+          sku={product.sku}
+          imageFit={product.imageFit}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
       </a>
       <div className="p-4">

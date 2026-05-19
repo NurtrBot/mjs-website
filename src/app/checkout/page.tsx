@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Loader2 } from "lucide-react";
+import { getTaxRate, formatTaxRate } from "@/lib/tax-rates";
 import {
   ArrowLeft,
   ArrowRight,
@@ -169,11 +170,6 @@ export default function CheckoutPage() {
 
   const promoDiscount = promoApplied?.discount || 0;
   const taxableSubtotal = subtotal - promoDiscount;
-  // Tax is estimated at 7.75% for display — BC calculates the actual tax at order creation
-  const estimatedTaxRate = 0.0775;
-  const tax = isTaxExempt ? 0 : taxableSubtotal * estimatedTaxRate;
-  const shipping = isPickup ? 0 : shippingEstimate ?? 0;
-  const total = taxableSubtotal + tax + shipping;
 
   const [form, setForm] = useState({
     email: "",
@@ -201,6 +197,13 @@ export default function CheckoutPage() {
     cardName: "",
     notes: "",
   });
+
+  // Tax rate based on shipping zip code — BC calculates the final tax at order creation
+  const billingZip = form?.sameAsBilling ? form?.zip : form?.billingZip || form?.zip || "";
+  const estimatedTaxRate = getTaxRate(billingZip);
+  const tax = isTaxExempt ? 0 : taxableSubtotal * estimatedTaxRate;
+  const shipping = isPickup ? 0 : shippingEstimate ?? 0;
+  const total = taxableSubtotal + tax + shipping;
 
   // Auto-fill from order setup + user data
   useEffect(() => {
@@ -1115,6 +1118,13 @@ export default function CheckoutPage() {
                           expiry: form.expiry,
                           cvv: form.cvv,
                         } : undefined,
+                        reward: selectedGift ? {
+                          id: selectedGift.id,
+                          name: selectedGift.name,
+                          type: selectedGift.type,
+                          amount: selectedGift.amount,
+                          tier: selectedGift.tier,
+                        } : undefined,
                       }),
                     });
 
@@ -1330,7 +1340,7 @@ export default function CheckoutPage() {
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-mjs-gray-500">Est. Tax</span>
+                      <span className="text-mjs-gray-500">Est. Tax{billingZip ? ` (${formatTaxRate(billingZip)})` : ""}</span>
                       <span className={`font-semibold ${isTaxExempt ? "text-emerald-600" : "text-mjs-gray-700"}`}>
                         {isTaxExempt ? "TAX EXEMPT" : `$${tax.toFixed(2)}`}
                       </span>

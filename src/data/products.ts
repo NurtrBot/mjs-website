@@ -421,7 +421,7 @@ export const products: ProductData[] = [
     price: 45.75,
     rating: 4.6,
     reviewCount: 138,
-    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12199/images/371337/Hi_Density_Liners__33198.1670966268.386.513__88251.1734545820.1280.1280.jpg?c=1"],
+    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12199/images/371704/45C__71146.1778789892.1280.1280.png?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12199/images/371703/MJS_CLEAR__19549.1778789892.1280.1280.png?c=1"],
     imageFit: "contain",
     inStock: true,
     stockQty: 420,

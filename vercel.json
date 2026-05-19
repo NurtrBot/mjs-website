@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://translate.google.com https://translate.googleapis.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://translate.googleapis.com; img-src 'self' data: blob: https: http:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com https://translate.googleapis.com https://formspree.io https://testflight.tremendous.com https://api.tremendous.com https://www.clarity.ms https://*.clarity.ms; frame-src 'self' https://translate.google.com;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://translate.google.com https://translate.googleapis.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://translate.googleapis.com; img-src 'self' data: blob: https: http:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com https://translate.googleapis.com https://formspree.io https://testflight.tremendous.com https://api.tremendous.com https://www.clarity.ms https://*.clarity.ms; frame-src 'self' https://translate.google.com https://www.youtube.com;"
         },
         {
           "key": "X-Frame-Options",

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
-import Image from "next/image";
+import ProductImage from "@/components/ProductImage";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
@@ -21,7 +21,7 @@ function ReadyCard({ product }: { product: ProductData }) {
         </div>
       )}
       <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden relative">
-        <Image src={product.images[0]} alt={product.cardTitle} fill sizes="200px" className={product.imageFit === "contain" ? "object-contain p-2" : "object-cover"} />
+        <ProductImage src={product.images[0]} alt={product.cardTitle} sku={product.sku} imageFit={product.imageFit} sizes="(max-width: 768px) 50vw, 200px" />
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>
