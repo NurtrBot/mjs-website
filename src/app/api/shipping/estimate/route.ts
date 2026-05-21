@@ -5,6 +5,7 @@ import {
   deleteCart,
   getProductIdBySku,
   getProducts,
+  getProductVariants,
 } from "@/lib/bigcommerce";
 
 /*
@@ -64,6 +65,16 @@ export async function POST(req: NextRequest) {
 
     if (lineItems.length === 0) {
       return NextResponse.json({ error: "No valid products found" }, { status: 400 });
+    }
+
+    // 1b. Resolve variant IDs for products with options
+    for (const li of lineItems) {
+      try {
+        const variants = await getProductVariants(li.product_id);
+        if (variants.length > 0) {
+          (li as { product_id: number; quantity: number; variant_id?: number }).variant_id = variants[0].id;
+        }
+      } catch {}
     }
 
     // 2. Create temporary cart

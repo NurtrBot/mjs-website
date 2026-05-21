@@ -157,6 +157,16 @@ export async function POST(req: NextRequest) {
       lineItems.push({ product_id: productId, quantity: item.quantity });
     }
 
+    // 1b. Resolve variant IDs for products with options (BC requires variant_id)
+    for (const li of lineItems) {
+      try {
+        const variants = await getProductVariants(li.product_id);
+        if (variants.length > 0) {
+          (li as { product_id: number; quantity: number; variant_id?: number }).variant_id = variants[0].id;
+        }
+      } catch {}
+    }
+
     // ── ALL ORDERS: Use checkout pipeline (triggers BC email notifications) ──
     // 2. Create cart
     const cart = await createCart(lineItems, customerId);

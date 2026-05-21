@@ -361,6 +361,7 @@ export async function getOrderProducts(orderId: number) {
 export interface CartLineItem {
   product_id: number;
   quantity: number;
+  variant_id?: number;
 }
 
 export interface ShippingAddress {
