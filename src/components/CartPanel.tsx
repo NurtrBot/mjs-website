@@ -199,7 +199,7 @@ export default function CartPanel() {
                           <span className="text-[10px] font-semibold text-mjs-gray-500">
                             <span className="font-bold text-mjs-red">${remaining.toFixed(2)}</span> away from free delivery
                           </span>
-                          <span className="text-[10px] text-mjs-gray-400">${subtotal.toFixed(0)} / $399</span>
+                          <span className="text-[10px] text-mjs-gray-400">Subtotal: ${subtotal.toFixed(0)} / $399</span>
                         </div>
                         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                           <div

@@ -335,6 +335,12 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
+      {/* Category Banner */}
+      {slug === "cleaning-chemicals" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-cleaning-chemicals.png" alt="Professional Cleaning Solutions" className="w-full h-auto rounded-xl" />
+        </div>
+      )}
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-4">
