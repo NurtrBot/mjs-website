@@ -680,7 +680,7 @@ export default function CartPage() {
                     {pickupSuggestions.map((p) => (
                       <div key={p.sku} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-3 flex flex-col group">
                         <a href={`/product/${p.slug}`} className="block aspect-square rounded-lg overflow-hidden mb-2 bg-white relative">
-                          <Image src={p.images[0]} alt={p.cardTitle} fill sizes="80px" className="object-cover" />
+                          <Image src={p.images[0]} alt={p.cardTitle} fill sizes="160px" className="object-cover" />
                         </a>
                         <div className="text-[10px] font-semibold text-mjs-dark leading-tight line-clamp-2 min-h-[28px]">{p.cardTitle}</div>
                         <div className="text-sm font-black text-mjs-dark mt-1">${p.price.toFixed(2)}</div>

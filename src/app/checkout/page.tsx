@@ -72,6 +72,7 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [showShippingWarning, setShowShippingWarning] = useState(false);
+  const [shippingWarningDismissed, setShippingWarningDismissed] = useState(false);
   const [selectedGift, setSelectedGift] = useState<{ id: string; name: string; tier: string; type: "physical" | "giftcard"; amount?: number } | null>(null);
   const [savedAddresses, setSavedAddresses] = useState<{ id: number; label: string; company: string; address: string; city: string; state: string; zip: string; phone?: string }[]>([]);
   const [useManualAddress, setUseManualAddress] = useState(false);
@@ -979,7 +980,7 @@ export default function CheckoutPage() {
                 onClick={async () => {
                   // Check if they're paying for shipping when they're close to free
                   const effectiveSubtotal = subtotal - promoDiscount;
-                  if (!isPickup && effectiveSubtotal < 399 && effectiveSubtotal >= 200 && !showShippingWarning) {
+                  if (!isPickup && effectiveSubtotal < 399 && effectiveSubtotal >= 200 && !shippingWarningDismissed) {
                     setShowShippingWarning(true);
                     return;
                   }
@@ -1390,7 +1391,6 @@ export default function CheckoutPage() {
       {showShippingWarning && (() => {
         const effectiveSub = subtotal - promoDiscount;
         const needed = (399 - effectiveSub);
-        const shippingCost = shipping > 0 ? shipping : 0;
         const pct = Math.min((effectiveSub / 399) * 100, 100);
         return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -1421,29 +1421,9 @@ export default function CheckoutPage() {
 
             {/* Body */}
             <div className="px-6 py-5">
-              {/* Shipping cost you'd save */}
-              {shippingCost > 0 && (
-                <div className="bg-emerald-50 rounded-xl p-4 mb-4 text-center border-2 border-emerald-200">
-                  <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">You Would Save</div>
-                  <div className="text-3xl font-black text-emerald-600">${shippingCost.toFixed(2)}</div>
-                  <div className="text-sm font-semibold text-emerald-700 mt-1">in shipping costs with FREE delivery</div>
-                </div>
-              )}
-
-              {/* Side by side comparison */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                <div className="bg-mjs-gray-50 rounded-xl p-3 text-center border border-gray-200">
-                  <div className="text-[9px] font-bold text-mjs-gray-400 uppercase tracking-wider mb-1">Without Free Delivery</div>
-                  <div className="text-lg font-black text-mjs-dark">${(effectiveSub + shippingCost).toFixed(2)}</div>
-                  <div className="text-[10px] text-mjs-gray-400">includes ${shippingCost.toFixed(2)} shipping</div>
-                </div>
-                <div className="bg-red-50 rounded-xl p-3 text-center border-2 border-mjs-red relative">
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-mjs-red text-white text-[8px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full">Better Deal</div>
-                  <div className="text-[9px] font-bold text-mjs-red uppercase tracking-wider mb-1">With Free Delivery</div>
-                  <div className="text-lg font-black text-mjs-dark">${(399).toFixed(2)}+</div>
-                  <div className="text-[10px] text-mjs-red font-semibold">$0.00 shipping</div>
-                </div>
-              </div>
+              <p className="text-sm text-mjs-gray-500 text-center mb-5">
+                Add <span className="font-bold text-mjs-dark">${needed.toFixed(2)}</span> more to your order and shipping is on us!
+              </p>
 
               {/* Add More Items */}
               <button
@@ -1454,19 +1434,22 @@ export default function CheckoutPage() {
                 className="w-full bg-mjs-red hover:bg-red-700 text-white font-extrabold py-4 rounded-xl text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/25 mb-3"
               >
                 <ShoppingCart className="w-5 h-5" />
-                Add ${needed.toFixed(2)} More & Get FREE Delivery
+                Keep Shopping — Get FREE Delivery
               </button>
 
               {/* Continue Anyway */}
               <button
                 onClick={() => {
+                  setShippingWarningDismissed(true);
                   setShowShippingWarning(false);
-                  const placeBtn = document.querySelector("[data-place-order]") as HTMLButtonElement;
-                  if (placeBtn) setTimeout(() => placeBtn.click(), 100);
+                  setTimeout(() => {
+                    const placeBtn = document.querySelector("[data-place-order]") as HTMLButtonElement;
+                    if (placeBtn) placeBtn.click();
+                  }, 100);
                 }}
                 className="w-full text-center text-[11px] text-mjs-gray-400 font-medium py-2 hover:text-mjs-dark transition-colors"
               >
-                No thanks, pay ${shippingCost > 0 ? `$${shippingCost.toFixed(2)} for` : "for"} shipping
+                No thanks, continue with shipping charges
               </button>
             </div>
           </div>
