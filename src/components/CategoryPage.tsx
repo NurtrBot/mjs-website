@@ -356,6 +356,26 @@ export default function CategoryPage({ slug }: { slug: string }) {
           <img src="/images/banner-gloves-safety.png" alt="Protection You Can Rely On. High-quality disposable gloves." className="w-full h-auto rounded-xl" />
         </div>
       )}
+      {slug === "breakroom" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-breakroom.png" alt="Everything You Need for a Better Breakroom." className="w-full h-auto rounded-xl" />
+        </div>
+      )}
+      {slug === "equipment" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-equipment.png" alt="Powerful Equipment. Professional Results." className="w-full h-auto rounded-xl" />
+        </div>
+      )}
+      {slug === "floor-care" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-floor-care.png" alt="Cleaner Floors. Better Impressions." className="w-full h-auto rounded-xl" />
+        </div>
+      )}
+      {slug === "car-detailing" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-car-detailing.png" alt="Professional Care. Stunning Results. Premium detailing products and equipment." className="w-full h-auto rounded-xl" />
+        </div>
+      )}
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-4">
