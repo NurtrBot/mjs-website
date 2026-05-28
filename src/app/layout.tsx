@@ -76,6 +76,76 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
+        {/* ── Structured Data: LocalBusiness + WebSite ── */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              "@id": "https://www.mobilejanitorialsupply.com/#organization",
+              name: "Mobile Janitorial Supply",
+              alternateName: ["MJS", "714 Supply", "Janitors Finest"],
+              description: "Southern California's highest-rated wholesale janitorial supply company. 10,000+ cleaning products, chemicals, paper goods, equipment, and safety supplies at wholesale prices with free local delivery.",
+              url: "https://www.mobilejanitorialsupply.com",
+              telephone: "+1-714-779-2640",
+              faxNumber: "+1-714-779-7789",
+              email: "orders@mobilejanitorialsupply.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "3066 E. La Palma Ave.",
+                addressLocality: "Anaheim",
+                addressRegion: "CA",
+                postalCode: "92806",
+                addressCountry: "US",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 33.8536,
+                longitude: -117.8756,
+              },
+              openingHoursSpecification: {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                opens: "06:30",
+                closes: "15:00",
+              },
+              areaServed: [
+                { "@type": "State", name: "California" },
+                { "@type": "AdministrativeArea", name: "Orange County, CA" },
+                { "@type": "AdministrativeArea", name: "Los Angeles County, CA" },
+                { "@type": "AdministrativeArea", name: "Riverside County, CA" },
+                { "@type": "AdministrativeArea", name: "San Bernardino County, CA" },
+                { "@type": "AdministrativeArea", name: "San Diego County, CA" },
+              ],
+              priceRange: "$$",
+              image: "https://www.mobilejanitorialsupply.com/banner-03.jpg",
+              sameAs: [
+                "https://www.714supply.com",
+                "https://www.janitorsfinest.com",
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Mobile Janitorial Supply",
+              url: "https://www.mobilejanitorialsupply.com",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://www.mobilejanitorialsupply.com/search?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-6N2DLCDNH9" strategy="afterInteractive" />
         <Script id="ga4-init" strategy="afterInteractive">
           {`

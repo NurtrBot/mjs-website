@@ -40,6 +40,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  // ── Guide pages ──
+  const guidePages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/guides`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/trash-bag-size-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/disposable-glove-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/how-to-strip-and-wax-floors`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/cleaning-chemical-dilution-chart`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/paper-towel-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/janitorial-supply-checklist`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/car-detailing-supply-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/stretch-wrap-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/commercial-carpet-cleaning-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/mop-buying-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/restroom-cleaning-checklist`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/respirator-mask-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/food-service-disposables-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/how-to-bid-a-cleaning-job`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/soap-dispenser-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/shipping-supplies-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/guides/green-cleaning-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+  ];
+
+  // ── Industry pages ──
+  const industryPages: MetadataRoute.Sitemap = [
+    "restaurants", "healthcare", "schools", "property-management", "offices", "warehouses",
+  ].map((slug) => ({
+    url: `${SITE_URL}/industries/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  // ── Local SEO pages ──
+  const locationPages: MetadataRoute.Sitemap = [
+    "orange-county", "los-angeles", "inland-empire", "san-diego",
+    "anaheim", "irvine", "santa-ana", "huntington-beach",
+    "fullerton", "costa-mesa", "garden-grove", "long-beach",
+  ].map((slug) => ({
+    url: `${SITE_URL}/locations/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   // ── Collection pages ──
   const collectionPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/collection?type=best-sellers`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
@@ -84,5 +128,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // If product fetch fails, sitemap still works with static + category pages
   }
 
-  return [...staticPages, ...categoryPages, ...collectionPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...guidePages, ...industryPages, ...locationPages, ...collectionPages, ...productPages];
 }

@@ -376,6 +376,11 @@ export default function CategoryPage({ slug }: { slug: string }) {
           <img src="/images/banner-car-detailing.png" alt="Professional Care. Stunning Results. Premium detailing products and equipment." className="w-full h-auto rounded-xl" />
         </div>
       )}
+      {slug === "paper-products" && (
+        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+          <img src="/images/banner-paper-products.png" alt="Every Sheet. Every Standard. High-quality paper products for every facility." className="w-full h-auto rounded-xl" />
+        </div>
+      )}
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-4">
