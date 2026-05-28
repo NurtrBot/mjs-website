@@ -19,7 +19,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   // Unique key forces all strips to re-mount and re-shuffle on every visit
-  const [refreshKey, setRefreshKey] = useState(Date.now());
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     setRefreshKey(Date.now());

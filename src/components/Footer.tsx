@@ -1,11 +1,66 @@
 "use client";
 
-import { MapPin, Phone, Mail, Globe, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Clock, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+
+const RESOURCE_SECTIONS = [
+  {
+    title: "Buying Guides",
+    links: [
+      { label: "Trash Bag Size Guide", href: "/guides/trash-bag-size-guide" },
+      { label: "Glove Guide: Nitrile vs Vinyl vs Latex", href: "/guides/disposable-glove-guide" },
+      { label: "How to Strip & Wax Floors", href: "/guides/how-to-strip-and-wax-floors" },
+      { label: "Chemical Dilution Chart", href: "/guides/cleaning-chemical-dilution-chart" },
+      { label: "Paper Towel Guide", href: "/guides/paper-towel-guide" },
+      { label: "Janitorial Supply Checklist", href: "/guides/janitorial-supply-checklist" },
+      { label: "Car Detailing Supply Guide", href: "/guides/car-detailing-supply-guide" },
+      { label: "Mop Buying Guide", href: "/guides/mop-buying-guide" },
+      { label: "Carpet Cleaning Guide", href: "/guides/commercial-carpet-cleaning-guide" },
+      { label: "Stretch Wrap Guide", href: "/guides/stretch-wrap-guide" },
+      { label: "N95 & Respirator Guide", href: "/guides/respirator-mask-guide" },
+      { label: "Restroom Cleaning Checklist", href: "/guides/restroom-cleaning-checklist" },
+      { label: "Food Service Disposables", href: "/guides/food-service-disposables-guide" },
+      { label: "How to Bid a Cleaning Job", href: "/guides/how-to-bid-a-cleaning-job" },
+      { label: "Soap & Dispenser Guide", href: "/guides/soap-dispenser-guide" },
+      { label: "Shipping Supplies Guide", href: "/guides/shipping-supplies-guide" },
+      { label: "Green Cleaning Guide", href: "/guides/green-cleaning-guide" },
+    ],
+  },
+  {
+    title: "Industries We Serve",
+    links: [
+      { label: "Restaurants & Food Service", href: "/industries/restaurants" },
+      { label: "Healthcare & Medical", href: "/industries/healthcare" },
+      { label: "Schools & Education", href: "/industries/schools" },
+      { label: "Property Management", href: "/industries/property-management" },
+      { label: "Offices & Commercial", href: "/industries/offices" },
+      { label: "Warehouses & Industrial", href: "/industries/warehouses" },
+    ],
+  },
+  {
+    title: "Service Areas",
+    links: [
+      { label: "Orange County", href: "/locations/orange-county" },
+      { label: "Los Angeles", href: "/locations/los-angeles" },
+      { label: "Inland Empire", href: "/locations/inland-empire" },
+      { label: "San Diego", href: "/locations/san-diego" },
+      { label: "Anaheim", href: "/locations/anaheim" },
+      { label: "Irvine", href: "/locations/irvine" },
+      { label: "Santa Ana", href: "/locations/santa-ana" },
+      { label: "Huntington Beach", href: "/locations/huntington-beach" },
+      { label: "Fullerton", href: "/locations/fullerton" },
+      { label: "Costa Mesa", href: "/locations/costa-mesa" },
+      { label: "Garden Grove", href: "/locations/garden-grove" },
+      { label: "Long Beach", href: "/locations/long-beach" },
+    ],
+  },
+];
 
 export default function Footer() {
   const [translating, setTranslating] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
 
   const toggleSpanish = () => {
     // Use Google Translate API
@@ -113,6 +168,49 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+      </div>
+
+      {/* Resources Toggle */}
+      <div className="max-w-[1400px] mx-auto px-4 py-2">
+        <button
+          onClick={() => setOpenSection(openSection === "resources" ? null : "resources")}
+          className="w-full flex items-center gap-4 py-4 group cursor-pointer"
+        >
+          <div className="flex-1 h-px bg-white/20" />
+          <div className={`flex items-center gap-2.5 px-6 py-2.5 rounded-full border transition-all ${
+            openSection === "resources"
+              ? "border-mjs-red bg-mjs-red/15 text-white"
+              : "border-white/20 bg-white/5 text-gray-300 group-hover:border-mjs-red/50 group-hover:bg-white/10 group-hover:text-white"
+          }`}>
+            <span className="text-[11px] font-bold uppercase tracking-widest">Resources</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${openSection === "resources" ? "rotate-180 text-mjs-red" : "text-gray-400"}`} />
+          </div>
+          <div className="flex-1 h-px bg-white/20" />
+        </button>
+
+        {/* Expanded Resources Panel */}
+        {openSection === "resources" && (
+          <div className="pb-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              {RESOURCE_SECTIONS.map((section) => (
+                <div key={section.title}>
+                  <h5 className="text-[10px] font-bold text-mjs-red uppercase tracking-widest mb-3">{section.title}</h5>
+                  <div className="space-y-1">
+                    {section.links.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block text-[12px] text-gray-500 hover:text-white transition-colors py-0.5"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Language + Payment + Copyright */}
