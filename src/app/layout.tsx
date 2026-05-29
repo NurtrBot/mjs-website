@@ -8,6 +8,7 @@ import { OrderProvider } from "@/context/OrderContext";
 import { ShippingProvider } from "@/context/ShippingContext";
 import { PurchaseProvider } from "@/context/PurchaseContext";
 import CartPanel from "@/components/CartPanel";
+import ReturnVisitorSurvey from "@/components/ReturnVisitorSurvey";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 
 const inter = Inter({
@@ -179,6 +180,7 @@ export default function RootLayout({
                 <CartProvider>
                   {children}
                   <CartPanel />
+                  <ReturnVisitorSurvey />
                 </CartProvider>
               </ShippingProvider>
             </OrderProvider>
