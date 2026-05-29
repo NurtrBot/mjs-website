@@ -45,11 +45,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastData | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
-  // Restore cart from localStorage on mount
+  // Restore cart from localStorage on mount — backfill missing SKUs for old cart items
   useEffect(() => {
     try {
       const stored = localStorage.getItem("mjs_cart");
-      if (stored) setItems(JSON.parse(stored));
+      if (stored) {
+        const parsed: CartItem[] = JSON.parse(stored);
+        setItems(parsed);
+
+        // Backfill missing SKUs by looking up product by slug
+        const needsSku = parsed.filter((i) => !i.sku);
+        if (needsSku.length > 0) {
+          Promise.all(
+            needsSku.map((i) =>
+              fetch(`/api/products/slug?slug=${encodeURIComponent(i.slug)}`)
+                .then((r) => r.json())
+                .then((d) => ({ slug: i.slug, sku: d.product?.sku }))
+                .catch(() => ({ slug: i.slug, sku: null }))
+            )
+          ).then((results) => {
+            const skuMap = new Map(results.filter((r) => r.sku).map((r) => [r.slug, r.sku]));
+            if (skuMap.size > 0) {
+              setItems((prev) =>
+                prev.map((i) => (skuMap.has(i.slug) ? { ...i, sku: skuMap.get(i.slug)! } : i))
+              );
+            }
+          });
+        }
+      }
     } catch {}
     setHydrated(true);
   }, []);

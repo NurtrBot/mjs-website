@@ -1,29 +1,36 @@
 "use client";
 
-import { ArrowRight, Percent, Users, Truck } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Mail, Users, Truck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import NewsletterModal from "@/components/NewsletterModal";
 
 export default function PromoBannerRow() {
   const { isLoggedIn } = useAuth();
+  const [showNewsletter, setShowNewsletter] = useState(false);
 
   return (
     <section className="bg-mjs-gray-50 py-4">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Bulk Savings — static, not clickable */}
-          <div
-            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4"
+          {/* Newsletter Signup */}
+          <button
+            onClick={() => setShowNewsletter(true)}
+            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4 group hover:shadow-lg transition-all text-left cursor-pointer"
           >
-            <div className="w-12 h-12 bg-mjs-red/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Percent className="w-6 h-6 text-mjs-red-light" />
+            <div className="w-12 h-12 bg-mjs-red/20 group-hover:bg-mjs-red/30 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
+              <Mail className="w-6 h-6 text-mjs-red-light" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-white">Bulk Order Savings</div>
+              <div className="text-sm font-bold text-white">Deals & Promotions</div>
               <div className="text-xs text-gray-400 mt-0.5">
-                Save up to 30% on volume orders
+                Sign up for exclusive offers
               </div>
             </div>
-          </div>
+            <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
+          </button>
+
+          <NewsletterModal isOpen={showNewsletter} onClose={() => setShowNewsletter(false)} />
 
           {/* Business Account → Contact Us */}
           <a

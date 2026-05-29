@@ -418,24 +418,41 @@ export default function AccountDashboard() {
 
 
   const handleReorder = async (order: OrderData) => {
-    // Fetch product details for images
+    // Fetch product details by exact SKU lookup (not keyword search)
     const results = await Promise.all(
       order.lineItems.map(item =>
-        fetch(`/api/products/search?q=${encodeURIComponent(item.sku)}&limit=1`)
+        fetch(`/api/products/slug?slug=${encodeURIComponent(item.sku)}`)
           .then(r => r.json())
-          .catch(() => ({ products: [] }))
+          .catch(() => ({ product: null }))
       )
     );
     for (let i = 0; i < order.lineItems.length; i++) {
       const item = order.lineItems[i];
-      const found = results[i]?.products?.[0];
+      const found = results[i]?.product;
+      // Use cardTitle if it's meaningful (>10 chars), otherwise fall back to the
+      // order line item name which is the full product name from BigCommerce
+      const displayName = found?.cardTitle && found.cardTitle.length > 10
+        ? found.cardTitle
+        : item.name;
+
+      // Use pack from API if meaningful, otherwise extract from the order item name
+      let pack = found?.pack || "";
+      if (!pack || pack === "Each") {
+        // Try to extract pack info from the original product name (e.g. "10/Bundle", "250/CS", "100/BX")
+        const packMatch = item.name.match(/\d+\s*\/\s*\w+|\d+\s*per\s+\w+|\d+\s*(?:bundle|carton|case|box|cs|bx|ct|pk)/i);
+        if (packMatch) pack = packMatch[0];
+      }
+
       addItem({
-        slug: found?.slug || item.sku.toLowerCase(),
-        name: item.name,
+        // Use the resolved slug if found, otherwise use SKU as slug
+        // to keep each line item unique in the cart
+        slug: found?.slug || `reorder-${item.sku.toLowerCase()}`,
+        sku: item.sku,
+        name: displayName,
         brand: found?.brand || "MJS",
         price: item.price,
         image: found?.images?.[0] || "/images/placeholder-product.svg",
-        pack: found?.pack || "",
+        pack,
       }, item.qty);
     }
     setReordered(order.id);

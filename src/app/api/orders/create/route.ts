@@ -151,6 +151,38 @@ export async function POST(req: NextRequest) {
         } catch {}
       }
 
+      // Final fallback: use the slug lookup API logic (handles complex slug → SKU resolution)
+      if (!productId && sku) {
+        try {
+          const { getProductBySku: skuLookup } = await import("@/lib/bigcommerce");
+          // Try the slug as a product slug — extract meaningful segments for SKU lookup
+          const slugParts = sku.split("-");
+          // Try compound segments (e.g., "if48" from "diamond-if48-vinyl...")
+          for (let i = 0; i < slugParts.length - 1 && !productId; i++) {
+            const pair = `${slugParts[i]}-${slugParts[i + 1]}`.toUpperCase();
+            if (pair.length >= 4 && pair.length <= 20) {
+              const found = await skuLookup(pair);
+              if (found && found.price > 0) { productId = found.id; break; }
+            }
+          }
+          // Try keyword search with product name extracted from slug
+          if (!productId) {
+            const noise = new Set(["for", "the", "per", "and", "with", "each", "size", "carton", "case", "box", "pack", "bx", "cs", "ct"]);
+            const keywords = slugParts.filter(w => w.length > 2 && !/^\d+$/.test(w) && !noise.has(w)).slice(0, 4).join(" ");
+            if (keywords) {
+              const searchRes = await getProducts({ keyword: keywords, limit: 10, is_visible: true });
+              const normalizedSku = sku.replace(/\//g, "-").replace(/-{2,}/g, "-").replace(/^-|-$/g, "");
+              const match = searchRes.data.find((p: { custom_url?: { url: string } }) => {
+                const pSlug = (p.custom_url?.url || "").replace(/^\/|\/$/g, "").replace(/\//g, "-").replace(/-{2,}/g, "-");
+                return pSlug === normalizedSku || pSlug.includes(normalizedSku) || normalizedSku.includes(pSlug);
+              });
+              if (match) productId = match.id;
+              else if (searchRes.data[0]?.id) productId = searchRes.data[0].id;
+            }
+          }
+        } catch {}
+      }
+
       if (!productId) {
         return NextResponse.json({ error: `Product not found: ${sku}. Please remove it from your cart and try again.` }, { status: 400 });
       }

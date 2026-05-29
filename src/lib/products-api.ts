@@ -118,6 +118,9 @@ const CUSTOM_PRICING: Record<string, { label: string; qty: number; unitPrice?: n
   ],
 };
 
+/* ── Local product data lookup — if we have hand-curated data, prefer it ── */
+import { getProductBySlug as getLocalProduct } from "@/data/products";
+
 /* ── Transform a BigCommerce product into our ProductData format ── */
 function transformProduct(bc: BCProduct): ProductData {
   const siteCategory = getSiteCategory(bc.categories);
@@ -208,8 +211,17 @@ function transformProduct(bc: BCProduct): ProductData {
     },
     category: finalCategory,
     subcategory,
-    cardTitle: buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle,
-    pack,
+    cardTitle: (() => {
+      // Prefer hand-curated local data for cardTitle if available
+      const local = getLocalProduct(slug);
+      if (local?.cardTitle) return local.cardTitle;
+      return buildLinerTitle(bc.name, subcategory) || buildGloveTitle(bc.name, subcategory) || buildCupTitle(bc.name, subcategory) || cardTitle;
+    })(),
+    pack: (() => {
+      const local = getLocalProduct(slug);
+      if (local?.pack && local.pack !== "Each") return local.pack;
+      return pack;
+    })(),
     imageFit: "contain",
     quickBuy: CUSTOM_PRICING[bc.sku] || (() => {
       const basePrice = Math.round((bc.calculated_price || bc.price) * 100) / 100;
@@ -272,6 +284,10 @@ function makeCardTitle(name: string): string {
     .replace(/\s+/g, " ")
     .trim();
 
+  // If stripping removed too much, fall back to the original name before comma
+  if (title.length < 10) {
+    title = name.split(",")[0].trim();
+  }
   if (title.length > 40) title = title.slice(0, 37) + "...";
   return title || name.slice(0, 37);
 }
@@ -363,9 +379,9 @@ function extractPack(name: string): string {
   // Normalize commas in numbers: "1,000" → "1000"
   const normalized = name.replace(/(\d),(\d)/g, "$1$2");
   const patterns = [
-    /([\d,]+)\s*\/\s*(case|carton|ct|cs|bx|pk|box)/i,
-    /([\d,]+)\s*(rolls?|sheets?|packs?|bags?|count|ct|pk|bx|per case)\b/i,
-    /([\d,]+)\s*per\s+(case|carton|box)/i,
+    /([\d,]+)\s*\/\s*(case|carton|ct|cs|bx|pk|box|bundle)/i,
+    /([\d,]+)\s*(rolls?|sheets?|packs?|bags?|bundles?|count|ct|pk|bx|per case)\b/i,
+    /([\d,]+)\s*per\s+(case|carton|box|bundle)/i,
     /\b(gallon|each|pair)\b/i,
   ];
   for (const p of patterns) {
