@@ -70,7 +70,19 @@ export default function CheckoutPage() {
   const { orderSetup, clearOrderSetup } = useOrderSetup();
   const router = useRouter();
   const [placing, setPlacing] = useState(false);
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
   const [orderError, setOrderError] = useState("");
+
+  // Prevent accidental navigation while order is processing
+  useEffect(() => {
+    if (!placing) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Your order is being processed. Please don't leave this page.";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [placing]);
   const [showShippingWarning, setShowShippingWarning] = useState(false);
   const [shippingWarningDismissed, setShippingWarningDismissed] = useState(false);
   const [selectedGift, setSelectedGift] = useState<{ id: string; name: string; tier: string; type: "physical" | "giftcard"; amount?: number } | null>(null);
@@ -372,6 +384,23 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-mjs-gray-50">
+      {/* Processing Overlay — blocks all interaction while order is being submitted */}
+      {orderSubmitted && (
+        <div className="fixed inset-0 z-[99999] bg-white/95 backdrop-blur-sm flex items-center justify-center">
+          <div className="text-center px-6 max-w-sm">
+            <div className="w-16 h-16 border-4 border-gray-200 border-t-mjs-red rounded-full animate-spin mx-auto mb-6" />
+            <h2 className="text-xl font-black text-mjs-dark mb-2">Processing Your Order</h2>
+            <p className="text-sm text-mjs-gray-500 mb-4">
+              Your payment is being processed securely. This usually takes 10-20 seconds.
+            </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+              <p className="text-xs font-bold text-amber-800">Please do not close or refresh this page</p>
+              <p className="text-[11px] text-amber-700 mt-0.5">Closing this page may result in a duplicate charge.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Checkout Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-[1100px] mx-auto px-4 py-4 flex items-center justify-between">
@@ -1101,6 +1130,7 @@ export default function CheckoutPage() {
                       quantity: item.qty,
                     }));
 
+                    setOrderSubmitted(true);
                     const res = await fetch("/api/orders/create", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
@@ -1177,6 +1207,7 @@ export default function CheckoutPage() {
                   } catch (err) {
                     setOrderError("Something went wrong. Please try again or call (714) 779-2640.");
                     setPlacing(false);
+                    setOrderSubmitted(false);
                   }
                 }}
                 className="w-full bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center gap-2 mb-8 disabled:opacity-50 disabled:cursor-not-allowed"

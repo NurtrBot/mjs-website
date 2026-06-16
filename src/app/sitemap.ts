@@ -84,6 +84,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // ── Spanish pages ──
+  const spanishPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/es`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    ...[
+    "anaheim", "santa-ana", "garden-grove", "fullerton", "fountain-valley",
+    "restaurantes", "escuelas", "oficinas", "iglesias",
+  ].map((slug) => ({
+    url: `${SITE_URL}/es/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  })),
+  ];
+
   // ── Collection pages ──
   const collectionPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/collection?type=best-sellers`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
@@ -128,5 +142,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // If product fetch fails, sitemap still works with static + category pages
   }
 
-  return [...staticPages, ...categoryPages, ...guidePages, ...industryPages, ...locationPages, ...collectionPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...guidePages, ...industryPages, ...locationPages, ...spanishPages, ...collectionPages, ...productPages];
 }

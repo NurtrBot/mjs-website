@@ -20,7 +20,9 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ products });
+    return NextResponse.json({ products }, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch {
     return NextResponse.json({ products: [] });
   }

@@ -159,23 +159,28 @@ export default function Header() {
           </a>
 
           {/* Language Toggle */}
-          <button
-            onClick={toggleLanguage}
-            className="notranslate hidden lg:flex items-center gap-2 flex-shrink-0 ml-2 bg-gradient-to-r from-mjs-red to-red-600 hover:from-red-600 hover:to-red-700 rounded-full px-3.5 py-2 transition-all shadow-sm hover:shadow-md group"
-          >
-            <span className="text-base leading-none">{isSpanish ? "🇺🇸" : "🇲🇽"}</span>
-            <span className="text-xs text-white font-semibold">
-              {isSpanish ? "English" : "Español"}
-            </span>
-            <div className="flex items-center bg-white/20 rounded-full p-0.5">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
-                EN
+          <div className="notranslate hidden lg:flex flex-col items-center flex-shrink-0 ml-2 gap-1">
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 bg-gradient-to-r from-mjs-red to-red-600 hover:from-red-600 hover:to-red-700 rounded-full px-3.5 py-2 transition-all shadow-sm hover:shadow-md group"
+            >
+              <span className="text-base leading-none">{isSpanish ? "🇺🇸" : "🇲🇽"}</span>
+              <span className="text-xs text-white font-semibold">
+                {isSpanish ? "English" : "Español"}
               </span>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${!isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
-                ES
-              </span>
-            </div>
-          </button>
+              <div className="flex items-center bg-white/20 rounded-full p-0.5">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
+                  EN
+                </span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${!isSpanish ? "bg-white text-mjs-red" : "text-white/60"}`}>
+                  ES
+                </span>
+              </div>
+            </button>
+            <a href="/es" className="text-[10px] text-mjs-gray-400 hover:text-mjs-red font-medium transition-colors">
+              Página en Español →
+            </a>
+          </div>
 
           {/* Search Bar — centered */}
           <div className="hidden md:block flex-1 mx-4 relative z-50">

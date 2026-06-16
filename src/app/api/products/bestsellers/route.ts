@@ -17,7 +17,9 @@ export async function GET() {
       .map(transformProduct)
       .filter(Boolean);
 
-    return NextResponse.json({ products });
+    return NextResponse.json({ products }, {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

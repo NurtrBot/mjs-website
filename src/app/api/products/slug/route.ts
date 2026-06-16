@@ -68,6 +68,15 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Check local synced data first — instant, no BC API call
+    const { getProductBySlug: getLocal } = await import("@/data/products");
+    const localProduct = getLocal(slug);
+    if (localProduct) {
+      return NextResponse.json({ product: localProduct, bcProductId: null }, {
+        headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+      });
+    }
+
     const noise = new Set(["for", "the", "per", "and", "with", "each", "carton", "case",
       "box", "pack", "roll", "rolls", "bundle", "wrap", "gauge", "inch", "gallon", "item"]);
     const allWords = slug.split("-").filter(Boolean);
@@ -202,12 +211,12 @@ export async function GET(req: NextRequest) {
             unit = "Unit";
           } else if (name.includes("32 oz") || name.includes("32oz") || name.includes("quart") || name.includes("qt.") || name.includes("qt ")) {
             unit = "Quart";
-          } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal")) {
+          } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal") || name.includes(", gal")) {
             unit = "Gallon";
-          } else if (subcat.includes("liner") || subcat.includes("trash")) {
-            unit = "Case";
           } else if (subcat.includes("roll towel") || subcat.includes("tissue")) {
             unit = "Carton";
+          } else if (cat.includes("cleaning chemical") || cat.includes("floor care")) {
+            unit = "Gallon";
           }
 
           const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
