@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { trackBeginCheckout } from "@/lib/analytics";
+import { getTierPrice } from "@/lib/tier-pricing";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -187,7 +188,7 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
                       sku: product.sku,
                       name: product.cardTitle,
                       brand: product.brand,
-                      price: product.price,
+                      price: getTierPrice(product, 1),
                       image: product.images[0],
                       pack: product.pack,
                     })}
@@ -686,7 +687,7 @@ export default function CartPage() {
                         <div className="text-sm font-black text-mjs-dark mt-1">${p.price.toFixed(2)}</div>
                         <div className="text-[9px] text-mjs-gray-500 mb-2">{p.pack}</div>
                         <button
-                          onClick={() => addItem({ slug: p.slug, sku: p.sku, name: p.cardTitle, brand: p.brand, price: p.price, image: p.images[0], pack: p.pack })}
+                          onClick={() => addItem({ slug: p.slug, sku: p.sku, name: p.cardTitle, brand: p.brand, price: getTierPrice(p, 1), image: p.images[0], pack: p.pack })}
                           className="w-full bg-mjs-red text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
                         >
                           <ShoppingCart className="w-3 h-3" /> Add

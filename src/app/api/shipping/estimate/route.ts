@@ -78,7 +78,24 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Create temporary cart
-    const cart = await createCart(lineItems);
+    let cart;
+    try {
+      cart = await createCart(lineItems);
+    } catch (cartErr: unknown) {
+      const msg = cartErr instanceof Error ? cartErr.message : "";
+      // If BC rejects due to insufficient stock (inventory tracking with 0 stock),
+      // return a helpful message instead of failing
+      if (msg.includes("sufficient stock") || msg.includes("422")) {
+        return NextResponse.json({
+          rates: [],
+          notice: "Shipping rate unavailable for this item. Please call (714) 779-2640 for a quote.",
+        });
+      }
+      throw cartErr;
+    }
+    if (!cart?.id) {
+      return NextResponse.json({ rates: [], notice: "Unable to estimate shipping." });
+    }
     cartId = cart.id;
 
     // 3. Add consignment with destination address

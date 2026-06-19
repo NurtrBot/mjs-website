@@ -45,6 +45,9 @@ function nativeRequest(method: string, url: string, body?: unknown): Promise<unk
       });
     });
     req.on("error", reject);
+    req.setTimeout(60000, () => {
+      req.destroy(new Error(`BC ${method} ${parsed.pathname}: Request timed out after 60s`));
+    });
     if (postData) req.write(postData);
     req.end();
   });
@@ -169,7 +172,7 @@ export async function getProducts(params?: {
 }
 
 export async function getProductBySku(sku: string): Promise<BCProduct | null> {
-  const res = await bcFetch("/catalog/products", { sku, include: "images" });
+  const res = await bcFetch("/catalog/products", { sku, include: "images", is_visible: "true" });
   return res.data?.[0] || null;
 }
 

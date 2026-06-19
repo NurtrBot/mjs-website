@@ -7,6 +7,7 @@ import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
 import { trackAddToCart } from "@/lib/analytics";
+import { getTierPrice } from "@/lib/tier-pricing";
 import ProductImage from "@/components/ProductImage";
 
 function formatCardName(name: string): string {
@@ -117,16 +118,17 @@ export default function ProductCard({ product }: { product: ProductData }) {
             </div>
             <button
               onClick={() => {
+                const tierPrice = customPrice || getTierPrice(product, qty);
                 addItem({
                   slug: product.slug,
                   sku: product.sku,
                   name: product.cardTitle,
                   brand: product.brand,
-                  price: displayPrice,
+                  price: tierPrice,
                   image: product.images[0],
                   pack: product.pack,
                 }, qty);
-                trackAddToCart({ sku: product.sku, name: product.cardTitle, price: displayPrice, quantity: qty, category: product.category, brand: product.brand });
+                trackAddToCart({ sku: product.sku, name: product.cardTitle, price: tierPrice, quantity: qty, category: product.category, brand: product.brand });
                 setQty(1);
               }}
               className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"

@@ -24,6 +24,7 @@ import {
   MapPin,
   Plus,
   ShoppingCart,
+  Phone,
 } from "lucide-react";
 import { trackPromoCode } from "@/lib/analytics";
 
@@ -71,6 +72,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [placing, setPlacing] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
+  const [orderTimedOut, setOrderTimedOut] = useState(false);
   const [orderError, setOrderError] = useState("");
 
   // Prevent accidental navigation while order is processing
@@ -83,6 +85,13 @@ export default function CheckoutPage() {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [placing]);
+
+  // Timeout: if order takes longer than 60 seconds, show help message
+  useEffect(() => {
+    if (!orderSubmitted) { setOrderTimedOut(false); return; }
+    const timer = setTimeout(() => setOrderTimedOut(true), 60000);
+    return () => clearTimeout(timer);
+  }, [orderSubmitted]);
   const [showShippingWarning, setShowShippingWarning] = useState(false);
   const [shippingWarningDismissed, setShippingWarningDismissed] = useState(false);
   const [selectedGift, setSelectedGift] = useState<{ id: string; name: string; tier: string; type: "physical" | "giftcard"; amount?: number } | null>(null);
@@ -388,15 +397,43 @@ export default function CheckoutPage() {
       {orderSubmitted && (
         <div className="fixed inset-0 z-[99999] bg-white/95 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center px-6 max-w-sm">
-            <div className="w-16 h-16 border-4 border-gray-200 border-t-mjs-red rounded-full animate-spin mx-auto mb-6" />
-            <h2 className="text-xl font-black text-mjs-dark mb-2">Processing Your Order</h2>
-            <p className="text-sm text-mjs-gray-500 mb-4">
-              Your payment is being processed securely. This usually takes 10-20 seconds.
-            </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-              <p className="text-xs font-bold text-amber-800">Please do not close or refresh this page</p>
-              <p className="text-[11px] text-amber-700 mt-0.5">Closing this page may result in a duplicate charge.</p>
-            </div>
+            {orderTimedOut ? (
+              <>
+                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Phone className="w-7 h-7 text-amber-600" />
+                </div>
+                <h2 className="text-xl font-black text-mjs-dark mb-2">Taking Longer Than Expected</h2>
+                <p className="text-sm text-mjs-gray-500 mb-4">
+                  We&apos;re having trouble completing your order. Please give us a call and we&apos;ll take care of it right away.
+                </p>
+                <a
+                  href="tel:7147792640"
+                  className="inline-flex items-center gap-2 bg-mjs-red text-white font-bold px-6 py-3 rounded-xl text-base hover:bg-mjs-red-dark transition-all mb-3"
+                >
+                  <Phone className="w-5 h-5" />
+                  (714) 779-2640
+                </a>
+                <p className="text-[11px] text-mjs-gray-400 mb-4">Mon — Fri, 6:30 AM — 3:00 PM</p>
+                <button
+                  onClick={() => { setOrderSubmitted(false); setOrderTimedOut(false); setPlacing(false); }}
+                  className="text-xs text-mjs-gray-400 hover:text-mjs-dark font-medium transition-colors"
+                >
+                  Go back to checkout
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 border-4 border-gray-200 border-t-mjs-red rounded-full animate-spin mx-auto mb-6" />
+                <h2 className="text-xl font-black text-mjs-dark mb-2">Processing Your Order</h2>
+                <p className="text-sm text-mjs-gray-500 mb-4">
+                  Your order is being processed securely. This usually takes 10-20 seconds.
+                </p>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                  <p className="text-xs font-bold text-amber-800">Please do not close or refresh this page</p>
+                  <p className="text-[11px] text-amber-700 mt-0.5">Closing this page may result in a duplicate charge.</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -1131,9 +1168,12 @@ export default function CheckoutPage() {
                     }));
 
                     setOrderSubmitted(true);
+                    const controller = new AbortController();
+                    const fetchTimeout = setTimeout(() => controller.abort(), 90000); // 90s hard timeout
                     const res = await fetch("/api/orders/create", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
+                      signal: controller.signal,
                       body: JSON.stringify({
                         items: orderItems,
                         customerId: user?.id,
@@ -1169,10 +1209,12 @@ export default function CheckoutPage() {
                       }),
                     });
 
+                    clearTimeout(fetchTimeout);
                     const data = await res.json();
                     if (!res.ok || !data.success) {
                       setOrderError(data.error || "Failed to place order. Please try again.");
                       setPlacing(false);
+                      setOrderSubmitted(false);
                       return;
                     }
 
@@ -1205,7 +1247,12 @@ export default function CheckoutPage() {
                     clearOrderSetup();
                     router.push(`/order-confirmation?order=${data.orderNumber}&method=${payMethod}&fulfillment=${fulfill}&shipping=${encodeURIComponent(data.shippingMethod || "")}&shippingCost=${data.shippingCost || 0}`);
                   } catch (err) {
-                    setOrderError("Something went wrong. Please try again or call (714) 779-2640.");
+                    const isTimeout = err instanceof DOMException && err.name === "AbortError";
+                    setOrderError(
+                      isTimeout
+                        ? "The order is taking too long to process. Please call us at (714) 779-2640 to complete your order."
+                        : "Something went wrong. Please try again or call (714) 779-2640."
+                    );
                     setPlacing(false);
                     setOrderSubmitted(false);
                   }

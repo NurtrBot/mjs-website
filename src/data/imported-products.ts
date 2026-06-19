@@ -1,6 +1,6 @@
 import type { ProductData } from './product-types';
 
-// Auto-synced from BigCommerce on 2026-06-03
+// Auto-synced from BigCommerce on 2026-06-19
 // 754 products
 
 export const importedProducts: ProductData[] = [
@@ -3100,7 +3100,7 @@ export const importedProducts: ProductData[] = [
     rating: 0,
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12222/images/371667/55__86341.1778784535.1280.1280.png?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12222/images/371668/ChatGPT_Image_May_14_2026_09_46_02_AM__03338.1778784535.1280.1280.png?c=1"],
-    inStock: true,
+    inStock: false,
     stockQty: 0,
     description: "Low density trash bags are made from resins that are resistant to puncturing and tearing, allowing them to stretch more easily than high density bags. plus, they are comparatively thicker than high density garbage bags. this bag has a 1.5 mil thickness making it a suitable for heavy, sharp trash.",
     highlights: ["SKU: LD385815K","Weight: 20 lbs","Professional grade quality"],
@@ -3957,7 +3957,7 @@ export const importedProducts: ProductData[] = [
     sku: "M70009024COMP",
     name: "24 Inch Flow Mop Microfiber Wet Mop System Complete",
     brand: "MJS",
-    price: 58.95,
+    price: 88.95,
     rating: 0,
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12288/images/13328/m70009018comp_1__79283.1576532674.1280.1280.jpg?c=1"],
@@ -3971,7 +3971,7 @@ export const importedProducts: ProductData[] = [
     cardTitle: "24 Inch Flow Mop Microfiber Wet Mop System...",
     pack: "Each",
     imageFit: 'contain',
-    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":58.95}],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":88.95}],
   },
   {
     slug: "cut-end-wet-mop-head-cotton-no-16-white",
@@ -5263,7 +5263,7 @@ export const importedProducts: ProductData[] = [
     rating: 0,
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12385/images/13136/439__58044.1576532754.1280.1280.jpg?c=1"],
-    inStock: true,
+    inStock: false,
     stockQty: 0,
     description: "32 Oz Value Check 3 Pack Spray Bottle",
     highlights: ["SKU: 130136","Weight: 4 lbs","Professional grade quality"],
@@ -13118,7 +13118,7 @@ export const importedProducts: ProductData[] = [
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/113112/images/320851/128EA__94688.1692971681.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/113112/images/320852/Awesome_Ad__33464.1692971682.1280.1280.jpg?c=1"],
     inStock: true,
-    stockQty: 931,
+    stockQty: 927,
     description: "Our original all-in-on cleaner, degreaser and spot remover is the inspiration behind the LA&rsquo;s Totally Awesome name and the cornerstone of our product lineup. A unique blend of proprietary ingredients works between the spot and the surface to harmlessly remove even the most stubborn of stains from any washable surface. Dilute the concentrated formula for the solution to almost any household cleaning need. Non-toxic and biodegradable, nothing gets the job done like LA&rsquo;s Totally Awesome",
     highlights: ["SKU: 128EA","Weight: 9 lbs","Professional grade quality"],
     specs: {"SKU":"128EA","Brand":"MJS","Weight":"9 lbs"},
@@ -13496,7 +13496,7 @@ export const importedProducts: ProductData[] = [
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/128041/apiprgl95__96243.1646285256.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242841/ESCGW24514_19__23821.1646285256.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242842/ESCGW24514_18__98801.1646285257.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242843/ESCGW24514_17__26335.1646285257.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242844/ESCGW24514_16__46799.1646285258.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242845/ESCGW24514_15__95768.1646285258.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242846/ESCGW24514_14__58104.1646285258.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242847/ESCGW24514_13__11101.1646285259.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242848/ESCGW24514_12__98371.1646285259.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242849/ESCGW24514_11__57875.1646285259.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242850/ESCGW24514_10__49587.1646285260.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242851/ESCGW24514_9__56895.1646285260.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242852/ESCGW24514_8__87047.1646285260.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242853/ESCGW24514_7__17035.1646285261.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242854/ESCGW24514_6__42617.1646285261.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242855/ESCGW24514_5__93244.1646285261.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242856/ESCGW24514_4__49717.1646285262.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242857/ESCGW24514_3__42112.1646285262.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242858/ESCGW24514_2__22276.1646285262.1280.1280.jpg?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/153847/images/242859/ESCGW24514__68113.1646285263.1280.1280.jpg?c=1"],
     inStock: true,
-    stockQty: 175,
+    stockQty: 172,
     description: "Our natural spring water is only bottled at the water's source ensuring freshness, quality and taste. While most bottled waters are purified tap water, highly processed and flavored with added minerals, our spring water is never compromised. There is a difference. 24 Bottles per Case, 84 Cases per Pallet. Beverage Type: Water; Flavor: Spring; Packing Type: Bottle; Capacity (Volume): 16.9 oz. CRV is Included In Price Listed",
     highlights: ["SKU: CGW24514","Weight: 2297 lbs","Professional grade quality"],
     specs: {"SKU":"CGW24514","Brand":"MJS","Weight":"2297 lbs"},

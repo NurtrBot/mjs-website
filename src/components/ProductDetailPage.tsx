@@ -30,6 +30,7 @@ import {
 import Image from "next/image";
 import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
 import { getSmartPairings } from "@/lib/product-pairings";
+import { getTierPrice } from "@/lib/tier-pricing";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -294,10 +295,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
   const handleAddToCart = () => {
     if (!product) return;
-    // Use selected brick's unit price, or match by qty
-    const selectedOpt = product.quickBuy[selectedBrick];
-    const matchedBulk = selectedOpt || product.quickBuy.find(opt => opt.qty === qty);
-    const unitPrice = customPrice || matchedBulk?.unitPrice || product.price;
+    // Always find the best tier price for the entered quantity.
+    // The quick select brick is a UI shortcut — the quantity drives the price.
+    const unitPrice = customPrice || getTierPrice(product, qty);
 
     // Check for upsell opportunity — is there a next tier they're close to?
     if (!customPrice && product.quickBuy.length > 1) {
@@ -412,6 +412,10 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           setShipPrice(`$${cheapest.cost.toFixed(2)}`);
           setShipMethod(cheapest.name || "UPS Ground");
           setShipArea(isLocal ? "OC / LA / IE" : isSD ? "San Diego" : cheapest.name || "UPS Ground");
+        } else if (data.notice) {
+          setShipPrice("Call (714) 779-2640");
+          setShipMethod("UPS Ground");
+          setShipArea("UPS Ground");
         } else {
           setShipPrice("Call for rate");
           setShipMethod("UPS Ground");

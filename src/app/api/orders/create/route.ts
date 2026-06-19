@@ -201,7 +201,20 @@ export async function POST(req: NextRequest) {
 
     // ── ALL ORDERS: Use checkout pipeline (triggers BC email notifications) ──
     // 2. Create cart
-    const cart = await createCart(lineItems, customerId);
+    let cart;
+    try {
+      cart = await createCart(lineItems, customerId);
+    } catch (cartError: unknown) {
+      const msg = cartError instanceof Error ? cartError.message : "Unknown cart error";
+      // If cart creation fails, likely an inactive/unavailable product
+      return NextResponse.json({
+        error: "One or more items in your cart may no longer be available. Please remove unavailable items and try again. If the issue persists, call us at (714) 779-2640.",
+        detail: msg,
+      }, { status: 400 });
+    }
+    if (!cart?.id) {
+      return NextResponse.json({ error: "Unable to create your order. Please try again or call (714) 779-2640." }, { status: 500 });
+    }
     const cartId = cart.id;
 
     // 2b. Apply coupon code if provided

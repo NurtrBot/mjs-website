@@ -199,7 +199,7 @@ function transformProduct(bc: BCProduct): ProductData {
       : 0,
     reviewCount: bc.reviews_count || 0,
     images,
-    inStock: bc.availability === "available" && (bc.inventory_tracking === "none" || bc.inventory_level > 0),
+    inStock: bc.availability === "available",
     stockQty: bc.inventory_level || 100,
     description,
     highlights: generateHighlights(bc),

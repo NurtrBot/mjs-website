@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ShoppingCart, Minus, Plus } from "lucide-react";
 import type { ProductData } from "@/data/products";
+import { getTierPrice } from "@/lib/tier-pricing";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import Header from "@/components/Header";
@@ -91,7 +92,7 @@ function CollectionCard({ product }: { product: ProductData }) {
           </div>
           <button
             onClick={() => {
-              addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: product.price, image: product.images[0], pack: product.pack }, qty);
+              addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: getTierPrice(product, qty), image: product.images[0], pack: product.pack }, qty);
               setQty(1);
             }}
             className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
