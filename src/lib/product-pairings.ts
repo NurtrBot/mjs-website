@@ -255,3 +255,231 @@ export function getSmartPairings(
 
   return result;
 }
+
+/**
+ * FBT Pairings — curated "Frequently Bought Together" logic.
+ *
+ * Priority order for each product type:
+ *   1. Its matching dispenser or key companion (highest priority)
+ *   2. A "staple" product (e.g., 5602 toilet tissue for all paper products)
+ *   3. A complementary product from a different category
+ *
+ * Rules:
+ *   - Max 1 product per subcategory (no red mop + blue mop)
+ *   - No items from the same subcategory as the current product
+ *   - Penalize items with too many shared name words (prevents size/color variants)
+ */
+
+// SKU-level FBT overrides — manually curated pairings for specific products
+// These take priority over subcategory-based pairing logic
+const FBT_SKU_OVERRIDES: Record<string, string[]> = {
+  "8036":  ["3162EA", "1015F", "8997LG5BLU"],   // Mop Bucket → Cleaner + Mop Handle + Loop Mop Blue
+  "8028":  ["3162EA", "1015F", "8011724"],       // Mop Bucket 26qt → Cleaner + Handle + Cotton Mop
+  "8019":  ["3162EA", "1015F", "8011724"],       // Mop Bucket 19qt → same
+  "3158EA": ["8036", "8997LG5BLU", "1015F"],     // Lemon Floor Cleaner → Mop Bucket + Loop Mop + Handle
+  "3162EA": ["8036", "8997LG5GRN", "1015F"],     // Lavender Cleaner → Mop Bucket + Loop Mop Green + Handle
+};
+
+// SKUs to always try to include for specific categories
+const FBT_STAPLE_SKUS: Record<string, string[]> = {
+  "Paper & Restroom": ["5602"],       // 2-Ply Toilet Tissue always pairs with paper
+  "Cleaning Chemicals": ["SPRBOT3PK"], // Spray bottles pair with chemicals
+  "Trash Liners": ["CL404814"],       // 40-45 gal liner is a staple
+  "Floor Care": ["3158EA"],           // Lemon neutral floor cleaner
+};
+
+// FBT-specific subcategory pairings — first item in list = highest priority (the dispenser/companion)
+const FBT_PAIRINGS: Record<string, string[]> = {
+  // ── Paper: every paper product → its dispenser FIRST, then toilet tissue, then soap ──
+  "Hardwound Roll Towels": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Roll towel": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Roll Towels": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Towels": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Multifolds": ["Folded towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Folded towels": ["Folded towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Center pull towels": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Standard toilet tissue rolls": ["Toilet tissue dispensers", "Folded towels", "Hand soaps"],
+  "Toilet Tissue": ["Toilet tissue dispensers", "Folded towels", "Hand soaps"],
+  "Jumbo rolls": ["Jumbo roll tissue dispensers", "Folded towels", "Hand soaps"],
+  "Coreless toilet tissue": ["Jumbo roll tissue dispensers", "Folded towels", "Hand soaps"],
+  "Facial Tissue": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand sanitizer"],
+  "Facial tissue": ["Roll towel dispensers", "Standard toilet tissue rolls", "Hand sanitizer"],
+  "Restroom Supplies": ["Toilet tissue dispensers", "Standard toilet tissue rolls", "Hand soaps"],
+  "Bowl clips": ["Urinal screens", "Toilet & bathroom", "Standard toilet tissue rolls"],
+  "Urinal and toilet mats": ["Urinal screens", "Toilet & bathroom", "Bowl clips"],
+
+  // ── Paper dispensers → the paper they hold, then soap, then toilet tissue ──
+  "Roll towel dispensers": ["Roll towel", "Hand soaps", "Standard toilet tissue rolls"],
+  "Folded towel dispensers": ["Folded towels", "Hand soaps", "Standard toilet tissue rolls"],
+  "Toilet tissue dispensers": ["Standard toilet tissue rolls", "Folded towels", "Hand soaps"],
+  "Jumbo roll tissue dispensers": ["Jumbo rolls", "Hand soaps", "Folded towels"],
+  "Toilet seat cover dispensers": ["Restroom Supplies", "Standard toilet tissue rolls", "Urinal screens"],
+
+  // ── Chemicals: spray bottle/trigger → gloves → mop bucket ──
+  "Degreasers": ["Trigger sprayers", "Blue nitrile gloves", "Mop Buckets"],
+  "Disinfectants": ["Trigger sprayers", "Blue nitrile gloves", "Smart rags microfiber towels"],
+  "All-Purpose Cleaners": ["Trigger sprayers", "Smart rags microfiber towels", "Mop Buckets"],
+  "All purpose cleaners": ["Trigger sprayers", "Smart rags microfiber towels", "Mop Buckets"],
+  "Glass cleaner": ["Smart rags microfiber towels", "Complete squeeges", "Trigger sprayers"],
+  "Hand soaps": ["Hand soap dispensers", "Roll towel", "Hand sanitizer"],
+  "Hand sanitizer": ["Hand soaps", "Roll towel", "Blue nitrile gloves"],
+  "Janitors finest chemicals": ["Trigger sprayers", "Mop Buckets", "Blue nitrile gloves"],
+  "Toilet & bathroom": ["Toilet tissue dispensers", "Standard toilet tissue rolls", "Blue nitrile gloves"],
+  "Kitchen & laundry": ["Blue nitrile gloves", "Trigger sprayers", "Smart rags microfiber towels"],
+  "Odor control": ["Urinal screens", "Bowl clips", "Disinfectants"],
+  "Air Fresheners": ["Urinal screens", "Bowl clips", "Disinfectants"],
+  "Drain cleaners & maintainers": ["Blue nitrile gloves", "Trigger sprayers", "Toilet bowl brushes"],
+
+  // ── Trash Liners: trash cans → gloves → cleaner ──
+  "Hi-Density Liners": ["Warehouse and trash collection", "Blue nitrile gloves", "All purpose cleaners"],
+  "Clear Can Liners": ["Warehouse and trash collection", "Blue nitrile gloves", "All purpose cleaners"],
+  "Black Can Liners": ["Warehouse and trash collection", "Blue nitrile gloves", "Degreasers"],
+  "High density": ["Warehouse and trash collection", "Blue nitrile gloves", "All purpose cleaners"],
+  "Low density": ["Warehouse and trash collection", "Blue nitrile gloves", "Degreasers"],
+  "Drawstring bags": ["Warehouse and trash collection", "Blue nitrile gloves", "All purpose cleaners"],
+  "Compostable": ["Warehouse and trash collection", "Blue nitrile gloves", "All purpose cleaners"],
+
+  // ── Gloves: dispenser → soap → disinfectant ──
+  "Blue nitrile gloves": ["Acrylic glove dispenser", "Hand soaps", "Disinfectants"],
+  "Black nitrile gloves": ["Acrylic glove dispenser", "Hand soaps", "Degreasers"],
+  "Nitrile Gloves": ["Acrylic glove dispenser", "Hand soaps", "Disinfectants"],
+  "Latex gloves": ["Acrylic glove dispenser", "Hand soaps", "Disinfectants"],
+  "Vinyl gloves": ["Acrylic glove dispenser", "Hand soaps", "Disinfectants"],
+  "Acrylic glove dispenser": ["Blue nitrile gloves", "Hand soaps", "Disinfectants"],
+
+  // ── Equipment: mops → bucket → cleaner ──
+  "Mop Buckets": ["Laundry mop heads", "Floor cleaners", "Blue nitrile gloves"],
+  "Mop buckets": ["Laundry mop heads", "Floor cleaners", "Blue nitrile gloves"],
+  "Cotton mop heads": ["Mop Buckets", "Floor cleaners", "Dust mop refill heads"],
+  "Rayon mop heads": ["Mop Buckets", "Floor cleaners", "Dust mop refill heads"],
+  "Laundry mop heads": ["Mop Buckets", "Floor cleaners", "Dust mop refill heads"],
+  "Mop heads": ["Mop Buckets", "Floor cleaners", "Dust mop refill heads"],
+  "Microfiber flat mops": ["Mop Buckets", "Floor cleaners", "Microfiber wet mopping system"],
+  "Microfiber wet mopping system": ["Floor cleaners", "Mop Buckets", "Blue nitrile gloves"],
+  "Dust mop refill heads": ["Dust mop handles", "Dust mop frames", "Floor cleaners"],
+  "Dust mop handles": ["Dust mop refill heads", "Dust mop frames", "Floor cleaners"],
+  "Dust mop frames": ["Dust mop refill heads", "Dust mop handles", "Floor cleaners"],
+  "Trigger sprayers": ["Plastic bottles", "Degreasers", "All purpose cleaners"],
+  "Brooms": ["Dust pans", "Dust mop refill heads", "Floor cleaners"],
+  "Dust pans": ["Brooms", "Dust mop refill heads", "Floor cleaners"],
+
+  // ── Floor Care ──
+  "Floor pads": ["Pad drivers", "Floor machines", "Floor finish"],
+  "Floor finish": ["Floor pads", "Floor stripper", "Mop Buckets"],
+  "Floor stripper": ["Floor pads", "Floor finish", "Mop Buckets"],
+  "Floor sealer": ["Floor finish", "Floor pads", "Mop Buckets"],
+  "Floor cleaners": ["Mop Buckets", "Laundry mop heads", "Dust mop refill heads"],
+  "Floor machines": ["Floor pads", "Pad drivers", "Floor finish"],
+  "Pad drivers": ["Floor pads", "Floor machines", "Floor finish"],
+
+  // ── Breakroom ──
+  "Cups": ["Napkins", "Utensils medium weight", "Plates"],
+  "Paper cups": ["Napkins", "Utensils medium weight", "Plates"],
+  "Plastic cups": ["Napkins", "Utensils medium weight", "Plates"],
+  "Plates": ["Utensils medium weight", "Napkins", "Cups"],
+  "Bowls": ["Utensils medium weight", "Napkins", "Cups"],
+  "Napkins": ["Cups", "Utensils medium weight", "Plates"],
+  "Utensils medium weight": ["Plates", "Napkins", "Cups"],
+  "Utensils heavy weight": ["Plates", "Napkins", "Cups"],
+  "Food storage bags": ["Utensils medium weight", "Plates", "Cups"],
+
+  // ── Packaging ──
+  "Stretch Film": ["Hand held tape", "Tape gun dispensers", "Bubble wrap"],
+  "Hand film": ["Hand held tape", "Tape gun dispensers", "Bubble wrap"],
+  "Clear stretch film": ["Hand held tape", "Tape gun dispensers", "Bubble wrap"],
+  "Bundling film": ["Hand film", "Hand held tape", "Tape gun dispensers"],
+  "Hand held tape": ["Tape gun dispensers", "Hand film", "Bubble wrap"],
+  "Tape gun dispensers": ["Hand held tape", "Hand film", "Bubble wrap"],
+  "Bubble wrap": ["Hand held tape", "Styrofoam packing peanuts", "Tape gun dispensers"],
+  "Styrofoam packing peanuts": ["Bubble wrap", "Hand held tape", "Tape gun dispensers"],
+
+  // ── Car Detailing ──
+  "Wonder wafers auto detail air fresheners": ["Smart rags microfiber towels", "Trigger sprayers", "Blue nitrile gloves"],
+  "Special event trash cans": ["Special event trash can lids", "Hi-Density Liners", "Blue nitrile gloves"],
+  "Special event trash can lids": ["Special event trash cans", "Hi-Density Liners", "Blue nitrile gloves"],
+};
+
+export function getFbtPairings(
+  currentProduct: ProductData,
+  allProducts: ProductData[],
+  limit = 3
+): ProductData[] {
+  const sub = currentProduct.subcategory || "";
+  const cat = currentProduct.category || "";
+  const currentSku = currentProduct.sku.toUpperCase();
+  const currentNameWords = new Set(currentProduct.name.toLowerCase().split(/[\s,]+/).filter(w => w.length > 3));
+
+  // Check for SKU-level overrides first — manually curated pairings
+  const skuOverride = FBT_SKU_OVERRIDES[currentProduct.sku];
+  if (skuOverride) {
+    const overrideProducts: ProductData[] = [];
+    for (const sku of skuOverride) {
+      const p = allProducts.find(x => x.sku === sku);
+      if (p && p.images[0]?.startsWith("http")) overrideProducts.push(p);
+    }
+    if (overrideProducts.length > 0) return overrideProducts.slice(0, limit);
+  }
+
+  // Use FBT-specific pairings first, fall back to general pairings
+  const targetSubs = FBT_PAIRINGS[sub] || SUBCATEGORY_PAIRINGS[sub] || CATEGORY_FALLBACKS[cat] || [];
+
+  // Try to include staple SKU for this category
+  const stapleSku = FBT_STAPLE_SKUS[cat]?.[0];
+  const stapleProduct = stapleSku ? allProducts.find(p => p.sku === stapleSku && p.sku.toUpperCase() !== currentSku) : null;
+
+  const scored: { product: ProductData; score: number }[] = [];
+
+  for (const p of allProducts) {
+    if (p.sku.toUpperCase() === currentSku) continue;
+    if (!p.images[0]?.startsWith("http")) continue;
+    if (p.subcategory === sub) continue;
+
+    const pSub = p.subcategory || "";
+    const pName = p.name.toLowerCase();
+
+    let score = 0;
+    for (let i = 0; i < targetSubs.length; i++) {
+      const target = targetSubs[i].toLowerCase();
+      if (pSub.toLowerCase() === target) { score += 100 - i * 10; break; }
+      if (pSub.toLowerCase().includes(target) || target.includes(pSub.toLowerCase())) { score += 60 - i * 10; break; }
+      if (pName.includes(target)) { score += 30 - i * 5; }
+    }
+
+    if (p.inStock) score += 10;
+    if (p.reviewCount > 0) score += 5;
+    // Boost Janitors Finest brand
+    if (p.brand?.toLowerCase().includes("janitors finest")) score += 8;
+
+    // Penalize too-similar items
+    const pWords = new Set(pName.split(/[\s,]+/).filter(w => w.length > 3));
+    let overlap = 0;
+    for (const w of pWords) { if (currentNameWords.has(w)) overlap++; }
+    if (overlap >= 3) score -= 50;
+
+    if (score > 0) scored.push({ product: p, score });
+  }
+
+  scored.sort((a, b) => b.score - a.score);
+
+  // Build result with strict diversity: max 1 per subcategory
+  const result: ProductData[] = [];
+  const usedSubs = new Set<string>();
+
+  for (const { product } of scored) {
+    if (result.length >= limit) break;
+    const pSub = product.subcategory || "other";
+    if (usedSubs.has(pSub)) continue;
+    result.push(product);
+    usedSubs.add(pSub);
+  }
+
+  // If we have room and a staple product that wasn't included, inject it
+  if (stapleProduct && result.length < limit && !result.find(p => p.sku === stapleProduct.sku)) {
+    const stapleSub = stapleProduct.subcategory || "other";
+    if (!usedSubs.has(stapleSub)) {
+      result.push(stapleProduct);
+    }
+  }
+
+  return result;
+}

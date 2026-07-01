@@ -1047,6 +1047,15 @@ export default function CheckoutPage() {
                   // Check if they're paying for shipping when they're close to free
                   const effectiveSubtotal = subtotal - promoDiscount;
                   if (!isPickup && effectiveSubtotal < 399 && effectiveSubtotal >= 200 && !shippingWarningDismissed) {
+                    try {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const w = window as any;
+                      if (w.gtag) w.gtag("event", "free_shipping_nudge_shown", {
+                        event_category: "shipping_nudge",
+                        value: 399 - effectiveSubtotal,
+                        subtotal: effectiveSubtotal,
+                      });
+                    } catch {}
                     setShowShippingWarning(true);
                     return;
                   }
@@ -1506,6 +1515,16 @@ export default function CheckoutPage() {
               {/* Add More Items */}
               <button
                 onClick={() => {
+                  try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const w = window as any;
+                    if (w.gtag) w.gtag("event", "free_shipping_nudge_accepted", {
+                      event_category: "shipping_nudge",
+                      event_label: "keep_shopping",
+                      value: needed,
+                      subtotal: effectiveSub,
+                    });
+                  } catch {}
                   setShowShippingWarning(false);
                   router.push("/");
                 }}
@@ -1518,6 +1537,16 @@ export default function CheckoutPage() {
               {/* Continue Anyway */}
               <button
                 onClick={() => {
+                  try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const w = window as any;
+                    if (w.gtag) w.gtag("event", "free_shipping_nudge_declined", {
+                      event_category: "shipping_nudge",
+                      event_label: "pay_shipping",
+                      value: needed,
+                      subtotal: effectiveSub,
+                    });
+                  } catch {}
                   setShippingWarningDismissed(true);
                   setShowShippingWarning(false);
                   setTimeout(() => {

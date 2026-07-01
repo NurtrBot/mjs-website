@@ -29,12 +29,17 @@ import {
 
 import Image from "next/image";
 import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
-import { getSmartPairings } from "@/lib/product-pairings";
+import { getSmartPairings, getFbtPairings } from "@/lib/product-pairings";
 import { getTierPrice } from "@/lib/tier-pricing";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
+
+// SKU → lifestyle image mapping (shown below product description)
+const LIFESTYLE_IMAGES: Record<string, string> = {
+  "8036": "/images/product-lifestyle-8036.png",
+};
 
 /* ───────── sub-components ───────── */
 
@@ -237,6 +242,8 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>(
     localProduct ? getSmartPairings(localProduct, allProducts, 6) : []
   );
+  const fbtProducts = localProduct ? getFbtPairings(localProduct, allProducts, 3) : [];
+  const [fbtSelected, setFbtSelected] = useState<Set<number>>(new Set([0, 1, 2])); // all 3 selected by default
   const { addItem, updateQty: updateCartQty, removeItem } = useCart();
   const { user, getCustomPrice } = useAuth();
   const customPrice = product ? getCustomPrice(product.sku) : null;
@@ -318,6 +325,23 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
             pack: product.pack,
           }, qty);
           trackAddToCart({ sku: product.sku, name: product.name, price: unitPrice, quantity: qty, category: product.category, brand: product.brand });
+
+          // Track upsell shown
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const w = window as any;
+            if (w.gtag) {
+              w.gtag("event", "upsell_shown", {
+                event_category: "upsell",
+                event_label: product.sku,
+                value: nextTier.qty,
+                current_qty: qty,
+                current_price: unitPrice,
+                next_tier_qty: nextTier.qty,
+                next_tier_price: nextTier.unitPrice,
+              });
+            }
+          } catch {}
 
           // Show upsell popup
           setUpsell({
@@ -962,58 +986,111 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         </div>
       </section>
 
-      {/* ═══════ 2. RECOMMENDED PRODUCTS (upsell) ═══════ */}
-      {relatedProducts.length > 0 && (
-      <section className="bg-mjs-gray-50 border-t border-gray-200">
-        <div className="max-w-[1400px] mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-mjs-dark">
-              You May Also Need
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            {relatedProducts.map((rp, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group"
-              >
-                <a href={`/product/${rp.slug}`} className="relative block bg-mjs-gray-50 h-[170px] overflow-hidden">
-                  <Image src={rp.images[0]} alt={rp.name} fill sizes="(max-width: 768px) 50vw, 200px" className="object-contain p-2" />
-                </a>
-                <div className="p-3.5">
-                  <a href={`/product/${rp.slug}`}>
-                    <h3 className="text-[11px] font-semibold text-mjs-gray-800 leading-snug group-hover:text-mjs-red transition-colors line-clamp-2">
-                      {rp.name}
-                    </h3>
-                  </a>
-                  <div className="text-lg font-bold text-mjs-dark mt-1.5">
-                    ${rp.price.toFixed(2)}
-                  </div>
-                  <div className="text-xs font-medium text-mjs-gray-600 mt-0.5">
-                    {rp.pack}
-                  </div>
-                  <button
-                    onClick={() => addItem({
-                      slug: rp.slug,
-                      sku: rp.sku,
-                      name: rp.cardTitle,
-                      brand: rp.brand,
-                      price: rp.price,
-                      image: rp.images[0],
-                      pack: rp.pack,
-                    })}
-                    className="w-full mt-3 border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    Add
-                  </button>
+      {/* ═══════ 2. FREQUENTLY BOUGHT TOGETHER ═══════ */}
+      {product && fbtProducts.length > 0 && (() => {
+        const selectedFbt = fbtProducts.filter((_, i) => fbtSelected.has(i));
+        const bundleTotal = product.price + selectedFbt.reduce((s, p) => s + p.price, 0);
+        const totalItems = selectedFbt.length + 1;
+
+        const toggleFbt = (index: number) => {
+          setFbtSelected(prev => {
+            const next = new Set(prev);
+            if (next.has(index)) next.delete(index);
+            else next.add(index);
+            return next;
+          });
+        };
+
+        return (
+        <section className="bg-mjs-gray-50 border-t border-gray-200">
+          <div className="max-w-[1400px] mx-auto px-4 py-6">
+            <h2 className="text-base font-bold text-mjs-dark mb-4">Frequently Bought Together</h2>
+            <div className="flex flex-col lg:flex-row items-stretch gap-3">
+              {/* Current product — always selected */}
+              <div className="relative bg-white rounded-lg border-2 border-mjs-red/20 p-3 flex-1 flex flex-col items-center text-center min-w-0">
+                <div className="absolute top-2 left-2">
+                  <span className="text-[9px] font-bold text-mjs-red bg-red-50 px-1.5 py-0.5 rounded">This Item</span>
                 </div>
+                <div className="relative h-[140px] w-full mb-2">
+                  <Image src={product.images[0]} alt={product.name} fill sizes="160px" className="object-contain p-1" />
+                </div>
+                <div className="text-[10px] font-semibold text-mjs-dark truncate w-full">{product.cardTitle}</div>
+                <div className="text-sm font-bold text-mjs-dark mt-1">${product.price.toFixed(2)}</div>
+                <div className="text-[9px] text-mjs-gray-400">{product.pack}</div>
               </div>
-            ))}
+
+              {fbtProducts.map((fbt, i) => {
+                const isSelected = fbtSelected.has(i);
+                return (
+                  <div key={fbt.sku} className="contents">
+                    <div className="flex items-center justify-center shrink-0 lg:py-0 py-1">
+                      <div className="w-6 h-6 rounded-full bg-mjs-gray-100 flex items-center justify-center text-mjs-gray-400 font-bold text-sm">+</div>
+                    </div>
+                    <div
+                      onClick={() => toggleFbt(i)}
+                      className={`relative rounded-lg p-3 flex-1 flex flex-col items-center text-center cursor-pointer transition-all min-w-0 ${
+                        isSelected
+                          ? "bg-white border-2 border-mjs-red/20 shadow-sm"
+                          : "bg-white/50 border-2 border-dashed border-gray-200 opacity-40"
+                      }`}
+                    >
+                      {/* Checkbox in top-right corner */}
+                      <div className="absolute top-2 right-2">
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                          isSelected ? "border-mjs-red bg-mjs-red" : "border-gray-300 bg-white"
+                        }`}>
+                          {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
+                        </div>
+                      </div>
+                      <div className="relative h-[140px] w-full mb-2">
+                        <Image src={fbt.images[0]} alt={fbt.name} fill sizes="160px" className="object-contain p-1" />
+                      </div>
+                      <div className={`text-[10px] font-semibold truncate w-full ${isSelected ? "text-mjs-dark" : "text-mjs-gray-400"}`}>{fbt.cardTitle}</div>
+                      <div className={`text-sm font-bold mt-1 ${isSelected ? "text-mjs-dark" : "text-mjs-gray-400"}`}>${fbt.price.toFixed(2)}</div>
+                      <div className="text-[9px] text-mjs-gray-400">{fbt.pack}</div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Bundle summary */}
+              <div className="flex items-center justify-center shrink-0 lg:py-0 py-1">
+                <div className="w-6 h-6 rounded-full bg-mjs-gray-100 flex items-center justify-center text-mjs-gray-400 font-bold text-sm">=</div>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-3 flex-1 flex flex-col items-center text-center justify-center min-w-0">
+                <div className="text-[9px] font-semibold text-mjs-gray-400 uppercase tracking-wider mb-0.5">Bundle Price</div>
+                <div className="text-xl font-black text-mjs-dark">
+                  ${bundleTotal.toFixed(2)}
+                </div>
+                <div className="text-[9px] text-mjs-gray-400 mb-3">for {totalItems} item{totalItems !== 1 ? "s" : ""}</div>
+                <button
+                  onClick={() => {
+                    addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: product.price, image: product.images[0], pack: product.pack });
+                    for (const fbt of selectedFbt) {
+                      addItem({ slug: fbt.slug, sku: fbt.sku, name: fbt.cardTitle, brand: fbt.brand, price: fbt.price, image: fbt.images[0], pack: fbt.pack });
+                    }
+                    try {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const w = window as any;
+                      if (w.gtag) w.gtag("event", "fbt_add_all", {
+                        event_category: "frequently_bought_together",
+                        event_label: product.sku,
+                        value: bundleTotal,
+                        items_count: totalItems,
+                      });
+                    } catch {}
+                  }}
+                  className="w-full bg-mjs-red hover:bg-mjs-red-dark text-white font-bold py-2.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  Add {totalItems} to Cart
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-      )}
+        </section>
+        );
+      })()}
 
       {/* ═══════ 3. SPECIFICATIONS ═══════ */}
       <section className="border-t border-gray-200">
@@ -1054,7 +1131,74 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         </div>
       </section>
 
-      {/* ═══════ 4. REVIEWS — FULL WIDTH ═══════ */}
+      {/* ═══════ 4. YOU MAY ALSO NEED ═══════ */}
+      {relatedProducts.length > 0 && (
+      <section className="bg-mjs-gray-50 border-t border-gray-200">
+        <div className="max-w-[1400px] mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-mjs-dark">
+              You May Also Need
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {relatedProducts.map((rp, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group"
+              >
+                <a href={`/product/${rp.slug}`} className="relative block bg-white h-[170px] overflow-hidden">
+                  <Image src={rp.images[0]} alt={rp.name} fill sizes="(max-width: 768px) 50vw, 200px" className="object-contain p-2" />
+                </a>
+                <div className="p-3.5">
+                  <a href={`/product/${rp.slug}`}>
+                    <h3 className="text-[11px] font-semibold text-mjs-gray-800 leading-snug group-hover:text-mjs-red transition-colors line-clamp-2">
+                      {rp.name}
+                    </h3>
+                  </a>
+                  <div className="text-lg font-bold text-mjs-dark mt-1.5">
+                    ${rp.price.toFixed(2)}
+                  </div>
+                  <div className="text-xs font-medium text-mjs-gray-600 mt-0.5">
+                    {rp.pack}
+                  </div>
+                  <button
+                    onClick={() => {
+                      addItem({
+                        slug: rp.slug,
+                        sku: rp.sku,
+                        name: rp.cardTitle,
+                        brand: rp.brand,
+                        price: rp.price,
+                        image: rp.images[0],
+                        pack: rp.pack,
+                      });
+                      try {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const w = window as any;
+                        if (w.gtag) w.gtag("event", "cross_sell_added", {
+                          event_category: "cross_sell",
+                          event_label: rp.sku,
+                          value: rp.price,
+                          source_product: product?.sku || "",
+                          added_product: rp.sku,
+                          added_product_name: rp.cardTitle,
+                        });
+                      } catch {}
+                    }}
+                    className="w-full mt-3 border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* ═══════ 5. REVIEWS — FULL WIDTH ═══════ */}
       <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
 
       {/* ═══════ CLOSING: TRUST + CONTACT ═══════ */}
@@ -1116,7 +1260,14 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
       {/* Upsell Popup */}
       {upsell && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setUpsell(null)}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => {
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const w = window as any;
+            if (w.gtag) w.gtag("event", "upsell_dismissed", { event_category: "upsell", event_label: product?.sku || "" });
+          } catch {}
+          setUpsell(null);
+        }}>
           <div className="bg-white rounded-2xl shadow-2xl max-w-[420px] w-[92%] mx-4 overflow-hidden animate-[fadeInUp_0.25s_ease-out]" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="bg-mjs-dark px-6 py-5 text-center relative">
@@ -1174,6 +1325,21 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                     image: product.images[0],
                     pack: product.pack,
                   }, upsell.nextTierQty);
+                  // Track upsell accepted
+                  try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const w = window as any;
+                    if (w.gtag) {
+                      w.gtag("event", "upsell_accepted", {
+                        event_category: "upsell",
+                        event_label: product.sku,
+                        value: upsell.nextTierQty,
+                        added_qty: upsell.addMore,
+                        savings_per_unit: upsell.savingsPerUnit,
+                        total_savings: Math.round(upsell.savingsPerUnit * upsell.nextTierQty * 100) / 100,
+                      });
+                    }
+                  } catch {}
                   setUpsell(null);
                 }}
                 className="w-full bg-mjs-red hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
@@ -1183,7 +1349,22 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               </button>
 
               <button
-                onClick={() => setUpsell(null)}
+                onClick={() => {
+                  // Track upsell declined
+                  try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const w = window as any;
+                    if (w.gtag) {
+                      w.gtag("event", "upsell_declined", {
+                        event_category: "upsell",
+                        event_label: product?.sku || "",
+                        value: upsell.currentQty,
+                        missed_savings: Math.round(upsell.savingsPerUnit * upsell.nextTierQty * 100) / 100,
+                      });
+                    }
+                  } catch {}
+                  setUpsell(null);
+                }}
                 className="w-full text-center text-[11px] text-mjs-gray-400 font-medium mt-3 py-1 hover:text-mjs-dark transition-colors"
               >
                 No thanks, keep {upsell.currentQty} cases

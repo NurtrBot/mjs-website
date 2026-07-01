@@ -149,6 +149,7 @@ export default function Footer() {
               <li><a href="/catalogs" className="hover:text-white transition-colors">Catalogs</a></li>
               <li><a href="/rewards" className="hover:text-white transition-colors">Rewards Program</a></li>
               <li><a href="/resources" className="hover:text-white transition-colors">Forms &amp; SDS</a></li>
+              <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
             </ul>
           </div>
 

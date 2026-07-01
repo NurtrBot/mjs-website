@@ -183,15 +183,27 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
                   <span className="text-sm font-black text-mjs-dark">${product.price.toFixed(2)}</span>
                   <div className="text-[9px] text-mjs-gray-500 mb-1.5">{product.pack}</div>
                   <button
-                    onClick={() => addItem({
-                      slug: product.slug,
-                      sku: product.sku,
-                      name: product.cardTitle,
-                      brand: product.brand,
-                      price: getTierPrice(product, 1),
-                      image: product.images[0],
-                      pack: product.pack,
-                    })}
+                    onClick={() => {
+                      addItem({
+                        slug: product.slug,
+                        sku: product.sku,
+                        name: product.cardTitle,
+                        brand: product.brand,
+                        price: getTierPrice(product, 1),
+                        image: product.images[0],
+                        pack: product.pack,
+                      });
+                      try {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const w = window as any;
+                        if (w.gtag) w.gtag("event", "cart_cross_sell_added", {
+                          event_category: "cross_sell",
+                          event_label: product.sku,
+                          value: product.price,
+                          source: "frequently_bought_together",
+                        });
+                      } catch {}
+                    }}
                     className="w-full bg-white border border-mjs-red text-mjs-red text-[10px] font-bold py-1.5 rounded-lg hover:bg-mjs-red hover:text-white transition-colors flex items-center justify-center gap-1"
                   >
                     <ShoppingCart className="w-3 h-3" />

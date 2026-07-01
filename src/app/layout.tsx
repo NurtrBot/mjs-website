@@ -9,6 +9,7 @@ import { ShippingProvider } from "@/context/ShippingContext";
 import { PurchaseProvider } from "@/context/PurchaseContext";
 import CartPanel from "@/components/CartPanel";
 import ReturnVisitorSurvey from "@/components/ReturnVisitorSurvey";
+import VacationNotice from "@/components/VacationNotice";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 
 const inter = Inter({

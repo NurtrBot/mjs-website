@@ -112,6 +112,37 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Set the tax_exempt_category on the customer record so AvaTax skips tax
+    // This uses the V2 customer field — works alongside any customer group pricing
+    try {
+      const { default: https2 } = await import("https");
+      const exemptBody = JSON.stringify({ tax_exempt_category: "TAX EXEMPT" });
+      await new Promise((resolve, reject) => {
+        const parsed2 = new URL(`https://api.bigcommerce.com/stores/${storeHash}/v2/customers/${customerId}`);
+        const r2 = https2.request({
+          hostname: parsed2.hostname,
+          path: parsed2.pathname,
+          method: "PUT",
+          headers: {
+            "X-Auth-Token": token,
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Content-Length": Buffer.byteLength(exemptBody),
+          },
+        }, (res) => {
+          const chunks: Buffer[] = [];
+          res.on("data", (c: Buffer) => chunks.push(c));
+          res.on("end", () => resolve(Buffer.concat(chunks).toString()));
+        });
+        r2.on("error", reject);
+        r2.write(exemptBody);
+        r2.end();
+      });
+      console.log(`[TAX_ID] Set tax_exempt_category=TAX EXEMPT for customer ${customerId}`);
+    } catch (exemptErr) {
+      console.error(`[TAX_ID] Failed to set tax exempt category:`, exemptErr);
+    }
+
     console.log(`[TAX_ID] Customer ${customerName} (${customerEmail}) from ${companyName} submitted Tax ID: ${taxIdNumber}`);
 
     return NextResponse.json({

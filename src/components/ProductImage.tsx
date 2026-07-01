@@ -3,6 +3,9 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 
+// SKUs that should use object-cover (cropped) instead of object-contain
+const CROPPED_VIDEOS = new Set(["TAPGP220C"]);
+
 // SKU → video file path mapping
 const PRODUCT_VIDEOS: Record<string, string> = {
   "6342EA": "/videos/6342EA.mp4",
@@ -25,6 +28,18 @@ const PRODUCT_VIDEOS: Record<string, string> = {
   "5602": "/videos/5602.mp4",
   "5603P": "/videos/5602.mp4",
   "5604P": "/videos/5602.mp4",
+  "CL242406": "/videos/CL2424.mp4",
+  "CL242408": "/videos/CL2424.mp4",
+  "LD2423045K": "/videos/LD2423045K.mp4",
+  "CL243306": "/videos/CL2433.mp4",
+  "CL243308": "/videos/CL2433.mp4",
+  "LD2432045K": "/videos/LD2432.mp4",
+  "LD243208K": "/videos/LD2432.mp4",
+  "CL303708": "/videos/CL3037.mp4",
+  "CL303710": "/videos/CL3037.mp4",
+  "LD242710WD": "/videos/LD242710WD.mp4",
+  "TAPGP220C": "/videos/TAPGP220C.mp4",
+  "DRINK12S1000": "/videos/DRINK12S1000.mp4",
   "5200": "/videos/5200.mp4",
   "8036": "/videos/8036.mp4",
   "5135": "/videos/5135.mp4",
@@ -69,7 +84,7 @@ export default function ProductImage({ src, alt, sku, imageFit = "contain", size
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-contain bg-white"
+          className={`absolute inset-0 w-full h-full bg-white ${sku && CROPPED_VIDEOS.has(sku) ? "object-cover" : "object-contain"}`}
         />
       ) : src?.startsWith("http") ? (
         <Image
