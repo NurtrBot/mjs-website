@@ -16,8 +16,6 @@ import CTABanner from "@/components/CTABanner";
 import NewArrivals from "@/components/NewArrivals";
 import ReadyToShipAlt from "@/components/ReadyToShipAlt";
 import Footer from "@/components/Footer";
-import VacationNotice from "@/components/VacationNotice";
-
 export default function Home() {
   // Unique key forces all strips to re-mount and re-shuffle on every visit
   const [refreshKey, setRefreshKey] = useState(0);
@@ -28,7 +26,6 @@ export default function Home() {
 
   return (
     <>
-      <VacationNotice />
       <TopBar />
       <Header />
       <CategoryNav />
