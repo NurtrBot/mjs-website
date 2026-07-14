@@ -2,7 +2,7 @@ import { ArrowRight, Phone } from "lucide-react";
 
 export default function CTABanner() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-mjs-red via-mjs-red-dark to-mjs-red">
+    <section className="hidden md:block relative overflow-hidden bg-gradient-to-r from-mjs-red via-mjs-red-dark to-mjs-red">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div

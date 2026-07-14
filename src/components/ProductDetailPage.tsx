@@ -11,6 +11,7 @@ import {
   RotateCcw,
   Package,
   Check,
+  ChevronLeft,
   ChevronRight,
   Minus,
   Plus,
@@ -39,6 +40,19 @@ import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
 // SKU → lifestyle image mapping (shown below product description)
 const LIFESTYLE_IMAGES: Record<string, string> = {
   "8036": "/images/product-lifestyle-8036.png",
+};
+
+/* ── Category name → slug mapping ── */
+const categorySlugMap: Record<string, string> = {
+  "Paper Products": "paper-products",
+  "Cleaning Chemicals": "cleaning-chemicals",
+  "Trash Liners": "trash-liners",
+  "Gloves & Safety": "gloves-safety",
+  "Packaging & Film": "packaging-film",
+  "Breakroom": "breakroom",
+  "Equipment & Tools": "equipment",
+  "Floor Care": "floor-care",
+  "Car Detailing": "car-detailing",
 };
 
 /* ───────── sub-components ───────── */
@@ -152,14 +166,26 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
   const total = reviews.length || 1;
 
   return (
-    <section id="reviews" className="bg-mjs-gray-50 border-t border-gray-200">
-      <div className="max-w-[1400px] mx-auto px-4 py-6">
-        {/* Review Header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 md:divide-x md:divide-gray-200">
-            <div className="md:pr-6 text-center md:text-left flex-shrink-0">
+    <section id="reviews" className="bg-mjs-gray-50 md:border-t md:border-gray-200">
+      <div className="max-w-[1400px] mx-auto px-4 py-4 md:py-6">
+        {/* Review Header — compact on mobile, full on desktop */}
+        <div className="flex items-center gap-3 mb-4 md:bg-white md:rounded-xl md:border md:border-gray-200 md:p-5 md:mb-5">
+          {/* Mobile: compact inline */}
+          <div className="md:hidden flex items-center gap-3 w-full">
+            {avgRating > 0 && (
+              <>
+                <div className="text-2xl font-black text-mjs-dark leading-none">{avgRating.toFixed(1)}</div>
+                <StarRating rating={avgRating} size="sm" />
+              </>
+            )}
+            <span className="text-xs text-mjs-gray-500">{count} Review{count !== 1 ? "s" : ""}</span>
+          </div>
+
+          {/* Desktop: full layout */}
+          <div className="hidden md:flex items-center justify-center gap-0 divide-x divide-gray-200 w-full">
+            <div className="pr-6 text-left flex-shrink-0">
               <h3 className="text-base font-bold text-mjs-dark mb-1">Customer Reviews</h3>
-              <div className="flex items-center justify-center md:justify-start gap-2">
+              <div className="flex items-center gap-2">
                 {avgRating > 0 && (
                   <span className="inline-flex items-center gap-0.5 bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">
                     {avgRating.toFixed(1)} <Star className="w-3 h-3 fill-white" />
@@ -170,7 +196,7 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
             </div>
 
             {avgRating > 0 && (
-              <div className="md:px-6 flex-shrink-0 text-center">
+              <div className="px-6 flex-shrink-0 text-center">
                 <div className="text-3xl font-black text-mjs-dark leading-none">{avgRating.toFixed(1)}</div>
                 <StarRating rating={avgRating} size="sm" />
                 <div className="text-[10px] text-mjs-gray-500 mt-0.5">{count} total</div>
@@ -178,7 +204,7 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
             )}
 
             {reviews.length > 0 && (
-              <div className="md:pl-6 flex-shrink-0 w-full md:w-auto">
+              <div className="pl-6 flex-shrink-0 w-auto">
                 <div className="space-y-1 w-[200px]">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const pct = Math.round((dist[star - 1] / total) * 100);
@@ -243,6 +269,25 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     localProduct ? getSmartPairings(localProduct, allProducts, 6) : []
   );
   const fbtProducts = localProduct ? getFbtPairings(localProduct, allProducts, 3) : [];
+
+  // Mobile FBT for Paper & Restroom — 1 paper, 1 chemical, 1 trash/glove
+  const mobileFbtProducts = (() => {
+    if (!localProduct || localProduct.category !== "Paper & Restroom") return fbtProducts;
+    const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+    const exclude = localProduct.sku;
+
+    const paperPool = shuffle(allProducts.filter(p => p.category === "Paper & Restroom" && p.sku !== exclude));
+    const chemPool = shuffle(allProducts.filter(p => p.category === "Cleaning Chemicals" && p.sku !== exclude));
+    const trashGlovePool = shuffle(allProducts.filter(p =>
+      (p.category === "Trash Liners" || (p.category === "Gloves & Safety" && p.subcategory !== "Dispensers")) && p.sku !== exclude
+    ));
+
+    const picks: ProductData[] = [];
+    if (paperPool.length > 0) picks.push(paperPool[0]);
+    if (chemPool.length > 0) picks.push(chemPool[0]);
+    if (trashGlovePool.length > 0) picks.push(trashGlovePool[0]);
+    return picks;
+  })();
   const [fbtSelected, setFbtSelected] = useState<Set<number>>(new Set([0, 1, 2])); // all 3 selected by default
   const { addItem, updateQty: updateCartQty, removeItem } = useCart();
   const { user, getCustomPrice } = useAuth();
@@ -386,6 +431,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     nextTotal: number;
     productName: string;
   } | null>(null);
+  const [mobileTab, setMobileTab] = useState<"description" | "details" | "pricing" | "reviews">("description");
   const [shipZip, setShipZip] = useState("");
   const [shipOption, setShipOption] = useState<"pickup" | "delivery">("delivery");
   const [shipChecked, setShipChecked] = useState(false);
@@ -490,10 +536,198 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       )
     : 0;
 
+  const currentTierPrice = customPrice || getTierPrice(product, qty);
+  const mobileSubtotal = Math.round(currentTierPrice * qty * 100) / 100;
+
   return (
-    <div className="bg-white">
-      {/* Breadcrumb */}
-      <div className="bg-mjs-gray-50 border-b border-gray-200">
+    <div className="bg-mjs-gray-50 md:bg-white pb-[10px] md:pb-0">
+      {/* ═══════════════ MOBILE PRODUCT PAGE ═══════════════ */}
+      <div className="md:hidden">
+        {/* Back nav */}
+        <div className="bg-mjs-gray-50 border-b border-gray-100 px-4 py-2.5">
+          <a href={`/category/${categorySlugMap[product.category] || "paper-products"}`} className="inline-flex items-center gap-1 text-sm font-semibold text-mjs-blue">
+            <ChevronLeft className="w-4 h-4" />
+            {product.category}
+          </a>
+        </div>
+
+        {/* Product name */}
+        <h1 className="text-[15px] font-bold text-mjs-dark text-center px-6 py-3 border-b border-gray-100">
+          {product.name}
+        </h1>
+
+        {/* Product image */}
+        <div
+          className="relative bg-white aspect-[4/3] max-h-[65vw] mx-auto w-full"
+          onClick={() => {
+            const httpImages = product.images.filter(img => img.startsWith("http"));
+            if (httpImages.length > 1) setSelectedImage((selectedImage + 1) % httpImages.length);
+          }}
+        >
+          {product.images[selectedImage]?.startsWith("http") ? (
+            <Image
+              src={product.images[selectedImage]}
+              alt={product.name}
+              fill
+              sizes="100vw"
+              quality={100}
+              unoptimized
+              className="object-contain p-4"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader2 className="w-10 h-10 text-mjs-red animate-spin" />
+            </div>
+          )}
+          {discount > 0 && (
+            <div className="absolute top-3 left-3 bg-mjs-red text-white text-xs font-bold px-2.5 py-1 rounded-lg">
+              SAVE {discount}%
+            </div>
+          )}
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-green-50 text-mjs-green text-[11px] font-bold px-2 py-1 rounded-lg">
+            <Check className="w-3 h-3" />
+            In Stock
+          </div>
+        </div>
+
+        {/* Image dots */}
+        {product.images.filter(img => img.startsWith("http")).length > 1 && (
+          <div className="flex items-center justify-center gap-2 py-2 bg-white">
+            {product.images.filter(img => img.startsWith("http")).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedImage(i)}
+                className={`rounded-full transition-all ${selectedImage === i ? "w-5 h-2 bg-mjs-dark" : "w-2 h-2 bg-gray-300"}`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="flex border-y border-gray-200 bg-mjs-gray-50">
+          {(["description", "details", "pricing", "reviews"] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setMobileTab(tab)}
+              className={`flex-1 py-3 text-xs font-semibold text-center transition-all ${
+                mobileTab === tab
+                  ? "text-mjs-dark border-b-2 border-mjs-red bg-white"
+                  : "text-mjs-gray-400"
+              }`}
+            >
+              {tab === "description" ? "Description" : tab === "details" ? "Details" : tab === "pricing" ? "Pricing" : `Reviews (${product.reviewCount})`}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab content */}
+        <div className="px-4 py-4 bg-white min-h-[200px]">
+          {mobileTab === "description" && (
+            <>
+              <p className="text-sm text-mjs-gray-600 leading-relaxed">
+                {product.description}
+              </p>
+              {product.highlights.length > 0 && (
+                <ul className="mt-4 space-y-2">
+                  {product.highlights.map((h, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-mjs-gray-700">
+                      <Check className="w-4 h-4 text-mjs-green flex-shrink-0 mt-0.5" />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {product.sdsSheet && (
+                <a href={product.sdsSheet} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 mt-4 text-sm text-mjs-red font-semibold">
+                  <FileText className="w-4 h-4" />
+                  Safety Data Sheet (PDF)
+                </a>
+              )}
+            </>
+          )}
+
+          {mobileTab === "details" && (
+            <div className="rounded-xl border border-gray-200 overflow-hidden">
+              <div className="flex text-sm border-b border-gray-100">
+                <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">SKU</div>
+                <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.sku}</div>
+              </div>
+              <div className="flex text-sm border-b border-gray-100">
+                <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">Brand</div>
+                <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.brand}</div>
+              </div>
+              <div className="flex text-sm border-b border-gray-100">
+                <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">Pack</div>
+                <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.pack}</div>
+              </div>
+              {Object.entries(product.specs).map(([key, value]) => (
+                <div key={key} className="flex text-sm border-b border-gray-100 last:border-b-0">
+                  <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">{key}</div>
+                  <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{value}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {mobileTab === "pricing" && (
+            <>
+              {customPrice && customPrice !== product.price && (
+                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full mb-3">
+                  <Check className="w-3.5 h-3.5" />
+                  Your Custom Price
+                </div>
+              )}
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-3xl font-black text-mjs-dark">
+                  ${currentTierPrice.toFixed(2)}
+                </span>
+                {(customPrice && customPrice < product.price) ? (
+                  <span className="text-base text-mjs-gray-400 line-through">${product.price.toFixed(2)}</span>
+                ) : product.originalPrice && !customPrice ? (
+                  <>
+                    <span className="text-base text-mjs-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+                    <span className="text-xs font-bold text-mjs-green">Save ${(product.originalPrice - product.price).toFixed(2)}</span>
+                  </>
+                ) : null}
+              </div>
+              <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}</p>
+
+              {product.quickBuy.length > 0 && !customPrice && (
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-mjs-gray-500 uppercase tracking-wide">Quantity Pricing</div>
+                  {product.quickBuy.map((opt, i) => {
+                    const unitPrice = opt.unitPrice || product.price;
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => { setSelectedBrick(i); setQty(opt.qty); }}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left ${
+                          selectedBrick === i ? "border-mjs-red bg-red-50" : "border-gray-200"
+                        }`}
+                      >
+                        <div>
+                          <span className="text-sm font-semibold text-mjs-dark">{opt.label}</span>
+                          {opt.savings && <span className="ml-2 text-xs font-bold text-mjs-green">{opt.savings}</span>}
+                        </div>
+                        <span className="text-sm font-bold text-mjs-dark">${unitPrice.toFixed(2)}/ea</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+
+          {mobileTab === "reviews" && (
+            <div className="-mx-4 -mb-4">
+              <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ═══════════════ DESKTOP BREADCRUMB ═══════════════ */}
+      <div className="hidden md:block bg-mjs-gray-50 border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-3">
           <nav className="flex items-center gap-1.5 text-sm text-mjs-gray-400">
             <a href="/" className="hover:text-mjs-red transition-colors">
@@ -515,8 +749,8 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         </div>
       </div>
 
-      {/* ═══════════════ PRODUCT HERO ═══════════════ */}
-      <section className="max-w-[1400px] mx-auto px-4 py-8 md:py-12">
+      {/* ═══════════════ DESKTOP PRODUCT HERO ═══════════════ */}
+      <section className="hidden md:block max-w-[1400px] mx-auto px-4 py-8 md:py-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-14">
           {/* ── LEFT: Image Gallery ── */}
           <div>
@@ -886,7 +1120,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       </section>
 
       {/* ═══════ VALUE BOXES ═══════ */}
-      <section className="border-t border-gray-200">
+      <section className="hidden md:block border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">
             <div className="flex items-center gap-3 bg-mjs-gray-50 border border-gray-200 rounded-xl px-4 py-3">
@@ -939,7 +1173,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       </section>
 
       {/* ═══════ 1. DESCRIPTION + FEATURES ═══════ */}
-      <section className="border-t border-gray-200">
+      <section className="hidden md:block border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Description — left 3 cols */}
@@ -987,7 +1221,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       </section>
 
       {/* ═══════ 2. FREQUENTLY BOUGHT TOGETHER ═══════ */}
-      {product && fbtProducts.length > 0 && (() => {
+      {product && (fbtProducts.length > 0 || mobileFbtProducts.length > 0) && (() => {
         const selectedFbt = fbtProducts.filter((_, i) => fbtSelected.has(i));
         const bundleTotal = product.price + selectedFbt.reduce((s, p) => s + p.price, 0);
         const totalItems = selectedFbt.length + 1;
@@ -1002,10 +1236,39 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         };
 
         return (
-        <section className="bg-mjs-gray-50 border-t border-gray-200">
+        <section className={`bg-mjs-gray-50 border-t border-gray-200 ${mobileTab !== "description" ? "hidden md:block" : ""}`}>
           <div className="max-w-[1400px] mx-auto px-4 py-6">
             <h2 className="text-base font-bold text-mjs-dark mb-4">Frequently Bought Together</h2>
-            <div className="flex flex-col lg:flex-row items-stretch gap-3">
+
+            {/* ── MOBILE: 3 cards in a row (curated for paper) ── */}
+            <div className="md:hidden grid grid-cols-3 gap-2">
+              {mobileFbtProducts.slice(0, 3).map((fbt) => (
+                <div key={fbt.sku} className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                  <a href={`/product/${fbt.slug}`}>
+                    <div className="relative h-[90px] bg-white">
+                      <Image src={fbt.images[0]} alt={fbt.name} fill sizes="33vw" className="object-contain p-2" />
+                    </div>
+                    <div className="px-2 pt-1.5">
+                      <div className="text-[10px] font-semibold text-mjs-dark leading-snug line-clamp-2">{fbt.cardTitle}</div>
+                      <div className="text-xs font-bold text-mjs-green mt-0.5">${fbt.price.toFixed(2)}</div>
+                    </div>
+                  </a>
+                  <div className="px-2 pb-2 mt-auto pt-1.5">
+                    <button
+                      onClick={() => {
+                        addItem({ slug: fbt.slug, sku: fbt.sku, name: fbt.cardTitle, brand: fbt.brand, price: fbt.price, image: fbt.images[0], pack: fbt.pack });
+                      }}
+                      className="w-full bg-mjs-red text-white font-bold text-[10px] py-1.5 rounded active:bg-red-700 transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── DESKTOP: Full card layout ── */}
+            <div className="hidden md:flex flex-row items-stretch gap-3">
               {/* Current product — always selected */}
               <div className="relative bg-white rounded-lg border-2 border-mjs-red/20 p-3 flex-1 flex flex-col items-center text-center min-w-0">
                 <div className="absolute top-2 left-2">
@@ -1023,7 +1286,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 const isSelected = fbtSelected.has(i);
                 return (
                   <div key={fbt.sku} className="contents">
-                    <div className="flex items-center justify-center shrink-0 lg:py-0 py-1">
+                    <div className="flex items-center justify-center shrink-0">
                       <div className="w-6 h-6 rounded-full bg-mjs-gray-100 flex items-center justify-center text-mjs-gray-400 font-bold text-sm">+</div>
                     </div>
                     <div
@@ -1034,7 +1297,6 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                           : "bg-white/50 border-2 border-dashed border-gray-200 opacity-40"
                       }`}
                     >
-                      {/* Checkbox in top-right corner */}
                       <div className="absolute top-2 right-2">
                         <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
                           isSelected ? "border-mjs-red bg-mjs-red" : "border-gray-300 bg-white"
@@ -1054,7 +1316,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               })}
 
               {/* Bundle summary */}
-              <div className="flex items-center justify-center shrink-0 lg:py-0 py-1">
+              <div className="flex items-center justify-center shrink-0">
                 <div className="w-6 h-6 rounded-full bg-mjs-gray-100 flex items-center justify-center text-mjs-gray-400 font-bold text-sm">=</div>
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-3 flex-1 flex flex-col items-center text-center justify-center min-w-0">
@@ -1093,7 +1355,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       })()}
 
       {/* ═══════ 3. SPECIFICATIONS ═══════ */}
-      <section className="border-t border-gray-200">
+      <section className="hidden md:block border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-6">
           <h3 className="text-base font-bold text-mjs-dark mb-3">
             Technical Specifications
@@ -1133,7 +1395,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
       {/* ═══════ 4. YOU MAY ALSO NEED ═══════ */}
       {relatedProducts.length > 0 && (
-      <section className="bg-mjs-gray-50 border-t border-gray-200">
+      <section className="hidden md:block bg-mjs-gray-50 border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-mjs-dark">
@@ -1198,11 +1460,13 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       </section>
       )}
 
-      {/* ═══════ 5. REVIEWS — FULL WIDTH ═══════ */}
-      <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
+      {/* ═══════ 5. REVIEWS — DESKTOP ONLY (mobile uses tab) ═══════ */}
+      <div className="hidden md:block">
+        <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
+      </div>
 
       {/* ═══════ CLOSING: TRUST + CONTACT ═══════ */}
-      <section className="bg-white border-t border-gray-200">
+      <section className="hidden md:block bg-white border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-6">
           {/* Trust Icons */}
           <div className="flex items-center justify-center gap-8 md:gap-14 mb-6 flex-wrap">
@@ -1257,6 +1521,56 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           </div>
         </div>
       </section>
+
+      {/* ═══════ MOBILE STICKY BOTTOM BAR ═══════ */}
+      {pricingLoaded && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <span className="text-lg font-black text-mjs-dark">${currentTierPrice.toFixed(2)}</span>
+              <span className="text-xs text-mjs-gray-400 ml-1">/ Price Each</span>
+            </div>
+            <div className="text-xs text-mjs-gray-500">
+              Subtotal: <span className="font-bold text-mjs-dark">${mobileSubtotal.toFixed(2)}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+              <button
+                onClick={() => setQty(Math.max(1, qty - 1))}
+                className="w-10 h-10 flex items-center justify-center bg-gray-100 active:bg-gray-200"
+              >
+                <Minus className="w-4 h-4 text-gray-600" />
+              </button>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={qty}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  const num = parseInt(val);
+                  if (num > 0) setQty(num);
+                }}
+                onBlur={() => { if (qty < 1) setQty(1); }}
+                className="w-12 h-10 text-center text-sm font-bold border-x border-gray-300 outline-none"
+              />
+              <button
+                onClick={() => setQty(qty + 1)}
+                className="w-10 h-10 flex items-center justify-center bg-gray-100 active:bg-gray-200"
+              >
+                <Plus className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 bg-mjs-red text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 active:bg-red-700"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Upsell Popup */}
       {upsell && (

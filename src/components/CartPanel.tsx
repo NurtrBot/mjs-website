@@ -120,7 +120,7 @@ export default function CartPanel() {
       />
 
       {/* Panel */}
-      <div className="fixed top-0 right-0 h-full w-full max-w-[420px] bg-white z-[70] shadow-2xl flex flex-col animate-slide-in">
+      <div className="fixed top-0 right-0 h-full w-full max-w-[calc(100vw-16px)] sm:max-w-[420px] bg-white z-[70] shadow-2xl flex flex-col animate-slide-in">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2.5">
@@ -179,36 +179,32 @@ export default function CartPanel() {
                 </div>
               )}
 
-              {/* Free Shipping Progress Bar */}
+              {/* Free Shipping Progress */}
               {!isPickup && (() => {
                 const threshold = 399;
                 const remaining = Math.max(0, threshold - subtotal);
                 const pct = Math.min((subtotal / threshold) * 100, 100);
                 const qualified = subtotal >= threshold;
 
-                return (
-                  <div className="mt-3 px-1">
-                    {qualified ? (
-                      <div className="flex items-center gap-2 bg-emerald-50 rounded-lg px-3 py-2">
-                        <Truck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                        <span className="text-xs font-bold text-emerald-700">You qualify for FREE delivery!</span>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-semibold text-mjs-gray-500">
-                            <span className="font-bold text-mjs-red">${remaining.toFixed(2)}</span> away from free delivery
-                          </span>
-                          <span className="text-[10px] text-mjs-gray-400">Subtotal: ${subtotal.toFixed(0)} / $399</span>
-                        </div>
-                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-mjs-red to-red-400 rounded-full transition-all duration-500"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
+                return qualified ? (
+                  <div className="flex items-center gap-1.5 mt-2 text-xs font-bold text-emerald-600">
+                    <Truck className="w-3.5 h-3.5" />
+                    You qualify for FREE delivery!
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-semibold text-mjs-gray-500">
+                        <span className="font-bold text-mjs-red">${remaining.toFixed(2)}</span> away from free delivery
+                      </span>
+                      <span className="text-[10px] text-mjs-gray-400">${subtotal.toFixed(0)} / $399</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-mjs-red to-red-400 rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
                   </div>
                 );
               })()}
@@ -219,18 +215,18 @@ export default function CartPanel() {
               {items.map((item) => (
                 <div
                   key={item.slug}
-                  className="flex gap-3 px-5 py-4 border-b border-gray-100"
+                  className="flex gap-3 px-5 py-3 border-b border-gray-100"
                 >
                   {/* Image */}
                   <a
                     href={`/product/${item.slug}`}
                     onClick={closeCart}
-                    className="w-[72px] h-[72px] bg-mjs-gray-50 rounded-xl overflow-hidden flex-shrink-0"
+                    className="w-[88px] h-[88px] bg-white rounded-xl overflow-hidden flex-shrink-0"
                   >
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </a>
 
@@ -252,7 +248,7 @@ export default function CartPanel() {
                       <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                         <button
                           onClick={() => updateQty(item.slug, item.qty - 1)}
-                          className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                          className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         >
                           <Minus className="w-3 h-3 text-mjs-gray-600" />
                         </button>
@@ -261,7 +257,7 @@ export default function CartPanel() {
                         </span>
                         <button
                           onClick={() => updateQty(item.slug, item.qty + 1)}
-                          className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                          className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         >
                           <Plus className="w-3 h-3 text-mjs-gray-600" />
                         </button>
@@ -277,7 +273,7 @@ export default function CartPanel() {
                         </div>
                         <button
                           onClick={() => removeItem(item.slug)}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"
+                          className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5 text-mjs-gray-400 hover:text-mjs-red" />
                         </button>

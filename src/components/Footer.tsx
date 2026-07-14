@@ -91,12 +91,12 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-mjs-dark text-gray-400">
-      {/* Main Footer */}
-      <div className="max-w-[1400px] mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+    <footer className="md:bg-mjs-dark text-gray-400">
+      {/* ═══ DESKTOP FOOTER (unchanged) ═══ */}
+      <div className="hidden md:block max-w-[1400px] mx-auto px-4 py-12">
+        <div className="grid md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Logo + Contact */}
-          <div className="col-span-2 md:col-span-1 lg:col-span-2">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
               <Image src="/images/mjs-logo.png" alt="Mobile Janitorial Supply" width={120} height={40} className="h-10 w-auto" />
               <div>
@@ -171,8 +171,21 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Resources Toggle */}
-      <div className="max-w-[1400px] mx-auto px-4 py-2">
+      {/* ═══ MOBILE FOOTER — minimal ═══ */}
+      <div className="md:hidden px-4 py-3 bg-mjs-gray-50">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-3 text-[10px] text-mjs-gray-400">
+            <a href="/return-policy">Returns</a>
+            <a href="/privacy-policy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/es">Español</a>
+          </div>
+          <div className="text-[10px] text-mjs-gray-400">&copy; {new Date().getFullYear()} MJS</div>
+        </div>
+      </div>
+
+      {/* Resources Toggle — desktop only */}
+      <div className="hidden md:block max-w-[1400px] mx-auto px-4 py-2">
         <button
           onClick={() => setOpenSection(openSection === "resources" ? null : "resources")}
           className="w-full flex items-center gap-4 py-4 group cursor-pointer"
@@ -218,10 +231,10 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-[1400px] mx-auto px-4 py-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Language Toggle */}
+            {/* Language Toggle — desktop only */}
             <button
               onClick={toggleSpanish}
-              className="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full px-4 py-2 transition-all group"
+              className="hidden md:flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full px-4 py-2 transition-all group"
             >
               <Globe className="w-4 h-4 text-mjs-red" />
               <span className="text-sm text-gray-300 group-hover:text-white font-medium">
@@ -237,8 +250,8 @@ export default function Footer() {
               </div>
             </button>
 
-            {/* Payment Icons */}
-            <div className="flex items-center gap-3">
+            {/* Payment Icons — desktop only */}
+            <div className="hidden md:flex items-center gap-3">
               <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Secure Checkout</span>
               <div className="flex items-center gap-1.5">
                 <Image src="/images/master-card.png" alt="MasterCard" width={38} height={24} className="h-6 w-auto" />

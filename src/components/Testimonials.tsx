@@ -128,7 +128,7 @@ export default function Testimonials() {
   const doubled = [...reviews, ...reviews];
 
   return (
-    <section className="bg-mjs-gray-50 py-8 border-t border-gray-100">
+    <section className="hidden md:block bg-mjs-gray-50 py-8 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto px-4">
         {/* Summary Header */}
         <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">

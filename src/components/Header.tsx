@@ -11,6 +11,8 @@ import {
   X,
   Package,
   Phone,
+  Camera,
+  Loader2,
 } from "lucide-react";
 import { LogOut, Globe } from "lucide-react";
 import type { ProductData } from "@/data/products";
@@ -27,6 +29,38 @@ export default function Header() {
   const { itemCount, toggleCart } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
   const [isSpanish, setIsSpanish] = useState(false);
+  const [visualSearching, setVisualSearching] = useState(false);
+  const cameraRef = useRef<HTMLInputElement>(null);
+
+  const handleVisualSearch = async (file: File) => {
+    setVisualSearching(true);
+    try {
+      // Convert to base64
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+
+      const res = await fetch("/api/visual-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64 }),
+      });
+      const data = await res.json();
+
+      if (data.search_terms?.length > 0) {
+        router.push(`/search?q=${encodeURIComponent(data.search_terms[0])}&visual=1&desc=${encodeURIComponent(data.description || "")}`);
+      } else {
+        router.push(`/search?q=${encodeURIComponent(data.product_type || "cleaning supply")}`);
+      }
+    } catch {
+      alert("Could not analyze image. Please try again.");
+    } finally {
+      setVisualSearching(false);
+      if (cameraRef.current) cameraRef.current.value = "";
+    }
+  };
 
   // Restore language preference on mount and re-apply on navigation
   useEffect(() => {
@@ -124,7 +158,7 @@ export default function Header() {
         <div className="flex items-center h-[60px] gap-4">
           {/* Mobile Menu */}
           <button
-            className="lg:hidden p-1.5 -ml-1 hover:bg-gray-100 rounded-lg"
+            className="lg:hidden p-2.5 -ml-1 hover:bg-gray-100 rounded-lg"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -137,7 +171,7 @@ export default function Header() {
               alt="Mobile Janitorial Supply"
               width={120}
               height={52}
-              className="h-[52px] w-auto"
+              className="h-[36px] md:h-[52px] w-auto"
             />
             <div className="hidden md:block">
               <div className="text-[14px] font-black tracking-tight text-mjs-dark leading-none whitespace-nowrap">
@@ -249,7 +283,16 @@ export default function Header() {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1 ml-auto flex-shrink-0">
+          <div className="flex items-center gap-0.5 md:gap-1 ml-auto flex-shrink-0">
+            {/* Mobile-only icons: Search, Profile, Phone */}
+            <a href={isLoggedIn ? "/account" : "/auth"} className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+              <User className="w-5 h-5 text-mjs-gray-500" />
+            </a>
+            <a href="tel:7147792640" className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+              <Phone className="w-5 h-5 text-mjs-gray-500" />
+            </a>
+
+            {/* Desktop: profile dropdown */}
             {isLoggedIn ? (
               <div className="hidden lg:block relative">
                 <button
@@ -298,9 +341,9 @@ export default function Header() {
               <Phone className="w-4 h-4" />
               <span className="text-sm font-semibold">(714) 779-2640</span>
             </a>
-            <button onClick={toggleCart} className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-50 rounded-lg transition-colors relative">
+            <button onClick={toggleCart} className="p-2 md:px-3 md:py-1.5 hover:bg-gray-50 rounded-lg transition-colors relative">
               <div className="relative">
-                <ShoppingCart className="w-[18px] h-[18px] text-mjs-gray-500" />
+                <ShoppingCart className="w-5 h-5 md:w-[18px] md:h-[18px] text-mjs-gray-500" />
                 {itemCount > 0 && (
                   <span className="absolute -top-1.5 -right-2 bg-mjs-red text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                     {itemCount}
@@ -312,21 +355,49 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile Search */}
-        <div className="md:hidden pb-3">
-          <div className="flex rounded-lg border border-gray-300">
+        {/* Mobile Search — full width bar below header */}
+        <div className="md:hidden pb-2">
+          <div className="flex rounded-lg border border-gray-300 bg-mjs-gray-50">
             <input
               type="text"
               value={mobileSearchQuery}
               onChange={(e) => setMobileSearchQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") handleSearch(mobileSearchQuery); }}
-              placeholder="Search products..."
-              className="flex-1 px-4 py-2 text-sm rounded-l-lg outline-none"
+              placeholder="Search"
+              className="flex-1 px-4 py-2.5 text-sm rounded-l-lg outline-none bg-transparent"
             />
-            <button onClick={() => handleSearch(mobileSearchQuery)} className="bg-mjs-red text-white px-4 rounded-r-md">
+            {/* Camera button */}
+            <button
+              onClick={() => cameraRef.current?.click()}
+              disabled={visualSearching}
+              className="flex items-center justify-center px-3 border-l border-gray-300"
+            >
+              {visualSearching ? (
+                <Loader2 className="w-[18px] h-[18px] animate-spin text-mjs-red" />
+              ) : (
+                <Camera className="w-[18px] h-[18px] text-mjs-red" />
+              )}
+            </button>
+            <input
+              ref={cameraRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleVisualSearch(file);
+              }}
+            />
+            <button onClick={() => handleSearch(mobileSearchQuery)} className="bg-mjs-red text-white px-4 rounded-r-lg">
               <Search className="w-4 h-4" />
             </button>
           </div>
+          {visualSearching && (
+            <div className="flex items-center justify-center gap-2 mt-2 text-xs text-mjs-gray-500">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-mjs-red" />
+              Analyzing product photo...
+            </div>
+          )}
         </div>
       </div>
 
@@ -335,12 +406,14 @@ export default function Header() {
         <div className="lg:hidden bg-white border-t shadow-xl max-h-[70vh] overflow-y-auto">
           <div className="py-2">
             {[
-              { label: "Paper & Restroom", href: "/shop/paper-restroom" },
-              { label: "Cleaning Chemicals", href: "/shop/cleaning-chemicals" },
-              { label: "Tools & Equipment", href: "/shop/equipment-tools" },
-              { label: "Gloves & Safety", href: "/shop/gloves-safety" },
+              { label: "Paper Products", href: "/category/paper-products" },
+              { label: "Cleaning Chemicals", href: "/category/cleaning-chemicals" },
+              { label: "Trash Liners", href: "/category/trash-liners" },
+              { label: "Gloves & Safety", href: "/category/gloves-safety" },
               { label: "Packaging & Film", href: "/category/packaging-film" },
               { label: "Breakroom", href: "/category/breakroom" },
+              { label: "Equipment", href: "/category/equipment" },
+              { label: "Floor Care", href: "/category/floor-care" },
               { label: "Car Detailing", href: "/category/car-detailing" },
             ].map((cat) => (
               <a

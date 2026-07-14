@@ -142,7 +142,7 @@ export default function NewArrivals() {
   if (items.length === 0) return null;
 
   return (
-    <section className="bg-white py-6 border-t border-gray-100">
+    <section className="hidden md:block bg-white py-6 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">

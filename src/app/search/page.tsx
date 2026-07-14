@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trackSearch } from "@/lib/analytics";
 import ProductImage from "@/components/ProductImage";
+import ProductCard from "@/components/ProductCard";
 
 const hasRealImage = (p: ProductData) =>
   p.images.length > 0 && !p.images[0].includes("placeholder");
@@ -149,9 +150,9 @@ function SearchContent() {
 
           {/* Results grid */}
           {results.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0 sm:gap-3">
               {results.map((product) => (
-                <ResultCard key={product.slug} product={product} />
+                <ProductCard key={product.slug} product={product} />
               ))}
             </div>
           ) : query.length > 1 && !loading ? (

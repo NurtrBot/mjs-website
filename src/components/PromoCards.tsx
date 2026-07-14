@@ -36,7 +36,7 @@ const promoCards = [
 
 export default function PromoCards() {
   return (
-    <section className="bg-mjs-gray-50 py-4">
+    <section className="hidden md:block bg-mjs-gray-50 py-4">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {promoCards.map((card) => (

@@ -31,9 +31,10 @@ export default function CategoryNav() {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="hidden md:block bg-white border-b border-gray-200">
       <div className="max-w-[1400px] mx-auto px-4">
-        <div className="flex items-end justify-between overflow-x-auto scrollbar-hide">
+        {/* Desktop: horizontal row (unchanged) */}
+        <div className="hidden md:flex items-end justify-between overflow-x-auto scrollbar-hide">
           {categories.map((cat) => {
             const isActive = active === cat.name;
             return (
@@ -73,6 +74,26 @@ export default function CategoryNav() {
               </a>
             );
           })}
+        </div>
+
+        {/* Mobile: 3-column grid (Uline style) */}
+        <div className="md:hidden grid grid-cols-3 gap-2 py-3">
+          {categories.filter(c => !c.highlight).map((cat) => (
+            <a
+              key={cat.name}
+              href={cat.href}
+              className="flex flex-col items-center text-center"
+            >
+              {cat.image && (
+                <div className="relative w-full aspect-square bg-mjs-gray-50 rounded-lg overflow-hidden mb-1">
+                  <Image src={cat.image} alt={cat.name} fill sizes="33vw" className="object-contain p-2" />
+                </div>
+              )}
+              <span className="text-[10px] font-semibold text-mjs-gray-700 leading-tight">
+                {cat.name}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </nav>

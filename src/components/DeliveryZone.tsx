@@ -13,7 +13,7 @@ const cities = [
 
 export default function DeliveryZone() {
   return (
-    <section className="bg-mjs-dark py-3">
+    <section className="hidden md:block bg-mjs-dark py-3">
       <div className="max-w-[1400px] mx-auto px-4 flex items-center gap-3 overflow-hidden">
         <span className="text-white text-xs font-bold whitespace-nowrap tracking-wide uppercase flex-shrink-0">
           1–2 Day Delivery
@@ -39,7 +39,12 @@ export default function DeliveryZone() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee-cities {
-          animation: marqueeCities 60s linear infinite;
+          animation: marqueeCities 30s linear infinite;
+        }
+        @media (min-width: 768px) {
+          .animate-marquee-cities {
+            animation: marqueeCities 60s linear infinite;
+          }
         }
       `}</style>
     </section>

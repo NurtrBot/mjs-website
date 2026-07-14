@@ -56,9 +56,10 @@ interface ProductImageProps {
   imageFit?: "contain" | "cover";
   sizes?: string;
   className?: string;
+  noPadding?: boolean;
 }
 
-export default function ProductImage({ src, alt, sku, imageFit = "contain", sizes = "200px", className }: ProductImageProps) {
+export default function ProductImage({ src, alt, sku, imageFit = "contain", sizes = "200px", className, noPadding }: ProductImageProps) {
   const [hovering, setHovering] = useState(false);
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const videoId = sku ? PRODUCT_VIDEOS[sku] : undefined;
@@ -93,7 +94,7 @@ export default function ProductImage({ src, alt, sku, imageFit = "contain", size
           fill
           unoptimized
           sizes={sizes}
-          className={imageFit === "contain" ? "object-contain p-4" : "object-cover"}
+          className={imageFit === "contain" ? `object-contain ${noPadding ? "p-1 mix-blend-multiply" : "p-4"}` : "object-cover"}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center">

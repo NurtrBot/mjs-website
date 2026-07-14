@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Tag, Check, X } from "lucide-react";
+import { Loader2, Tag, Check, X, SlidersHorizontal, ChevronLeft } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
 import { trackViewCategory } from "@/lib/analytics";
@@ -182,6 +182,7 @@ export default function CategoryPage({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<number | null>(null);
   const [activeSubFilter, setActiveSubFilter] = useState<number | null>(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   // Coupon nudge
   const couponConfig = CATEGORY_COUPONS[slug];
@@ -337,53 +338,75 @@ export default function CategoryPage({ slug }: { slug: string }) {
     <section className="bg-mjs-gray-50 min-h-screen">
       {/* Category Banner */}
       {slug === "cleaning-chemicals" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-cleaning-chemicals.png" alt="Professional Cleaning Solutions" className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "trash-liners" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-trash-liners.png" alt="Strong Bags. Clean Spaces. Durable trash liners for every need." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "packaging-film" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-packaging-film.png" alt="Pack It Right. Ship It Safe. High-quality packaging products." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "gloves-safety" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-gloves-safety.png" alt="Protection You Can Rely On. High-quality disposable gloves." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "breakroom" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-breakroom.png" alt="Everything You Need for a Better Breakroom." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "equipment" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-equipment.png" alt="Powerful Equipment. Professional Results." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "floor-care" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-floor-care.png" alt="Cleaner Floors. Better Impressions." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "car-detailing" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-car-detailing.png" alt="Professional Care. Stunning Results. Premium detailing products and equipment." className="w-full h-auto rounded-xl" />
         </div>
       )}
       {slug === "paper-products" && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
+        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
           <img src="/images/banner-paper-products.png" alt="Every Sheet. Every Standard. High-quality paper products for every facility." className="w-full h-auto rounded-xl" />
         </div>
       )}
       <div className="max-w-[1400px] mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-4">
+        {/* Mobile Header + Filter */}
+        <div className="sm:hidden flex items-center justify-between mb-3">
+          <div>
+            <a href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-mjs-blue mb-1">
+              <ChevronLeft className="w-4 h-4" />
+              Home
+            </a>
+            <h1 className="text-lg font-bold text-mjs-dark">{categoryName}</h1>
+            <p className="text-xs text-mjs-gray-500">
+              {loading ? "Loading..." : `${filtered.length} products available`}
+            </p>
+          </div>
+          {filters.length > 0 && (
+            <button
+              onClick={() => setShowFilterModal(true)}
+              className="w-9 h-9 flex items-center justify-center bg-mjs-red text-white rounded-lg active:scale-95 transition-all flex-shrink-0"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden sm:block mb-4">
           <div className="flex items-center gap-2 text-xs text-mjs-gray-400 mb-3">
             <a href="/" className="hover:text-mjs-red transition-colors">Home</a>
             <span>/</span>
@@ -401,9 +424,9 @@ export default function CategoryPage({ slug }: { slug: string }) {
           </p>
         </div>
 
-        {/* Quick Filter Buttons */}
+        {/* Desktop: Quick Filter Buttons */}
         {filters.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-100 px-6 py-4 mb-6">
+          <div className="hidden sm:block bg-white rounded-xl border border-gray-100 px-6 py-4 mb-6">
             <div className="flex flex-wrap items-center justify-center gap-2">
               <button
                 onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
@@ -470,7 +493,7 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
         {/* Product Grid */}
         {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0 sm:gap-4">
             {filtered.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
@@ -532,6 +555,58 @@ export default function CategoryPage({ slug }: { slug: string }) {
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Filter Modal */}
+      {showFilterModal && filters.length > 0 && (
+        <div className="fixed inset-0 z-50 sm:hidden" onClick={() => setShowFilterModal(false)}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          {/* Modal — slides up from bottom */}
+          <div
+            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto animate-in slide-in-from-bottom duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle + Header */}
+            <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-5 pt-3 pb-4">
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-mjs-dark">Filter Products</h2>
+                <button onClick={() => setShowFilterModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
+                  <X className="w-4 h-4 text-mjs-gray-500" />
+                </button>
+              </div>
+            </div>
+            {/* Filter options */}
+            <div className="px-5 py-4 space-y-2">
+              <button
+                onClick={() => { setActiveFilter(null); setActiveSubFilter(null); setShowFilterModal(false); }}
+                className={`w-full text-left px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
+                  activeFilter === null
+                    ? "bg-mjs-red text-white"
+                    : "bg-mjs-gray-50 text-mjs-gray-700 active:bg-red-50"
+                }`}
+              >
+                All Products
+              </button>
+              {filters.map((filter, i) => (
+                <button
+                  key={filter.label}
+                  onClick={() => { setActiveFilter(i); setActiveSubFilter(null); setShowFilterModal(false); }}
+                  className={`w-full text-left px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
+                    activeFilter === i
+                      ? "bg-mjs-red text-white"
+                      : "bg-mjs-gray-50 text-mjs-gray-700 active:bg-red-50"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            {/* Bottom safe area */}
+            <div className="h-8" />
           </div>
         </div>
       )}

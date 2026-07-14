@@ -10,6 +10,7 @@ import { usePurchases } from "@/context/PurchaseContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductImage from "@/components/ProductImage";
+import ProductCard from "@/components/ProductCard";
 
 const hasRealImage = (p: ProductData) =>
   p.images.length > 0 && !p.images[0].includes("placeholder");
@@ -147,9 +148,9 @@ function CollectionContent() {
               <div className="w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin" />
             </div>
           ) : products.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0 sm:gap-3">
               {products.map((product) => (
-                <CollectionCard key={product.slug} product={product} />
+                <ProductCard key={product.slug} product={product} />
               ))}
             </div>
           ) : (

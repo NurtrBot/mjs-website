@@ -12,7 +12,7 @@ export const products: ProductData[] = [
     brand: "Janitors Finest",
     price: 48.99,
     rating: 4.8,
-    reviewCount: 342,
+    reviewCount: 9,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12044/images/371474/5602__16739.1777926765.1280.1280.png?c=1"],
     inStock: true,
     stockQty: 312,

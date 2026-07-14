@@ -11,7 +11,7 @@ const industries = [
 
 export default function IndustrySection() {
   return (
-    <section className="bg-mjs-gray-50 py-6 border-t border-gray-100">
+    <section className="hidden md:block bg-mjs-gray-50 py-6 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="mb-4">
           <h2 className="text-lg font-bold text-mjs-dark">

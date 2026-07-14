@@ -16,6 +16,8 @@ import CTABanner from "@/components/CTABanner";
 import NewArrivals from "@/components/NewArrivals";
 import ReadyToShipAlt from "@/components/ReadyToShipAlt";
 import Footer from "@/components/Footer";
+import MobileCategoryGrid from "@/components/MobileCategoryGrid";
+
 export default function Home() {
   // Unique key forces all strips to re-mount and re-shuffle on every visit
   const [refreshKey, setRefreshKey] = useState(0);
@@ -31,6 +33,7 @@ export default function Home() {
       <CategoryNav />
       <main>
         <HeroBanner />
+        <MobileCategoryGrid />
         <PromoCards />
         <DeliveryZone />
         <FeaturedProducts key={`best-${refreshKey}`} />

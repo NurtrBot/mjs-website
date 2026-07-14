@@ -114,10 +114,26 @@ export default function HeroBanner() {
   const slide = slides[current];
 
   return (
-    <section className="bg-mjs-gray-50">
-      <div className="max-w-[1400px] mx-auto px-4 pt-4">
-        {/* ═══ MAIN CAROUSEL ═══ */}
-        <div className="relative rounded-2xl overflow-hidden">
+    <section className="bg-white md:bg-mjs-gray-50">
+      <div className="max-w-[1400px] mx-auto px-0 md:px-4 pt-0 md:pt-4">
+        {/* ═══ MOBILE: Delivery strip + Star Seller banner ═══ */}
+        <div className="md:hidden">
+          <div className="bg-gradient-to-r from-mjs-red via-red-600 to-mjs-red-dark py-3 text-center shadow-sm">
+            <div className="text-[9px] sm:text-[11px] font-bold text-white tracking-wide">
+              FREE 1–3 Business Day Delivery on Orders $399+ <span className="text-white/70 font-normal">(Before Tax)</span>
+            </div>
+          </div>
+          <a href="/product/janitors-finest-premium-plus-2-ply-toilet-tissue-96-rolls">
+            <img
+              src="/images/mobile-hero-star-seller.png"
+              alt="Star Seller — Janitors Finest Premium Plus 96 Rolls as low as $39.99"
+              className="w-full h-auto block"
+            />
+          </a>
+        </div>
+
+        {/* ═══ DESKTOP: Full Carousel ═══ */}
+        <div className="relative rounded-2xl overflow-hidden hidden md:block">
           {/* Clickable banner link */}
           {slide.isBanner && (
             <a href={slide.href} className="absolute inset-0 z-[5] cursor-pointer" />
@@ -139,7 +155,7 @@ export default function HeroBanner() {
           </div>
 
           {/* Content */}
-          <div className={`relative min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex items-center px-8 md:px-14 py-10 ${slide.isBanner ? "pointer-events-none" : ""}`}>
+          <div className={`relative min-h-[160px] sm:min-h-[200px] md:min-h-[320px] flex items-center px-4 md:px-14 py-4 md:py-10 ${slide.isBanner ? "pointer-events-none" : ""}`}>
             {!slide.isBanner && (
               <>
                 <div className="max-w-md">
@@ -185,19 +201,19 @@ export default function HeroBanner() {
           {/* Nav Arrows */}
           <button
             onClick={() => goTo((current - 1 + slides.length) % slides.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md hidden md:flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
           <button
             onClick={() => goTo((current + 1) % slides.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md hidden md:flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           >
             <ChevronRight className="w-5 h-5 text-gray-700" />
           </button>
 
-          {/* Progress Bars */}
-          <div className="absolute bottom-0 left-0 right-0 flex h-1">
+          {/* Progress Bars — desktop only */}
+          <div className="absolute bottom-0 left-0 right-0 hidden md:flex h-1">
             {slides.map((_, i) => (
               <div key={i} className="flex-1 bg-black/20">
                 <div
@@ -210,25 +226,25 @@ export default function HeroBanner() {
           </div>
         </div>
 
-        {/* ═══ DEAL TABS (Moglix caption bar) ═══ */}
-        <div className="flex border border-gray-200 rounded-xl overflow-hidden mt-3 bg-white">
+        {/* ═══ DEAL TABS (hidden on mobile, shown on md+) ═══ */}
+        <div className="hidden md:flex border border-gray-200 rounded-xl overflow-hidden mt-3 bg-white">
           {dealTabs.map((tab, i) => (
             <a
               key={tab.label}
               href={tab.href}
-              className={`flex-1 text-center py-2.5 px-2 transition-all hover:bg-gray-50 ${
+              className={`flex-1 text-center py-1.5 px-1 md:py-2.5 md:px-2 transition-all hover:bg-gray-50 ${
                 i < dealTabs.length - 1 ? "border-r border-gray-200" : ""
               } ${tab.active ? "bg-red-50" : ""}`}
             >
               <div
-                className={`text-[11px] font-bold ${
+                className={`text-[8px] md:text-[11px] font-bold ${
                   tab.active ? "text-mjs-red" : "text-mjs-gray-700"
                 }`}
               >
                 {tab.label}
               </div>
               <div
-                className={`text-[10px] mt-0.5 ${
+                className={`text-[7px] md:text-[10px] mt-0.5 ${
                   tab.active
                     ? "text-mjs-red font-semibold"
                     : "text-mjs-gray-400"

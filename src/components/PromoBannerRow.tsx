@@ -10,7 +10,7 @@ export default function PromoBannerRow() {
   const [showNewsletter, setShowNewsletter] = useState(false);
 
   return (
-    <section className="bg-mjs-gray-50 py-4">
+    <section className="hidden md:block bg-mjs-gray-50 py-4">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Newsletter Signup */}
