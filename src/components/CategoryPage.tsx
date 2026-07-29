@@ -177,9 +177,9 @@ const CATEGORY_COUPONS: Record<string, { code: string; discount: string; delay: 
   "trash-liners": { code: "TRASH5", discount: "5% off", delay: 10 },
 };
 
-export default function CategoryPage({ slug }: { slug: string }) {
-  const [products, setProducts] = useState<ProductData[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function CategoryPage({ slug, initialProducts }: { slug: string; initialProducts?: ProductData[] }) {
+  const [products, setProducts] = useState<ProductData[]>(initialProducts || []);
+  const [loading, setLoading] = useState(!initialProducts || initialProducts.length === 0);
   const [activeFilter, setActiveFilter] = useState<number | null>(null);
   const [activeSubFilter, setActiveSubFilter] = useState<number | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -223,6 +223,9 @@ export default function CategoryPage({ slug }: { slug: string }) {
   const currentSubFilters = activeFilterLabel ? subFilters[slug]?.[activeFilterLabel] || [] : [];
 
   useEffect(() => {
+    // Skip fetch if we already have server-provided products
+    if (initialProducts && initialProducts.length > 0) return;
+
     setLoading(true);
 
     // For car-detailing: also fetch JF air freshener gallons from cleaning-chemicals
@@ -315,18 +318,22 @@ export default function CategoryPage({ slug }: { slug: string }) {
     );
   }
 
+  // Shared filter matcher for a given subcategory list
+  const matchesFilter = (p: ProductData, subs: string[]) => {
+    if (subs.includes("__wonder_wafers__")) return /wonder wafer/i.test(p.name);
+    if (subs.includes("__jf_air_fresheners__")) return /janitors finest/i.test(p.name) && p.subcategory === "Air Fresheners" && p.sku !== "31801EA";
+    if (subs.includes("__all_purpose_whitelist__")) {
+      const allowed = new Set(["3162EA","80301EA","12520EA","128EA","CLO60607CT","CPC53058"]);
+      return allowed.has(p.sku);
+    }
+    return subs.includes(p.subcategory);
+  };
+
+  // Count products per filter
+  const filterCounts = filters.map((f) => products.filter((p) => matchesFilter(p, f.subcategories)).length);
+
   let filtered = activeFilter !== null && filters[activeFilter]
-    ? products.filter((p) => {
-        const subs = filters[activeFilter].subcategories;
-        // Special name-based filters
-        if (subs.includes("__wonder_wafers__")) return /wonder wafer/i.test(p.name);
-        if (subs.includes("__jf_air_fresheners__")) return /janitors finest/i.test(p.name) && p.subcategory === "Air Fresheners" && p.sku !== "31801EA";
-        if (subs.includes("__all_purpose_whitelist__")) {
-          const allowed = new Set(["3162EA","80301EA","12520EA","128EA","CLO60607CT","CPC53058"]);
-          return allowed.has(p.sku);
-        }
-        return subs.includes(p.subcategory);
-      })
+    ? products.filter((p) => matchesFilter(p, filters[activeFilter].subcategories))
     : products;
 
   // Apply sub-filter if active
@@ -336,52 +343,6 @@ export default function CategoryPage({ slug }: { slug: string }) {
 
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
-      {/* Category Banner */}
-      {slug === "cleaning-chemicals" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-cleaning-chemicals.png" alt="Professional Cleaning Solutions" className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "trash-liners" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-trash-liners.png" alt="Strong Bags. Clean Spaces. Durable trash liners for every need." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "packaging-film" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-packaging-film.png" alt="Pack It Right. Ship It Safe. High-quality packaging products." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "gloves-safety" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-gloves-safety.png" alt="Protection You Can Rely On. High-quality disposable gloves." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "breakroom" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-breakroom.png" alt="Everything You Need for a Better Breakroom." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "equipment" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-equipment.png" alt="Powerful Equipment. Professional Results." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "floor-care" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-floor-care.png" alt="Cleaner Floors. Better Impressions." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "car-detailing" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-car-detailing.png" alt="Professional Care. Stunning Results. Premium detailing products and equipment." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
-      {slug === "paper-products" && (
-        <div className="hidden md:block max-w-[1400px] mx-auto px-4 pt-6">
-          <img src="/images/banner-paper-products.png" alt="Every Sheet. Every Standard. High-quality paper products for every facility." className="w-full h-auto rounded-xl" />
-        </div>
-      )}
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         {/* Mobile Header + Filter */}
         <div className="sm:hidden flex items-center justify-between mb-3">
@@ -424,90 +385,112 @@ export default function CategoryPage({ slug }: { slug: string }) {
           </p>
         </div>
 
-        {/* Desktop: Quick Filter Buttons */}
-        {filters.length > 0 && (
-          <div className="hidden sm:block bg-white rounded-xl border border-gray-100 px-6 py-4 mb-6">
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <button
-                onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
-                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                  activeFilter === null
-                    ? "bg-mjs-red text-white shadow-md shadow-red-200"
-                    : "bg-mjs-gray-50 text-mjs-gray-600 hover:bg-red-50 hover:text-mjs-red"
-                }`}
-              >
-                All Products
-              </button>
-              {filters.map((filter, i) => (
+        {/* Desktop: Sidebar + Product Grid layout */}
+        <div className="hidden sm:flex gap-6">
+          {/* Left Sidebar Filters */}
+          {filters.length > 0 && (
+            <aside className="w-56 flex-shrink-0">
+              <nav className="sticky top-24">
                 <button
-                  key={filter.label}
-                  onClick={() => { setActiveFilter(activeFilter === i ? null : i); setActiveSubFilter(null); }}
-                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                    activeFilter === i
-                      ? "bg-mjs-red text-white shadow-md shadow-red-200"
-                      : "bg-mjs-gray-50 text-mjs-gray-600 hover:bg-red-50 hover:text-mjs-red"
+                  onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
+                  className={`block w-full text-left text-sm font-bold py-2 border-b border-gray-100 transition-colors ${
+                    activeFilter === null
+                      ? "text-mjs-red"
+                      : "text-mjs-dark hover:text-mjs-red"
                   }`}
                 >
-                  {filter.label}
+                  <span className="flex items-center justify-between">
+                    All Products
+                    <span className="text-xs font-normal text-mjs-gray-400">{products.length}</span>
+                  </span>
                 </button>
-              ))}
-            </div>
+                {filters.map((filter, i) => (
+                  <div key={filter.label}>
+                    <button
+                      onClick={() => { setActiveFilter(activeFilter === i ? null : i); setActiveSubFilter(null); }}
+                      className={`block w-full text-left text-sm py-2 border-b border-gray-50 transition-colors ${
+                        activeFilter === i
+                          ? "font-bold text-mjs-red"
+                          : "text-mjs-gray-600 hover:text-mjs-red"
+                      }`}
+                    >
+                      <span className="flex items-center justify-between">
+                        {filter.label}
+                        <span className="text-xs font-normal text-mjs-gray-400">{filterCounts[i]}</span>
+                      </span>
+                    </button>
+                    {/* Sub-filters — inline under the active filter */}
+                    {activeFilter === i && currentSubFilters.length > 0 && (
+                      <div className="pl-3 pb-1">
+                        {currentSubFilters.map((sf, si) => (
+                          <button
+                            key={sf.label}
+                            onClick={() => setActiveSubFilter(activeSubFilter === si ? null : si)}
+                            className={`block w-full text-left text-xs py-1.5 transition-colors ${
+                              activeSubFilter === si
+                                ? "text-mjs-red font-semibold"
+                                : "text-mjs-gray-500 hover:text-mjs-red"
+                            }`}
+                          >
+                            {sf.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </aside>
+          )}
 
-            {/* Sub-filters — appear when a main filter with sub-options is active */}
-            {currentSubFilters.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center gap-1.5 mt-3 pt-3 border-t border-gray-100">
-                <button
-                  onClick={() => setActiveSubFilter(null)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                    activeSubFilter === null
-                      ? "bg-mjs-dark text-white"
-                      : "bg-gray-100 text-mjs-gray-500 hover:bg-gray-200 hover:text-mjs-dark"
-                  }`}
-                >
-                  All
-                </button>
-                {currentSubFilters.map((sf, i) => (
-                  <button
-                    key={sf.label}
-                    onClick={() => setActiveSubFilter(activeSubFilter === i ? null : i)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                      activeSubFilter === i
-                        ? "bg-mjs-dark text-white"
-                        : "bg-gray-100 text-mjs-gray-500 hover:bg-gray-200 hover:text-mjs-dark"
-                    }`}
-                  >
-                    {sf.label}
-                  </button>
+          {/* Product Grid */}
+          <div className="flex-1 min-w-0">
+            {loading && (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="w-8 h-8 text-mjs-red animate-spin" />
+              </div>
+            )}
+            {!loading && filtered.length > 0 && (
+              <div className={`grid grid-cols-1 md:grid-cols-2 ${filters.length > 0 ? "lg:grid-cols-3 xl:grid-cols-4" : "lg:grid-cols-4 xl:grid-cols-5"} gap-4`}>
+                {filtered.map((product) => (
+                  <ProductCard key={product.slug} product={product} />
                 ))}
               </div>
             )}
+            {!loading && filtered.length === 0 && (
+              <div className="bg-white rounded-xl p-12 text-center">
+                <p className="text-mjs-gray-500">No products in this category yet. Check back soon!</p>
+                <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
+                  Back to Home
+                </a>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-mjs-red animate-spin" />
-          </div>
-        )}
-
-        {/* Product Grid */}
-        {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0 sm:gap-4">
-            {filtered.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        )}
-
-        {!loading && filtered.length === 0 && (
-          <div className="bg-white rounded-xl p-12 text-center">
-            <p className="text-mjs-gray-500">No products in this category yet. Check back soon!</p>
-            <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
-              Back to Home
-            </a>
-          </div>
-        )}
+        {/* Mobile: Loading & Grid (no sidebar) */}
+        <div className="sm:hidden">
+          {loading && (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 text-mjs-red animate-spin" />
+            </div>
+          )}
+          {!loading && filtered.length > 0 && (
+            <div className="grid grid-cols-1 gap-0">
+              {filtered.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
+            </div>
+          )}
+          {!loading && filtered.length === 0 && (
+            <div className="bg-white rounded-xl p-12 text-center">
+              <p className="text-mjs-gray-500">No products in this category yet. Check back soon!</p>
+              <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
+                Back to Home
+              </a>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Coupon Nudge — push notification style, top-right */}

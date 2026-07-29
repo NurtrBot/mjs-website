@@ -42,6 +42,64 @@ const LIFESTYLE_IMAGES: Record<string, string> = {
   "8036": "/images/product-lifestyle-8036.png",
 };
 
+// SKU → photo strip mapping (shown between description and specs)
+const PHOTO_STRIPS: Record<string, { src: string; alt: string; position?: string }[]> = {
+  "JC25": [
+    { src: "/images/jc-strip-1.png", alt: "Toss-Ins pouch inside a portable restroom while technician services the unit" },
+    { src: "/images/jc-strip-2.png", alt: "Johnny's Choice Toss-Ins box and pouch product packaging" },
+    { src: "/images/jc-strip-3.png", alt: "Hand holding Toss-Ins pouch at a construction site with portable restrooms" },
+    { src: "/images/jc-strip-4.png", alt: "Worker carrying Toss-Ins pouch past a row of portable restrooms" },
+  ],
+  "JC250": [
+    { src: "/images/jc-strip-1.png", alt: "Toss-Ins pouch inside a portable restroom while technician services the unit" },
+    { src: "/images/jc-strip-2.png", alt: "Johnny's Choice Toss-Ins box and pouch product packaging" },
+    { src: "/images/jc-strip-3.png", alt: "Hand holding Toss-Ins pouch at a construction site with portable restrooms" },
+    { src: "/images/jc-strip-4.png", alt: "Worker carrying Toss-Ins pouch past a row of portable restrooms" },
+  ],
+  "5300": [
+    { src: "/images/5300-strip-1.png", alt: "Janitors Finest 5300 multi-fold towels case on display at an outdoor event" },
+    { src: "/images/5300-strip-2.png", alt: "Janitors Finest 5300 Premium Plus white multi-fold towels box front view" },
+    { src: "/images/5300-strip-3.png", alt: "Janitors Finest 5300 multi-fold towels case and towels on a kitchen counter" },
+    { src: "/images/5300-strip-4.png", alt: "Janitors Finest 5300 multi-fold towels case and towel stack on a delivery van tailgate" },
+  ],
+  "5602": [
+    { src: "/images/5602-strip-1.png", alt: "Janitors Finest 5602 bath tissue case and roll on the back of a service van" },
+    { src: "/images/5602-strip-2.png", alt: "Janitors Finest 5602 Premium Plus bath tissue box and roll on display" },
+    { src: "/images/5602-strip-3.png", alt: "Janitors Finest 5602 bath tissue case on a pallet in a warehouse" },
+    { src: "/images/5602-strip-4.png", alt: "Worker holding a roll of Janitors Finest 5602 bath tissue at a construction site", position: "center 30%" },
+  ],
+  "JCD50": [
+    { src: "/images/jcd-strip-1.png", alt: "Grand Disk being placed inside a portable restroom toilet paper holder" },
+    { src: "/images/jcd-strip-2.png", alt: "Technician holding Grand Disks pouch and disk at a construction site" },
+    { src: "/images/jcd-strip-3.png", alt: "Grand Disks 50-pack pouch sitting on heavy equipment at a job site" },
+    { src: "/images/jcd-strip-4.png", alt: "Worker carrying Grand Disks pouch toward a portable restroom" },
+  ],
+  "JCD250": [
+    { src: "/images/jcd-strip-1.png", alt: "Grand Disk being placed inside a portable restroom toilet paper holder" },
+    { src: "/images/jcd-strip-2.png", alt: "Technician holding Grand Disks pouch and disk at a construction site" },
+    { src: "/images/jcd-strip-3.png", alt: "Grand Disks 50-pack pouch sitting on heavy equipment at a job site" },
+    { src: "/images/jcd-strip-4.png", alt: "Worker carrying Grand Disks pouch toward a portable restroom" },
+  ],
+  "5200": [
+    { src: "/images/5200-strip-1.png", alt: "Janitors Finest 5200 Premium Plus jumbo roll tissue case on an outdoor table" },
+    { src: "/images/5200-strip-2.png", alt: "Worker pulling Janitors Finest 5200 jumbo roll tissue case from a warehouse shelf" },
+    { src: "/images/5200-strip-3.png", alt: "Woman loading a jumbo roll into a wall-mounted tissue dispenser in a restroom" },
+    { src: "/images/5200-strip-4.png", alt: "Janitors Finest 5200 Premium Plus jumbo roll tissue case on a warehouse floor" },
+  ],
+  "25630EA": [
+    { src: "/images/25630-strip-1.png", alt: "Janitor carrying Pink Cherry Lotion Hand Soap gallon through a restroom" },
+    { src: "/images/25630-strip-2.png", alt: "Worker pouring Pink Cherry Hand Soap into a wall-mounted dispenser" },
+    { src: "/images/25630-strip-3.png", alt: "Janitors Finest Pink Cherry Lotion Hand Soap gallon on a kitchen counter" },
+    { src: "/images/25630-strip-4.png", alt: "Pink Cherry Hand Soap gallon on a janitorial cart in a hospital hallway" },
+  ],
+  "3162EA": [
+    { src: "/images/3162-strip-1.png", alt: "Janitors Finest Fabulous Lavender gallon with diluted spray bottle and purple microfiber cloth on a kitchen counter" },
+    { src: "/images/3162-strip-2.png", alt: "Cleaning professional mopping a tile hallway floor with lavender cleaner and mop bucket" },
+    { src: "/images/3162-strip-3.png", alt: "Janitors Finest Fabulous Lavender gallon on a warehouse supply shelf next to towels and boxes" },
+    { src: "/images/3162-strip-4.png", alt: "Housekeeper wiping down a countertop with lavender spray bottle and microfiber cloth" },
+  ],
+};
+
 /* ── Category name → slug mapping ── */
 const categorySlugMap: Record<string, string> = {
   "Paper Products": "paper-products",
@@ -347,12 +405,18 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
   const handleAddToCart = () => {
     if (!product) return;
+
+    // Detect variant selector: all quickBuy options have qty=1 with multiple choices (e.g. size selector)
+    const isVariantSelector = product.quickBuy.length > 1 && product.quickBuy.every(o => o.qty === 1);
+    const selectedOpt = product.quickBuy[selectedBrick];
+    const variantLabel = isVariantSelector && selectedOpt ? selectedOpt.label : undefined;
+
     // Always find the best tier price for the entered quantity.
     // The quick select brick is a UI shortcut — the quantity drives the price.
-    const unitPrice = customPrice || getTierPrice(product, qty);
+    const unitPrice = customPrice || (isVariantSelector && selectedOpt?.unitPrice ? selectedOpt.unitPrice : getTierPrice(product, qty));
 
     // Check for upsell opportunity — is there a next tier they're close to?
-    if (!customPrice && product.quickBuy.length > 1) {
+    if (!customPrice && !isVariantSelector && product.quickBuy.length > 1) {
       const sortedTiers = [...product.quickBuy].sort((a, b) => a.qty - b.qty);
       const nextTier = sortedTiers.find(t => t.qty > qty && t.unitPrice && t.unitPrice < unitPrice);
       if (nextTier && nextTier.unitPrice) {
@@ -405,10 +469,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
       }
     }
 
+    const cartName = variantLabel ? `${product.cardTitle} — ${variantLabel}` : product.cardTitle;
     addItem({
       slug: product.slug,
       sku: product.sku,
-      name: product.cardTitle,
+      variantLabel,
+      name: cartName,
       brand: product.brand,
       price: unitPrice,
       image: product.images[0],
@@ -642,6 +708,18 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                   <FileText className="w-4 h-4" />
                   Safety Data Sheet (PDF)
                 </a>
+              )}
+              {PHOTO_STRIPS[product.sku] && (
+                <div className="mt-8 mb-2">
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Product Photos</h3>
+                  <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden">
+                    {PHOTO_STRIPS[product.sku].map((photo, i) => (
+                      <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                        <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" style={photo.position ? { objectPosition: photo.position } : undefined} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </>
           )}
@@ -1354,6 +1432,29 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         );
       })()}
 
+      {/* ═══════ PHOTO STRIP ═══════ */}
+      {PHOTO_STRIPS[product.sku] && (
+        <section className="hidden md:block border-t border-gray-200 bg-white py-10">
+          <div className="max-w-[1400px] mx-auto px-6">
+            <h2 className="text-lg font-extrabold text-gray-900 uppercase tracking-wider mb-5 text-center">
+              Product Photos
+            </h2>
+            <div className="grid grid-cols-4 gap-2 rounded-xl overflow-hidden">
+              {PHOTO_STRIPS[product.sku].map((photo, i) => (
+                <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    className="w-full h-full object-cover"
+                    style={photo.position ? { objectPosition: photo.position } : undefined}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ═══════ 3. SPECIFICATIONS ═══════ */}
       <section className="hidden md:block border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-6">
@@ -1548,10 +1649,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 value={qty}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[^0-9]/g, "");
+                  if (val === "") { setQty(0); return; }
                   const num = parseInt(val);
-                  if (num > 0) setQty(num);
+                  if (num >= 0) setQty(num);
                 }}
                 onBlur={() => { if (qty < 1) setQty(1); }}
+                onFocus={(e) => e.target.select()}
                 className="w-12 h-10 text-center text-sm font-bold border-x border-gray-300 outline-none"
               />
               <button

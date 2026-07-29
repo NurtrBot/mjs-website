@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -339,26 +339,26 @@ export default function AccountDashboard() {
   }, [user?.id]);
 
   // Fetch real addresses from BC
-  useEffect(() => {
+  const fetchAddresses = useCallback(() => {
     if (!user?.id) return;
     fetch(`/api/customer/addresses?customerId=${user.id}`)
       .then(r => r.json())
       .then(data => {
-        if (data.addresses?.length > 0) {
-          const bcAddrs = data.addresses.map((a: Record<string, unknown>) => ({
-            id: a.id as number,
-            label: (a.company as string) || `${a.city}, ${a.state}`,
-            company: (a.company as string) || "",
-            address: `${a.address1}${a.address2 ? " " + a.address2 : ""}`,
-            city: a.city as string,
-            state: a.state as string,
-            zip: a.zip as string,
-          }));
-          setAddresses(bcAddrs);
-        }
+        const bcAddrs = (data.addresses || []).map((a: Record<string, unknown>) => ({
+          id: a.id as number,
+          label: (a.company as string) || `${a.city}, ${a.state}`,
+          company: (a.company as string) || "",
+          address: `${a.address1}${a.address2 ? " " + a.address2 : ""}`,
+          city: a.city as string,
+          state: a.state as string,
+          zip: a.zip as string,
+        }));
+        setAddresses(bcAddrs);
       })
       .catch(() => {});
   }, [user?.id]);
+
+  useEffect(() => { fetchAddresses(); }, [fetchAddresses]);
 
   // Populate billTo from user data
   useEffect(() => {
@@ -1465,8 +1465,10 @@ export default function AccountDashboard() {
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({ addressId: addr.id }),
                               });
-                            } catch {}
-                            setAddresses(addresses.filter(a => a.id !== addr.id));
+                              fetchAddresses();
+                            } catch {
+                              setAddresses(addresses.filter(a => a.id !== addr.id));
+                            }
                           }}
                           className="text-[10px] text-mjs-gray-500 hover:text-red-600 font-medium"
                         >
@@ -1543,10 +1545,15 @@ export default function AccountDashboard() {
                                 zip: addressForm.zip,
                               }),
                             });
-                            if ((await res.json()).success) {
-                              setAddresses(addresses.map(a => a.id === editingAddressId ? { ...addressForm, id: editingAddressId } : a));
+                            const data = await res.json();
+                            if (data.success) {
+                              fetchAddresses();
+                            } else {
+                              alert(data.error || "Failed to update address. Please try again.");
                             }
-                          } catch {}
+                          } catch {
+                            alert("Failed to update address. Please try again.");
+                          }
                         } else {
                           // Create new address in BC
                           try {
@@ -1565,16 +1572,8 @@ export default function AccountDashboard() {
                               }),
                             });
                             const data = await res.json();
-                            if (data.success && data.address) {
-                              setAddresses([...addresses, {
-                                id: data.address.id,
-                                label: addressForm.label || addressForm.company || `${addressForm.city}, ${addressForm.state}`,
-                                company: addressForm.company,
-                                address: addressForm.address,
-                                city: addressForm.city,
-                                state: addressForm.state,
-                                zip: addressForm.zip,
-                              }]);
+                            if (data.success) {
+                              fetchAddresses();
                             } else {
                               alert(data.error || "Failed to save address. Please try again.");
                             }

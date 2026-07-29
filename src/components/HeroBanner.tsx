@@ -14,6 +14,7 @@ const slides: {
   accent: string;
   image: string;
   isBanner?: boolean;
+  coverBanner?: boolean;
 }[] = [
   {
     id: 1,
@@ -71,15 +72,16 @@ const slides: {
     isBanner: true,
   },
   {
-    id: 6,
+    id: 7,
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/search?q=toss+ins",
-    gradient: "from-[#87CEEB] via-[#87CEEB] to-[#87CEEB]",
+    href: "/brands/johnnys-choice",
+    gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-blue-600",
-    image: "/banner-tossins-new.jpg",
+    image: "/banner-johnnys-choice.jpg",
     isBanner: true,
+    coverBanner: true,
   },
 ];
 
@@ -123,7 +125,7 @@ export default function HeroBanner() {
               FREE 1–3 Business Day Delivery on Orders $399+ <span className="text-white/70 font-normal">(Before Tax)</span>
             </div>
           </div>
-          <a href="/product/janitors-finest-premium-plus-2-ply-toilet-tissue-96-rolls">
+          <a href="/product/janitors-finest-2-ply-toilet-tissue-4-3-x-3-5-500-sheets-per-roll-96-rolls-per-case-5602">
             <img
               src="/images/mobile-hero-star-seller.png"
               alt="Star Seller — Janitors Finest Premium Plus 96 Rolls as low as $39.99"
@@ -144,7 +146,7 @@ export default function HeroBanner() {
             <img
               src={slide.image}
               alt=""
-              className={`w-full h-full ${slide.isBanner ? "object-contain" : "object-cover"}`}
+              className={`w-full h-full ${slide.coverBanner ? "object-cover" : slide.isBanner ? "object-contain" : "object-cover"}`}
             />
             {!slide.isBanner && (
               <>

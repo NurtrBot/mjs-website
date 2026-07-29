@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/privacy-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/return-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/shop-by-workspace`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
   ];
 
   // ── Category pages ──
@@ -61,6 +62,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/guides/soap-dispenser-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/guides/shipping-supplies-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/guides/green-cleaning-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+  ];
+
+  // ── Brand pages ──
+  const brandPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/brands/johnnys-choice`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
   ];
 
   // ── Industry pages ──
@@ -143,5 +149,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // If product fetch fails, sitemap still works with static + category pages
   }
 
-  return [...staticPages, ...categoryPages, ...guidePages, ...industryPages, ...locationPages, ...spanishPages, ...collectionPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...brandPages, ...guidePages, ...industryPages, ...locationPages, ...spanishPages, ...collectionPages, ...productPages];
 }
