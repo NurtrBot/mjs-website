@@ -1917,6 +1917,25 @@ export default function AccountDashboard() {
                       zip: customShipTo.zip,
                     } : null,
                   });
+
+                  // Auto-save new custom shipping address to BC for future use
+                  if (fulfillment === "delivery" && !selectedAddr && customShipTo.address && user?.id) {
+                    fetch("/api/customer/addresses", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        customerId: user.id,
+                        company: billTo.company || "",
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        address: customShipTo.address,
+                        city: customShipTo.city,
+                        state: customShipTo.state,
+                        zip: customShipTo.zip,
+                      }),
+                    }).then(() => fetchAddresses()).catch(() => {});
+                  }
+
                   setShowOrderModal(false);
                   window.location.href = "/";
                 };

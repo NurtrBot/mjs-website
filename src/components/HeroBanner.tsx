@@ -72,26 +72,25 @@ const slides: {
     isBanner: true,
   },
   {
-    id: 7,
+    id: 8,
     headline: "",
     sub: "",
-    cta: "Shop Now",
-    href: "/brands/johnnys-choice",
-    gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
-    accent: "bg-blue-600",
-    image: "/banner-johnnys-choice.jpg",
+    cta: "Try It Out Now",
+    href: "/shop-by-workspace",
+    gradient: "from-[#1a1f2e] via-[#1a1f2e] to-[#1a1f2e]",
+    accent: "bg-mjs-red",
+    image: "/banner-shop-by-workspace.png",
     isBanner: true,
-    coverBanner: true,
   },
 ];
 
 /* ── Deal Tabs (below carousel) ── */
 const dealTabs = [
-  { label: "PAPER PRODUCTS", sub: "Upto 25% OFF", active: false, href: "/shop/paper-restroom" },
-  { label: "CHEMICALS", sub: "Best Prices", active: false, href: "/shop/cleaning-chemicals" },
-  { label: "GLOVES", sub: "Upto 30% OFF", active: false, href: "/shop/gloves-safety" },
-  { label: "PACKAGING", sub: "Upto 20% OFF", active: false, href: "/category/packaging-film" },
-  { label: "ANNOUNCEMENTS", sub: "What's New", active: true, href: "/announcements" },
+  { label: "SCHOOLS", sub: "Restroom & Classroom Supplies", active: false, href: "/industries/schools", featured: false },
+  { label: "HOSPITALITY", sub: "Hotels & Restaurants", active: false, href: "/category/breakroom", featured: false },
+  { label: "PORTABLE RESTROOM SUPPLIES", sub: "Deodorizers, Paper & More", active: true, href: "/industries/portable-restroom", featured: true },
+  { label: "MANUFACTURING", sub: "Industrial & Warehouse", active: false, href: "/category/packaging-film", featured: false },
+  { label: "HEALTHCARE", sub: "Medical & Facilities", active: false, href: "/category/gloves-safety", featured: false },
 ];
 
 
@@ -234,7 +233,9 @@ export default function HeroBanner() {
             <a
               key={tab.label}
               href={tab.href}
-              className={`flex-1 text-center py-1.5 px-1 md:py-2.5 md:px-2 transition-all hover:bg-gray-50 ${
+              className={`text-center py-1.5 px-1 md:py-2.5 md:px-2 transition-all hover:bg-gray-50 ${
+                tab.featured ? "flex-[1.4]" : "flex-1"
+              } ${
                 i < dealTabs.length - 1 ? "border-r border-gray-200" : ""
               } ${tab.active ? "bg-red-50" : ""}`}
             >
