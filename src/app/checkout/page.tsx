@@ -360,18 +360,19 @@ export default function CheckoutPage() {
       .catch(() => { setEstimatingShipping(false); });
   }, [form.zip, form.state, items.length, isPickup, subtotal]);
 
-  // Auto-fill billTo from order setup
+  // Auto-fill billTo from order setup + first saved address
   useEffect(() => {
+    const firstAddr = savedAddresses[0];
     if (orderSetup?.billTo) {
       setBillTo({
         company: orderSetup.billTo.company || user?.company || "",
         name: orderSetup.billTo.name || (user ? `${user.firstName} ${user.lastName}` : ""),
         email: orderSetup.billTo.email || user?.email || "",
         phone: orderSetup.billTo.phone || user?.phone || "",
-        address: "",
-        city: "",
-        state: "CA",
-        zip: "",
+        address: firstAddr?.address || "",
+        city: firstAddr?.city || "",
+        state: firstAddr?.state || "CA",
+        zip: firstAddr?.zip || "",
       });
     } else if (user) {
       setBillTo({
@@ -379,13 +380,13 @@ export default function CheckoutPage() {
         name: `${user.firstName} ${user.lastName}`,
         email: user.email || "",
         phone: user.phone || "",
-        address: "",
-        city: "",
-        state: "CA",
-        zip: "",
+        address: firstAddr?.address || "",
+        city: firstAddr?.city || "",
+        state: firstAddr?.state || "CA",
+        zip: firstAddr?.zip || "",
       });
     }
-  }, [user, orderSetup]);
+  }, [user, orderSetup, savedAddresses]);
 
   const inputClass =
     "w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40 transition-colors bg-white";
@@ -1174,6 +1175,7 @@ export default function CheckoutPage() {
                       sku: item.sku || item.slug,
                       productId: item.productId,
                       quantity: item.qty,
+                      variantLabel: item.variantLabel,
                     }));
 
                     setOrderSubmitted(true);
@@ -1194,10 +1196,10 @@ export default function CheckoutPage() {
                           lastName: billTo.name?.split(" ").slice(1).join(" ") || "",
                           email: billTo.email,
                           company: billTo.company,
-                          address1: billTo.address || shipAddr.address1,
-                          city: billTo.city || shipAddr.city,
-                          state: billTo.state || shipAddr.state,
-                          zip: billTo.zip || shipAddr.zip,
+                          address1: billTo.address || (isPickup ? "" : shipAddr.address1),
+                          city: billTo.city || (isPickup ? "" : shipAddr.city),
+                          state: billTo.state || (isPickup ? "CA" : shipAddr.state),
+                          zip: billTo.zip || (isPickup ? "" : shipAddr.zip),
                           phone: billTo.phone || "",
                         } : undefined,
                         notes: form.notes || "",

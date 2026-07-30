@@ -33,6 +33,7 @@ interface OrderItem {
   sku: string;
   productId?: number;
   quantity: number;
+  variantLabel?: string;
 }
 
 interface OrderRequest {
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Resolve SKUs/slugs to product IDs
-    const lineItems: { product_id: number; quantity: number }[] = [];
+    const lineItems: { product_id: number; quantity: number; _variantLabel?: string }[] = [];
     for (const item of items) {
       let productId = item.productId;
       const sku = item.sku || "";
@@ -186,7 +187,7 @@ export async function POST(req: NextRequest) {
       if (!productId) {
         return NextResponse.json({ error: `Product not found: ${sku}. Please remove it from your cart and try again.` }, { status: 400 });
       }
-      lineItems.push({ product_id: productId, quantity: item.quantity });
+      lineItems.push({ product_id: productId, quantity: item.quantity, _variantLabel: item.variantLabel });
     }
 
     // 1b. Resolve variant IDs for products with options (BC requires variant_id)
@@ -194,7 +195,12 @@ export async function POST(req: NextRequest) {
       try {
         const variants = await getProductVariants(li.product_id);
         if (variants.length > 0) {
-          (li as { product_id: number; quantity: number; variant_id?: number }).variant_id = variants[0].id;
+          // Match by variant option label if provided (e.g. '15"' for floor pad sizes)
+          let matched = li._variantLabel
+            ? variants.find(v => v.option_values.some(ov => ov.label === li._variantLabel))
+            : undefined;
+          if (!matched) matched = variants[0];
+          (li as { product_id: number; quantity: number; variant_id?: number }).variant_id = matched.id;
         }
       } catch {}
     }
@@ -271,13 +277,19 @@ export async function POST(req: NextRequest) {
     await selectShippingOption(cartId, String(consignment.id), selectedOption.id);
 
     // 6. Set billing address
-    const billAddr = billingAddress && billingAddress.address1 ? billingAddress : shippingAddress;
-    const billingEmail = billAddr.email || shippingAddress.email || "order@mobilejanitorialsupply.com";
+    // For pickup orders, billing address should use the customer's info, not the store address
+    const hasBillingAddr = billingAddress && billingAddress.address1;
+    const billAddr = hasBillingAddr ? billingAddress : shippingAddress;
+    const billingEmail = (billingAddress?.email || shippingAddress.email || "order@mobilejanitorialsupply.com");
+    const billingName = {
+      first: billingAddress?.firstName || shippingAddress.firstName || "Customer",
+      last: billingAddress?.lastName || shippingAddress.lastName || "Order",
+    };
     await setBillingAddress(cartId, {
-      first_name: billAddr.firstName || shippingAddress.firstName || "Customer",
-      last_name: billAddr.lastName || shippingAddress.lastName || "Order",
+      first_name: billingName.first,
+      last_name: billingName.last,
       email: billingEmail,
-      company: billAddr.company || shippingAddress.company || "",
+      company: billingAddress?.company || shippingAddress.company || "",
       address1: billAddr.address1 || shippingAddress.address1,
       address2: (billAddr as Record<string, unknown>).address2 as string || (shippingAddress as Record<string, unknown>).address2 as string || "",
       city: billAddr.city || shippingAddress.city,
@@ -285,7 +297,7 @@ export async function POST(req: NextRequest) {
       state_or_province_code: billAddr.state || shippingAddress.state,
       postal_code: billAddr.zip || shippingAddress.zip,
       country_code: "US",
-      phone: billAddr.phone || shippingAddress.phone || "",
+      phone: billingAddress?.phone || shippingAddress.phone || "",
     });
 
     // 7. Create order from checkout
