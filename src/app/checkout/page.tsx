@@ -388,6 +388,21 @@ export default function CheckoutPage() {
     }
   }, [user, orderSetup, savedAddresses]);
 
+  // Pre-fill billing form fields for pickup orders from saved address or user info
+  useEffect(() => {
+    if (!isPickup) return;
+    const firstAddr = savedAddresses[0];
+    if (firstAddr && !form.billingAddress) {
+      update("billingFirstName", user?.firstName || "");
+      update("billingLastName", user?.lastName || "");
+      update("billingCompany", user?.company || firstAddr.company || "");
+      update("billingAddress", firstAddr.address || "");
+      update("billingCity", firstAddr.city || "");
+      update("billingState", firstAddr.state || "CA");
+      update("billingZip", firstAddr.zip || "");
+    }
+  }, [isPickup, savedAddresses]);
+
   const inputClass =
     "w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40 transition-colors bg-white";
   const labelClass = "text-xs font-semibold text-mjs-gray-500 mb-1.5 block";
@@ -838,27 +853,29 @@ export default function CheckoutPage() {
                 )}
               </section>
 
-              {/* Billing Address — only show for credit card customers */}
-              {!isBillToAccount && !isCash && (
+              {/* Billing Address — show for credit card customers, and always for pickup */}
+              {(!isBillToAccount && !isCash) || isPickup ? (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">
                     Billing Address
                   </h2>
                 </div>
-                <label className="flex items-center gap-2.5 cursor-pointer mb-4">
-                  <input
-                    type="checkbox"
-                    checked={form.sameAsBilling}
-                    onChange={(e) => update("sameAsBilling", e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-mjs-red focus:ring-mjs-red/20"
-                  />
-                  <span className="text-sm text-mjs-gray-600">
-                    Same as shipping address
-                  </span>
-                </label>
+                {!isPickup && (
+                  <label className="flex items-center gap-2.5 cursor-pointer mb-4">
+                    <input
+                      type="checkbox"
+                      checked={form.sameAsBilling}
+                      onChange={(e) => update("sameAsBilling", e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-mjs-red focus:ring-mjs-red/20"
+                    />
+                    <span className="text-sm text-mjs-gray-600">
+                      Same as shipping address
+                    </span>
+                  </label>
+                )}
 
-                {!form.sameAsBilling && (
+                {(isPickup || !form.sameAsBilling) && (
                   <>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -895,7 +912,7 @@ export default function CheckoutPage() {
                   </>
                 )}
               </section>
-              )}
+              ) : null}
 
               {/* Payment */}
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
@@ -1191,17 +1208,49 @@ export default function CheckoutPage() {
                         paymentMethod: payMethod,
                         fulfillment: fulfill,
                         shippingAddress: shipAddr,
-                        billingAddress: isBillToAccount ? {
-                          firstName: billTo.name?.split(" ")[0] || "",
-                          lastName: billTo.name?.split(" ").slice(1).join(" ") || "",
-                          email: billTo.email,
-                          company: billTo.company,
-                          address1: billTo.address || (isPickup ? "" : shipAddr.address1),
-                          city: billTo.city || (isPickup ? "" : shipAddr.city),
-                          state: billTo.state || (isPickup ? "CA" : shipAddr.state),
-                          zip: billTo.zip || (isPickup ? "" : shipAddr.zip),
-                          phone: billTo.phone || "",
-                        } : undefined,
+                        billingAddress: (() => {
+                          // Use billing form fields if customer filled them in (pickup or unchecked "same as shipping")
+                          const useBillingForm = isPickup || !form.sameAsBilling;
+                          if (useBillingForm && form.billingAddress) {
+                            return {
+                              firstName: form.billingFirstName || shipAddr.firstName || "",
+                              lastName: form.billingLastName || shipAddr.lastName || "",
+                              email: billTo.email || shipAddr.email || "",
+                              company: form.billingCompany || billTo.company || "",
+                              address1: form.billingAddress,
+                              city: form.billingCity,
+                              state: form.billingState || "CA",
+                              zip: form.billingZip,
+                              phone: billTo.phone || shipAddr.phone || "",
+                            };
+                          }
+                          // Logged-in user with billTo address
+                          if (billTo.address) {
+                            return {
+                              firstName: billTo.name?.split(" ")[0] || shipAddr.firstName || "",
+                              lastName: billTo.name?.split(" ").slice(1).join(" ") || shipAddr.lastName || "",
+                              email: billTo.email || shipAddr.email || "",
+                              company: billTo.company || "",
+                              address1: billTo.address,
+                              city: billTo.city,
+                              state: billTo.state || "CA",
+                              zip: billTo.zip,
+                              phone: billTo.phone || "",
+                            };
+                          }
+                          // Fallback: use shipping address (delivery orders only)
+                          return {
+                            firstName: shipAddr.firstName || "",
+                            lastName: shipAddr.lastName || "",
+                            email: shipAddr.email || "",
+                            company: shipAddr.company || "",
+                            address1: isPickup ? "" : shipAddr.address1,
+                            city: isPickup ? "" : shipAddr.city,
+                            state: isPickup ? "CA" : shipAddr.state,
+                            zip: isPickup ? "" : shipAddr.zip,
+                            phone: shipAddr.phone || "",
+                          };
+                        })(),
                         notes: form.notes || "",
                         couponCode: promoApplied?.code || undefined,
                         card: payMethod === "card" ? {
