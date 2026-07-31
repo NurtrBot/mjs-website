@@ -388,20 +388,17 @@ export default function CheckoutPage() {
     }
   }, [user, orderSetup, savedAddresses]);
 
-  // Pre-fill billing form fields for pickup orders from saved address or user info
+  // Clear billing form fields when switching to pickup so customer enters their own
   useEffect(() => {
     if (!isPickup) return;
-    const firstAddr = savedAddresses[0];
-    if (firstAddr && !form.billingAddress) {
-      update("billingFirstName", user?.firstName || "");
-      update("billingLastName", user?.lastName || "");
-      update("billingCompany", user?.company || firstAddr.company || "");
-      update("billingAddress", firstAddr.address || "");
-      update("billingCity", firstAddr.city || "");
-      update("billingState", firstAddr.state || "CA");
-      update("billingZip", firstAddr.zip || "");
-    }
-  }, [isPickup, savedAddresses]);
+    update("billingFirstName", "");
+    update("billingLastName", "");
+    update("billingCompany", "");
+    update("billingAddress", "");
+    update("billingCity", "");
+    update("billingState", "CA");
+    update("billingZip", "");
+  }, [isPickup]);
 
   const inputClass =
     "w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red/40 transition-colors bg-white";
