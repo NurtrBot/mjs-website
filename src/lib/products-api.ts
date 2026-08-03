@@ -156,6 +156,27 @@ function transformProduct(bc: BCProduct): ProductData {
   // Category overrides — move misplaced products to correct category
   const nameLower = bc.name.toLowerCase();
   let finalCategory = siteCategoryName;
+
+  // SKU-based car detailing override — these are in BC Chemicals but belong in Car Detailing
+  const CAR_DETAILING_SKUS = new Set([
+    "BL18GRN","CJB-M114","CJB-M113","CJB-M112","CJB-M111","BUPET",
+    "BS9GRN","BS9BLU","BT9BLK","BT9CRM","BS9BPT","BS9RED",
+    "CJB-T933","CJB-T931",
+    "CJB-T59133GRN","CJB-T59133BLK","CJB-T59133ORG","CJB-T59133RED","CJB-T59133BLU","CJB-T59133YEL",
+    "DB6","CJB-C611","CJB-M637","CJB-M633","CJB-M634","CJB-M621","CJB-M649",
+    "CJB-C628","CJB-M650","CJB-M654","CJB-C624","CJB-C653","CJB-M638",
+    "CJB-B4C652","CJB-B4C625","CJB-B4C626",
+    "A2FCTB41","CJB-924",
+  ]);
+  if (CAR_DETAILING_SKUS.has(bc.sku)) {
+    finalCategory = "Car Detailing";
+  }
+
+  // SKU-based portable toilet override — keep in Cleaning Chemicals but set subcategory
+  const PORTABLE_TOILET_SKUS = new Set(["JC25","JC250","JCD50","JCD250"]);
+  if (PORTABLE_TOILET_SKUS.has(bc.sku)) {
+    finalCategory = "Cleaning Chemicals";
+  }
   if (nameLower.includes("spot off") || nameLower.includes("spot remover") ||
       (subcategory === "Specialty Cleaners" && siteCategory === "equipment") ||
       (subcategory === "All Purpose Cleaners" && siteCategory === "equipment") ||
@@ -434,6 +455,17 @@ function extractBrand(name: string): string {
 function getSubcategory(bc: BCProduct): string {
   const name = bc.name.toLowerCase();
   const siteSlug = getSiteCategory(bc.categories);
+
+  // SKU-based subcategory overrides
+  if (["JC25","JC250","JCD50","JCD250"].includes(bc.sku)) return "Portable Toilet Supplies";
+
+  // Car detailing subcategories by SKU prefix/pattern
+  if (bc.sku.startsWith("CJB-T59133") || ["CJB-T933","CJB-T931"].includes(bc.sku)) return "Pads & Applicators";
+  if (["CJB-C624","CJB-B4C625","CJB-C653","CJB-C628","CJB-B4C626","CJB-B4C652"].includes(bc.sku)) return "Car Wash & Shampoo";
+  if (["CJB-M621","CJB-M654","CJB-M649","CJB-M650","CJB-M638","CJB-M637","CJB-M633"].includes(bc.sku)) return "Coatings & Protectants";
+  if (bc.sku === "CJB-M634") return "Interior Care";
+  if (["BS9GRN","BS9BLU","BS9BPT","BS9RED","BT9BLK","BT9CRM","DB6","BL18GRN","BUPET","CJB-M114","CJB-M113","CJB-M112","CJB-M111","CJB-C611","A2FCTB41"].includes(bc.sku)) return "Brushes & Tools";
+  if (bc.sku === "CJB-924") return "Pads & Applicators";
 
   // ── Dispensers — MUST check before paper/tissue/glove to avoid false matches ──
   if ((name.includes("tape dispenser") || name.includes("tape gun")) && !name.includes("not included")) return "Tape Dispensers";

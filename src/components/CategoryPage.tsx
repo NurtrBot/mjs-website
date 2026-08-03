@@ -41,6 +41,7 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
     { label: "Urinal Screens", subcategories: ["Urinal Screens"] },
     { label: "Dish & Laundry", subcategories: ["Dish & Laundry"] },
     { label: "Floor & Carpet", subcategories: ["Floor Care", "Floor Strippers", "Floor Finishes", "Carpet Care", "Drain Cleaners", "Floor & Carpet"] },
+    { label: "Portable Toilets", subcategories: ["__portable_toilets__"] },
   ],
   "trash-liners": [
     { label: "Clear", subcategories: ["Clear Can Liners"] },
@@ -102,6 +103,11 @@ const quickFilters: Record<string, { label: string; subcategories: string[] }[]>
   "car-detailing": [
     { label: "Wonder Wafers", subcategories: ["__wonder_wafers__"] },
     { label: "Air Freshener Gallons", subcategories: ["__jf_air_fresheners__"] },
+    { label: "Car Wash & Shampoo", subcategories: ["Car Wash & Shampoo"] },
+    { label: "Coatings & Protectants", subcategories: ["Coatings & Protectants"] },
+    { label: "Interior Care", subcategories: ["Interior Care"] },
+    { label: "Brushes & Tools", subcategories: ["Brushes & Tools"] },
+    { label: "Pads & Applicators", subcategories: ["Pads & Applicators"] },
   ],
 };
 
@@ -326,6 +332,10 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
       const allowed = new Set(["3162EA","80301EA","12520EA","128EA","CLO60607CT","CPC53058"]);
       return allowed.has(p.sku);
     }
+    if (subs.includes("__portable_toilets__")) {
+      const allowed = new Set(["JC25","JC250","JCD50","JCD250"]);
+      return allowed.has(p.sku);
+    }
     return subs.includes(p.subcategory);
   };
 
@@ -390,7 +400,7 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
           {/* Left Sidebar Filters */}
           {filters.length > 0 && (
             <aside className="w-56 flex-shrink-0">
-              <nav className="sticky top-24">
+              <nav className="sticky top-24" suppressHydrationWarning>
                 <button
                   onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
                   className={`block w-full text-left text-sm font-bold py-2 border-b border-gray-100 transition-colors ${

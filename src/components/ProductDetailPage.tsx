@@ -26,6 +26,7 @@ import {
   Loader2,
   Headphones,
   FileText,
+  Droplets,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -98,6 +99,79 @@ const PHOTO_STRIPS: Record<string, { src: string; alt: string; position?: string
     { src: "/images/3162-strip-3.png", alt: "Janitors Finest Fabulous Lavender gallon on a warehouse supply shelf next to towels and boxes" },
     { src: "/images/3162-strip-4.png", alt: "Housekeeper wiping down a countertop with lavender spray bottle and microfiber cloth" },
   ],
+};
+
+// SKU → dilution data (chemicals only)
+interface DilutionRate {
+  label: string;
+  ratio: string;
+  ozPerGal: number;
+}
+interface DilutionInfo {
+  containerOz: number;
+  containerLabel: string;
+  rates: DilutionRate[];
+}
+const DILUTION_DATA: Record<string, DilutionInfo> = {
+  "3180EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Heavy Duty", ratio: "1:10", ozPerGal: 13 },
+      { label: "Medium Duty", ratio: "1:32", ozPerGal: 4 },
+      { label: "Light Duty", ratio: "1:64", ozPerGal: 2 },
+    ],
+  },
+  "3162EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Heavy Duty", ratio: "1:32", ozPerGal: 4 },
+      { label: "General Cleaning", ratio: "1:64", ozPerGal: 2 },
+      { label: "Light Duty", ratio: "1:128", ozPerGal: 1 },
+    ],
+  },
+  "3158EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Standard", ratio: "1:64", ozPerGal: 2 },
+      { label: "Light Duty", ratio: "1:128", ozPerGal: 1 },
+    ],
+  },
+  "91101EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Disinfecting", ratio: "1:64", ozPerGal: 2 },
+      { label: "General Cleaning", ratio: "1:128", ozPerGal: 1 },
+    ],
+  },
+  "80301EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Heavy Duty", ratio: "1:20", ozPerGal: 6 },
+      { label: "General Cleaning", ratio: "1:40", ozPerGal: 3 },
+    ],
+  },
+  "128EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Heavy Duty", ratio: "1:4", ozPerGal: 26 },
+      { label: "General Cleaning", ratio: "1:10", ozPerGal: 13 },
+    ],
+  },
+  "12520EA": {
+    containerOz: 128,
+    containerLabel: "1 Gallon",
+    rates: [
+      { label: "Heavy Duty", ratio: "1:20", ozPerGal: 6 },
+      { label: "General Cleaning", ratio: "1:40", ozPerGal: 3 },
+      { label: "Light Duty / Mopping", ratio: "1:64", ozPerGal: 2 },
+    ],
+  },
 };
 
 /* ── Category name → slug mapping ── */
@@ -721,6 +795,37 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                   </div>
                 </div>
               )}
+              {DILUTION_DATA[product.sku] && (() => {
+                const dil = DILUTION_DATA[product.sku];
+                const costPerOz = product.price / dil.containerOz;
+                return (
+                  <div className="mt-8">
+                    <h3 className="text-sm font-bold text-gray-900 mb-3">Dilution & Cost Breakdown</h3>
+                    <p className="text-xs text-mjs-gray-400 mb-3">{dil.containerLabel} ({dil.containerOz} oz) &middot; ${costPerOz.toFixed(3)}/oz concentrate</p>
+                    <div className="space-y-3">
+                      {dil.rates.map((rate) => {
+                        const yieldGal = Math.floor(dil.containerOz / rate.ozPerGal);
+                        const costPerGal = product.price / yieldGal;
+                        return (
+                          <div key={rate.label} className="bg-blue-50/50 rounded-xl border border-blue-100 p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-bold text-mjs-red uppercase">{rate.label}</span>
+                              <span className="text-xs font-bold text-mjs-dark bg-white px-2 py-0.5 rounded-full">{rate.ratio}</span>
+                            </div>
+                            <div className="text-2xl font-black text-mjs-dark">
+                              ${costPerGal.toFixed(2)}<span className="text-xs font-semibold text-mjs-gray-400 ml-1">/gal</span>
+                            </div>
+                            <div className="mt-2 flex gap-4 text-[11px] text-mjs-gray-500">
+                              <span>{rate.ozPerGal} oz/gal</span>
+                              <span>Yields {yieldGal} gal</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
             </>
           )}
 
@@ -1454,6 +1559,56 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           </div>
         </section>
       )}
+
+      {/* ═══════ DILUTION COST BREAKDOWN ═══════ */}
+      {DILUTION_DATA[product.sku] && (() => {
+        const dil = DILUTION_DATA[product.sku];
+        const costPerOz = product.price / dil.containerOz;
+        return (
+          <section className="hidden md:block border-t border-gray-200 bg-gradient-to-b from-blue-50/50 to-white">
+            <div className="max-w-[1400px] mx-auto px-6 py-10">
+              <div className="mb-6">
+                <h2 className="text-lg font-extrabold text-gray-900 tracking-tight">Dilution & Cost Breakdown</h2>
+                <p className="text-xs text-mjs-gray-400 mt-1">{dil.containerLabel} ({dil.containerOz} oz) &middot; ${costPerOz.toFixed(3)}/oz of concentrate</p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                {dil.rates.map((rate) => {
+                  const yieldGal = Math.floor(dil.containerOz / rate.ozPerGal);
+                  const costPerGal = product.price / yieldGal;
+                  return (
+                    <div key={rate.label} className="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-sm transition-all">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-xs font-bold text-mjs-red uppercase tracking-wider">{rate.label}</span>
+                        <span className="text-xs font-bold text-mjs-dark bg-blue-50 px-2.5 py-1 rounded-full">{rate.ratio}</span>
+                      </div>
+                      <div className="text-3xl font-black text-mjs-dark tracking-tight">
+                        ${costPerGal.toFixed(2)}
+                        <span className="text-sm font-semibold text-mjs-gray-400 ml-1">/gal</span>
+                      </div>
+                      <p className="text-xs text-mjs-gray-400 mt-1">per diluted gallon of solution</p>
+                      <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-mjs-gray-500">Concentrate per gallon</span>
+                          <span className="font-bold text-mjs-dark">{rate.ozPerGal} oz</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-mjs-gray-500">Yield per {dil.containerLabel.toLowerCase()}</span>
+                          <span className="font-bold text-mjs-dark">{yieldGal} gallons</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-mjs-gray-500">Cost per ounce</span>
+                          <span className="font-bold text-mjs-dark">${costPerOz.toFixed(3)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ═══════ 3. SPECIFICATIONS ═══════ */}
       <section className="hidden md:block border-t border-gray-200">
