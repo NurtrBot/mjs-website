@@ -26,6 +26,7 @@ import {
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useOrderSetup } from "@/context/OrderContext";
+import { SALE_CONFIG, isSaleActive } from "@/lib/active-sale";
 
 /* ═══ FREQUENTLY BOUGHT TOGETHER ENGINE ═══ */
 
@@ -157,6 +158,61 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
       setPairings(picks.slice(0, 3));
     });
   }, [cartItems]);
+
+  // Show sale items if sale is active, otherwise show pairings
+  const saleActive = isSaleActive();
+  const cartSkuSet = new Set(cartItems.map(i => i.sku));
+  const missingSaleItems = saleActive ? SALE_CONFIG.items.filter(i => !cartSkuSet.has(i.sku)) : [];
+
+  if (saleActive && missingSaleItems.length > 0) {
+    return (
+      <div className="mb-4">
+        <h3 className="text-xs font-bold text-mjs-red uppercase tracking-wide mb-3">Sale — Add to Your Order</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {missingSaleItems.map((item) => {
+            const discount = Math.round(((item.originalPrice - item.salePrice) / item.originalPrice) * 100);
+            return (
+              <div key={item.sku} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-2.5 flex flex-col group hover:shadow-md hover:border-red-200 transition-all">
+                <a href={`/product/${item.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white relative">
+                  <Image src={item.image} alt={item.name} fill sizes="33vw" unoptimized className="object-contain p-1" />
+                </a>
+                <div className="flex-1 min-h-[36px]">
+                  <div className="text-[9px] text-mjs-red font-bold uppercase">Save {discount}%</div>
+                  <a href={`/product/${item.slug}`} className="text-[11px] font-semibold text-mjs-dark leading-tight line-clamp-2 group-hover:text-mjs-red transition-colors">
+                    {item.name}
+                  </a>
+                </div>
+                <div className="mt-1.5">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-sm font-black text-mjs-dark">${item.salePrice}</span>
+                    <span className="text-[10px] text-mjs-gray-400 line-through">${item.originalPrice.toFixed(2)}</span>
+                  </div>
+                  <div className="text-[9px] text-mjs-gray-500 mb-1.5">Each</div>
+                  <button
+                    onClick={() => {
+                      addItem({
+                        slug: item.slug,
+                        sku: item.sku,
+                        name: item.name,
+                        brand: "",
+                        price: item.salePrice,
+                        image: item.image,
+                        pack: "Each",
+                      });
+                    }}
+                    className="w-full flex items-center justify-center gap-1 bg-mjs-red text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <ShoppingCart className="w-3 h-3" />
+                    Add
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   if (pairings.length === 0) return null;
 
@@ -484,14 +540,14 @@ export default function CartPage() {
                         <div className="text-sm font-semibold text-mjs-gray-600 text-center">${item.price.toFixed(2)}</div>
                         <div className="flex items-center justify-center">
                           <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                            <button onClick={() => updateQty(item.slug, item.qty - 1)} className="w-9 h-9 flex items-center justify-center hover:bg-gray-100"><Minus className="w-3.5 h-3.5 text-mjs-gray-600" /></button>
-                            <span className="w-12 h-9 flex items-center justify-center text-sm font-semibold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50">{item.qty}</span>
-                            <button onClick={() => updateQty(item.slug, item.qty + 1)} className="w-9 h-9 flex items-center justify-center hover:bg-gray-100"><Plus className="w-3.5 h-3.5 text-mjs-gray-600" /></button>
+                            <button onClick={() => updateQty(item.slug, item.qty - 1, item.variantLabel)} className="w-9 h-9 flex items-center justify-center hover:bg-gray-100"><Minus className="w-3.5 h-3.5 text-mjs-gray-600" /></button>
+                            <input type="text" inputMode="numeric" value={item.qty} onChange={(e) => { const n = parseInt(e.target.value.replace(/[^0-9]/g, "")); if (n > 0) updateQty(item.slug, n, item.variantLabel); }} onFocus={(e) => e.target.select()} className="w-12 h-9 text-center text-sm font-semibold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50 outline-none" />
+                            <button onClick={() => updateQty(item.slug, item.qty + 1, item.variantLabel)} className="w-9 h-9 flex items-center justify-center hover:bg-gray-100"><Plus className="w-3.5 h-3.5 text-mjs-gray-600" /></button>
                           </div>
                         </div>
                         <div className="text-sm font-bold text-mjs-dark text-right">${(item.price * item.qty).toFixed(2)}</div>
                         <div className="flex justify-end">
-                          <button onClick={() => removeItem(item.slug)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-red-50 group">
+                          <button onClick={() => removeItem(item.slug, item.variantLabel)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-red-50 group">
                             <Trash2 className="w-4 h-4 text-mjs-gray-300 group-hover:text-mjs-red transition-colors" />
                           </button>
                         </div>
@@ -507,15 +563,15 @@ export default function CartPage() {
                           <div className="text-[10px] text-mjs-gray-400">{item.brand} &middot; {item.pack}</div>
                           <div className="flex items-center justify-between mt-1.5">
                             <div className="flex items-center border border-gray-200 rounded overflow-hidden">
-                              <button onClick={() => updateQty(item.slug, item.qty - 1)} className="w-7 h-7 flex items-center justify-center bg-gray-50"><Minus className="w-3 h-3 text-mjs-gray-600" /></button>
-                              <span className="w-8 h-7 flex items-center justify-center text-xs font-bold text-mjs-dark border-x border-gray-200">{item.qty}</span>
-                              <button onClick={() => updateQty(item.slug, item.qty + 1)} className="w-7 h-7 flex items-center justify-center bg-gray-50"><Plus className="w-3 h-3 text-mjs-gray-600" /></button>
+                              <button onClick={() => updateQty(item.slug, item.qty - 1, item.variantLabel)} className="w-7 h-7 flex items-center justify-center bg-gray-50"><Minus className="w-3 h-3 text-mjs-gray-600" /></button>
+                              <input type="text" inputMode="numeric" value={item.qty} onChange={(e) => { const n = parseInt(e.target.value.replace(/[^0-9]/g, "")); if (n > 0) updateQty(item.slug, n, item.variantLabel); }} onFocus={(e) => e.target.select()} className="w-9 h-7 text-center text-xs font-bold text-mjs-dark border-x border-gray-200 outline-none" />
+                              <button onClick={() => updateQty(item.slug, item.qty + 1, item.variantLabel)} className="w-7 h-7 flex items-center justify-center bg-gray-50"><Plus className="w-3 h-3 text-mjs-gray-600" /></button>
                             </div>
                             <div className="text-right">
                               <div className="text-sm font-bold text-mjs-dark">${(item.price * item.qty).toFixed(2)}</div>
                               <div className="text-[10px] text-mjs-gray-400">${item.price.toFixed(2)}/ea</div>
                             </div>
-                            <button onClick={() => removeItem(item.slug)} className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-50 ml-1">
+                            <button onClick={() => removeItem(item.slug, item.variantLabel)} className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-50 ml-1">
                               <Trash2 className="w-3.5 h-3.5 text-mjs-gray-300" />
                             </button>
                           </div>

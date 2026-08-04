@@ -76,7 +76,7 @@ function FeaturedCard({ product }: { product: ProductData }) {
             <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-6 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors">
               <Minus className="w-2.5 h-2.5 text-mjs-gray-500" />
             </button>
-            <span className="w-7 h-7 flex items-center justify-center text-[10px] font-bold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50">{qty}</span>
+            <input type="text" inputMode="numeric" value={qty} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); if (val === "") { setQty(0); return; } const n = parseInt(val); if (n >= 0) setQty(n); }} onBlur={() => { if (qty < 1) setQty(1); }} onFocus={(e) => e.target.select()} className="w-8 h-7 text-center text-[10px] font-bold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50 outline-none" />
             <button onClick={() => setQty(qty + 1)} className="w-6 h-7 flex items-center justify-center hover:bg-gray-100 transition-colors">
               <Plus className="w-2.5 h-2.5 text-mjs-gray-500" />
             </button>

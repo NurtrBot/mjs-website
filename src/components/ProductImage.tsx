@@ -92,7 +92,6 @@ export default function ProductImage({ src, alt, sku, imageFit = "contain", size
           src={src}
           alt={alt}
           fill
-          unoptimized
           sizes={sizes}
           className={imageFit === "contain" ? `object-contain ${noPadding ? "p-1 mix-blend-multiply" : "p-4"}` : "object-cover"}
         />

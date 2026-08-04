@@ -209,7 +209,7 @@ export async function getBulkPricingRules(productId: number): Promise<BCBulkPric
 }
 
 /* ── Variants (for V2 order creation) ── */
-export async function getProductVariants(productId: number): Promise<{ id: number; option_values: { id: number; option_id: number }[] }[]> {
+export async function getProductVariants(productId: number): Promise<{ id: number; sku: string; option_values: { id: number; option_id: number; label: string }[] }[]> {
   try {
     const res = await bcFetch(`/catalog/products/${productId}/variants`, { limit: "10" });
     return res.data || [];

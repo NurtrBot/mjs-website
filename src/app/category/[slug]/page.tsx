@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import CategoryPage from "@/components/CategoryPage";
 import Footer from "@/components/Footer";
+import { fetchProductsByCategory } from "@/lib/products-api";
 
 const SITE_URL = "https://www.mobilejanitorialsupply.com";
 
@@ -176,6 +177,15 @@ export default async function CategoryRoute({
 }) {
   const { slug } = await params;
 
+  // Pre-fetch products server-side so first paint has real content (no spinner)
+  let initialProducts: Awaited<ReturnType<typeof fetchProductsByCategory>>["products"] = [];
+  try {
+    const result = await fetchProductsByCategory(slug, 1, 250);
+    initialProducts = result.products || [];
+  } catch {
+    initialProducts = [];
+  }
+
   return (
     <>
       <CategoryJsonLd slug={slug} />
@@ -183,7 +193,7 @@ export default async function CategoryRoute({
       <Header />
       <CategoryNav />
       <main>
-        <CategoryPage slug={slug} />
+        <CategoryPage slug={slug} initialProducts={initialProducts} />
       </main>
       <Footer />
     </>

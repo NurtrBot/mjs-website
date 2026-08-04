@@ -16,7 +16,9 @@ import {
   Store,
   ArrowRight,
   Sparkles,
+  Check,
 } from "lucide-react";
+import { SALE_CONFIG, isSaleActive, getDaysRemaining } from "@/lib/active-sale";
 
 // Same pairing rules as the cart page
 const PICKUP_PAIRINGS: { match: string[]; pairWith: string[]; avoid: string[] }[] = [
@@ -247,16 +249,26 @@ export default function CartPanel() {
                       {/* Qty Controls */}
                       <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                         <button
-                          onClick={() => updateQty(item.slug, item.qty - 1)}
+                          onClick={() => updateQty(item.slug, item.qty - 1, item.variantLabel)}
                           className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         >
                           <Minus className="w-3 h-3 text-mjs-gray-600" />
                         </button>
-                        <span className="w-8 h-7 flex items-center justify-center text-xs font-semibold text-mjs-dark border-x border-gray-200">
-                          {item.qty}
-                        </span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={item.qty}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, "");
+                            if (val === "") return;
+                            const num = parseInt(val);
+                            if (num > 0) updateQty(item.slug, num, item.variantLabel);
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          className="w-10 h-7 text-center text-xs font-semibold text-mjs-dark border-x border-gray-200 outline-none"
+                        />
                         <button
-                          onClick={() => updateQty(item.slug, item.qty + 1)}
+                          onClick={() => updateQty(item.slug, item.qty + 1, item.variantLabel)}
                           className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         >
                           <Plus className="w-3 h-3 text-mjs-gray-600" />
@@ -272,7 +284,7 @@ export default function CartPanel() {
                           <div className="text-[10px] text-gray-400">${item.price.toFixed(2)}/ea</div>
                         </div>
                         <button
-                          onClick={() => removeItem(item.slug)}
+                          onClick={() => removeItem(item.slug, item.variantLabel)}
                           className="w-9 h-9 md:w-7 md:h-7 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5 text-mjs-gray-400 hover:text-mjs-red" />

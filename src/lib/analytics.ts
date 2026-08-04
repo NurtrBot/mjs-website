@@ -14,6 +14,15 @@ function gtag(...args: unknown[]) {
   }
 }
 
+// OpenAI pixel helper
+function oaiq(action: string, event: string, params?: Record<string, unknown>) {
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    if (w.oaiq) w.oaiq(action, event, params);
+  }
+}
+
 // Page view (auto-tracked but useful for SPA navigation)
 export function trackPageView(url: string, title?: string) {
   gtag("event", "page_view", {
@@ -51,6 +60,11 @@ export function trackAddToCart(product: { sku: string; name: string; price: numb
       item_brand: product.brand || "",
     }],
   });
+  oaiq("measure", "add_to_cart", {
+    type: "product",
+    value: product.price * product.quantity,
+    currency: "USD",
+  });
 }
 
 // Begin checkout
@@ -64,6 +78,11 @@ export function trackBeginCheckout(items: { sku: string; name: string; price: nu
       price: i.price,
       quantity: i.quantity,
     })),
+  });
+  oaiq("measure", "begin_checkout", {
+    type: "checkout",
+    value: total,
+    currency: "USD",
   });
 }
 
@@ -81,6 +100,12 @@ export function trackPurchase(orderId: string, total: number, tax: number, shipp
       price: i.price,
       quantity: i.quantity,
     })),
+  });
+  oaiq("measure", "purchase", {
+    type: "purchase",
+    value: total,
+    currency: "USD",
+    transaction_id: orderId,
   });
 }
 

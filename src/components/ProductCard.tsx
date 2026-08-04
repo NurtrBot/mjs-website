@@ -124,7 +124,9 @@ export default function ProductCard({ product }: { product: ProductData }) {
               type="text"
               inputMode="numeric"
               value={qty}
-              onChange={(e) => { const n = parseInt(e.target.value); if (n > 0) setQty(n); else if (e.target.value === "") setQty(1); }}
+              onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); if (val === "") { setQty(0); return; } const n = parseInt(val); if (n >= 0) setQty(n); }}
+              onBlur={() => { if (qty < 1) setQty(1); }}
+              onFocus={(e) => e.target.select()}
               className="w-12 h-9 text-center text-sm font-bold border-y border-gray-300 outline-none"
             />
             <button

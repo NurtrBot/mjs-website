@@ -8,6 +8,7 @@ export interface CartItem {
   slug: string;
   sku?: string;
   productId?: number;
+  variantLabel?: string;
   name: string;
   brand: string;
   price: number;
@@ -29,8 +30,8 @@ interface CartContextType {
   closeCart: () => void;
   toggleCart: () => void;
   addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
-  updateQty: (slug: string, qty: number) => void;
-  removeItem: (slug: string) => void;
+  updateQty: (slug: string, qty: number, variantLabel?: string) => void;
+  removeItem: (slug: string, variantLabel?: string) => void;
   clearCart: () => void;
   applyCustomPrices: (priceMap: Record<string, number>) => void;
   itemCount: number;
@@ -96,10 +97,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = useCallback(
     (item: Omit<CartItem, "qty">, qty = 1) => {
       setItems((prev) => {
-        const existing = prev.find((i) => i.slug === item.slug);
+        const matchKey = (i: CartItem) => i.slug === item.slug && (i.variantLabel || "") === (item.variantLabel || "");
+        const existing = prev.find(matchKey);
         if (existing) {
           return prev.map((i) =>
-            i.slug === item.slug ? { ...i, qty: i.qty + qty } : i
+            matchKey(i) ? { ...i, qty: i.qty + qty } : i
           );
         }
         return [...prev, { ...item, qty }];
@@ -109,18 +111,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const updateQty = useCallback((slug: string, qty: number) => {
+  const updateQty = useCallback((slug: string, qty: number, variantLabel?: string) => {
+    const match = (i: CartItem) => i.slug === slug && (i.variantLabel || "") === (variantLabel || "");
     if (qty <= 0) {
-      setItems((prev) => prev.filter((i) => i.slug !== slug));
+      setItems((prev) => prev.filter((i) => !match(i)));
     } else {
       setItems((prev) =>
-        prev.map((i) => (i.slug === slug ? { ...i, qty } : i))
+        prev.map((i) => (match(i) ? { ...i, qty } : i))
       );
     }
   }, []);
 
-  const removeItem = useCallback((slug: string) => {
-    setItems((prev) => prev.filter((i) => i.slug !== slug));
+  const removeItem = useCallback((slug: string, variantLabel?: string) => {
+    const match = (i: CartItem) => i.slug === slug && (i.variantLabel || "") === (variantLabel || "");
+    setItems((prev) => prev.filter((i) => !match(i)));
   }, []);
 
   const clearCart = useCallback(() => {

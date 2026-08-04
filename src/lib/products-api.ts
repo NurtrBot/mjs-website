@@ -668,9 +668,17 @@ export async function fetchProductsByCategory(
   _limit = 50
 ): Promise<{ products: ProductData[]; total: number; totalPages: number }> {
   // Get ALL BC category IDs mapped to this site slug (parents + children)
-  const bcCategoryIds = Object.entries(BC_CATEGORY_MAP)
+  let bcCategoryIds = Object.entries(BC_CATEGORY_MAP)
     .filter(([, slug]) => slug === siteSlug)
     .map(([id]) => Number(id));
+
+  // Car detailing products live in BC Chemicals — also query those categories
+  if (siteSlug === "car-detailing") {
+    const chemIds = Object.entries(BC_CATEGORY_MAP)
+      .filter(([, slug]) => slug === "cleaning-chemicals")
+      .map(([id]) => Number(id));
+    bcCategoryIds = [...new Set([...bcCategoryIds, ...chemIds])];
+  }
 
   if (bcCategoryIds.length === 0) {
     return { products: [], total: 0, totalPages: 0 };

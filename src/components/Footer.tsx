@@ -29,6 +29,12 @@ const RESOURCE_SECTIONS = [
     ],
   },
   {
+    title: "Our Brands",
+    links: [
+      { label: "Johnny's Choice Toss-Ins", href: "/brands/johnnys-choice" },
+    ],
+  },
+  {
     title: "Industries We Serve",
     links: [
       { label: "Restaurants & Food Service", href: "/industries/restaurants" },
@@ -173,14 +179,11 @@ export default function Footer() {
 
       {/* ═══ MOBILE FOOTER — minimal ═══ */}
       <div className="md:hidden px-4 py-3 bg-mjs-gray-50">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-3 text-[10px] text-mjs-gray-400">
-            <a href="/return-policy">Returns</a>
-            <a href="/privacy-policy">Privacy</a>
-            <a href="/terms">Terms</a>
-            <a href="/es">Español</a>
-          </div>
-          <div className="text-[10px] text-mjs-gray-400">&copy; {new Date().getFullYear()} MJS</div>
+        <div className="flex justify-center gap-4 text-[10px] text-mjs-gray-400">
+          <a href="/return-policy">Returns</a>
+          <a href="/privacy-policy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/es">Español</a>
         </div>
       </div>
 
@@ -205,7 +208,7 @@ export default function Footer() {
         {/* Expanded Resources Panel */}
         {openSection === "resources" && (
           <div className="pb-6">
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-4 gap-6">
               {RESOURCE_SECTIONS.map((section) => (
                 <div key={section.title}>
                   <h5 className="text-[10px] font-bold text-mjs-red uppercase tracking-widest mb-3">{section.title}</h5>

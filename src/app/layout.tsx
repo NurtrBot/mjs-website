@@ -170,6 +170,13 @@ export default function RootLayout({
           `}
         </Script>
         <Script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" strategy="lazyOnload" />
+        <Script id="openai-pixel" strategy="afterInteractive">
+          {`
+            !function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");
+            oaiq("init",{pixelId:"UAqNA1SX8Sn7LXhSCfqCaf",debug:true});
+            oaiq("measure","page_viewed",{type:"contents"});
+          `}
+        </Script>
       </head>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
         <div id="google_translate_element" style={{ display: "none" }} />
