@@ -9,8 +9,13 @@ declare global {
 }
 
 function gtag(...args: unknown[]) {
-  if (typeof window !== "undefined" && window.gtag) {
+  if (typeof window === "undefined") return;
+  if (window.gtag) {
     window.gtag(...args);
+  } else {
+    // gtag not ready yet — push directly to dataLayer so the event isn't lost
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(arguments);
   }
 }
 

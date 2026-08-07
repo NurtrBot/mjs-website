@@ -73,24 +73,54 @@ function ConfirmationContent() {
       if (stored) {
         const data = JSON.parse(stored);
         setOrderDetails(data);
-        sessionStorage.removeItem("mjs_order_confirm");
-        // Track purchase in GA4
-        if (data.items) {
-          trackPurchase(
-            orderId,
-            data.total || 0,
-            data.tax || 0,
-            data.shipping || 0,
-            data.items.map((i: OrderItem) => ({ sku: i.sku, name: i.name, price: i.price, quantity: i.qty }))
-          );
+
+        // Deduplicate: only fire purchase event once per order
+        const firedKey = `mjs_purchase_fired_${orderId}`;
+        const alreadyFired = sessionStorage.getItem(firedKey);
+
+        if (data.items && orderId && !alreadyFired) {
+          // Wait for gtag to be ready before firing purchase event
+          const firePurchase = () => {
+            trackPurchase(
+              orderId,
+              data.total || 0,
+              data.tax || 0,
+              data.shipping || 0,
+              data.items.map((i: OrderItem) => ({ sku: i.sku, name: i.name, price: i.price, quantity: i.qty }))
+            );
+            sessionStorage.setItem(firedKey, "1");
+          };
+
+          if (typeof window !== "undefined" && window.gtag) {
+            firePurchase();
+          } else {
+            // gtag not ready yet — wait up to 5 seconds
+            let attempts = 0;
+            const interval = setInterval(() => {
+              attempts++;
+              if (window.gtag) {
+                clearInterval(interval);
+                firePurchase();
+              } else if (attempts >= 50) {
+                clearInterval(interval);
+                // Last resort: fire anyway (gtag wrapper queues if dataLayer exists)
+                firePurchase();
+              }
+            }, 100);
+          }
         }
+
+        // Only remove after we've captured the data for display
+        // (keep it for potential re-renders, deduplicate via firedKey)
+        sessionStorage.removeItem("mjs_order_confirm");
+
         // Show gift picker after 2 seconds if order qualifies
         if (data.rewardTier) {
           setTimeout(() => setShowGiftPicker(true), 2000);
         }
       }
     } catch {}
-  }, []);
+  }, [orderId]);
 
   const handleGiftSelect = async (gift: { id: string; name: string; image: string }) => {
     if (!orderDetails?.rewardTier) return;

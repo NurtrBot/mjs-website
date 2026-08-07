@@ -284,7 +284,18 @@ export default function Header() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-0.5 md:gap-1 ml-auto flex-shrink-0">
+            {/* Ask MJS — AI Assistant */}
+            <a
+              href="/assistant"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.278L21 12l-5.816 1.909a2 2 0 00-1.272 1.278L12 21l-1.912-5.813a2 2 0 00-1.272-1.278L3 12l5.816-1.909a2 2 0 001.272-1.278z"/></svg>
+              <span className="text-sm font-semibold">Ask MJS</span>
+            </a>
             {/* Mobile-only icons: Search, Profile, Phone */}
+            <a href="/assistant" className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+              <svg className="w-5 h-5 text-mjs-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.272 1.278L21 12l-5.816 1.909a2 2 0 00-1.272 1.278L12 21l-1.912-5.813a2 2 0 00-1.272-1.278L3 12l5.816-1.909a2 2 0 001.272-1.278z"/></svg>
+            </a>
             <a href={isLoggedIn ? "/account" : "/auth"} className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
               <User className="w-5 h-5 text-mjs-gray-500" />
             </a>

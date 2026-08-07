@@ -26,7 +26,7 @@ import {
   ShoppingCart,
   Phone,
 } from "lucide-react";
-import { trackPromoCode } from "@/lib/analytics";
+import { trackPromoCode, trackPurchase } from "@/lib/analytics";
 
 // Digital gift cards (from Tremendous production campaign)
 const GIFT_CARDS = [
@@ -1298,6 +1298,18 @@ export default function CheckoutPage() {
                         })(),
                       }));
                     } catch {}
+
+                    // Fire GA4 purchase event immediately (most reliable spot)
+                    const orderTotal = bc.total || total;
+                    const orderTax = bc.tax || (isTaxExempt ? 0 : tax);
+                    const orderShipping = bc.shipping || shipping;
+                    trackPurchase(
+                      String(data.orderNumber),
+                      orderTotal,
+                      orderTax,
+                      orderShipping,
+                      items.map(i => ({ sku: i.sku || "", name: i.name, price: i.price, quantity: i.qty }))
+                    );
 
                     // Success — clear cart and redirect
                     clearCart();
