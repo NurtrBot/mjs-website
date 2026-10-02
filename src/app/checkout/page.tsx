@@ -126,9 +126,8 @@ export default function CheckoutPage() {
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
   const [shippingName, setShippingName] = useState("");
   const [estimatingShipping, setEstimatingShipping] = useState(false);
-  const isNewCustomerGroup = user?.customerGroupId === 708;
   const [selectedPayment, setSelectedPayment] = useState<"bill" | "card" | "cash" | "">(
-    isNewCustomerGroup ? "card" : (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
+    (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
   );
   const [fulfillmentType, setFulfillmentType] = useState<"delivery" | "pickup">(
     (orderSetup?.fulfillment as "delivery" | "pickup") || "delivery"
@@ -496,8 +495,8 @@ export default function CheckoutPage() {
                 Back to Cart
               </Link>
 
-              {/* Bill To — only for approved accounts */}
-              {user?.id && !isNewCustomerGroup && (
+              {/* Bill To — for logged-in customer accounts */}
+              {user?.id && (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">Bill To</h2>
@@ -889,8 +888,8 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                {/* Payment method selector for approved accounts */}
-                {user?.id && !isNewCustomerGroup && (
+                {/* Payment method selector for logged-in users */}
+                {user?.id && (
                   <div className="grid grid-cols-2 gap-3 mb-5">
                     <button
                       onClick={() => setSelectedPayment("bill")}
