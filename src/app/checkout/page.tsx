@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Loader2 } from "lucide-react";
 import { getTaxRate, formatTaxRate } from "@/lib/tax-rates";
+import { getDeliveryZone, getFreeDeliveryMinimum, isExtendedMinimumZip, LOCAL_FREE_DELIVERY_MINIMUM } from "@/lib/delivery-zones";
 import {
   ArrowLeft,
   ArrowRight,
@@ -125,8 +126,9 @@ export default function CheckoutPage() {
   const [shippingEstimate, setShippingEstimate] = useState<number | null>(null);
   const [shippingName, setShippingName] = useState("");
   const [estimatingShipping, setEstimatingShipping] = useState(false);
+  const isNewCustomerGroup = user?.customerGroupId === 708;
   const [selectedPayment, setSelectedPayment] = useState<"bill" | "card" | "cash" | "">(
-    (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
+    isNewCustomerGroup ? "card" : (orderSetup?.paymentMethod as "bill" | "card" | "cash") || ""
   );
   const [fulfillmentType, setFulfillmentType] = useState<"delivery" | "pickup">(
     (orderSetup?.fulfillment as "delivery" | "pickup") || "delivery"
@@ -263,19 +265,8 @@ export default function CheckoutPage() {
     zip: "",
   });
 
-  // Delivery zone detection
-  const getDeliveryZone = (zip: string): "oc" | "la" | "ie" | "sd" | "ups" => {
-    const prefix = zip.slice(0, 3);
-    const ocZips = ["926", "927", "928"];
-    const laZips = ["900", "901", "902", "903", "904", "905", "906", "907", "908", "909", "910", "911", "912", "913", "914", "915", "916", "917", "918"];
-    const ieZips = ["920", "921", "922", "923", "924", "925"];
-    const sdZips = ["919", "930", "931", "932", "933", "934", "935"];
-    if (ocZips.includes(prefix)) return "oc";
-    if (laZips.includes(prefix)) return "la";
-    if (ieZips.includes(prefix)) return "ie";
-    if (sdZips.includes(prefix)) return "sd";
-    return "ups";
-  };
+  // Free delivery minimum for the entered zip (defaults to local until a zip is entered)
+  const freeDeliveryMinimum = getFreeDeliveryMinimum(form.zip) ?? LOCAL_FREE_DELIVERY_MINIMUM;
 
   // Fetch real shipping estimate when zip changes
   useEffect(() => {
@@ -288,42 +279,14 @@ export default function CheckoutPage() {
     }
 
     const zone = getDeliveryZone(form.zip);
+    const upsBelowMinimum = isExtendedMinimumZip(form.zip);
 
-    // Local delivery zones
-    const isLoggedIn = !!user?.id;
-
-    if (zone === "oc" || zone === "la" || zone === "ie") {
-      if (subtotal >= 399) {
-        setShippingEstimate(0);
-        setShippingName("FREE Delivery");
-        setEstimatingShipping(false);
-        return;
-      }
-      // Under threshold — logged-in customers get flat $35, guests get UPS
-      if (isLoggedIn) {
-        setShippingEstimate(35);
-        setShippingName("Local Delivery");
-        setEstimatingShipping(false);
-        return;
-      }
-      // Guest — fall through to UPS rate
-    }
-
-    if (zone === "sd") {
-      if (subtotal >= 699) {
-        setShippingEstimate(0);
-        setShippingName("FREE Delivery");
-        setEstimatingShipping(false);
-        return;
-      }
-      // Under threshold — logged-in customers get flat $65, guests get UPS
-      if (isLoggedIn) {
-        setShippingEstimate(65);
-        setShippingName("San Diego Delivery");
-        setEstimatingShipping(false);
-        return;
-      }
-      // Guest — fall through to UPS rate
+    // Local delivery zones — free at the minimum, otherwise the real UPS rate
+    if (zone !== "ups" && subtotal >= freeDeliveryMinimum) {
+      setShippingEstimate(0);
+      setShippingName("FREE Delivery");
+      setEstimatingShipping(false);
+      return;
     }
 
     // All other orders — get real UPS rate
@@ -346,7 +309,9 @@ export default function CheckoutPage() {
       .then(data => {
         if (data.rates?.length > 0) {
           const deliveryRates = data.rates.filter((r: { type: string }) => r.type !== "pickupinstore" && r.type !== "pickup");
-          const cheapest = deliveryRates.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
+          const upsRates = deliveryRates.filter((r: { name: string }) => /ups/i.test(r.name || ""));
+          const eligibleRates = upsBelowMinimum && upsRates.length > 0 ? upsRates : deliveryRates;
+          const cheapest = eligibleRates.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
           if (cheapest) {
             setShippingEstimate(cheapest.cost);
             setShippingName(cheapest.name);
@@ -531,8 +496,8 @@ export default function CheckoutPage() {
                 Back to Cart
               </Link>
 
-              {/* Bill To — only for logged-in customer accounts */}
-              {user?.id && (
+              {/* Bill To — only for approved accounts */}
+              {user?.id && !isNewCustomerGroup && (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">Bill To</h2>
@@ -924,8 +889,8 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                {/* Payment method selector for logged-in users */}
-                {user?.id && (
+                {/* Payment method selector for approved accounts */}
+                {user?.id && !isNewCustomerGroup && (
                   <div className="grid grid-cols-2 gap-3 mb-5">
                     <button
                       onClick={() => setSelectedPayment("bill")}
@@ -1061,13 +1026,13 @@ export default function CheckoutPage() {
                 onClick={async () => {
                   // Check if they're paying for shipping when they're close to free
                   const effectiveSubtotal = subtotal - promoDiscount;
-                  if (!isPickup && effectiveSubtotal < 399 && effectiveSubtotal >= 200 && !shippingWarningDismissed) {
+                  if (!isPickup && effectiveSubtotal < freeDeliveryMinimum && effectiveSubtotal >= freeDeliveryMinimum - 199 && !shippingWarningDismissed) {
                     try {
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const w = window as any;
                       if (w.gtag) w.gtag("event", "free_shipping_nudge_shown", {
                         event_category: "shipping_nudge",
-                        value: 399 - effectiveSubtotal,
+                        value: freeDeliveryMinimum - effectiveSubtotal,
                         subtotal: effectiveSubtotal,
                       });
                     } catch {}
@@ -1537,8 +1502,8 @@ export default function CheckoutPage() {
       {/* Free Shipping Warning Popup */}
       {showShippingWarning && (() => {
         const effectiveSub = subtotal - promoDiscount;
-        const needed = (399 - effectiveSub);
-        const pct = Math.min((effectiveSub / 399) * 100, 100);
+        const needed = (freeDeliveryMinimum - effectiveSub);
+        const pct = Math.min((effectiveSub / freeDeliveryMinimum) * 100, 100);
         return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl max-w-[460px] w-[94%] mx-4 overflow-hidden">
@@ -1561,7 +1526,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between mt-1.5">
                   <span className="text-[10px] text-white/40">$0</span>
                   <span className="text-[10px] text-white font-bold">Subtotal: ${effectiveSub.toFixed(2)}</span>
-                  <span className="text-[10px] text-white/40">$399</span>
+                  <span className="text-[10px] text-white/40">${freeDeliveryMinimum}</span>
                 </div>
               </div>
             </div>

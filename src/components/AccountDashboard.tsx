@@ -1612,7 +1612,9 @@ export default function AccountDashboard() {
                   </div>
                   <div>
                     <div className="text-[10px] text-mjs-gray-500 font-medium uppercase">Payment Method</div>
-                    <div className="text-sm font-semibold text-mjs-dark">Bill to Company (Net 30)</div>
+                    <div className="text-sm font-semibold text-mjs-dark">
+                      {user?.customerGroupId === 708 ? "Credit Card" : "Bill to Company (Net 30)"}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1636,7 +1638,9 @@ export default function AccountDashboard() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-mjs-gray-500">Credit Terms</span>
-                    <span className="font-semibold text-mjs-dark">Net 30</span>
+                    <span className={`font-semibold ${user?.customerGroupId === 708 ? "text-amber-600" : "text-mjs-dark"}`}>
+                      {user?.customerGroupId === 708 ? "Pending Approval" : "Net 30"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1703,12 +1707,12 @@ export default function AccountDashboard() {
 
                   {/* Payment Method */}
                   <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider mb-3">Payment Method</h3>
-                  <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className={`grid ${user?.customerGroupId === 708 ? "grid-cols-2" : "grid-cols-3"} gap-3 mb-6`}>
                     {[
                       { id: "bill", label: "Bill to Company", icon: Building2, sub: "Net 30 Terms" },
                       { id: "card", label: "Credit Card", icon: CreditCard, sub: "Pay Now" },
                       { id: "cash", label: "Cash on Pickup", icon: DollarSign, sub: "Pay at Counter" },
-                    ].map((opt) => (
+                    ].filter((opt) => user?.customerGroupId === 708 ? opt.id !== "bill" : true).map((opt) => (
                       <button
                         key={opt.id}
                         onClick={() => setPaymentMethod(opt.id)}
@@ -1731,7 +1735,7 @@ export default function AccountDashboard() {
                       <Building2 className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <div className="text-sm font-semibold text-blue-700">Billing to {billTo.company || "your company"}</div>
-                        <div className="text-xs text-blue-600">{billTo.name} &middot; Net 30 Terms</div>
+                        <div className="text-xs text-blue-600">{billTo.name} &middot; Net 30</div>
                       </div>
                     </div>
                   )}

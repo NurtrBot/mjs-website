@@ -281,6 +281,7 @@ export async function createCustomer(data: {
     country_code: string;
   };
 }) {
+  const NEW_CUSTOMER_GROUP_ID = 708;
   const customerBody: Record<string, unknown>[] = [{
     first_name: data.first_name,
     last_name: data.last_name,
@@ -288,6 +289,7 @@ export async function createCustomer(data: {
     company: data.company || "",
     phone: data.phone || "",
     authentication: { new_password: data.password },
+    customer_group_id: NEW_CUSTOMER_GROUP_ID,
     origin_channel_id: 1,
     channel_ids: [1],
   }];

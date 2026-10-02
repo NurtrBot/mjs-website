@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
         email: customer.email,
         company: customer.company || "",
         phone: customer.phone || "",
-        customerGroupId: 0,
+        customerGroupId: customer.customer_group_id || 0,
         priceListId: null,
       },
     });

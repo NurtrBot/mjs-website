@@ -17,6 +17,7 @@ import {
   updateOrder,
   type ShippingAddress,
 } from "@/lib/bigcommerce";
+import { getFreeDeliveryMinimum, isExtendedMinimumZip } from "@/lib/delivery-zones";
 
 /*
   Full order pipeline:
@@ -256,7 +257,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create shipping consignment" }, { status: 500 });
     }
 
-    // 5. Select shipping option
+    // 5. Determine if order qualifies for free local delivery
+    const freeDeliveryMinimum = getFreeDeliveryMinimum(shippingAddress.zip || "");
+    const cartSubtotal = lineItems.reduce((sum, li) => {
+      const item = items.find(i => i.productId === li.product_id || (!i.productId && i.sku));
+      return sum + (item?.quantity || li.quantity) * 0; // We'll check BC subtotal after
+    }, 0);
+
+    // We'll override shipping after order creation if it qualifies
+
+    // 6. Select shipping option
     const shippingOptions = consignment.available_shipping_options || [];
     let selectedOption;
 
@@ -265,7 +275,13 @@ export async function POST(req: NextRequest) {
       if (!selectedOption) selectedOption = shippingOptions.find((o: { description: string }) => o.description.toLowerCase().includes("pick up"));
     } else {
       const deliveryOptions = shippingOptions.filter((o: { type: string }) => o.type !== "pickupinstore" && o.type !== "pickup");
-      selectedOption = deliveryOptions.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
+      // $699-minimum zips pay the UPS rate when under the minimum, not a local delivery rate
+      const cartSubtotalBeforeTax = Number(checkoutWithConsignment.subtotal_ex_tax) || 0;
+      const underExtendedMinimum =
+        isExtendedMinimumZip(shippingAddress.zip || "") && freeDeliveryMinimum !== null && cartSubtotalBeforeTax < freeDeliveryMinimum;
+      const upsOptions = deliveryOptions.filter((o: { description: string }) => /ups/i.test(o.description || ""));
+      const eligibleOptions = underExtendedMinimum && upsOptions.length > 0 ? upsOptions : deliveryOptions;
+      selectedOption = eligibleOptions.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
     }
 
     if (!selectedOption) selectedOption = shippingOptions[0];
@@ -346,6 +362,7 @@ export async function POST(req: NextRequest) {
 
     // 10. Fetch actual order totals from BC
     let bcTotals = { subtotal: 0, tax: 0, shipping: 0, discount: 0, total: 0 };
+    let subtotalBeforeTax = 0;
     try {
       const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
       const token = process.env.BIGCOMMERCE_ACCESS_TOKEN!;
@@ -355,6 +372,7 @@ export async function POST(req: NextRequest) {
       );
       if (orderRes.ok) {
         const od = await orderRes.json();
+        subtotalBeforeTax = Number(od.subtotal_ex_tax) || 0;
         bcTotals = {
           subtotal: Number(od.subtotal_inc_tax) || 0,
           tax: Number(od.total_tax) || 0,
@@ -364,6 +382,22 @@ export async function POST(req: NextRequest) {
         };
       }
     } catch {}
+
+    // 10b. Override shipping to $0 if order qualifies for free local delivery
+    // Minimums apply to the subtotal before tax
+    const orderSubtotal = subtotalBeforeTax;
+    const qualifiesFreeShipping =
+      fulfillment === "delivery" && freeDeliveryMinimum !== null && orderSubtotal >= freeDeliveryMinimum;
+    if (qualifiesFreeShipping && bcTotals.shipping > 0) {
+      try {
+        await updateOrder(orderId, { shipping_cost_override: 0 });
+        bcTotals.shipping = 0;
+        bcTotals.total = bcTotals.subtotal + bcTotals.tax - bcTotals.discount;
+      } catch {
+        // Non-critical — log but don't fail the order
+        console.error(`[Order ${orderId}] Failed to override shipping to $0 for free delivery`);
+      }
+    }
 
     // 11. Send gift card via Tremendous if selected
     let rewardResult: { redeemLink?: string; amount?: number; name?: string } | null = null;

@@ -37,6 +37,7 @@ const slides: {
     accent: "bg-mjs-gold",
     image: "/banner-02.jpg",
     isBanner: true,
+    coverBanner: true,
   },
   {
     id: 3,
@@ -48,6 +49,7 @@ const slides: {
     accent: "bg-blue-600",
     image: "/banner-03.jpg",
     isBanner: true,
+    coverBanner: true,
   },
   {
     id: 4,
@@ -75,8 +77,8 @@ const slides: {
     id: 8,
     headline: "",
     sub: "",
-    cta: "Try It Out Now",
-    href: "/shop-by-workspace",
+    cta: "Shop Johnny's Choice",
+    href: "/brands/johnnys-choice",
     gradient: "from-[#1a1f2e] via-[#1a1f2e] to-[#1a1f2e]",
     accent: "bg-mjs-red",
     image: "/banner-shop-by-workspace.png",

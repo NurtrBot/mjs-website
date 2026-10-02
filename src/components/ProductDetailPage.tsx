@@ -33,6 +33,7 @@ import Image from "next/image";
 import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
 import { getSmartPairings, getFbtPairings } from "@/lib/product-pairings";
 import { getTierPrice } from "@/lib/tier-pricing";
+import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -587,22 +588,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     setShipChecking(true);
 
     // Detect local zone for free delivery info
-    const prefix = shipZip.slice(0, 3);
-    const ocZips = ["926", "927", "928"];
-    const laZips = ["900","901","902","903","904","905","906","907","908","909","910","911","912","913","914","915","916","917","918"];
-    const ieZips = ["920","921","922","923","924","925"];
-    const sdZips = ["919","930","931","932","933","934","935"];
+    const zone = getDeliveryZone(shipZip);
+    const isLocal = zone === "oc" || zone === "la" || zone === "ie";
+    const isSD = zone === "sd";
+    const minimum = getFreeDeliveryMinimum(shipZip);
 
-    const isLocal = ocZips.includes(prefix) || laZips.includes(prefix) || ieZips.includes(prefix);
-    const isSD = sdZips.includes(prefix);
-
-    if (isLocal) {
-      setFreeMinimum("$399");
-    } else if (isSD) {
-      setFreeMinimum("$699");
-    } else {
-      setFreeMinimum("");
-    }
+    setFreeMinimum(minimum !== null ? `$${minimum}` : "");
 
     // Always fetch real UPS rate from ShipperHQ
     fetch("/api/shipping/estimate", {
@@ -728,6 +719,14 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
             <Check className="w-3 h-3" />
             In Stock
           </div>
+          {product.quickBuy.length > 0 && !customPrice && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setMobileTab("pricing"); }}
+              className="absolute bottom-6 right-6 w-[62px] h-[62px] rounded-full overflow-hidden"
+            >
+              <Image src="/images/qty-discounts-badge.png" alt="Quantity Discounts" fill sizes="56px" className="object-cover" />
+            </button>
+          )}
         </div>
 
         {/* Image dots */}
@@ -752,6 +751,8 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               className={`flex-1 py-3 text-xs font-semibold text-center transition-all ${
                 mobileTab === tab
                   ? "text-mjs-dark border-b-2 border-mjs-red bg-white"
+                  : tab === "pricing" && product.quickBuy.length > 0 && !customPrice
+                  ? "text-mjs-red bg-red-50"
                   : "text-mjs-gray-400"
               }`}
             >
