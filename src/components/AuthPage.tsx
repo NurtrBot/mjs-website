@@ -17,6 +17,34 @@ export default function AuthPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Forgot password
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotError, setForgotError] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("forgot")) setShowForgot(true);
+  }, []);
+  const submitForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    setForgotLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail || email }),
+      });
+      const data = await res.json();
+      if (!res.ok) setForgotError(data.error || "Something went wrong. Please try again.");
+      else setForgotSent(true);
+    } catch {
+      setForgotError("Something went wrong. Please try again.");
+    }
+    setForgotLoading(false);
+  };
+
   // Form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -166,7 +194,40 @@ export default function AuthPage() {
 
             {/* Form content */}
             <div className="flex-1">
-              {mode === "login" ? (
+              {mode === "login" && showForgot ? (
+                <>
+                  <div className="mb-6 text-center">
+                    <h2 className="text-lg font-bold text-mjs-dark">Reset your password</h2>
+                    <p className="text-xs text-gray-400 mt-0.5">Enter your email and we&apos;ll send you a link to choose a new password.</p>
+                  </div>
+                  {forgotSent ? (
+                    <div className="text-center">
+                      <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+                      <p className="text-sm font-semibold text-mjs-dark">Check your email</p>
+                      <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                        If there&apos;s an account for <strong>{forgotEmail}</strong>, a reset link is on its way. It works for 1 hour. Don&apos;t see it? Check your spam folder, or call us at (714) 779-2640.
+                      </p>
+                      <button type="button" onClick={() => setShowForgot(false)} className="mt-6 text-sm font-bold text-mjs-red hover:underline">Back to login</button>
+                    </div>
+                  ) : (
+                    <form onSubmit={submitForgot} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-mjs-dark mb-1.5">Email address</label>
+                        <input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required placeholder="Enter your account email" className={inputClass} autoFocus />
+                      </div>
+                      {forgotError && (
+                        <div className="bg-red-50 text-red-600 text-xs font-medium px-4 py-2.5 rounded-lg">{forgotError}</div>
+                      )}
+                      <button type="submit" disabled={forgotLoading} className="w-full bg-mjs-red text-white font-bold py-3.5 rounded-lg text-sm hover:bg-red-700 transition-colors disabled:opacity-50 uppercase tracking-wide">
+                        {forgotLoading ? "Sending..." : "SEND RESET LINK"}
+                      </button>
+                      <p className="text-center text-sm text-gray-500">
+                        <button type="button" onClick={() => setShowForgot(false)} className="text-mjs-red font-bold hover:underline">Back to login</button>
+                      </p>
+                    </form>
+                  )}
+                </>
+              ) : mode === "login" ? (
                 <>
                   <div className="mb-6 text-center">
                     <h2 className="text-lg font-bold text-mjs-dark">Welcome Back!</h2>
@@ -198,7 +259,7 @@ export default function AuthPage() {
                         <input type="checkbox" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="w-4 h-4 rounded border-gray-300 text-mjs-red focus:ring-mjs-red" />
                         <span className="text-xs text-gray-600">Remember me</span>
                       </label>
-                      <a href="/contact" className="text-xs text-mjs-red font-semibold hover:underline">Forgot password?</a>
+                      <button type="button" onClick={() => { setShowForgot(true); setForgotEmail(email); setForgotSent(false); setForgotError(""); }} className="text-xs text-mjs-red font-semibold hover:underline">Forgot password?</button>
                     </div>
 
                     {loginError && (

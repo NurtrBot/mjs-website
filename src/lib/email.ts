@@ -1,10 +1,59 @@
 import { Resend } from "resend";
 
+export const FROM_ADDRESS = "Mobile Janitorial Supply <orders@updates.mobilejanitorialsupply.com>";
+
+export async function sendPasswordResetEmail(to: string, firstName: string, resetUrl: string) {
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject: "Reset your Mobile Janitorial Supply password",
+      html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;">
+<tr><td align="center" style="padding:24px 12px;">
+<table width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;">
+
+<tr><td style="background-color:#1a1a2e;border-radius:14px 14px 0 0;padding:28px 32px;text-align:center;">
+<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;margin-bottom:8px;">Mobile Janitorial Supply</div>
+<div style="font-size:24px;font-weight:900;color:#ffffff;line-height:1.25;">Reset your password</div>
+</td></tr>
+
+<tr><td style="background-color:#ffffff;padding:28px 32px;">
+<p style="margin:0 0 16px;font-size:14px;color:#374151;line-height:1.6;">Hi ${firstName || "there"},</p>
+<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6;">We received a request to reset the password for your account. Click the button below to choose a new one. This link works for <strong>1 hour</strong>.</p>
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:4px 0 20px;">
+<a href="${resetUrl}" style="display:inline-block;background:#dc2626;color:#ffffff;font-weight:700;font-size:15px;padding:14px 40px;border-radius:8px;text-decoration:none;">Choose a New Password</a>
+</td></tr></table>
+<p style="margin:0 0 8px;font-size:12px;color:#6b7280;line-height:1.6;">If the button doesn't work, copy this link into your browser:</p>
+<p style="margin:0 0 20px;font-size:11px;color:#9ca3af;word-break:break-all;">${resetUrl}</p>
+<p style="margin:0;font-size:12px;color:#6b7280;line-height:1.6;">If you didn't request this, you can ignore this email — your password won't change. Questions? Call us at (714) 779-2640.</p>
+</td></tr>
+
+<tr><td style="background-color:#1a1a2e;border-radius:0 0 14px 14px;padding:16px 32px;text-align:center;">
+<a href="https://www.mobilejanitorialsupply.com" style="font-size:10px;color:#dc2626;text-decoration:none;font-weight:600;">mobilejanitorialsupply.com</a>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>`,
+    });
+    return true;
+  } catch (error) {
+    console.error("[RESEND] Password reset email failed:", error);
+    return false;
+  }
+}
+
 export async function sendWelcomeEmail(to: string, firstName: string, lastName: string, email: string) {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
-      from: "Mobile Janitorial Supply <onboarding@resend.dev>",
+      from: FROM_ADDRESS,
       to,
       subject: `Welcome to Mobile Janitorial Supply, ${firstName}!`,
       html: `<!DOCTYPE html>
