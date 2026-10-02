@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Building2, Loader2 } from "lucide-react";
 import { getTaxRate, formatTaxRate } from "@/lib/tax-rates";
 import { getDeliveryZone, getFreeDeliveryMinimum, isExtendedMinimumZip, LOCAL_FREE_DELIVERY_MINIMUM } from "@/lib/delivery-zones";
+import CreditApplicationModal from "@/components/CreditApplicationModal";
 import {
   ArrowLeft,
   ArrowRight,
@@ -140,7 +141,6 @@ export default function CheckoutPage() {
   // New accounts awaiting Net-30 approval: card only, with a "request terms" option
   const [termsPending, setTermsPending] = useState(false);
   const [termsRequested, setTermsRequested] = useState(false);
-  const [requestingTerms, setRequestingTerms] = useState(false);
   useEffect(() => {
     if (!user?.id) { setTermsPending(false); return; }
     fetch(`/api/customers/terms-status?customerId=${user.id}`)
@@ -152,19 +152,7 @@ export default function CheckoutPage() {
     if (termsPending && selectedPayment === "bill") setSelectedPayment("card");
   }, [termsPending, selectedPayment]);
 
-  const requestTerms = async () => {
-    if (!user?.id || requestingTerms) return;
-    setRequestingTerms(true);
-    try {
-      const res = await fetch("/api/customers/terms-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId: user.id }),
-      });
-      if (res.ok) setTermsRequested(true);
-    } catch {}
-    setRequestingTerms(false);
-  };
+  const [showCreditApp, setShowCreditApp] = useState(false);
 
   const [isTaxExempt, setIsTaxExempt] = useState(false);
   useEffect(() => {
@@ -926,21 +914,20 @@ export default function CheckoutPage() {
                         <div className="text-sm font-bold text-mjs-dark">Want Net-30 terms?</div>
                         {termsRequested ? (
                           <p className="text-xs text-mjs-gray-600 mt-1">
-                            Your request is in. Our team will review it and email you once Bill to Account is enabled on your account. You can pay by card in the meantime.
+                            Your application is in. Our team will review it and email you once Bill to Account is enabled on your account. You can pay by card in the meantime.
                           </p>
                         ) : (
                           <>
                             <p className="text-xs text-mjs-gray-600 mt-1">
-                              Bill to Account is available to approved business accounts. Request terms and our team will review your account, usually within one business day.
+                              Bill to Account is available to approved business accounts. Complete the short credit application and our team will review it, usually within one business day.
                             </p>
                             <div className="flex flex-wrap items-center gap-3 mt-3">
                               <button
                                 type="button"
-                                onClick={requestTerms}
-                                disabled={requestingTerms}
-                                className="text-xs font-bold text-white bg-mjs-dark hover:bg-black px-4 py-2 rounded-lg transition-colors disabled:opacity-60"
+                                onClick={() => setShowCreditApp(true)}
+                                className="text-xs font-bold text-white bg-mjs-dark hover:bg-black px-4 py-2 rounded-lg transition-colors"
                               >
-                                {requestingTerms ? "Sending…" : "Request Net-30 Terms"}
+                                Apply for Net-30 Terms
                               </button>
                               <a href="/forms/credit-application.pdf" target="_blank" rel="noopener" className="text-xs font-semibold text-mjs-red hover:underline">
                                 Download credit application
@@ -1562,6 +1549,15 @@ export default function CheckoutPage() {
           </div>
         )}
       </main>
+
+      {showCreditApp && user?.id && (
+        <CreditApplicationModal
+          customerId={user.id}
+          defaults={{ legalName: user.company || "", contact: `${user.firstName} ${user.lastName}`.trim(), email: user.email, phone: user.phone || "" }}
+          onClose={() => setShowCreditApp(false)}
+          onSubmitted={() => setTermsRequested(true)}
+        />
+      )}
 
       {/* Free Shipping Warning Popup */}
       {showShippingWarning && (() => {

@@ -50,7 +50,12 @@ export function staffEmailHtml(opts: {
 </html>`;
 }
 
-export async function sendStaffEmail(opts: { subject: string; html: string; replyTo?: string }): Promise<boolean> {
+export async function sendStaffEmail(opts: {
+  subject: string;
+  html: string;
+  replyTo?: string;
+  attachments?: { filename: string; content: string }[]; // content is base64
+}): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const recipients = staffRecipients();
   if (!apiKey || recipients.length === 0) {
@@ -67,6 +72,7 @@ export async function sendStaffEmail(opts: { subject: string; html: string; repl
         reply_to: opts.replyTo || undefined,
         subject: opts.subject,
         html: opts.html,
+        attachments: opts.attachments,
       }),
     });
     if (!res.ok) {

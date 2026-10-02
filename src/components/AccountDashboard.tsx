@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useOrderSetup } from "@/context/OrderContext";
+import CreditApplicationModal from "@/components/CreditApplicationModal";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
@@ -269,6 +270,18 @@ function BuyAgainStrip({ orders, addItem }: { orders: OrderData[]; addItem: (ite
 
 export default function AccountDashboard() {
   const { user, login } = useAuth();
+
+  // Net-30 terms status — read live from BigCommerce so approvals show without re-login
+  const [termsPending, setTermsPending] = useState(user?.customerGroupId === 708);
+  const [termsRequested, setTermsRequested] = useState(false);
+  const [showCreditApp, setShowCreditApp] = useState(false);
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/customers/terms-status?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => { setTermsPending(!!data.pending); setTermsRequested(!!data.requested); })
+      .catch(() => {});
+  }, [user?.id]);
   const { favorites, removeFavorite } = useFavorites();
   const [viewingReward, setViewingReward] = useState<{ amount: number; brand: string; tierLabel: string; tierColor: string; orderId: string; orderDate: string; orderTotal: number; hoursLeft: number; minsLeft: number; isDelivered: boolean } | null>(null);
   const { addItem } = useCart();
@@ -1613,10 +1626,33 @@ export default function AccountDashboard() {
                   <div>
                     <div className="text-[10px] text-mjs-gray-500 font-medium uppercase">Payment Method</div>
                     <div className="text-sm font-semibold text-mjs-dark">
-                      {user?.customerGroupId === 708 ? "Credit Card" : "Bill to Company (Net 30)"}
+                      {termsPending ? "Credit Card" : "Bill to Company (Net 30)"}
                     </div>
                   </div>
                 </div>
+                {termsPending && (
+                  <div className="mt-4 bg-mjs-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div className="text-sm font-bold text-mjs-dark">Want Net-30 terms?</div>
+                    {termsRequested ? (
+                      <p className="text-xs text-mjs-gray-600 mt-1">
+                        Your credit application has been received. We&apos;ll email you once Bill to Account is enabled.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-xs text-mjs-gray-600 mt-1">
+                          Complete the credit application online and our team will review it, usually within one business day.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowCreditApp(true)}
+                          className="mt-3 text-xs font-bold text-white bg-mjs-dark hover:bg-black px-4 py-2 rounded-lg transition-colors"
+                        >
+                          Apply for Net-30 Terms
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -1638,8 +1674,8 @@ export default function AccountDashboard() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-mjs-gray-500">Credit Terms</span>
-                    <span className={`font-semibold ${user?.customerGroupId === 708 ? "text-amber-600" : "text-mjs-dark"}`}>
-                      {user?.customerGroupId === 708 ? "Pending Approval" : "Net 30"}
+                    <span className={`font-semibold ${termsPending ? "text-amber-600" : "text-mjs-dark"}`}>
+                      {termsPending ? (termsRequested ? "Application Under Review" : "Not Yet Applied") : "Net 30"}
                     </span>
                   </div>
                 </div>
@@ -1648,6 +1684,15 @@ export default function AccountDashboard() {
           </div>
         )}
       </div>
+
+      {showCreditApp && user?.id && (
+        <CreditApplicationModal
+          customerId={user.id}
+          defaults={{ legalName: user.company || "", contact: `${user.firstName} ${user.lastName}`.trim(), email: user.email, phone: user.phone || "" }}
+          onClose={() => setShowCreditApp(false)}
+          onSubmitted={() => setTermsRequested(true)}
+        />
+      )}
 
       {/* ═══ PLACE ORDER MODAL ═══ */}
       {showOrderModal && (
@@ -1707,12 +1752,12 @@ export default function AccountDashboard() {
 
                   {/* Payment Method */}
                   <h3 className="text-xs font-bold text-mjs-gray-500 uppercase tracking-wider mb-3">Payment Method</h3>
-                  <div className={`grid ${user?.customerGroupId === 708 ? "grid-cols-2" : "grid-cols-3"} gap-3 mb-6`}>
+                  <div className={`grid ${termsPending ? "grid-cols-2" : "grid-cols-3"} gap-3 mb-6`}>
                     {[
                       { id: "bill", label: "Bill to Company", icon: Building2, sub: "Net 30 Terms" },
                       { id: "card", label: "Credit Card", icon: CreditCard, sub: "Pay Now" },
                       { id: "cash", label: "Cash on Pickup", icon: DollarSign, sub: "Pay at Counter" },
-                    ].filter((opt) => user?.customerGroupId === 708 ? opt.id !== "bill" : true).map((opt) => (
+                    ].filter((opt) => termsPending ? opt.id !== "bill" : true).map((opt) => (
                       <button
                         key={opt.id}
                         onClick={() => setPaymentMethod(opt.id)}
