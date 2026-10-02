@@ -137,6 +137,35 @@ export default function CheckoutPage() {
   const isBillToAccount = selectedPayment === "bill";
   const isCash = selectedPayment === "cash";
 
+  // New accounts awaiting Net-30 approval: card only, with a "request terms" option
+  const [termsPending, setTermsPending] = useState(false);
+  const [termsRequested, setTermsRequested] = useState(false);
+  const [requestingTerms, setRequestingTerms] = useState(false);
+  useEffect(() => {
+    if (!user?.id) { setTermsPending(false); return; }
+    fetch(`/api/customers/terms-status?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => { setTermsPending(!!data.pending); setTermsRequested(!!data.requested); })
+      .catch(() => {});
+  }, [user?.id]);
+  useEffect(() => {
+    if (termsPending && selectedPayment === "bill") setSelectedPayment("card");
+  }, [termsPending, selectedPayment]);
+
+  const requestTerms = async () => {
+    if (!user?.id || requestingTerms) return;
+    setRequestingTerms(true);
+    try {
+      const res = await fetch("/api/customers/terms-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerId: user.id }),
+      });
+      if (res.ok) setTermsRequested(true);
+    } catch {}
+    setRequestingTerms(false);
+  };
+
   const [isTaxExempt, setIsTaxExempt] = useState(false);
   useEffect(() => {
     if (user?.id) {
@@ -495,8 +524,8 @@ export default function CheckoutPage() {
                 Back to Cart
               </Link>
 
-              {/* Bill To — for logged-in customer accounts */}
-              {user?.id && (
+              {/* Bill To — for logged-in customer accounts with approved terms */}
+              {user?.id && !termsPending && (
               <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-bold text-mjs-dark">Bill To</h2>
@@ -888,8 +917,44 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                {/* Payment method selector for logged-in users */}
-                {user?.id && (
+                {/* New accounts: card only, with the option to request Net-30 terms */}
+                {user?.id && termsPending && (
+                  <div className="bg-mjs-gray-50 border border-gray-200 rounded-xl p-4 mb-5">
+                    <div className="flex items-start gap-3">
+                      <Building2 className="w-5 h-5 text-mjs-gray-400 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="text-sm font-bold text-mjs-dark">Want Net-30 terms?</div>
+                        {termsRequested ? (
+                          <p className="text-xs text-mjs-gray-600 mt-1">
+                            Your request is in. Our team will review it and email you once Bill to Account is enabled on your account. You can pay by card in the meantime.
+                          </p>
+                        ) : (
+                          <>
+                            <p className="text-xs text-mjs-gray-600 mt-1">
+                              Bill to Account is available to approved business accounts. Request terms and our team will review your account, usually within one business day.
+                            </p>
+                            <div className="flex flex-wrap items-center gap-3 mt-3">
+                              <button
+                                type="button"
+                                onClick={requestTerms}
+                                disabled={requestingTerms}
+                                className="text-xs font-bold text-white bg-mjs-dark hover:bg-black px-4 py-2 rounded-lg transition-colors disabled:opacity-60"
+                              >
+                                {requestingTerms ? "Sending…" : "Request Net-30 Terms"}
+                              </button>
+                              <a href="/forms/credit-application.pdf" target="_blank" rel="noopener" className="text-xs font-semibold text-mjs-red hover:underline">
+                                Download credit application
+                              </a>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Payment method selector for approved accounts */}
+                {user?.id && !termsPending && (
                   <div className="grid grid-cols-2 gap-3 mb-5">
                     <button
                       onClick={() => setSelectedPayment("bill")}
@@ -1046,7 +1111,7 @@ export default function CheckoutPage() {
                     const fulfill = isPickup ? "pickup" : "delivery";
 
                     // Require payment selection for logged-in users
-                    if (user?.id && !selectedPayment) {
+                    if (user?.id && !selectedPayment && !termsPending) {
                       setOrderError("Please select a payment method — Bill to Account or Credit Card.");
                       setPlacing(false);
                       return;

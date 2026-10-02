@@ -457,6 +457,34 @@ export async function updateOrderStatus(orderId: number, statusId: number) {
   return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`, { status_id: statusId });
 }
 
+/* ── Customer record (V2) ── */
+export interface BCCustomerV2 {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  company: string;
+  phone: string;
+  customer_group_id: number;
+  notes: string;
+  tax_exempt_category: string;
+  date_created: string;
+}
+
+export async function getCustomerById(customerId: number): Promise<BCCustomerV2 | null> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    return await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/customers/${customerId}`) as BCCustomerV2;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateCustomer(customerId: number, fields: Record<string, unknown>) {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v2/customers/${customerId}`, fields);
+}
+
 /* ── Update Order (general fields via V2) ── */
 export async function updateOrder(orderId: number, fields: Record<string, unknown>) {
   const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
