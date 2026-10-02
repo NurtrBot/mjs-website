@@ -26,6 +26,7 @@ import {
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useOrderSetup } from "@/context/OrderContext";
+import { useAuth } from "@/context/AuthContext";
 import { SALE_CONFIG, isSaleActive } from "@/lib/active-sale";
 
 /* ═══ FREQUENTLY BOUGHT TOGETHER ENGINE ═══ */
@@ -441,9 +442,20 @@ export default function CartPage() {
     setTimeout(() => setAnimateBar(true), 50);
   };
 
+  // Tax-exempt customers (Tax ID on file) see no tax estimate
+  const { user } = useAuth();
+  const [isTaxExempt, setIsTaxExempt] = useState(false);
+  useEffect(() => {
+    if (!user?.id) { setIsTaxExempt(false); return; }
+    fetch(`/api/customers/tax-id?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(data => setIsTaxExempt(!!data.uploaded))
+      .catch(() => {});
+  }, [user?.id]);
+
   // Tax estimated at checkout based on shipping zip
   const taxRate = 0.0775;
-  const tax = subtotal * taxRate;
+  const tax = isTaxExempt ? 0 : subtotal * taxRate;
   const total = subtotal + tax;
 
   return (
@@ -652,8 +664,8 @@ export default function CartPage() {
                       <span className="text-mjs-gray-500">
                         Est. Sales Tax
                       </span>
-                      <span className="font-semibold text-mjs-gray-700">
-                        ${tax.toFixed(2)}
+                      <span className={`font-semibold ${isTaxExempt ? "text-emerald-600" : "text-mjs-gray-700"}`}>
+                        {isTaxExempt ? "TAX EXEMPT" : `$${tax.toFixed(2)}`}
                       </span>
                     </div>
                   </div>
