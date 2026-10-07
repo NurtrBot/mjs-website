@@ -85,8 +85,8 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 </td></tr>
 
 <!-- TRUCK HERO -->
-<tr><td style="padding:0;line-height:0;">
-  <img src="${site}/images/email-welcome-truck.jpg" width="720" alt="Mobile Janitorial Supply delivery truck — Your business. Our next stop. Serving Southern California since 1990." style="display:block;width:100%;height:auto;border:0;">
+<tr><td style="padding:0;line-height:0;font-size:0;" bgcolor="#1a2340">
+  <img src="${site}/images/email-welcome-truck.jpg" width="720" height="384" alt="Mobile Janitorial Supply delivery truck — Your business. Our next stop. Serving Southern California since 1990." style="display:block;width:100%;height:auto;border:0;outline:none;">
 </td></tr>
 
 <!-- ACCOUNT CONFIRMED -->
