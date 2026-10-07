@@ -227,19 +227,20 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
   const font = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;";
   const subject = `Ready for a refill, ${d.firstName}? It's been ${d.daysSince} days`;
 
-  const itemRows = d.items.slice(0, 6).map((it, i, arr) => `
-<tr><td style="padding:18px 40px;${i < arr.length - 1 ? "border-bottom:1px solid #e5e7eb;" : ""}">
+  const itemRows = d.items.slice(0, 8).map((it, i, arr) => `
+<tr><td style="padding:12px 40px;${i < arr.length - 1 ? "border-bottom:1px solid #e5e7eb;" : ""}">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
-    <td width="46%" style="vertical-align:top;padding-right:22px;">
-      <a href="${site}/product/${esc(it.slug)}"><img src="${esc(it.image)}" width="280" alt="${esc(it.name)}" style="display:block;width:100%;max-width:280px;height:auto;border:0;border-radius:4px;background:#f3f4f6;"></a>
+    <td width="130" style="vertical-align:middle;padding-right:18px;">
+      <a href="${site}/product/${esc(it.slug)}"><img src="${esc(it.image)}" width="130" alt="${esc(it.name)}" style="display:block;width:130px;height:auto;border:0;border-radius:4px;background:#f3f4f6;"></a>
     </td>
-    <td style="vertical-align:top;">
-      <div style="${font}font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#1a2340;line-height:1.1;">${esc(it.name)}</div>
-      ${it.detail ? `<div style="${font}font-size:14px;color:#4a6ea0;margin-top:4px;">${esc(it.detail)}</div>` : ""}
-      <div style="${font}font-size:11px;font-weight:800;letter-spacing:1.5px;color:#1a2340;margin-top:16px;">LAST ORDERED</div>
-      <div style="${font}font-size:24px;font-weight:800;color:#1a2340;line-height:1.1;">${esc(plural(it.qty, it.unit))}</div>
-      <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:14px;"><tr>
-        <td style="border:2px solid #e4282f;border-radius:3px;"><a href="${d.itemUrl(it)}" style="display:inline-block;${font}font-size:15px;font-weight:700;color:#e4282f;text-decoration:none;padding:9px 22px;">Reorder this item &rarr;</a></td>
+    <td style="vertical-align:middle;padding-right:16px;">
+      <div style="${font}font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#1a2340;line-height:1.2;">${esc(it.name)}</div>
+      ${it.detail ? `<div style="${font}font-size:13px;color:#4a6ea0;margin-top:3px;">${esc(it.detail)}</div>` : ""}
+      <div style="${font}font-size:13px;color:#6b7280;margin-top:6px;">Last ordered: <span style="font-weight:800;color:#1a2340;">${esc(plural(it.qty, it.unit))}</span></div>
+    </td>
+    <td width="150" align="right" style="vertical-align:middle;white-space:nowrap;">
+      <table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr>
+        <td style="border:2px solid #e4282f;border-radius:3px;"><a href="${d.itemUrl(it)}" style="display:inline-block;${font}font-size:13px;font-weight:700;color:#e4282f;text-decoration:none;padding:8px 14px;">Reorder &rarr;</a></td>
       </tr></table>
     </td>
   </tr></table>
@@ -260,7 +261,7 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
     <tr><td style="padding:14px 40px 34px 40px;">
       <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;margin-bottom:10px;">YOUR NEXT ORDER, MADE EASY</div>
       <div style="${font}font-size:66px;line-height:0.96;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Ready for<br>a refill?</div>
-      <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:22px;">Hi ${esc(d.firstName)}, how&rsquo;s your supply holding up?</div>
+      <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:22px;max-width:430px;line-height:1.2;">Hi ${esc(d.firstName)}, how&rsquo;s your supply holding up?</div>
       <div style="${font}font-size:16px;color:#6b7280;line-height:1.45;margin-top:6px;max-width:440px;">It&rsquo;s been ${d.daysSince} days since your last order.<br>Here&rsquo;s what you stocked up on.</div>
     </td></tr>
   </table>
@@ -285,14 +286,15 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
 </td></tr>
 
 <!-- LAST ORDER -->
-<tr><td style="padding:34px 40px 8px 40px;">
+<tr><td style="padding:30px 40px 6px 40px;">
   <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1;">Your last order.</div>
   <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">A familiar lineup. Ready when you are.</div>
 </td></tr>
 ${itemRows}
 
 <!-- KEEP STOCKED -->
-<tr><td bgcolor="#1a2340" style="background:#1a2340;padding:32px 40px;margin-top:10px;">
+<tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
+<tr><td bgcolor="#1a2340" style="background:#1a2340;padding:32px 40px;">
   <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:1;">Keep your business stocked.</div>
   <div style="${font}font-size:17px;color:#ffffff;margin-top:8px;">Bring your previous items into a new order and update what you need.</div>
   <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:18px;"><tr>
