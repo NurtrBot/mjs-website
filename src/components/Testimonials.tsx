@@ -2,6 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useState } from "react";
+import { GOOGLE_REVIEWS } from "@/lib/business";
 
 const reviews = [
   { reviewer: "Luis salas", reviews_count: 3, time: "2 months ago", review: "Mobile janitorial is the best supplier in socal if your a looking for top quality janitorial supplies. Very friendly staff and has everything in stock . Highly recommended ." },
@@ -140,10 +141,10 @@ export default function Testimonials() {
               </h2>
               <div className="flex items-center justify-center gap-2">
                 <span className="bg-green-600 text-white text-[11px] font-bold px-2 py-0.5 rounded flex items-center gap-0.5">
-                  4.9
+                  {GOOGLE_REVIEWS.rating}
                   <Star className="w-3 h-3 fill-white" />
                 </span>
-                <span className="text-xs text-mjs-gray-400">229 Reviews</span>
+                <span className="text-xs text-mjs-gray-400">{GOOGLE_REVIEWS.count} Reviews</span>
               </div>
             </div>
 
@@ -177,13 +178,13 @@ export default function Testimonials() {
 
             {/* Big Rating */}
             <div className="text-center">
-              <div className="text-3xl font-black text-mjs-dark leading-none">4.9</div>
+              <div className="text-3xl font-black text-mjs-dark leading-none">{GOOGLE_REVIEWS.rating}</div>
               <div className="flex items-center gap-0.5 justify-center mt-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-3 h-3 text-mjs-gold fill-mjs-gold" />
                 ))}
               </div>
-              <div className="text-[10px] text-mjs-gray-400 mt-0.5">229 total</div>
+              <div className="text-[10px] text-mjs-gray-400 mt-0.5">{GOOGLE_REVIEWS.count} total</div>
             </div>
 
             {/* Divider */}

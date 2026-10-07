@@ -1,4 +1,4 @@
-import { BUSINESS, DELIVERY, RETURNS, PAYMENT, yearsInBusinessClaim } from "@/lib/business";
+import { BUSINESS, DELIVERY, RETURNS, PAYMENT, GOOGLE_REVIEWS, yearsInBusinessClaim } from "@/lib/business";
 import { SITE_CATEGORY_NAMES } from "@/lib/category-map";
 import { getQuickFilters, filterSlug } from "@/lib/category-filters";
 
@@ -16,7 +16,7 @@ export function GET() {
 
   const body = `# ${BUSINESS.name}
 
-> Wholesale janitorial, cleaning, paper, packaging, safety and food-service supplies from Anaheim, California. ${BUSINESS.productCountClaim} products at distributor pricing, sold to businesses and the public, with free 1–3 business day local delivery on qualifying orders across Southern California. In business ${yearsInBusinessClaim()} years (since ${BUSINESS.foundedYear}).
+> Wholesale janitorial, cleaning, paper, packaging, safety and food-service supplies from Anaheim, California. ${BUSINESS.productCountClaim} products at distributor pricing, sold to businesses and the public, with free 1–3 business day local delivery on qualifying orders across Southern California. In business ${yearsInBusinessClaim()} years (since ${BUSINESS.foundedYear}). Rated ${GOOGLE_REVIEWS.rating}/5 on Google across ${GOOGLE_REVIEWS.count} reviews.
 
 Warehouse & walk-in outlet: ${BUSINESS.address.street}, ${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}
 Phone: ${BUSINESS.phone} · Email: ${BUSINESS.email} · Hours: ${BUSINESS.hours}

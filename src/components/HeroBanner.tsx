@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star } from "lucide-react";
-import { DELIVERY_BANNER } from "@/lib/business";
+import { DELIVERY_BANNER, GOOGLE_REVIEWS } from "@/lib/business";
 
 /* ── Carousel Slides ── */
 const slides: {
@@ -186,8 +186,8 @@ export default function HeroBanner() {
                         <Star key={i} className="w-4 h-4 text-mjs-gold fill-mjs-gold" />
                       ))}
                     </div>
-                    <div className="text-white font-bold text-sm">4.9 Rating</div>
-                    <div className="text-white/50 text-[10px]">229 Google Reviews</div>
+                    <div className="text-white font-bold text-sm">{GOOGLE_REVIEWS.rating} Rating</div>
+                    <div className="text-white/50 text-[10px]">{GOOGLE_REVIEWS.count} Google Reviews</div>
                   </div>
                   <div className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl px-5 py-4 text-center">
                     <div className="text-2xl font-black text-white">10K+</div>

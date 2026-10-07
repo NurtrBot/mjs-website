@@ -25,6 +25,13 @@ export const BUSINESS = {
   pricePromise: "Found a lower price from a local competitor? We'll match it.",
 } as const;
 
+/* ── Google reviews (update count here; every page reads it) ── */
+export const GOOGLE_REVIEWS = {
+  count: 247,
+  rating: 4.9,
+  url: "https://www.google.com/search?q=Mobile+Janitorial+Supply+Anaheim+reviews",
+} as const;
+
 export const yearsInBusiness = () => new Date().getFullYear() - BUSINESS.foundedYear;
 export const yearsInBusinessClaim = () => `${Math.floor(yearsInBusiness() / 5) * 5}+`; // "35+"
 
