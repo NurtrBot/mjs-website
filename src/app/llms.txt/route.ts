@@ -24,6 +24,7 @@ Phone: ${BUSINESS.phone} · Email: ${BUSINESS.email} · Hours: ${BUSINESS.hours}
 ## How to buy
 
 - Every product page (\`${base}/product/<slug>\`) shows the SKU, price, pack size, quantity-tier pricing and an Add to Cart button. Checkout is at \`${base}/checkout\`.
+- Cart deep link for agents: \`${base}/cart/add?items=SKU:QTY,SKU:QTY\` adds those SKUs to the cart and opens it, e.g. \`${base}/cart/add?items=5602:2,CL404814:1\`. SKUs are in llms-full.txt.
 - Guest checkout: ${PAYMENT.guestCheckout ? "yes, no account required" : "no"}.
 - Payment: ${PAYMENT.methods}
 - Net-30: ${PAYMENT.netTerms}

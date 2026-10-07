@@ -189,3 +189,168 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
     return false;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Replenishment ("Ready for a refill?") email
+   ───────────────────────────────────────────────────────────── */
+export interface ReplenishmentItem {
+  sku: string;
+  name: string;
+  detail: string;      // e.g. "500 sheets per roll · 96 rolls per case"
+  qty: number;
+  unit: string;        // "case" / "each" / "gallon"
+  image: string;
+  slug: string;
+}
+
+export interface ReplenishmentEmailData {
+  to: string;
+  firstName: string;
+  daysSince: number;
+  lastOrderDate: string;      // "September 16, 2026"
+  items: ReplenishmentItem[];
+  reorderUrl: string;         // /cart/add?items=…
+  itemUrl: (item: ReplenishmentItem) => string;
+  unsubscribeUrl: string;
+  preferencesUrl: string;
+}
+
+const esc = (s: string) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const plural = (n: number, unit: string) => {
+  if (unit === "each") return `Qty ${n}`;
+  if (n === 1) return `1 ${unit}`;
+  return `${n} ${unit === "box" ? "boxes" : unit + "s"}`;
+};
+
+export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: string; html: string } {
+  const site = "https://www.mobilejanitorialsupply.com";
+  const font = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;";
+  const subject = `Ready for a refill, ${d.firstName}? It's been ${d.daysSince} days`;
+
+  const itemRows = d.items.slice(0, 6).map((it, i, arr) => `
+<tr><td style="padding:18px 40px;${i < arr.length - 1 ? "border-bottom:1px solid #e5e7eb;" : ""}">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td width="46%" style="vertical-align:top;padding-right:22px;">
+      <a href="${site}/product/${esc(it.slug)}"><img src="${esc(it.image)}" width="280" alt="${esc(it.name)}" style="display:block;width:100%;max-width:280px;height:auto;border:0;border-radius:4px;background:#f3f4f6;"></a>
+    </td>
+    <td style="vertical-align:top;">
+      <div style="${font}font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#1a2340;line-height:1.1;">${esc(it.name)}</div>
+      ${it.detail ? `<div style="${font}font-size:14px;color:#4a6ea0;margin-top:4px;">${esc(it.detail)}</div>` : ""}
+      <div style="${font}font-size:11px;font-weight:800;letter-spacing:1.5px;color:#1a2340;margin-top:16px;">LAST ORDERED</div>
+      <div style="${font}font-size:24px;font-weight:800;color:#1a2340;line-height:1.1;">${esc(plural(it.qty, it.unit))}</div>
+      <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:14px;"><tr>
+        <td style="border:2px solid #e4282f;border-radius:3px;"><a href="${d.itemUrl(it)}" style="display:inline-block;${font}font-size:15px;font-weight:700;color:#e4282f;text-decoration:none;padding:9px 22px;">Reorder this item &rarr;</a></td>
+      </tr></table>
+    </td>
+  </tr></table>
+</td></tr>`).join("");
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${esc(subject)}</title></head>
+<body style="margin:0;padding:0;background-color:#eef0f3;${font}">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#eef0f3;">
+<tr><td align="center" style="padding:0;">
+<table width="720" cellpadding="0" cellspacing="0" role="presentation" style="max-width:720px;width:100%;background:#ffffff;">
+
+<!-- HEADER -->
+<tr><td background="${site}/images/email-welcome-header-bg.jpg" bgcolor="#ffffff" style="background:#ffffff url('${site}/images/email-welcome-header-bg.jpg') no-repeat right top;background-size:100% 100%;padding:0;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr><td style="padding:22px 28px 0 0;text-align:right;${font}font-size:12px;font-weight:800;letter-spacing:2px;color:#ffffff;">TIME TO RESTOCK?</td></tr>
+    <tr><td style="padding:14px 40px 34px 40px;">
+      <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;margin-bottom:10px;">YOUR NEXT ORDER, MADE EASY</div>
+      <div style="${font}font-size:66px;line-height:0.96;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Ready for<br>a refill?</div>
+      <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:22px;">Hi ${esc(d.firstName)}, how&rsquo;s your supply holding up?</div>
+      <div style="${font}font-size:16px;color:#6b7280;line-height:1.45;margin-top:6px;max-width:440px;">It&rsquo;s been ${d.daysSince} days since your last order.<br>Here&rsquo;s what you stocked up on.</div>
+    </td></tr>
+  </table>
+</td></tr>
+
+<!-- DAYS BAND -->
+<tr><td style="padding:0 40px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#1a2340" style="background:#1a2340;"><tr>
+    <td width="50%" style="padding:22px 28px;border-right:1px solid #3a4461;">
+      <div style="${font}font-size:46px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:1;">${d.daysSince} DAYS</div>
+      <div style="${font}font-size:18px;color:#ffffff;margin-top:4px;">since your last order</div>
+    </td>
+    <td style="padding:22px 28px;">
+      <div style="${font}font-size:12px;font-weight:800;letter-spacing:2px;color:#ffffff;">LAST ORDER</div>
+      <div style="${font}font-size:24px;font-weight:700;color:#ffffff;margin-top:4px;">${esc(d.lastOrderDate)}</div>
+    </td>
+  </tr></table>
+  <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:14px;"><tr>
+    <td bgcolor="#e4282f" style="border-radius:3px;"><a href="${d.reorderUrl}" style="display:inline-block;${font}font-size:18px;font-weight:700;color:#ffffff;text-decoration:none;padding:13px 30px;">Review &amp; reorder &rarr;</a></td>
+  </tr></table>
+  <div style="${font}font-size:14px;color:#4a6ea0;margin-top:8px;">Adjust quantities before checkout.</div>
+</td></tr>
+
+<!-- LAST ORDER -->
+<tr><td style="padding:34px 40px 8px 40px;">
+  <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1;">Your last order.</div>
+  <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">A familiar lineup. Ready when you are.</div>
+</td></tr>
+${itemRows}
+
+<!-- KEEP STOCKED -->
+<tr><td bgcolor="#1a2340" style="background:#1a2340;padding:32px 40px;margin-top:10px;">
+  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:1;">Keep your business stocked.</div>
+  <div style="${font}font-size:17px;color:#ffffff;margin-top:8px;">Bring your previous items into a new order and update what you need.</div>
+  <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:18px;"><tr>
+    <td bgcolor="#e4282f" style="border-radius:3px;"><a href="${d.reorderUrl}" style="display:inline-block;${font}font-size:18px;font-weight:700;color:#ffffff;text-decoration:none;padding:12px 30px;">Review &amp; reorder &rarr;</a></td>
+  </tr></table>
+  <div style="${font}font-size:14px;color:#c3c9d6;margin-top:10px;">Nothing is ordered until you check out.</div>
+</td></tr>
+
+<!-- NEED A HAND -->
+<tr><td style="padding:26px 40px 18px 40px;">
+  <div style="${font}font-size:34px;font-weight:900;letter-spacing:-1.2px;color:#1a2340;line-height:1;">Need a hand with your next order?</div>
+  <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">Your team is one call away.</div>
+</td></tr>
+<tr><td bgcolor="#e4282f" style="background:#e4282f;padding:16px 40px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td style="vertical-align:middle;white-space:nowrap;"><a href="tel:7147792640" style="${font}font-size:34px;font-weight:900;letter-spacing:-1px;color:#ffffff;text-decoration:none;">&#9742;&nbsp; (714) 779-2640</a></td>
+    <td style="vertical-align:middle;padding-left:24px;border-left:1px solid rgba(255,255,255,0.45);${font}font-size:13px;color:#ffffff;">Mon&ndash;Fri &middot; 6:30 AM &ndash; 3:00 PM PT</td>
+  </tr></table>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="padding:26px 40px 24px 40px;text-align:center;">
+  <img src="${site}/images/email-welcome-logo.png" width="200" alt="When supplies are running low… call Mobile Janitorial Supply! 714-779-2640" style="display:block;width:200px;height:auto;border:0;margin:0 auto 12px auto;">
+  <div style="${font}font-size:20px;font-weight:800;color:#1a2340;">Mobile Janitorial Supply</div>
+  <div style="${font}font-size:14px;color:#1a2340;margin-top:4px;">Serving Southern California since 1990</div>
+  <div style="${font}font-size:14px;color:#1a2340;margin-top:10px;">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+  <div style="${font}font-size:14px;color:#6b7280;margin-top:2px;">orders@mobilejanitorialsupply.com</div>
+  <div style="margin-top:8px;"><a href="${site}" style="${font}font-size:16px;font-weight:800;color:#e4282f;text-decoration:none;">mobilejanitorialsupply.com</a></div>
+  <div style="border-top:1px solid #e5e7eb;margin:20px 0 12px 0;"></div>
+  <div style="${font}font-size:11px;color:#9ca3af;">
+    <a href="${d.preferencesUrl}" style="color:#6b7280;text-decoration:none;">Manage email preferences</a> &middot; <a href="${d.unsubscribeUrl}" style="color:#6b7280;text-decoration:none;">Unsubscribe</a>
+  </div>
+  <div style="${font}font-size:11px;color:#9ca3af;margin-top:6px;">You&rsquo;re receiving this because you have an account with Mobile Janitorial Supply.</div>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>`;
+  return { subject, html };
+}
+
+export async function sendReplenishmentEmail(d: ReplenishmentEmailData): Promise<boolean> {
+  const { subject, html } = renderReplenishmentEmail(d);
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const res = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: d.to,
+      replyTo: "orders@mobilejanitorialsupply.com",
+      subject,
+      html,
+      headers: { "List-Unsubscribe": `<${d.unsubscribeUrl}>` },
+    });
+    if (res.error) { console.error("[RESEND] Replenishment email failed:", res.error); return false; }
+    return true;
+  } catch (error) {
+    console.error("[RESEND] Replenishment email failed:", error);
+    return false;
+  }
+}
