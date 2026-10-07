@@ -168,6 +168,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 
 <!-- FOOTER -->
 <tr><td style="padding:30px 40px 26px 40px;text-align:center;">
+  <img src="${site}/images/email-welcome-logo.png" width="200" alt="When supplies are running low… call Mobile Janitorial Supply! 714-779-2640" style="display:block;width:200px;height:auto;border:0;margin:0 auto 14px auto;">
   <div style="${font}font-size:20px;font-weight:800;color:#1a2340;">Mobile Janitorial Supply</div>
   <div style="${font}font-size:14px;color:#1a2340;margin-top:4px;">Serving Southern California since 1990</div>
   <div style="${font}font-size:14px;color:#1a2340;margin-top:18px;">3066 E. La Palma Ave, Anaheim, CA 92806</div>
