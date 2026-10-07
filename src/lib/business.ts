@@ -30,6 +30,11 @@ export const GOOGLE_REVIEWS = {
   count: 247,
   rating: 4.9,
   url: "https://www.google.com/search?q=Mobile+Janitorial+Supply+Anaheim+reviews",
+  // Where the review-request email's button sends people. This share link opens our
+  // Google listing, where "Write a review" is one more tap. To drop people straight
+  // into the review box instead, replace this with the Business Profile link
+  // (Google Business Profile → Ask for reviews → Copy link, a https://g.page/r/…/review URL).
+  writeUrl: "https://share.google/3LyYI6SnmFkHTmEKr",
 } as const;
 
 export const yearsInBusiness = () => new Date().getFullYear() - BUSINESS.foundedYear;

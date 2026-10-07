@@ -337,6 +337,119 @@ ${itemRows}
   return { subject, html };
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Review request ("How did we do?") email — fires 72h after an order
+   ───────────────────────────────────────────────────────────── */
+export interface ReviewRequestEmailData {
+  to: string;
+  firstName: string;
+  reviewUrl: string;
+  unsubscribeUrl: string;
+  preferencesUrl: string;
+}
+
+export function renderReviewRequestEmail(d: ReviewRequestEmailData): { subject: string; html: string } {
+  const site = "https://www.mobilejanitorialsupply.com";
+  const font = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;";
+  const subject = `How did we do, ${d.firstName}?`;
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${esc(subject)}</title></head>
+<body style="margin:0;padding:0;background-color:#eef0f3;${font}">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#eef0f3;">
+<tr><td align="center" style="padding:0;">
+<table width="720" cellpadding="0" cellspacing="0" role="presentation" style="max-width:720px;width:100%;background:#ffffff;">
+
+<!-- INTRO -->
+<tr><td align="center" style="padding:34px 40px 30px 40px;text-align:center;">
+  <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;">THANK YOU FOR YOUR ORDER</div>
+  <div style="${font}font-size:62px;line-height:1;font-weight:900;letter-spacing:-2.5px;color:#1a2340;margin-top:14px;">How did we do?</div>
+  <div style="${font}font-size:24px;font-weight:800;color:#1a2340;margin-top:18px;">Hi ${esc(d.firstName)},</div>
+  <div style="${font}font-size:18px;color:#374151;line-height:1.5;margin-top:8px;">Thanks for choosing Mobile Janitorial Supply.<br>We&rsquo;d love to hear about your recent experience.</div>
+</td></tr>
+
+<!-- GOOGLE CARD on navy band -->
+<tr><td bgcolor="#1a2340" style="background:#1a2340;padding:30px 40px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#ffffff" style="background:#ffffff;border-radius:10px;">
+    <tr><td align="center" style="padding:36px 36px 34px 36px;text-align:center;">
+      <img src="${site}/images/email-google-logo.png" width="240" alt="Google" style="display:block;width:240px;height:auto;border:0;margin:0 auto;">
+      <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1.05;margin-top:16px;">Your experience matters.</div>
+      <img src="${site}/images/email-review-stars.png" width="376" alt="" style="display:block;width:376px;max-width:100%;height:auto;border:0;margin:18px auto 0 auto;">
+      <div style="${font}font-size:18px;color:#374151;line-height:1.45;margin-top:16px;">Share an honest review and help other local<br>businesses get to know us.</div>
+      <table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:22px auto 0 auto;"><tr>
+        <td bgcolor="#e4282f" style="border-radius:6px;"><a href="${esc(d.reviewUrl)}" style="display:inline-block;${font}font-size:20px;font-weight:800;color:#ffffff;text-decoration:none;padding:16px 34px;">Write a Google review &rarr;</a></td>
+      </tr></table>
+      <div style="${font}font-size:12px;color:#6b7280;margin-top:12px;">Opens Google to write your review.</div>
+    </td></tr>
+  </table>
+</td></tr>
+
+<!-- FAMILY NOTE -->
+<tr><td style="padding:30px 40px 0 40px;">
+  <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;">FROM OUR FAMILY TO YOUR BUSINESS</div>
+  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1.05;margin-top:10px;">Thanks for being part of our story.</div>
+  <div style="${font}font-size:18px;color:#374151;line-height:1.45;margin-top:10px;">Your feedback helps our family business improve<br>and means a great deal to our team.</div>
+  <div style="${font}font-size:18px;font-style:italic;color:#1a2340;margin-top:12px;">&mdash; Ryan, Zack &amp; Nick</div>
+</td></tr>
+
+<!-- NEED HELP PANEL -->
+<tr><td style="padding:26px 40px 0 40px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#eef0f3" style="background:#eef0f3;border-radius:10px;">
+    <tr><td align="center" style="padding:22px 28px;text-align:center;">
+      <div style="${font}font-size:20px;font-weight:800;color:#1a2340;">Need help with your order?</div>
+      <div style="${font}font-size:16px;color:#374151;margin-top:4px;">Reply to this email or give us a call.</div>
+      <!-- The phone mark is an image so it stays brand red; emoji glyphs can't be recolored -->
+      <table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:8px auto 0 auto;"><tr>
+        <td style="vertical-align:middle;padding-right:10px;"><img src="${site}/images/email-phone-icon.png" width="30" alt="" style="display:block;width:30px;height:auto;border:0;"></td>
+        <td style="vertical-align:middle;"><a href="tel:7147792640" style="${font}font-size:32px;font-weight:900;letter-spacing:-1px;color:#1a2340;text-decoration:none;">(714) 779-2640</a></td>
+      </tr></table>
+      <div style="${font}font-size:13px;color:#6b7280;margin-top:4px;">Mon&ndash;Fri &middot; 6:30 AM&ndash;3:00 PM PT</div>
+    </td></tr>
+  </table>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="padding:26px 40px 24px 40px;text-align:center;">
+  <img src="${site}/images/email-welcome-logo.png" width="200" alt="When supplies are running low… call Mobile Janitorial Supply! 714-779-2640" style="display:block;width:200px;height:auto;border:0;margin:0 auto 12px auto;">
+  <div style="${font}font-size:20px;font-weight:800;color:#1a2340;">Mobile Janitorial Supply</div>
+  <div style="${font}font-size:14px;color:#1a2340;margin-top:4px;">Serving Southern California since 1990</div>
+  <div style="${font}font-size:14px;color:#1a2340;margin-top:10px;">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+  <div style="${font}font-size:14px;color:#6b7280;margin-top:2px;">orders@mobilejanitorialsupply.com</div>
+  <div style="margin-top:8px;"><a href="${site}" style="${font}font-size:16px;font-weight:800;color:#e4282f;text-decoration:none;">mobilejanitorialsupply.com</a></div>
+  <div style="border-top:1px solid #e5e7eb;margin:20px 0 12px 0;"></div>
+  <div style="${font}font-size:11px;color:#9ca3af;">
+    <a href="${d.preferencesUrl}" style="color:#6b7280;text-decoration:none;">Manage email preferences</a> &middot; <a href="${d.unsubscribeUrl}" style="color:#6b7280;text-decoration:none;">Unsubscribe</a>
+  </div>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>`;
+  return { subject, html };
+}
+
+export async function sendReviewRequestEmail(d: ReviewRequestEmailData): Promise<boolean> {
+  const { subject, html } = renderReviewRequestEmail(d);
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const res = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: d.to,
+      replyTo: "orders@mobilejanitorialsupply.com",
+      subject,
+      html,
+      headers: { "List-Unsubscribe": `<${d.unsubscribeUrl}>` },
+    });
+    if (res.error) { console.error("[RESEND] Review request email failed:", res.error); return false; }
+    return true;
+  } catch (error) {
+    console.error("[RESEND] Review request email failed:", error);
+    return false;
+  }
+}
+
 export async function sendReplenishmentEmail(d: ReplenishmentEmailData): Promise<boolean> {
   const { subject, html } = renderReplenishmentEmail(d);
   try {
