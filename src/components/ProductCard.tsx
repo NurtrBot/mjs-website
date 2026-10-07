@@ -48,192 +48,126 @@ export default function ProductCard({ product }: { product: ProductData }) {
     setQty(1);
   };
 
+  const qtyInput = (
+    <div className="flex items-center rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+      <button
+        onClick={() => setQty(Math.max(1, qty - 1))}
+        className="w-9 h-9 sm:w-7 sm:h-8 flex items-center justify-center bg-gray-600 text-white active:bg-gray-700 sm:bg-white sm:text-mjs-gray-500 sm:hover:bg-gray-100 transition-colors"
+        aria-label="Decrease quantity"
+      >
+        <Minus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
+      </button>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={qty}
+        onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); if (val === "") { setQty(0); return; } const n = parseInt(val); if (n >= 0) setQty(n); }}
+        onBlur={() => { if (qty < 1) setQty(1); }}
+        onFocus={(e) => e.target.select()}
+        className="w-12 h-9 sm:w-8 sm:h-8 text-center text-sm sm:text-xs font-bold text-mjs-dark border-x border-gray-200 bg-white sm:bg-mjs-gray-50 outline-none"
+        aria-label="Quantity"
+      />
+      <button
+        onClick={() => setQty(qty + 1)}
+        className="w-9 h-9 sm:w-7 sm:h-8 flex items-center justify-center bg-gray-600 text-white active:bg-gray-700 sm:bg-white sm:text-mjs-gray-500 sm:hover:bg-gray-100 transition-colors"
+        aria-label="Increase quantity"
+      >
+        <Plus className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
+      </button>
+    </div>
+  );
+
+  // One card for every screen size: a list row on phones, a grid card from `sm` up.
   return (
-    <>
-      {/* ═══ MOBILE: Expanded list row ═══ */}
-      <div className="sm:hidden border-b border-gray-200 py-4 px-3">
-        {/* Image + Details */}
-        <div className="flex gap-3">
-          {/* Image + SKU */}
-          <div className="flex-shrink-0 w-[120px]">
-            <a href={`/product/${product.slug}`} className="relative w-[120px] h-[120px] block bg-white rounded-lg overflow-hidden">
-              <ProductImage
-                src={product.images[0]}
-                alt={product.cardTitle}
-                sku={product.sku}
-                imageFit={product.imageFit}
-                sizes="120px"
-                noPadding
-              />
-            </a>
-            <div className="text-[10px] text-mjs-gray-400 text-center mt-1.5 font-medium">{product.sku}</div>
-          </div>
-
-          {/* Details */}
-          <div className="flex-1 min-w-0">
-            <a href={`/product/${product.slug}`}>
-              <h3 className="text-sm font-bold text-mjs-blue leading-snug line-clamp-2">
-                {formatCardName(product.name)}
-              </h3>
-            </a>
-
-            {/* Specs mini-table */}
-            <div className="mt-1.5 space-y-0.5">
-              <div className="flex justify-between text-[11px]">
-                <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">Brand</span>
-                <span className="text-mjs-gray-700 font-medium">{product.brand}</span>
-              </div>
-              {product.pack && (
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">Pack</span>
-                  <span className="text-mjs-gray-700 font-medium">{product.pack}</span>
-                </div>
-              )}
-              {Object.entries(product.specs || {}).slice(0, 2).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-[11px]">
-                  <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">{key}</span>
-                  <span className="text-mjs-gray-700 font-medium text-right">{value}</span>
-                </div>
-              ))}
-              {/* Price row */}
-              <div className="flex justify-between items-baseline text-[11px] pt-0.5">
-                <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">Price</span>
-                <span className="text-[13px] font-extrabold text-mjs-green text-right">
-                  ${displayPrice.toFixed(2)}
-                  {customPrice && customPrice < product.price ? (
-                    <span className="text-[8px] font-bold text-blue-600 bg-blue-50 px-1 py-0.5 rounded ml-1">YOUR PRICE</span>
-                  ) : product.originalPrice ? (
-                    <span className="text-[9px] font-bold text-mjs-green ml-1">{discount}% OFF</span>
-                  ) : null}
-                </span>
-              </div>
-            </div>
-          </div>
+    <div className="relative border-b border-gray-200 py-4 px-3 sm:p-0 sm:flex sm:flex-col sm:bg-white sm:rounded-xl sm:border sm:border-gray-100 sm:overflow-hidden sm:hover:shadow-lg transition-all group">
+      {purchasedDate && (
+        <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+          Purchased {purchasedDate}
         </div>
+      )}
+      {product.badge && (
+        <div className={`hidden sm:block absolute top-2 left-2 z-10 ${product.badgeColor} text-white text-[9px] font-bold px-2 py-0.5 rounded`}>
+          {product.badge}
+        </div>
+      )}
 
-        {/* Qty + Add row */}
-        <div className="flex items-center gap-2 mt-3">
-          <div className="flex items-center rounded overflow-hidden flex-shrink-0">
-            <button
-              onClick={() => setQty(Math.max(1, qty - 1))}
-              className="w-9 h-9 flex items-center justify-center bg-gray-600 text-white active:bg-gray-700"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={qty}
-              onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); if (val === "") { setQty(0); return; } const n = parseInt(val); if (n >= 0) setQty(n); }}
-              onBlur={() => { if (qty < 1) setQty(1); }}
-              onFocus={(e) => e.target.select()}
-              className="w-12 h-9 text-center text-sm font-bold border-y border-gray-300 outline-none"
+      <div className="flex gap-3 sm:block">
+        {/* Image + SKU */}
+        <div className="flex-shrink-0 w-[120px] sm:w-auto">
+          <a href={`/product/${product.slug}`} className="relative block w-[120px] h-[120px] sm:w-auto sm:h-[200px] bg-white rounded-lg sm:rounded-none overflow-hidden">
+            <ProductImage
+              src={product.images[0]}
+              alt={product.cardTitle}
+              sku={product.sku}
+              imageFit={product.imageFit}
+              sizes="(max-width: 640px) 120px, (max-width: 1024px) 50vw, 25vw"
             />
-            <button
-              onClick={() => setQty(qty + 1)}
-              className="w-9 h-9 flex items-center justify-center bg-gray-600 text-white active:bg-gray-700"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
-          <button
-            onClick={handleAdd}
-            className="flex-1 bg-mjs-red text-white font-bold text-sm h-9 rounded active:bg-red-700 transition-colors"
-          >
-            Add
-          </button>
+          </a>
+          <div className="text-[10px] text-mjs-gray-400 text-center mt-1.5 font-medium sm:hidden">{product.sku}</div>
         </div>
-      </div>
 
-      {/* ═══ DESKTOP: Card grid ═══ */}
-      <div className="hidden sm:flex bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative flex-col">
-        {purchasedDate && (
-          <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-            Purchased {purchasedDate}
-          </div>
-        )}
-        {product.badge && (
-          <div className={`absolute top-2 left-2 z-10 ${product.badgeColor} text-white text-[9px] font-bold px-2 py-0.5 rounded`}>
-            {product.badge}
-          </div>
-        )}
-
-        <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden relative">
-          <ProductImage
-            src={product.images[0]}
-            alt={product.cardTitle}
-            sku={product.sku}
-            imageFit={product.imageFit}
-            sizes="(max-width: 1024px) 50vw, 25vw"
-          />
-        </a>
-
-        <div className="p-4 flex flex-col flex-1">
-          <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">
-            {product.sku}
-          </div>
+        {/* Details */}
+        <div className="flex-1 min-w-0 sm:p-4 sm:flex sm:flex-col sm:flex-1">
+          <div className="hidden sm:block text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{product.sku}</div>
           <a href={`/product/${product.slug}`}>
-            <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug mt-1 group-hover:text-mjs-red transition-colors line-clamp-2">
+            <h3 className="text-sm sm:text-xs font-bold sm:font-semibold text-mjs-blue sm:text-mjs-gray-800 leading-snug sm:mt-1 group-hover:text-mjs-red transition-colors line-clamp-2">
               {formatCardName(product.name)}
             </h3>
           </a>
 
-          <div className="mt-auto pt-3">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-mjs-dark">
+          {/* Phone-only spec rows */}
+          <div className="mt-1.5 space-y-0.5 sm:hidden">
+            {product.brand && (
+              <div className="flex justify-between text-[11px]">
+                <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">Brand</span>
+                <span className="text-mjs-gray-700 font-medium">{product.brand}</span>
+              </div>
+            )}
+            {Object.entries(product.specs || {}).slice(0, 2).map(([key, value]) => (
+              <div key={key} className="flex justify-between text-[11px]">
+                <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide">{key}</span>
+                <span className="text-mjs-gray-700 font-medium text-right">{value}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="sm:mt-auto sm:pt-3">
+            <div className="flex justify-between items-baseline sm:justify-start sm:gap-2 text-[11px] pt-0.5 sm:pt-0">
+              <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide sm:hidden">Price</span>
+              <span className="text-[13px] sm:text-lg font-extrabold sm:font-bold text-mjs-green sm:text-mjs-dark">
                 ${displayPrice.toFixed(2)}
               </span>
               {customPrice && customPrice < product.price ? (
-                <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
-                  YOUR PRICE
-                </span>
+                <span className="text-[8px] sm:text-[9px] font-bold text-blue-600 bg-blue-50 px-1 sm:px-1.5 py-0.5 rounded ml-1 sm:ml-0">YOUR PRICE</span>
               ) : product.originalPrice ? (
                 <>
-                  <span className="text-xs text-mjs-gray-400 line-through">
-                    ${product.originalPrice.toFixed(2)}
-                  </span>
-                  <span className="text-xs font-bold text-mjs-green">
-                    {discount}% OFF
-                  </span>
+                  <span className="hidden sm:inline text-xs text-mjs-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+                  <span className="text-[9px] sm:text-xs font-bold text-mjs-green ml-1 sm:ml-0">{discount}% OFF</span>
                 </>
               ) : null}
             </div>
-
-            <div className="text-[11px] font-medium text-mjs-gray-500 mt-0.5">
-              {product.pack}
-            </div>
+            {product.pack && (
+              <div className="flex justify-between sm:block text-[11px] font-medium text-mjs-gray-500 mt-0.5">
+                <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide sm:hidden">Pack</span>
+                <span className="text-mjs-gray-700 sm:text-mjs-gray-500">{product.pack}</span>
+              </div>
+            )}
 
             {/* Qty + Add to Cart */}
             <div className="flex items-center gap-2 mt-3">
-              <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="w-7 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  <Minus className="w-3 h-3 text-mjs-gray-500" />
-                </button>
-                <span className="w-8 h-8 flex items-center justify-center text-xs font-bold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50">
-                  {qty}
-                </span>
-                <button
-                  onClick={() => setQty(qty + 1)}
-                  className="w-7 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  <Plus className="w-3 h-3 text-mjs-gray-500" />
-                </button>
-              </div>
+              {qtyInput}
               <button
                 onClick={handleAdd}
-                className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
+                className="flex-1 h-9 sm:h-auto sm:py-2 rounded-lg text-sm sm:text-xs font-bold sm:font-semibold bg-mjs-red text-white active:bg-red-700 sm:bg-white sm:border sm:border-mjs-red sm:text-mjs-red sm:hover:bg-mjs-red sm:hover:text-white transition-all flex items-center justify-center gap-1.5"
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
+                <ShoppingCart className="hidden sm:block w-3.5 h-3.5" />
                 Add
               </button>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

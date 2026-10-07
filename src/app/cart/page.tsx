@@ -28,49 +28,12 @@ import { useRouter } from "next/navigation";
 import { useOrderSetup } from "@/context/OrderContext";
 import { useAuth } from "@/context/AuthContext";
 import { SALE_CONFIG, isSaleActive } from "@/lib/active-sale";
+import { LOCAL_FREE_DELIVERY_MINIMUM } from "@/lib/delivery-zones";
 
-/* ═══ FREQUENTLY BOUGHT TOGETHER ENGINE ═══ */
-
-// Pairing rules: product keywords → complementary products (never suggest the same type)
-const PAIRING_RULES: { match: string[]; pairWith: string[]; avoid: string[] }[] = [
-  // Paper → Dispensers + Restroom essentials
-  { match: ["roll towel", "paper towel", "hardwound"], pairWith: ["towel dispenser", "hand soap", "trash liner"], avoid: ["towel"] },
-  { match: ["toilet tissue", "bath tissue", "bathroom tissue"], pairWith: ["tissue dispenser", "seat cover", "hand soap", "air freshener"], avoid: ["tissue", "toilet"] },
-  { match: ["multifold", "multi-fold", "c-fold", "singlefold"], pairWith: ["folded towel dispenser", "hand soap", "hand sanitizer"], avoid: ["fold"] },
-  { match: ["facial tissue"], pairWith: ["tissue dispenser", "disinfecting wipe"], avoid: ["facial"] },
-  // Dispensers → Refills + Restroom
-  { match: ["soap dispenser", "foam dispenser"], pairWith: ["hand soap", "foam soap", "paper towel"], avoid: ["dispenser"] },
-  { match: ["towel dispenser"], pairWith: ["roll towel", "hand soap", "trash liner"], avoid: ["dispenser"] },
-  // Soaps → Dispensers + Towels
-  { match: ["hand soap", "hand sanitizer", "foam soap", "foam wash"], pairWith: ["soap dispenser", "paper towel", "air freshener"], avoid: ["soap", "sanitizer", "wash"] },
-  // Chemicals → Tools
-  { match: ["degreaser", "all purpose cleaner"], pairWith: ["spray bottle", "microfiber", "nitrile glove"], avoid: ["degreaser", "cleaner"] },
-  { match: ["glass cleaner", "window cleaner"], pairWith: ["squeegee", "microfiber towel", "spray bottle"], avoid: ["glass", "window"] },
-  { match: ["floor cleaner", "floor finish", "floor stripper"], pairWith: ["mop head", "floor pad", "mop bucket"], avoid: ["floor"] },
-  { match: ["carpet shampoo", "carpet cleaner"], pairWith: ["carpet bonnet", "carpet extractor", "floor pad"], avoid: ["carpet"] },
-  { match: ["disinfectant", "disinfecting"], pairWith: ["spray bottle", "nitrile glove", "microfiber"], avoid: ["disinfect"] },
-  // Mops → Buckets + Handles + Heads
-  { match: ["mop head", "mop refill"], pairWith: ["mop handle", "mop bucket", "floor cleaner"], avoid: ["mop head"] },
-  { match: ["mop handle"], pairWith: ["mop head", "mop bucket", "floor cleaner"], avoid: ["handle"] },
-  { match: ["mop bucket", "wringer"], pairWith: ["mop head", "mop handle", "floor cleaner"], avoid: ["bucket", "wringer"] },
-  // Gloves → Other PPE + Hygiene
-  { match: ["nitrile glove", "latex glove", "vinyl glove"], pairWith: ["face mask", "bouffant cap", "hand sanitizer", "disinfecting wipe"], avoid: ["glove"] },
-  // Trash → Can Liners + Cleaning
-  { match: ["trash can", "waste receptacle"], pairWith: ["can liner", "degreaser", "disinfectant"], avoid: ["trash can", "receptacle"] },
-  { match: ["can liner", "trash liner", "trash bag"], pairWith: ["trash can", "degreaser"], avoid: ["liner", "bag"] },
-  // Packaging
-  { match: ["stretch film", "stretch wrap"], pairWith: ["tape gun", "bubble wrap", "packing peanut"], avoid: ["stretch", "film"] },
-  { match: ["tape", "packing tape"], pairWith: ["tape gun", "stretch film", "bubble wrap"], avoid: ["tape"] },
-  { match: ["bubble wrap", "bubble cushion"], pairWith: ["tape gun", "packing peanut", "stretch film"], avoid: ["bubble"] },
-  // Breakroom — always suggest DIFFERENT breakroom categories
-  { match: ["fork", "spoon", "knife", "cutlery", "utensil"], pairWith: ["napkin", "coffee", "paper cup", "plate"], avoid: ["fork", "spoon", "knife", "cutlery", "utensil"] },
-  { match: ["plate", "bowl"], pairWith: ["napkin", "cutlery", "coffee", "foam cup"], avoid: ["plate", "bowl"] },
-  { match: ["cup", "foam cup", "paper cup"], pairWith: ["coffee", "napkin", "stir stick", "sugar"], avoid: ["cup"] },
-  { match: ["coffee", "creamer"], pairWith: ["paper cup", "stir stick", "sugar", "napkin"], avoid: ["coffee", "creamer"] },
-  { match: ["napkin"], pairWith: ["cutlery", "plate", "coffee", "cup"], avoid: ["napkin"] },
-  // Vacuums → Bags + Chemicals
-  { match: ["vacuum", "backpack vacuum"], pairWith: ["vacuum bag", "filter bag", "carpet shampoo"], avoid: ["vacuum"] },
-];
+/* ═══ FREQUENTLY BOUGHT TOGETHER ═══
+   Picks come from /api/products/recommend, which ranks real co-purchases
+   from order history (src/data/copurchase.json) and prefers items that
+   close the free-delivery gap. */
 
 interface CartItemType {
   slug: string;
@@ -80,6 +43,7 @@ interface CartItemType {
   price: number;
   image: string;
   pack: string;
+  qty?: number;
 }
 
 interface ProductType {
@@ -100,64 +64,14 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
   const [pairings, setPairings] = useState<ProductType[]>([]);
 
   useEffect(() => {
-    const cartNames = cartItems.map(i => i.name.toLowerCase());
-    const searchTerms = new Set<string>();
-    const avoidTerms = new Set<string>();
-
-    // Collect what to search for AND what to avoid
-    for (const rule of PAIRING_RULES) {
-      const cartMatches = cartNames.some(name => rule.match.some(m => name.includes(m)));
-      if (cartMatches) {
-        rule.pairWith.forEach(term => searchTerms.add(term));
-        rule.avoid.forEach(term => avoidTerms.add(term));
-      }
-    }
-
-    // Also avoid anything already in the cart by name keywords
-    for (const name of cartNames) {
-      const words = name.split(/[\s,]+/).filter(w => w.length > 3);
-      words.slice(0, 3).forEach(w => avoidTerms.add(w));
-    }
-
-    // Fallback: universal complements
-    if (searchTerms.size === 0) {
-      searchTerms.add("hand soap");
-      searchTerms.add("microfiber");
-      searchTerms.add("can liner");
-      searchTerms.add("paper towel");
-    }
-
-    const cartSlugs = new Set(cartItems.map(i => i.slug));
-    const terms = Array.from(searchTerms).slice(0, 8);
-
-    Promise.all(
-      terms.map(term =>
-        fetch(`/api/products/search?q=${encodeURIComponent(term)}&limit=5`)
-          .then(r => r.json())
-          .catch(() => ({ products: [] }))
-      )
-    ).then(results => {
-      const seen = new Set<string>();
-      const picks: ProductType[] = [];
-
-      for (const r of results) {
-        for (const p of (r.products || [])) {
-          if (seen.has(p.sku) || cartSlugs.has(p.slug)) continue;
-          if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
-
-          // Skip if product name contains any avoid terms
-          const pName = p.cardTitle?.toLowerCase() || p.name?.toLowerCase() || "";
-          const shouldAvoid = Array.from(avoidTerms).some(term => pName.includes(term));
-          if (shouldAvoid) continue;
-
-          seen.add(p.sku);
-          picks.push(p);
-        }
-      }
-
-      // Dedupe by taking max 1 per search term for variety
-      setPairings(picks.slice(0, 3));
-    });
+    const skus = cartItems.map(i => i.sku).filter(Boolean).join(",");
+    if (!skus) { setPairings([]); return; }
+    const subtotal = cartItems.reduce((sum, i) => sum + i.price * (i.qty || 1), 0);
+    const gap = Math.max(0, LOCAL_FREE_DELIVERY_MINIMUM - subtotal);
+    fetch(`/api/products/recommend?skus=${encodeURIComponent(skus)}&gap=${gap.toFixed(2)}&limit=3`)
+      .then(r => r.json())
+      .then(data => setPairings(data.products || []))
+      .catch(() => setPairings([]));
   }, [cartItems]);
 
   // Show sale items if sale is active, otherwise show pairings
@@ -294,133 +208,17 @@ export default function CartPage() {
   };
 
   // Smart product matching algorithm for impulse suggestions
+  // "Before you go" picks — frequently bought together from real order history
   useEffect(() => {
     if (!showPickupPopup || items.length === 0) return;
-
-    const cartNames = items.map(i => i.name.toLowerCase());
-    const cartSkus = new Set(items.map(i => i.sku || i.slug));
-    const cartSlugs = new Set(items.map(i => i.slug));
-
-    // Step 1: Build search terms from pairing rules
-    const pairedTerms = new Set<string>();
-    const avoidTerms = new Set<string>();
-
-    for (const rule of PAIRING_RULES) {
-      if (cartNames.some(name => rule.match.some(m => name.includes(m)))) {
-        rule.pairWith.forEach(t => pairedTerms.add(t));
-        rule.avoid.forEach(t => avoidTerms.add(t));
-      }
-    }
-
-    // Step 2: Extract keywords from cart item names for broader matching
-    const cartKeywords: string[] = [];
-    cartNames.forEach(n => {
-      n.split(/[\s,]+/).filter(w => w.length > 3).forEach(w => {
-        avoidTerms.add(w); // avoid suggesting same type
-        cartKeywords.push(w);
-      });
-    });
-
-    // Step 3: Build category-aware complementary searches
-    // Map common cart keywords to complementary product categories
-    const complementMap: Record<string, string[]> = {
-      towel: ["hand soap", "soap dispenser", "trash liner"],
-      tissue: ["seat cover", "hand sanitizer", "air freshener"],
-      soap: ["paper towel", "soap dispenser", "hand sanitizer"],
-      glove: ["face mask", "hand sanitizer", "disinfecting wipe"],
-      liner: ["degreaser", "disinfectant", "trash can"],
-      degreaser: ["spray bottle", "microfiber", "nitrile glove"],
-      disinfect: ["spray bottle", "paper towel", "nitrile glove"],
-      mop: ["floor cleaner", "mop bucket", "floor pad"],
-      vacuum: ["vacuum bag", "carpet shampoo"],
-      stretch: ["tape gun", "bubble wrap", "packing peanut"],
-      tape: ["stretch film", "bubble wrap", "tape gun"],
-      cup: ["napkin", "coffee", "stir stick"],
-      plate: ["napkin", "cutlery", "cup"],
-      napkin: ["cup", "plate", "cutlery"],
-      coffee: ["cup", "napkin", "stir stick"],
-      freshener: ["urinal screen", "disinfectant"],
-      chemical: ["spray bottle", "microfiber", "nitrile glove"],
-      cleaner: ["microfiber", "spray bottle", "mop head"],
-      wipe: ["hand sanitizer", "nitrile glove", "paper towel"],
-    };
-
-    for (const keyword of cartKeywords) {
-      for (const [trigger, complements] of Object.entries(complementMap)) {
-        if (keyword.includes(trigger)) {
-          complements.forEach(c => pairedTerms.add(c));
-        }
-      }
-    }
-
-    // Step 4: Always include some universal high-value items as fallback
-    const universalTerms = ["hand soap", "microfiber towel", "nitrile glove", "paper towel", "disinfecting wipe", "trash liner", "air freshener"];
-
-    // Step 5: Combine all search terms, shuffle for variety
-    const allTerms = [...Array.from(pairedTerms), ...universalTerms];
-    for (let i = allTerms.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [allTerms[i], allTerms[j]] = [allTerms[j], allTerms[i]];
-    }
-    // Deduplicate
-    const uniqueTerms = [...new Set(allTerms)].slice(0, 8);
-
-    // Step 6: Fetch products for each term
-    Promise.all(
-      uniqueTerms.map(t =>
-        fetch(`/api/products/search?q=${encodeURIComponent(t)}&limit=5`)
-          .then(r => r.json())
-          .catch(() => ({ products: [] }))
-      )
-    ).then(results => {
-      // Step 7: Score and rank all candidates
-      const candidates: (ProductType & { score: number })[] = [];
-      const seen = new Set<string>();
-
-      for (const r of results) {
-        for (const p of (r.products || [])) {
-          if (!p || seen.has(p.sku) || cartSkus.has(p.sku) || cartSlugs.has(p.slug)) continue;
-          if (!p.images?.[0] || p.images[0].includes("placeholder")) continue;
-
-          const pName = (p.cardTitle || p.name || "").toLowerCase();
-          // Skip if too similar to cart items
-          if (Array.from(avoidTerms).some(t => pName.includes(t))) continue;
-
-          // Score: prefer items from pairing rules, popular items, different categories
-          let score = Math.random() * 20; // Random base for variety
-          if (p.reviewCount > 0) score += Math.min(p.reviewCount, 50); // Popularity bonus
-          if (p.brand?.toLowerCase().includes("janitors finest")) score += 15; // JF bonus
-          if (p.price > 5 && p.price < 80) score += 10; // Sweet spot pricing
-
-          seen.add(p.sku);
-          candidates.push({ ...p, score });
-        }
-      }
-
-      // Step 8: Sort by score, take top 3
-      candidates.sort((a, b) => b.score - a.score);
-
-      // Ensure variety — don't pick 3 from the same subcategory
-      const picks: ProductType[] = [];
-      const usedSubcats = new Set<string>();
-      for (const c of candidates) {
-        if (picks.length >= 3) break;
-        if (c.subcategory && usedSubcats.has(c.subcategory) && picks.length < candidates.length - 1) continue;
-        if (c.subcategory) usedSubcats.add(c.subcategory);
-        picks.push(c);
-      }
-
-      // If we couldn't get 3 diverse picks, fill from remaining
-      if (picks.length < 3) {
-        for (const c of candidates) {
-          if (picks.length >= 3) break;
-          if (!picks.find(p => p.sku === c.sku)) picks.push(c);
-        }
-      }
-
-      setPickupSuggestions(picks);
-    });
-  }, [showPickupPopup, items]);
+    const skus = items.map(i => i.sku).filter(Boolean).join(",");
+    if (!skus) return;
+    const gap = Math.max(0, LOCAL_FREE_DELIVERY_MINIMUM - subtotal);
+    fetch(`/api/products/recommend?skus=${encodeURIComponent(skus)}&gap=${gap.toFixed(2)}&limit=3`)
+      .then(r => r.json())
+      .then(data => setPickupSuggestions(data.products || []))
+      .catch(() => setPickupSuggestions([]));
+  }, [showPickupPopup, items, subtotal]);
 
   const handleCheckout = () => {
     trackBeginCheckout(items.map(i => ({ sku: i.sku || "", name: i.name, price: i.price, quantity: i.qty })), subtotal);

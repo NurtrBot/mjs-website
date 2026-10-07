@@ -79,7 +79,7 @@ export default function AboutPage() {
               We pride ourselves on being a one-stop shop for janitorial and miscellaneous supply needs, with a focus on making the ordering process easy, convenient, and hassle-free. Our goal is to save our customers time while delivering the dependable service they deserve.
             </p>
             <p className="text-mjs-gray-600 leading-relaxed mb-8">
-              With over <strong>40,000 products</strong> available and delivery in as little as 1&#8211;3 business days, we are equipped to meet the demands of businesses that rely on speed and consistency. Every member of our team is committed to excellent customer service, and with a typical turnaround time of 24&#8211;48 hours, we work hard to ensure prompt delivery, including free delivery on qualifying orders.
+              With over <strong>10,000 products</strong> available and delivery in as little as 1&#8211;3 business days, we are equipped to meet the demands of businesses that rely on speed and consistency. Every member of our team is committed to excellent customer service, and with a typical turnaround time of 24&#8211;48 hours, we work hard to ensure prompt delivery, including free delivery on qualifying orders.
             </p>
 
             {/* What We Offer */}
@@ -140,7 +140,7 @@ export default function AboutPage() {
             <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-4">
               <Package className="w-6 h-6 text-mjs-red" />
             </div>
-            <h3 className="font-bold text-mjs-dark mb-1">40,000+ Items</h3>
+            <h3 className="font-bold text-mjs-dark mb-1">10,000+ Items</h3>
             <p className="text-sm text-mjs-gray-500">Huge inventory of janitorial &amp; cleaning supplies</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">

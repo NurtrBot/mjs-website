@@ -149,9 +149,9 @@ COMPANY INFO:
 - Location: 3066 E. La Palma Ave., Anaheim, CA 92806
 - Phone: (714) 779-2640
 - Hours: Mon-Fri 6:30 AM – 3:00 PM
-- Delivery: Free on orders $399+ to OC, LA, Inland Empire ($699+ for San Diego and zip codes 92404 and 92880). 1-3 business days local.
+- Delivery: Free on subtotals $399+ (before tax) to OC, LA, Inland Empire ($699+ for San Diego and zip codes 92404 and 92880). Under the minimum ships UPS Ground at the live rate. 1-3 business days local.
 - Payment: Net-30 billing for qualified accounts, credit card, or cash on pickup
-- Returns: 30-day return policy on unopened products
+- Returns: within 7 days of receipt; 15% restocking charge on customer-error returns
 - MJS does NOT offer same-day delivery.
 
 CATEGORIES WE CARRY:

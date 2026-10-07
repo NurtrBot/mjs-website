@@ -10,7 +10,7 @@
  * BC API calls for product metadata — keeping the logic centralized.
  */
 import { getProducts, getProductBySku, type BCProduct } from "@/lib/bigcommerce";
-import { transformProduct } from "@/lib/products-api";
+import { transformProduct, loadBrandMap } from "@/lib/products-api";
 import type { ProductData } from "@/data/product-types";
 
 const normalizeSlug = (s: string) =>
@@ -48,6 +48,7 @@ function findBestMatch(candidates: BCProduct[], slug: string): BCProduct | null 
 
 export async function fetchProductForSeo(slug: string): Promise<ProductData | null> {
   try {
+    await loadBrandMap();
     const slugParts = slug.split("-");
     let match: BCProduct | null = null;
 

@@ -1,199 +1,47 @@
-"use client";
-
-import { useState, useEffect, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Search, ShoppingCart, Minus, Plus } from "lucide-react";
-import type { ProductData } from "@/data/products";
-import { getTierPrice } from "@/lib/tier-pricing";
-import { useCart } from "@/context/CartContext";
-import { usePurchases } from "@/context/PurchaseContext";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { trackSearch } from "@/lib/analytics";
-import ProductImage from "@/components/ProductImage";
-import ProductCard from "@/components/ProductCard";
+import SearchResults from "@/components/SearchResults";
+import { searchProducts } from "@/lib/products-api";
+import type { ProductData } from "@/data/products";
 
-const hasRealImage = (p: ProductData) =>
-  p.images.length > 0 && !p.images[0].includes("placeholder");
+type SearchParams = Promise<{ q?: string | string[] }>;
 
-// Scoring is now handled server-side in searchProducts()
+const hasRealImage = (p: ProductData) => p.images.length > 0 && !p.images[0].includes("placeholder");
 
-function ResultCard({ product }: { product: ProductData }) {
-  const { addItem } = useCart();
-  const { getPurchaseDate } = usePurchases();
-  const [qty, setQty] = useState(1);
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-  const purchasedDate = getPurchaseDate(product.sku);
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group relative">
-      {purchasedDate && (
-        <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-          Purchased {purchasedDate}
-        </div>
-      )}
-      {product.badge && (
-        <div className={`absolute top-2 left-2 z-10 ${product.badgeColor} text-white text-[9px] font-bold px-2 py-0.5 rounded`}>
-          {product.badge}
-        </div>
-      )}
-      <a href={`/product/${product.slug}`} className="block h-[200px] bg-white overflow-hidden relative">
-        <ProductImage
-          src={product.images[0]}
-          alt={product.cardTitle}
-          sku={product.sku}
-          imageFit={product.imageFit}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        />
-      </a>
-      <div className="p-4">
-        <div className="text-[10px] font-medium text-mjs-gray-400 uppercase tracking-wide">{product.brand}</div>
-        <a href={`/product/${product.slug}`}>
-          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors mt-1">
-            {product.name}
-          </h3>
-        </a>
-        <div className="mt-2">
-          {(() => {
-            const prices = product.quickBuy?.filter(q => q.unitPrice).map(q => q.unitPrice!) || [];
-            const lowestPrice = prices.length > 0 ? Math.min(...prices) : product.price;
-            const hasDiscount = lowestPrice < product.price;
-            return (
-              <>
-                {hasDiscount && <span className="text-xs text-mjs-gray-400 line-through mr-1.5">${product.price.toFixed(2)}</span>}
-                <span className="text-lg font-bold text-mjs-dark">${lowestPrice.toFixed(2)}</span>
-                {hasDiscount && <div className="text-[10px] font-semibold text-mjs-green mt-0.5">As low as ${lowestPrice.toFixed(2)}</div>}
-              </>
-            );
-          })()}
-        </div>
-        <div className="text-[11px] font-medium text-mjs-gray-500 mt-1">{product.pack}</div>
-        <div className="text-[10px] text-mjs-gray-400 mt-0.5">SKU: {product.sku}</div>
-        <div className="flex items-center gap-2 mt-3">
-          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-            <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-7 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors">
-              <Minus className="w-3 h-3 text-mjs-gray-500" />
-            </button>
-            <span className="w-8 h-8 flex items-center justify-center text-xs font-bold text-mjs-dark border-x border-gray-200 bg-mjs-gray-50">{qty}</span>
-            <button onClick={() => setQty(qty + 1)} className="w-7 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors">
-              <Plus className="w-3 h-3 text-mjs-gray-500" />
-            </button>
-          </div>
-          <button
-            onClick={() => {
-              addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: getTierPrice(product, qty), image: product.images[0], pack: product.pack }, qty);
-              setQty(1);
-            }}
-            className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-2 rounded-lg text-xs hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1.5"
-          >
-            <ShoppingCart className="w-3.5 h-3.5" />
-            Add to Cart
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const { q } = await searchParams;
+  const query = (Array.isArray(q) ? q[0] : q || "").trim();
+  return {
+    title: query ? `"${query}" — Search Results | Mobile Janitorial Supply` : "Search Products | Mobile Janitorial Supply",
+    description: query
+      ? `Products matching "${query}" at Mobile Janitorial Supply. Wholesale janitorial supplies with free local delivery in Southern California.`
+      : "Search 10,000+ janitorial, cleaning, and facility supplies. Find products by name, SKU, brand, or category.",
+    robots: { index: false, follow: true },
+  };
 }
 
-function SearchContent() {
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q") || "";
-  const [query, setQuery] = useState(q);
-  const [results, setResults] = useState<ProductData[]>([]);
-  const [loading, setLoading] = useState(false);
+// Server-rendered search: results are in the HTML, so crawlers and AI agents can read them.
+export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
+  const { q } = await searchParams;
+  const query = (Array.isArray(q) ? q[0] : q || "").trim().slice(0, 100);
 
-  // Fetch BC results (live data with current descriptions)
-  useEffect(() => {
-    if (query.length < 2) { setResults([]); return; }
-    setLoading(true);
-    fetch(`/api/products/search?q=${encodeURIComponent(query)}&limit=250`)
-      .then((res) => res.json())
-      .then((data) => {
-        const products = (data.products || []).filter(hasRealImage) as ProductData[];
-        setResults(products);
-        trackSearch(query, products.length);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [query]);
-
-  // Sync from URL param
-  useEffect(() => {
-    if (q && q !== query) setQuery(q);
-  }, [q]);
+  let results: ProductData[] = [];
+  if (query.length >= 2) {
+    try {
+      results = (await searchProducts(query, 250)).filter(hasRealImage);
+    } catch {
+      results = [];
+    }
+  }
 
   return (
     <>
       <Header />
       <main className="bg-mjs-gray-50 min-h-screen">
-        <div className="max-w-[1400px] mx-auto px-4 py-6">
-          {/* Search header */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-mjs-dark">
-                {query ? (
-                  <>Search results for &ldquo;<span className="text-mjs-red">{query}</span>&rdquo;</>
-                ) : (
-                  "Search Products"
-                )}
-              </h1>
-              {query && (
-                <p className="text-sm text-mjs-gray-400 mt-1">
-                  {loading ? "Searching..." : `${results.length} product${results.length !== 1 ? "s" : ""} found`}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Results grid */}
-          {results.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0 sm:gap-3">
-              {results.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
-          ) : query.length > 1 && !loading ? (
-            <div className="text-center py-20">
-              <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h2 className="text-lg font-bold text-mjs-gray-700 mb-2">No products found</h2>
-              <p className="text-sm text-mjs-gray-400 max-w-md mx-auto">
-                We couldn&apos;t find any products matching &ldquo;{query}&rdquo;. Try a different search term or browse our categories.
-              </p>
-              <a
-                href="/"
-                className="inline-block mt-6 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
-              >
-                Browse All Products
-              </a>
-            </div>
-          ) : !query ? (
-            <div className="text-center py-20">
-              <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h2 className="text-lg font-bold text-mjs-gray-700 mb-2">Search for products</h2>
-              <p className="text-sm text-mjs-gray-400">Use the search bar above to find products by name, SKU, brand, or category.</p>
-            </div>
-          ) : null}
-        </div>
+        <SearchResults query={query} results={results} />
       </main>
       <Footer />
     </>
-  );
-}
-
-export default function SearchPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-gray-500 mt-3">Loading search...</p>
-        </div>
-      </div>
-    }>
-      <SearchContent />
-    </Suspense>
   );
 }

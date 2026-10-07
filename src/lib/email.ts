@@ -100,7 +100,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 <td align="center" width="25%" style="padding:8px;vertical-align:top;">
 <div style="width:44px;height:44px;background:#fef2f2;border-radius:12px;text-align:center;line-height:44px;margin:0 auto 8px;font-size:20px;">&#128666;</div>
 <div style="font-size:11px;font-weight:700;color:#1a1a2e;">Free Delivery</div>
-<div style="font-size:9px;color:#9ca3af;margin-top:2px;">On orders $399+ in SoCal</div>
+<div style="font-size:9px;color:#9ca3af;margin-top:2px;">On qualifying orders in SoCal</div>
 </td>
 <td align="center" width="25%" style="padding:8px;vertical-align:top;">
 <div style="width:44px;height:44px;background:#fef2f2;border-radius:12px;text-align:center;line-height:44px;margin:0 auto 8px;font-size:20px;">&#128203;</div>

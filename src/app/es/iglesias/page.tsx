@@ -339,7 +339,7 @@ export default function Page() {
                     </h3>
                     <p className="text-amber-800 leading-relaxed mb-4">
                       No somos solo un proveedor — somos parte de la comunidad. Durante mas de
-                      30 anos hemos servido a iglesias de todas las denominaciones en el Condado
+                      35 años hemos servido a iglesias de todas las denominaciones en el Condado
                       de Orange. Entendemos que muchas iglesias dependen de voluntarios para la
                       limpieza y que los presupuestos son limitados. Por eso ofrecemos precios
                       especiales, productos faciles de usar y entregas programadas para que sus

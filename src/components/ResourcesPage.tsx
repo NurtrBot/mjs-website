@@ -188,6 +188,23 @@ export default function ResourcesPage() {
               </div>
             </div>
           )}
+
+          {/* Full SDS index — in the HTML so every sheet is discoverable; collapsed for people */}
+          <details className="max-w-3xl mx-auto mt-10 group">
+            <summary className="cursor-pointer text-sm font-semibold text-mjs-dark hover:text-mjs-red transition-colors text-center">
+              Browse all {sdsIndex.length} Safety Data Sheets A–Z
+            </summary>
+            <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
+              {[...sdsIndex].sort((a, b) => a.name.localeCompare(b.name)).map((sheet) => (
+                <li key={sheet.sku + sheet.file} className="flex items-baseline justify-between gap-3 py-1 border-b border-gray-100">
+                  <a href={sheet.file} target="_blank" rel="noopener noreferrer" className="text-mjs-blue hover:text-mjs-red hover:underline truncate">
+                    {sheet.name}
+                  </a>
+                  <span className="text-mjs-gray-400 flex-shrink-0">{sheet.sku}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
         </div>
       </div>
     </section>

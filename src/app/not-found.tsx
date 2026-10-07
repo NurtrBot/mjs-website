@@ -42,12 +42,12 @@ export default function NotFound() {
             {/* Quick Links */}
             <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
               {[
-                { label: "Paper Products", href: "/shop/paper-restroom" },
-                { label: "Chemicals", href: "/shop/cleaning-chemicals" },
+                { label: "Paper Products", href: "/category/paper-products" },
+                { label: "Chemicals", href: "/category/cleaning-chemicals" },
                 { label: "Trash Liners", href: "/category/trash-liners" },
-                { label: "Gloves & Safety", href: "/shop/gloves-safety" },
-                { label: "Equipment", href: "/shop/equipment-tools" },
-                { label: "Packaging", href: "/shop/packaging-film" },
+                { label: "Gloves & Safety", href: "/category/gloves-safety" },
+                { label: "Equipment", href: "/category/equipment" },
+                { label: "Packaging", href: "/category/packaging-film" },
               ].map((link) => (
                 <a
                   key={link.label}

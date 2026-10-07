@@ -37,7 +37,7 @@ const categories = [
     startingFrom: "$11.50",
     color: "from-emerald-400 to-emerald-600",
     bg: "bg-emerald-50",
-    href: "/shop/cleaning-chemicals",
+    href: "/category/cleaning-chemicals",
   },
   {
     name: "Nitrile Gloves",
@@ -77,7 +77,7 @@ const categories = [
     startingFrom: "$149.00",
     color: "from-gray-400 to-gray-600",
     bg: "bg-gray-50",
-    href: "/shop/equipment-tools",
+    href: "/category/equipment",
   },
   {
     name: "Breakroom",

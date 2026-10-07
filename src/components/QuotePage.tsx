@@ -156,7 +156,7 @@ export default function QuotePage() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-mjs-dark">Price Match</div>
-                    <div className="text-xs text-mjs-gray-500 mt-0.5">Found a lower price? Let us know and we&apos;ll beat it.</div>
+                    <div className="text-xs text-mjs-gray-500 mt-0.5">Found a lower price from a local competitor? Let us know and we&apos;ll match it.</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

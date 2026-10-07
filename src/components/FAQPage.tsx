@@ -120,8 +120,8 @@ function FAQAccordion({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; 
         </div>
         <ChevronDown className={`w-5 h-5 flex-shrink-0 mt-0.5 transition-transform duration-200 ${isOpen ? "rotate-180 text-mjs-red" : "text-mjs-gray-400"}`} />
       </button>
-      {isOpen && (
-        <div className="px-6 pb-5 pl-20">
+      {/* Always in the DOM (hidden with CSS) so the answers are readable by crawlers and assistants */}
+      <div className="px-6 pb-5 pl-20" hidden={!isOpen}>
           {Array.isArray(faq.answer) ? (
             <div className="space-y-2">
               {faq.answer.map((line, i) => (
@@ -131,8 +131,7 @@ function FAQAccordion({ faq, isOpen, toggle }: { faq: FAQItem; isOpen: boolean; 
           ) : (
             <p className="text-sm text-mjs-gray-600 leading-relaxed">{faq.answer}</p>
           )}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

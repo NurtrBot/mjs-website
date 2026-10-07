@@ -100,11 +100,10 @@ function Accordion({ section, isOpen, toggle }: { section: TermsSection; isOpen:
         </h3>
         <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180 text-mjs-red" : "text-mjs-gray-400"}`} />
       </button>
-      {isOpen && (
-        <div className="px-6 pb-6 pl-20">
-          {section.content}
-        </div>
-      )}
+      {/* Always in the DOM (hidden with CSS) so the terms are readable by crawlers and assistants */}
+      <div className="px-6 pb-6 pl-20" hidden={!isOpen}>
+        {section.content}
+      </div>
     </div>
   );
 }

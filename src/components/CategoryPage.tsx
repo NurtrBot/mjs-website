@@ -1,115 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, Tag, Check, X, SlidersHorizontal, ChevronLeft } from "lucide-react";
+import { Loader2, Tag, Check, X, SlidersHorizontal } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
 import { trackViewCategory } from "@/lib/analytics";
-
-/* ── Site category slug → display name ── */
-const categoryNames: Record<string, string> = {
-  "paper-products": "Paper Products",
-  "cleaning-chemicals": "Cleaning Chemicals",
-  "trash-liners": "Trash Liners",
-  "gloves-safety": "Gloves & Safety",
-  "packaging-film": "Packaging & Film",
-  "breakroom": "Breakroom",
-  "equipment": "Equipment & Tools",
-  "floor-care": "Floor Care",
-  "car-detailing": "Car Detailing",
-};
-
-/* ── Quick filter config per category ── */
-const quickFilters: Record<string, { label: string; subcategories: string[] }[]> = {
-  "paper-products": [
-    { label: "Hardwound Roll Towels", subcategories: ["Hardwound Roll Towels", "Jumbo Roll Towels"] },
-    { label: "Kitchen Towels", subcategories: ["Kitchen Roll Towels"] },
-    { label: "Center-Pull", subcategories: ["Center-Pull Towels"] },
-    { label: "Multifold & C-Fold", subcategories: ["Multifold Towels", "C-Fold Towels", "Singlefold Towels"] },
-    { label: "Toilet Tissue", subcategories: ["Standard Toilet Tissue"] },
-    { label: "Jumbo Toilet Tissue", subcategories: ["Jumbo Toilet Tissue", "Coreless Toilet Tissue"] },
-    { label: "Facial Tissue", subcategories: ["Facial Tissue"] },
-    { label: "Seat Covers", subcategories: ["Seat Covers"] },
-    { label: "Feminine Products", subcategories: ["Feminine Products"] },
-  ],
-  "cleaning-chemicals": [
-    { label: "Degreasers", subcategories: ["Degreasers"] },
-    { label: "All Purpose", subcategories: ["__all_purpose_whitelist__"] },
-    { label: "Disinfectants", subcategories: ["Disinfectants", "Bleach"] },
-    { label: "Hand Soaps", subcategories: ["Hand Soap & Sanitizer"] },
-    { label: "Air Fresheners", subcategories: ["Air Fresheners"] },
-    { label: "Urinal Screens", subcategories: ["Urinal Screens"] },
-    { label: "Dish & Laundry", subcategories: ["Dish & Laundry"] },
-    { label: "Floor & Carpet", subcategories: ["Floor Care", "Floor Strippers", "Floor Finishes", "Carpet Care", "Drain Cleaners", "Floor & Carpet"] },
-    { label: "Portable Toilets", subcategories: ["__portable_toilets__"] },
-  ],
-  "trash-liners": [
-    { label: "Clear", subcategories: ["Clear Can Liners"] },
-    { label: "Black", subcategories: ["Black Can Liners"] },
-    { label: "Drawstring", subcategories: ["Drawstring Liners"] },
-    { label: "Compostable", subcategories: ["Compostable Liners"] },
-  ],
-  "gloves-safety": [
-    { label: "Blue Nitrile", subcategories: ["Blue Nitrile"] },
-    { label: "Black Nitrile", subcategories: ["Black Nitrile"] },
-    { label: "8 Mil Diamond", subcategories: ["Orange Diamond Nitrile", "Black Diamond Nitrile", "Diamond Nitrile"] },
-    { label: "Latex", subcategories: ["Latex Gloves", "High Risk Latex"] },
-    { label: "Vinyl", subcategories: ["Vinyl Gloves"] },
-    { label: "Face Masks", subcategories: ["Face Masks"] },
-    { label: "Hair & Beard", subcategories: ["Hair Protection", "Beard Covers"] },
-    { label: "Aprons & PPE", subcategories: ["Aprons", "Arm Sleeves", "Shoe Covers", "Back Support"] },
-    { label: "Dispensers", subcategories: ["Dispensers"] },
-  ],
-  "packaging-film": [
-    { label: "Stretch Film", subcategories: ["Stretch Film"] },
-    { label: "Colored Stretch Film", subcategories: ["Colored Stretch Film"] },
-    { label: "Machine Film", subcategories: ["Machine Film"] },
-    { label: "Tape", subcategories: ["Tape"] },
-    { label: "Tape Guns", subcategories: ["Tape Dispensers"] },
-    { label: "Bubble Wrap", subcategories: ["Bubble Wrap"] },
-    { label: "Packing Peanuts", subcategories: ["Packing Peanuts"] },
-    { label: "Steel Strapping", subcategories: ["Steel Strapping"] },
-    { label: "Cable Ties", subcategories: ["Cable Ties"] },
-    { label: "Labels", subcategories: ["Labels"] },
-  ],
-  "breakroom": [
-    { label: "Cups & Lids", subcategories: ["Cups & Lids"] },
-    { label: "Cutlery", subcategories: ["Cutlery"] },
-    { label: "Plates & Bowls", subcategories: ["Plates & Bowls"] },
-    { label: "Napkins", subcategories: ["Napkins"] },
-    { label: "Food Storage", subcategories: ["Food Storage"] },
-    { label: "Beverages", subcategories: ["Beverages"] },
-  ],
-  "equipment": [
-    { label: "Dispensers", subcategories: ["Dispensers", "Tape Dispensers"] },
-    { label: "Mops", subcategories: ["Mops & Handles", "Dust Mops"] },
-    { label: "Brooms", subcategories: ["Brooms & Dustpans"] },
-    { label: "Mop Buckets", subcategories: ["Buckets & Wringers"] },
-    { label: "Vacuums", subcategories: ["Vacuums"] },
-    { label: "Trash Cans", subcategories: ["Trash Cans", "Carts & Dollies"] },
-    { label: "Window", subcategories: ["Window Equipment"] },
-    { label: "Sprayers", subcategories: ["Sprayers & Bottles"] },
-    { label: "Rags & Wipers", subcategories: ["Rags & Wipers", "Microfiber"] },
-    { label: "Brushes & Pads", subcategories: ["Brushes & Pads", "Pad Drivers"] },
-    { label: "Dusters", subcategories: ["Dusters"] },
-    { label: "Batteries", subcategories: ["Batteries"] },
-    { label: "Floor Machines", subcategories: ["Floor Machines", "Air Movers"] },
-  ],
-  "floor-care": [
-    { label: "Floor Pads", subcategories: ["Floor Pads", "Stripping Pads", "Buffing Pads", "Polishing Pads", "Scrubbing Pads"] },
-    { label: "Bonnets", subcategories: ["Bonnets"] },
-    { label: "Chemicals", subcategories: ["Floor Care", "Floor Strippers", "Floor Finishes", "Floor & Carpet", "Carpet Care"] },
-  ],
-  "car-detailing": [
-    { label: "Wonder Wafers", subcategories: ["__wonder_wafers__"] },
-    { label: "Air Freshener Gallons", subcategories: ["__jf_air_fresheners__"] },
-    { label: "Car Wash & Shampoo", subcategories: ["Car Wash & Shampoo"] },
-    { label: "Coatings & Protectants", subcategories: ["Coatings & Protectants"] },
-    { label: "Interior Care", subcategories: ["Interior Care"] },
-    { label: "Brushes & Tools", subcategories: ["Brushes & Tools"] },
-    { label: "Pads & Applicators", subcategories: ["Pads & Applicators"] },
-  ],
-};
+import { categoryNames, quickFilters, filterSlug, matchesFilter } from "@/lib/category-filters";
 
 /* ── Sub-filters: secondary filter buttons that appear when a main filter is active ── */
 const subFilters: Record<string, Record<string, { label: string; match: (name: string) => boolean }[]>> = {
@@ -183,10 +79,10 @@ const CATEGORY_COUPONS: Record<string, { code: string; discount: string; delay: 
   "trash-liners": { code: "TRASH5", discount: "5% off", delay: 10 },
 };
 
-export default function CategoryPage({ slug, initialProducts }: { slug: string; initialProducts?: ProductData[] }) {
+export default function CategoryPage({ slug, initialProducts, initialFilter = null }: { slug: string; initialProducts?: ProductData[]; initialFilter?: number | null }) {
   const [products, setProducts] = useState<ProductData[]>(initialProducts || []);
   const [loading, setLoading] = useState(!initialProducts || initialProducts.length === 0);
-  const [activeFilter, setActiveFilter] = useState<number | null>(null);
+  const [activeFilter, setActiveFilter] = useState<number | null>(initialFilter);
   const [activeSubFilter, setActiveSubFilter] = useState<number | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
 
@@ -228,80 +124,27 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
   const activeFilterLabel = activeFilter !== null ? filters[activeFilter]?.label : null;
   const currentSubFilters = activeFilterLabel ? subFilters[slug]?.[activeFilterLabel] || [] : [];
 
+  // Filter URLs are real pages (crawlable); clicking keeps the instant client-side filtering
+  // and just updates the address bar.
+  const filterHref = (i: number | null) => i === null ? `/category/${slug}` : `/category/${slug}/${filterSlug(filters[i].label)}`;
+  const selectFilter = (i: number | null) => {
+    setActiveFilter(i);
+    setActiveSubFilter(null);
+    try { window.history.replaceState(null, "", filterHref(i)); } catch {}
+  };
+
   useEffect(() => {
     // Skip fetch if we already have server-provided products
     if (initialProducts && initialProducts.length > 0) return;
-
     setLoading(true);
-
-    // For car-detailing: also fetch JF air freshener gallons from cleaning-chemicals
-    if (slug === "car-detailing") {
-      Promise.all([
-        fetch(`/api/products/category?slug=car-detailing&limit=250`).then(r => r.json()),
-        fetch(`/api/products/category?slug=cleaning-chemicals&limit=250`).then(r => r.json()),
-      ]).then(([carData, chemData]) => {
-        const carProducts = carData.products || [];
-        const jfAirFresheners = (chemData.products || []).filter((p: ProductData) =>
-          p.subcategory === "Air Fresheners" && p.brand?.toLowerCase().includes("janitors finest")
-        );
-        const seen = new Set(carProducts.map((p: ProductData) => p.sku));
-        const merged = [...carProducts];
-        for (const p of jfAirFresheners) {
-          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push(p); }
-        }
-        setProducts(merged);
+    fetch(`/api/products/category?slug=${slug}&limit=250`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data.products || []);
         setLoading(false);
-      }).catch(() => setLoading(false));
-    } else
-    // For gloves-safety: also fetch glove dispensers from equipment
-    if (slug === "gloves-safety") {
-      Promise.all([
-        fetch(`/api/products/category?slug=gloves-safety&limit=250`).then(r => r.json()),
-        fetch(`/api/products/category?slug=equipment&limit=250`).then(r => r.json()),
-      ]).then(([gloveData, equipData]) => {
-        const gloveProducts = gloveData.products || [];
-        const gloveDispensers = (equipData.products || []).filter((p: ProductData) =>
-          p.subcategory === "Dispensers" && /glove/i.test(p.name)
-        );
-        const seen = new Set(gloveProducts.map((p: ProductData) => p.sku));
-        const merged = [...gloveProducts];
-        for (const p of gloveDispensers) {
-          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push({ ...p, subcategory: "Dispensers" }); }
-        }
-        setProducts(merged);
-        setLoading(false);
-      }).catch(() => setLoading(false));
-    } else
-    // For floor-care: also fetch carpet/floor chemicals from cleaning-chemicals
-    if (slug === "floor-care") {
-      Promise.all([
-        fetch(`/api/products/category?slug=floor-care&limit=250`).then(r => r.json()),
-        fetch(`/api/products/category?slug=cleaning-chemicals&limit=250`).then(r => r.json()),
-      ]).then(([floorData, chemData]) => {
-        const floorProducts = floorData.products || [];
-        // Pull in carpet/floor chemicals
-        const floorChemicals = (chemData.products || []).filter((p: ProductData) =>
-          ["Carpet Care", "Floor Care", "Floor Strippers", "Floor Finishes", "Floor & Carpet"].includes(p.subcategory)
-        );
-        // Merge and dedupe
-        const seen = new Set(floorProducts.map((p: ProductData) => p.sku));
-        const merged = [...floorProducts];
-        for (const p of floorChemicals) {
-          if (!seen.has(p.sku)) { seen.add(p.sku); merged.push(p); }
-        }
-        setProducts(merged);
-        setLoading(false);
-      }).catch(() => setLoading(false));
-    } else {
-      fetch(`/api/products/category?slug=${slug}&limit=250`)
-        .then((res) => res.json())
-        .then((data) => {
-          setProducts(data.products || []);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [slug]);
+      })
+      .catch(() => setLoading(false));
+  }, [slug, initialProducts]);
 
   // Track category view when products load
   useEffect(() => {
@@ -324,21 +167,6 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
     );
   }
 
-  // Shared filter matcher for a given subcategory list
-  const matchesFilter = (p: ProductData, subs: string[]) => {
-    if (subs.includes("__wonder_wafers__")) return /wonder wafer/i.test(p.name);
-    if (subs.includes("__jf_air_fresheners__")) return /janitors finest/i.test(p.name) && p.subcategory === "Air Fresheners" && p.sku !== "31801EA";
-    if (subs.includes("__all_purpose_whitelist__")) {
-      const allowed = new Set(["3162EA","80301EA","12520EA","128EA","CLO60607CT","CPC53058"]);
-      return allowed.has(p.sku);
-    }
-    if (subs.includes("__portable_toilets__")) {
-      const allowed = new Set(["JC25","JC250","JCD50","JCD250"]);
-      return allowed.has(p.sku);
-    }
-    return subs.includes(p.subcategory);
-  };
-
   // Count products per filter
   const filterCounts = filters.map((f) => products.filter((p) => matchesFilter(p, f.subcategories)).length);
 
@@ -351,84 +179,77 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
     filtered = filtered.filter((p) => currentSubFilters[activeSubFilter].match(p.name));
   }
 
+  const pageTitle = activeFilterLabel ? `${activeFilterLabel}` : categoryName;
+
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 py-6">
-        {/* Mobile Header + Filter */}
-        <div className="sm:hidden flex items-center justify-between mb-3">
+        {/* Header — one breadcrumb, one H1 */}
+        <div className="flex items-start justify-between gap-3 mb-4">
           <div>
-            <a href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-mjs-blue mb-1">
-              <ChevronLeft className="w-4 h-4" />
-              Home
-            </a>
-            <h1 className="text-lg font-bold text-mjs-dark">{categoryName}</h1>
-            <p className="text-xs text-mjs-gray-500">
+            <nav className="flex items-center gap-2 text-xs text-mjs-gray-400 mb-1 sm:mb-3" aria-label="Breadcrumb">
+              <a href="/" className="hover:text-mjs-red transition-colors">Home</a>
+              <span>/</span>
+              {activeFilterLabel ? (
+                <>
+                  <a href={`/category/${slug}`} onClick={(e) => { e.preventDefault(); selectFilter(null); }} className="hover:text-mjs-red transition-colors">{categoryName}</a>
+                  <span>/</span>
+                  <span className="text-mjs-dark font-medium">{activeFilterLabel}</span>
+                </>
+              ) : (
+                <span className="text-mjs-dark font-medium">{categoryName}</span>
+              )}
+            </nav>
+            <h1 className="text-lg sm:text-2xl font-bold text-mjs-dark">
+              {pageTitle}
+              {activeFilterLabel && <span className="text-mjs-gray-400 font-medium text-sm sm:text-base"> · {categoryName}</span>}
+            </h1>
+            <p className="text-xs sm:text-sm text-mjs-gray-500 mt-1">
               {loading ? "Loading..." : `${filtered.length} products available`}
             </p>
           </div>
           {filters.length > 0 && (
             <button
               onClick={() => setShowFilterModal(true)}
-              className="w-9 h-9 flex items-center justify-center bg-mjs-red text-white rounded-lg active:scale-95 transition-all flex-shrink-0"
+              className="sm:hidden w-9 h-9 flex items-center justify-center bg-mjs-red text-white rounded-lg active:scale-95 transition-all flex-shrink-0"
+              aria-label="Filter products"
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Desktop Header */}
-        <div className="hidden sm:block mb-4">
-          <div className="flex items-center gap-2 text-xs text-mjs-gray-400 mb-3">
-            <a href="/" className="hover:text-mjs-red transition-colors">Home</a>
-            <span>/</span>
-            <span className="text-mjs-dark font-medium">{categoryName}</span>
-            {activeFilter !== null && filters[activeFilter] && (
-              <>
-                <span>/</span>
-                <span className="text-mjs-dark font-medium">{filters[activeFilter].label}</span>
-              </>
-            )}
-          </div>
-          <h1 className="text-2xl font-bold text-mjs-dark">{categoryName}</h1>
-          <p className="text-sm text-mjs-gray-500 mt-1">
-            {loading ? "Loading..." : `${filtered.length} products available`}
-          </p>
-        </div>
-
-        {/* Desktop: Sidebar + Product Grid layout */}
-        <div className="hidden sm:flex gap-6">
-          {/* Left Sidebar Filters */}
+        {/* Sidebar (desktop) + single product grid */}
+        <div className="flex gap-6">
           {filters.length > 0 && (
-            <aside className="w-56 flex-shrink-0">
-              <nav className="sticky top-24" suppressHydrationWarning>
-                <button
-                  onClick={() => { setActiveFilter(null); setActiveSubFilter(null); }}
+            <aside className="hidden sm:block w-56 flex-shrink-0">
+              <nav className="sticky top-24" suppressHydrationWarning aria-label="Subcategories">
+                <a
+                  href={filterHref(null)}
+                  onClick={(e) => { e.preventDefault(); selectFilter(null); }}
                   className={`block w-full text-left text-sm font-bold py-2 border-b border-gray-100 transition-colors ${
-                    activeFilter === null
-                      ? "text-mjs-red"
-                      : "text-mjs-dark hover:text-mjs-red"
+                    activeFilter === null ? "text-mjs-red" : "text-mjs-dark hover:text-mjs-red"
                   }`}
                 >
                   <span className="flex items-center justify-between">
                     All Products
                     <span className="text-xs font-normal text-mjs-gray-400">{products.length}</span>
                   </span>
-                </button>
+                </a>
                 {filters.map((filter, i) => (
                   <div key={filter.label}>
-                    <button
-                      onClick={() => { setActiveFilter(activeFilter === i ? null : i); setActiveSubFilter(null); }}
+                    <a
+                      href={filterHref(i)}
+                      onClick={(e) => { e.preventDefault(); selectFilter(activeFilter === i ? null : i); }}
                       className={`block w-full text-left text-sm py-2 border-b border-gray-50 transition-colors ${
-                        activeFilter === i
-                          ? "font-bold text-mjs-red"
-                          : "text-mjs-gray-600 hover:text-mjs-red"
+                        activeFilter === i ? "font-bold text-mjs-red" : "text-mjs-gray-600 hover:text-mjs-red"
                       }`}
                     >
                       <span className="flex items-center justify-between">
                         {filter.label}
                         <span className="text-xs font-normal text-mjs-gray-400">{filterCounts[i]}</span>
                       </span>
-                    </button>
+                    </a>
                     {/* Sub-filters — inline under the active filter */}
                     {activeFilter === i && currentSubFilters.length > 0 && (
                       <div className="pl-3 pb-1">
@@ -437,9 +258,7 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
                             key={sf.label}
                             onClick={() => setActiveSubFilter(activeSubFilter === si ? null : si)}
                             className={`block w-full text-left text-xs py-1.5 transition-colors ${
-                              activeSubFilter === si
-                                ? "text-mjs-red font-semibold"
-                                : "text-mjs-gray-500 hover:text-mjs-red"
+                              activeSubFilter === si ? "text-mjs-red font-semibold" : "text-mjs-gray-500 hover:text-mjs-red"
                             }`}
                           >
                             {sf.label}
@@ -453,7 +272,6 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
             </aside>
           )}
 
-          {/* Product Grid */}
           <div className="flex-1 min-w-0">
             {loading && (
               <div className="flex items-center justify-center py-20">
@@ -461,7 +279,7 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
               </div>
             )}
             {!loading && filtered.length > 0 && (
-              <div className={`grid grid-cols-1 md:grid-cols-2 ${filters.length > 0 ? "lg:grid-cols-3 xl:grid-cols-4" : "lg:grid-cols-4 xl:grid-cols-5"} gap-4`}>
+              <div className={`grid grid-cols-1 gap-0 sm:gap-4 md:grid-cols-2 ${filters.length > 0 ? "lg:grid-cols-3 xl:grid-cols-4" : "lg:grid-cols-4 xl:grid-cols-5"}`}>
                 {filtered.map((product) => (
                   <ProductCard key={product.slug} product={product} />
                 ))}
@@ -476,30 +294,6 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
               </div>
             )}
           </div>
-        </div>
-
-        {/* Mobile: Loading & Grid (no sidebar) */}
-        <div className="sm:hidden">
-          {loading && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-mjs-red animate-spin" />
-            </div>
-          )}
-          {!loading && filtered.length > 0 && (
-            <div className="grid grid-cols-1 gap-0">
-              {filtered.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
-          )}
-          {!loading && filtered.length === 0 && (
-            <div className="bg-white rounded-xl p-12 text-center">
-              <p className="text-mjs-gray-500">No products in this category yet. Check back soon!</p>
-              <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
-                Back to Home
-              </a>
-            </div>
-          )}
         </div>
       </div>
 
@@ -575,7 +369,7 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
             {/* Filter options */}
             <div className="px-5 py-4 space-y-2">
               <button
-                onClick={() => { setActiveFilter(null); setActiveSubFilter(null); setShowFilterModal(false); }}
+                onClick={() => { selectFilter(null); setShowFilterModal(false); }}
                 className={`w-full text-left px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
                   activeFilter === null
                     ? "bg-mjs-red text-white"
@@ -587,7 +381,7 @@ export default function CategoryPage({ slug, initialProducts }: { slug: string; 
               {filters.map((filter, i) => (
                 <button
                   key={filter.label}
-                  onClick={() => { setActiveFilter(i); setActiveSubFilter(null); setShowFilterModal(false); }}
+                  onClick={() => { selectFilter(i); setShowFilterModal(false); }}
                   className={`w-full text-left px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
                     activeFilter === i
                       ? "bg-mjs-red text-white"

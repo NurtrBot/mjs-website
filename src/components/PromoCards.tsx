@@ -8,21 +8,21 @@ const promoCards = [
     subtitle: "Toilet paper, towels, liners & soap",
     gradient: "from-sky-500 to-blue-600",
     image: "/images/promo-paper-restroom.png",
-    href: "/shop/paper-restroom",
+    href: "/category/paper-products",
   },
   {
     title: "Cleaning Chemicals",
     subtitle: "Degreasers, disinfectants & floor care",
     gradient: "from-emerald-500 to-green-600",
     image: "/images/promo-chemicals.png",
-    href: "/shop/cleaning-chemicals",
+    href: "/category/cleaning-chemicals",
   },
   {
     title: "Gloves & Safety",
     subtitle: "Nitrile, latex, vinyl & PPE supplies",
     gradient: "from-violet-500 to-purple-600",
     image: "/images/promo-gloves-safety.png",
-    href: "/shop/gloves-safety",
+    href: "/category/gloves-safety",
   },
   {
     title: "Equipment & Tools",
@@ -30,7 +30,7 @@ const promoCards = [
     gradient: "from-amber-500 to-orange-600",
     image: "/images/promo-equipment.png",
     imagePosition: "center 40%",
-    href: "/shop/equipment-tools",
+    href: "/category/equipment",
   },
 ];
 

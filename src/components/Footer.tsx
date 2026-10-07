@@ -134,12 +134,12 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3">Shop</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/shop/paper-restroom" className="hover:text-white transition-colors">Paper Products</a></li>
-              <li><a href="/shop/cleaning-chemicals" className="hover:text-white transition-colors">Chemicals</a></li>
+              <li><a href="/category/paper-products" className="hover:text-white transition-colors">Paper Products</a></li>
+              <li><a href="/category/cleaning-chemicals" className="hover:text-white transition-colors">Chemicals</a></li>
               <li><a href="/category/trash-liners" className="hover:text-white transition-colors">Trash Liners</a></li>
-              <li><a href="/shop/gloves-safety" className="hover:text-white transition-colors">Gloves &amp; Safety</a></li>
+              <li><a href="/category/gloves-safety" className="hover:text-white transition-colors">Gloves &amp; Safety</a></li>
               <li><a href="/category/packaging-film" className="hover:text-white transition-colors">Packaging</a></li>
-              <li><a href="/shop/equipment-tools" className="hover:text-white transition-colors">Equipment</a></li>
+              <li><a href="/category/equipment" className="hover:text-white transition-colors">Equipment</a></li>
               <li><a href="/category/breakroom" className="hover:text-white transition-colors">Breakroom</a></li>
             </ul>
           </div>
@@ -152,7 +152,7 @@ export default function Footer() {
               <li><a href="/contact" className="hover:text-white transition-colors">Contact</a></li>
               <li><a href="/faq" className="hover:text-white transition-colors">FAQ</a></li>
               <li><a href="/quote" className="hover:text-white transition-colors">Get a Quote</a></li>
-              <li><a href="/catalogs" className="hover:text-white transition-colors">Catalogs</a></li>
+              <li><a href="/resources" className="hover:text-white transition-colors">Catalogs &amp; Forms</a></li>
               <li><a href="/rewards" className="hover:text-white transition-colors">Rewards Program</a></li>
               <li><a href="/resources" className="hover:text-white transition-colors">Forms &amp; SDS</a></li>
               <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>

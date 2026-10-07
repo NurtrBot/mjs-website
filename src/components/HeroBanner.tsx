@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star } from "lucide-react";
+import { DELIVERY_BANNER } from "@/lib/business";
 
 /* ── Carousel Slides ── */
 const slides: {
@@ -21,7 +22,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/shop/paper-restroom",
+    href: "/category/paper-products",
     gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-mjs-gold",
     image: "/banner-01.jpg",
@@ -44,7 +45,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/shop/cleaning-chemicals",
+    href: "/category/cleaning-chemicals",
     gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-blue-600",
     image: "/banner-03.jpg",
@@ -67,7 +68,7 @@ const slides: {
     headline: "",
     sub: "",
     cta: "Shop Now",
-    href: "/shop/gloves-safety",
+    href: "/category/gloves-safety",
     gradient: "from-[#0a1628] via-[#0a1628] to-[#0a1628]",
     accent: "bg-mjs-gold",
     image: "/banner-05.jpg",
@@ -81,7 +82,7 @@ const slides: {
     href: "/brands/johnnys-choice",
     gradient: "from-[#1a1f2e] via-[#1a1f2e] to-[#1a1f2e]",
     accent: "bg-mjs-red",
-    image: "/banner-shop-by-workspace.png",
+    image: "/banner-shop-by-workspace.jpg",
     isBanner: true,
   },
 ];
@@ -123,12 +124,12 @@ export default function HeroBanner() {
         <div className="md:hidden">
           <div className="bg-gradient-to-r from-mjs-red via-red-600 to-mjs-red-dark py-3 text-center shadow-sm">
             <div className="text-[9px] sm:text-[11px] font-bold text-white tracking-wide">
-              FREE 1–3 Business Day Delivery on Orders $399+ <span className="text-white/70 font-normal">(Before Tax)</span>
+              {DELIVERY_BANNER} <span className="text-white/70 font-normal">(Before Tax)</span>
             </div>
           </div>
           <a href="/product/janitors-finest-2-ply-toilet-tissue-4-3-x-3-5-500-sheets-per-roll-96-rolls-per-case-5602">
             <img
-              src="/images/mobile-hero-star-seller.png"
+              src="/images/mobile-hero-star-seller.jpg"
               alt="Star Seller — Janitors Finest Premium Plus 96 Rolls as low as $39.99"
               className="w-full h-auto block"
             />

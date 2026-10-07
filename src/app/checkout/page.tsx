@@ -283,6 +283,10 @@ export default function CheckoutPage() {
 
   // Free delivery minimum for the entered zip (defaults to local until a zip is entered)
   const freeDeliveryMinimum = getFreeDeliveryMinimum(form.zip) ?? LOCAL_FREE_DELIVERY_MINIMUM;
+  // Only local delivery zones have a free-delivery threshold; out-of-area zips always pay UPS
+  const hasFreeDeliveryZone = !form.zip || form.zip.length < 5 || getFreeDeliveryMinimum(form.zip) !== null;
+  const effectiveSubtotalForGap = Math.max(0, subtotal - promoDiscount);
+  const freeDeliveryGap = hasFreeDeliveryZone ? Math.max(0, freeDeliveryMinimum - effectiveSubtotalForGap) : 0;
 
   // Fetch real shipping estimate when zip changes
   useEffect(() => {
@@ -1476,6 +1480,32 @@ export default function CheckoutPage() {
                     )}
                   </div>
 
+                  {/* Free-delivery gap — always visible when within reach, not just on the final click */}
+                  {!isPickup && freeDeliveryGap > 0 && freeDeliveryGap <= 150 && (
+                    <div className="mb-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-3.5">
+                      <div className="flex items-start gap-2.5">
+                        <Truck className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-extrabold text-mjs-dark">
+                            You&apos;re <span className="text-mjs-red">${freeDeliveryGap.toFixed(2)}</span> away from FREE delivery
+                          </div>
+                          <p className="text-xs text-mjs-gray-600 mt-0.5">
+                            Add ${freeDeliveryGap.toFixed(2)} more and your order ships free instead of
+                            {shippingEstimate && shippingEstimate > 0 ? ` $${shippingEstimate.toFixed(2)}` : " the UPS rate"}.
+                            Free delivery starts at ${freeDeliveryMinimum} (subtotal before tax).
+                          </p>
+                          <div className="mt-2 h-1.5 w-full bg-white rounded-full overflow-hidden border border-amber-200">
+                            <div className="h-full bg-gradient-to-r from-mjs-red to-amber-400 rounded-full" style={{ width: `${Math.min(100, (effectiveSubtotalForGap / freeDeliveryMinimum) * 100)}%` }} />
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-[10px] text-mjs-gray-500">${effectiveSubtotalForGap.toFixed(2)} of ${freeDeliveryMinimum}</span>
+                            <Link href="/cart" className="text-xs font-bold text-mjs-red hover:underline">Add items &rarr;</Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Totals */}
                   <div className="space-y-2.5 mb-4">
                     <div className="flex justify-between text-sm">
@@ -1498,6 +1528,9 @@ export default function CheckoutPage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-mjs-gray-500">
                         {shippingName || "Shipping"}
+                        {!isPickup && freeDeliveryGap > 0 && shipping > 0 && (
+                          <span className="block text-[10px] text-amber-700 font-semibold">Free at ${freeDeliveryMinimum} subtotal</span>
+                        )}
                       </span>
                       <span className="font-semibold text-mjs-gray-700">
                         {estimatingShipping ? (

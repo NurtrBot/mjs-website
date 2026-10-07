@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Mobile Janitorial Supply",
     title: "Mobile Janitorial Supply | #1 Rated Cleaning Products in SoCal",
     description:
-      "Southern California's highest-rated janitorial supply company. 10,000+ products at wholesale prices. Free 1-3 day local delivery on orders $399+.",
+      "Southern California's highest-rated janitorial supply company. 10,000+ products at wholesale prices. Free 1-3 day local delivery on orders $399+ (OC, LA, Inland Empire) and $699+ (San Diego).",
     images: [
       {
         url: "/banner-03.jpg",

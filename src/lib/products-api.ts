@@ -1,4 +1,4 @@
-import { getProducts, type BCProduct } from "./bigcommerce";
+import { getProducts, getBrands, type BCProduct } from "./bigcommerce";
 import { getSiteCategory, getSiteCategoryName, BC_CATEGORY_MAP, SITE_CATEGORY_NAMES } from "./category-map";
 import type { ProductData } from "@/data/products";
 import { sdsIndex } from "@/data/sds-index";
@@ -122,6 +122,19 @@ const CUSTOM_PRICING: Record<string, { label: string; qty: number; unitPrice?: n
 import { getProductBySlug as getLocalProduct } from "@/data/products";
 
 /* ── Transform a BigCommerce product into our ProductData format ── */
+// BigCommerce brand_id → name. Populated by loadBrandMap() (called by the fetch helpers);
+// transformProduct stays synchronous.
+let brandMap: Record<number, string> = {};
+let brandMapLoadedAt = 0;
+export async function loadBrandMap(): Promise<void> {
+  if (Date.now() - brandMapLoadedAt < 60 * 60 * 1000 && Object.keys(brandMap).length > 0) return;
+  try {
+    const brands = await getBrands();
+    brandMap = Object.fromEntries(brands.map(b => [b.id, b.name]));
+    brandMapLoadedAt = Date.now();
+  } catch {}
+}
+
 function transformProduct(bc: BCProduct): ProductData {
   const siteCategory = getSiteCategory(bc.categories);
   const siteCategoryName = getSiteCategoryName(siteCategory);
@@ -138,8 +151,9 @@ function transformProduct(bc: BCProduct): ProductData {
   // Extract pack from name
   const pack = extractPack(bc.name);
 
-  // Extract brand from name
-  const brand = extractBrand(bc.name);
+  // Brand: known names in the title first (house brands are often not set in BC), then the
+  // BigCommerce brand record. Unknown stays blank rather than guessing from the first word.
+  const brand = extractBrand(bc.name) || (bc.brand_id && brandMap[bc.brand_id]) || "";
 
   // Strip HTML from description
   const description = bc.description
@@ -226,7 +240,7 @@ function transformProduct(bc: BCProduct): ProductData {
     highlights: generateHighlights(bc),
     specs: {
       SKU: bc.sku || "",
-      Brand: brand,
+      ...(brand ? { Brand: brand } : {}),
       Condition: bc.condition || "New",
       ...(bc.weight > 0 ? { Weight: `${bc.weight} lbs` } : {}),
     },
@@ -442,14 +456,64 @@ function extractBrand(name: string): string {
     "WAVE": "Wave",
     "DURABLE PACKAGING": "Durable Packaging",
     "WRAP IT ALL": "Wrap It All",
+    "STRIKE BAC": "Strike Bac",
+    "JOHNNY'S CHOICE": "Johnny's Choice",
+    "JOHNNYS CHOICE": "Johnny's Choice",
+    "KLEENEX": "Kleenex",
+    "KIMBERLY": "Kimberly-Clark",
+    "SCOTT ": "Scott",
+    "COTTONELLE": "Cottonelle",
+    "TAMPAX": "Tampax",
+    "GEORGIA PACIFIC": "Georgia-Pacific",
+    "GEORGIA-PACIFIC": "Georgia-Pacific",
+    "TORK": "Tork",
+    "DIAL ": "Dial",
+    "GOJO": "GOJO",
+    "PURELL": "Purell",
+    "CLR ": "CLR",
+    "DAWN": "Dawn",
+    "NICE-PAK": "Nice-Pak",
+    "NICE PAK": "Nice-Pak",
+    "SEVENTH GENERATION": "Seventh Generation",
+    "BLUE SEAL": "Blue Seal",
+    "EUREKA": "Eureka",
+    "PROTEAM": "ProTeam",
+    "BOARDWALK": "Boardwalk",
+    "WINCO": "Winco",
+    "DART ": "Dart",
+    "DIAMOND GLOVE": "Diamond Glove",
+    "LYSOL": "Lysol",
+    "PINE-SOL": "Pine-Sol",
+    "WINDEX": "Windex",
+    "SPRAYWAY": "Sprayway",
+    "ZEP": "Zep",
+    "3M": "3M",
+    "SCOTCH-BRITE": "Scotch-Brite",
+    "O-CEDAR": "O-Cedar",
+    "LIBMAN": "Libman",
+    "UNGER": "Unger",
+    "CARLISLE": "Carlisle",
+    "CONTINENTAL": "Continental",
+    "IMPACT": "Impact Products",
+    "TOLCO": "Tolco",
+    "HOSPECO": "Hospeco",
+    "FRESH PRODUCTS": "Fresh Products",
+    "BIG D": "Big D",
+    "WONDER WAFERS": "Wonder Wafers",
+    "BETCO": "Betco",
+    "SPARTAN": "Spartan",
+    "DIVERSEY": "Diversey",
+    "ECOLAB": "Ecolab",
+    "SC JOHNSON": "SC Johnson",
+    "DURACELL": "Duracell",
+    "ENERGIZER": "Energizer",
+    "HERCULES": "Hercules",
   };
   const upper = name.toUpperCase();
   for (const [key, val] of Object.entries(brands)) {
     if (upper.includes(key)) return val;
   }
-  const first = name.split(/[,\s]/)[0].replace(/[®™©"]/g, "");
-  if (first && /^[A-Z]/.test(first) && first.length > 1) return first;
-  return "MJS";
+  return "";
 }
 
 function getSubcategory(bc: BCProduct): string {
@@ -667,6 +731,7 @@ export async function fetchProductsByCategory(
   _page = 1,
   _limit = 50
 ): Promise<{ products: ProductData[]; total: number; totalPages: number }> {
+  await loadBrandMap();
   // Get ALL BC category IDs mapped to this site slug (parents + children)
   let bcCategoryIds = Object.entries(BC_CATEGORY_MAP)
     .filter(([, slug]) => slug === siteSlug)
@@ -1016,6 +1081,16 @@ export async function fetchProductsByCategory(
     return b.reviewCount - a.reviewCount;
   });
 
+  // Some categories borrow products from another department (previously merged only on the
+  // client, so server-rendered pages were missing them). Do it here so SSR, API and sitemap agree.
+  const extras = await fetchCategoryExtras(siteSlug);
+  if (extras.length > 0) {
+    const have = new Set(filtered.map(p => p.sku));
+    for (const p of extras) {
+      if (!have.has(p.sku)) { have.add(p.sku); filtered.push(p); }
+    }
+  }
+
   return {
     products: filtered,
     total: filtered.length,
@@ -1023,7 +1098,43 @@ export async function fetchProductsByCategory(
   };
 }
 
+async function fetchCategoryExtras(siteSlug: string): Promise<ProductData[]> {
+  try {
+    if (siteSlug === "car-detailing") {
+      const chem = await fetchProductsByCategory("cleaning-chemicals", 1, 250);
+      return chem.products.filter(p => p.subcategory === "Air Fresheners" && p.brand?.toLowerCase().includes("janitors finest"));
+    }
+    if (siteSlug === "gloves-safety") {
+      const equip = await fetchProductsByCategory("equipment", 1, 250);
+      return equip.products
+        .filter(p => p.subcategory === "Dispensers" && /glove/i.test(p.name))
+        .map(p => ({ ...p, subcategory: "Dispensers" }));
+    }
+    if (siteSlug === "floor-care") {
+      const chem = await fetchProductsByCategory("cleaning-chemicals", 1, 250);
+      return chem.products.filter(p => ["Carpet Care", "Floor Care", "Floor Strippers", "Floor Finishes", "Floor & Carpet"].includes(p.subcategory));
+    }
+  } catch {}
+  return [];
+}
+
+// Exact-SKU lookups (used by curated pages like /industries/portable-restroom)
+export async function fetchProductsBySkus(skus: string[]): Promise<ProductData[]> {
+  await loadBrandMap();
+  const { getProductBySku } = await import("./bigcommerce");
+  const results = await Promise.allSettled(skus.map((sku) => getProductBySku(sku)));
+  const out: ProductData[] = [];
+  const seen = new Set<string>();
+  for (const r of results) {
+    if (r.status !== "fulfilled" || !r.value || r.value.price <= 0) continue;
+    const t = transformProduct(r.value);
+    if (t && !seen.has(t.sku)) { seen.add(t.sku); out.push(t); }
+  }
+  return out;
+}
+
 export async function fetchProductBySlug(slug: string): Promise<ProductData | null> {
+  await loadBrandMap();
   // The slug in BC is stored in custom_url
   try {
     const res = await getProducts({ limit: 1, keyword: slug.replace(/-/g, " ") });
@@ -1037,6 +1148,7 @@ export async function fetchProductBySlug(slug: string): Promise<ProductData | nu
 }
 
 export async function fetchAllProducts(page = 1, limit = 50): Promise<{ products: ProductData[]; total: number; totalPages: number }> {
+  await loadBrandMap();
   const res = await getProducts({ page, limit, is_visible: true });
   const products = res.data.filter((p) => p.price > 0).map(transformProduct).filter(Boolean) as ProductData[];
   return {
@@ -1277,6 +1389,7 @@ async function fetchWithKeyword(keyword: string, seen: Set<number>, maxPages = 2
 }
 
 export async function searchProducts(keyword: string, limit = 250): Promise<ProductData[]> {
+  await loadBrandMap();
   const seen = new Set<number>();
   const allResults: ProductData[] = [];
 

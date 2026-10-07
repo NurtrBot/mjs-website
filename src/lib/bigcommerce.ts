@@ -133,6 +133,8 @@ export interface BCProduct {
   total_sold: number;
   sort_order: number;
   custom_url: { url: string };
+  date_created?: string;
+  date_modified?: string;
   images?: BCProductImage[];
   reviews_count?: number;
   reviews_rating_sum?: number;

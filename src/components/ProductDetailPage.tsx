@@ -38,6 +38,10 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
+import { RETURNS } from "@/lib/business";
+import { getCategorySlug } from "@/data/products";
+import { findFilterForSubcategory, filterSlug } from "@/lib/category-filters";
+import { SITE_CATEGORY_NAMES } from "@/lib/category-map";
 
 // SKU → lifestyle image mapping (shown below product description)
 const LIFESTYLE_IMAGES: Record<string, string> = {
@@ -140,12 +144,13 @@ const DILUTION_DATA: Record<string, DilutionInfo> = {
       { label: "Light Duty", ratio: "1:128", ozPerGal: 1 },
     ],
   },
+  // Strike Bac: matches the product description (4 oz/gal). EPA label rate governs —
+  // verify against the current label before changing.
   "91101EA": {
     containerOz: 128,
     containerLabel: "1 Gallon",
     rates: [
-      { label: "Disinfecting", ratio: "1:64", ozPerGal: 2 },
-      { label: "General Cleaning", ratio: "1:128", ozPerGal: 1 },
+      { label: "Disinfecting", ratio: "1:32", ozPerGal: 4 },
     ],
   },
   "80301EA": {
@@ -263,7 +268,7 @@ function QuantitySelector({
 
 /* ───────── reviews component ───────── */
 
-interface ReviewData {
+export interface ReviewData {
   id: number;
   title: string;
   text: string;
@@ -272,12 +277,13 @@ interface ReviewData {
   date: string;
 }
 
-function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: number; reviewCount: number }) {
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+function ProductReviews({ sku, rating, reviewCount, initialReviews }: { sku: string; rating: number; reviewCount: number; initialReviews?: ReviewData[] }) {
+  const [reviews, setReviews] = useState<ReviewData[]>(initialReviews || []);
   const [avgRating, setAvgRating] = useState(rating);
-  const [count, setCount] = useState(reviewCount);
+  const [count, setCount] = useState(initialReviews?.length || reviewCount);
 
   useEffect(() => {
+    if (initialReviews && initialReviews.length > 0) return; // already server-rendered
     fetch(`/api/products/reviews?sku=${encodeURIComponent(sku)}`)
       .then(r => r.json())
       .then(data => {
@@ -288,7 +294,7 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
         }
       })
       .catch(() => {});
-  }, [sku]);
+  }, [sku, initialReviews]);
 
   // Don't render section if no reviews
   if (count === 0 && reviews.length === 0) return null;
@@ -393,7 +399,7 @@ function ProductReviews({ sku, rating, reviewCount }: { sku: string; rating: num
 
 /* ───────── main component ───────── */
 
-export default function ProductDetailPage({ slug, initialProduct }: { slug: string; initialProduct?: ProductData | null }) {
+export default function ProductDetailPage({ slug, initialProduct, initialReviews }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[] }) {
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
@@ -401,26 +407,22 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>(
     localProduct ? getSmartPairings(localProduct, allProducts, 6) : []
   );
-  const fbtProducts = localProduct ? getFbtPairings(localProduct, allProducts, 3) : [];
-
-  // Mobile FBT for Paper & Restroom — 1 paper, 1 chemical, 1 trash/glove
-  const mobileFbtProducts = (() => {
-    if (!localProduct || localProduct.category !== "Paper & Restroom") return fbtProducts;
-    const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
-    const exclude = localProduct.sku;
-
-    const paperPool = shuffle(allProducts.filter(p => p.category === "Paper & Restroom" && p.sku !== exclude));
-    const chemPool = shuffle(allProducts.filter(p => p.category === "Cleaning Chemicals" && p.sku !== exclude));
-    const trashGlovePool = shuffle(allProducts.filter(p =>
-      (p.category === "Trash Liners" || (p.category === "Gloves & Safety" && p.subcategory !== "Dispensers")) && p.sku !== exclude
-    ));
-
-    const picks: ProductData[] = [];
-    if (paperPool.length > 0) picks.push(paperPool[0]);
-    if (chemPool.length > 0) picks.push(chemPool[0]);
-    if (trashGlovePool.length > 0) picks.push(trashGlovePool[0]);
-    return picks;
-  })();
+  // Frequently bought together — real co-purchase data via /api/products/recommend,
+  // seeded with the rulebook so there's no empty flash before the fetch returns.
+  const [fbtProducts, setFbtProducts] = useState<ProductData[]>(
+    localProduct ? getFbtPairings(localProduct, allProducts, 3) : []
+  );
+  const fbtSku = product?.sku || localProduct?.sku || "";
+  useEffect(() => {
+    if (!fbtSku) return;
+    let cancelled = false;
+    fetch(`/api/products/recommend?skus=${encodeURIComponent(fbtSku)}&limit=3`)
+      .then(r => r.json())
+      .then(data => { if (!cancelled && data.products?.length >= 2) setFbtProducts(data.products); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [fbtSku]);
+  const mobileFbtProducts = fbtProducts;
   const [fbtSelected, setFbtSelected] = useState<Set<number>>(new Set([0, 1, 2])); // all 3 selected by default
   const { addItem, updateQty: updateCartQty, removeItem } = useCart();
   const { user, getCustomPrice } = useAuth();
@@ -661,6 +663,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     );
   }
 
+  const categorySlug = categorySlugMap[product.category] || getCategorySlug(product.category);
+  const subcategoryFilter = findFilterForSubcategory(categorySlug, product.subcategory);
+
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -683,9 +688,9 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
         </div>
 
         {/* Product name */}
-        <h1 className="text-[15px] font-bold text-mjs-dark text-center px-6 py-3 border-b border-gray-100">
+        <p className="text-[15px] font-bold text-mjs-dark text-center px-6 py-3 border-b border-gray-100">
           {product.name}
-        </h1>
+        </p>
 
         {/* Product image */}
         <div
@@ -836,10 +841,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">SKU</div>
                 <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.sku}</div>
               </div>
-              <div className="flex text-sm border-b border-gray-100">
-                <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">Brand</div>
-                <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.brand}</div>
-              </div>
+              {product.brand && (
+                <div className="flex text-sm border-b border-gray-100">
+                  <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">Brand</div>
+                  <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.brand}</div>
+                </div>
+              )}
               <div className="flex text-sm border-b border-gray-100">
                 <div className="w-2/5 px-4 py-2.5 font-semibold text-mjs-gray-600 bg-mjs-gray-50">Pack</div>
                 <div className="w-3/5 px-4 py-2.5 text-mjs-gray-700">{product.pack}</div>
@@ -904,7 +911,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
           {mobileTab === "reviews" && (
             <div className="-mx-4 -mb-4">
-              <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
+              <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} initialReviews={initialReviews} />
             </div>
           )}
         </div>
@@ -918,13 +925,17 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
               Home
             </a>
             <ChevronRight className="w-3.5 h-3.5" />
-            <a href={`/search?q=${encodeURIComponent(product.category)}`} className="hover:text-mjs-red transition-colors">
-              {product.category}
+            <a href={`/category/${categorySlug}`} className="hover:text-mjs-red transition-colors">
+              {SITE_CATEGORY_NAMES[categorySlug] || product.category}
             </a>
             <ChevronRight className="w-3.5 h-3.5" />
-            <a href={`/search?q=${encodeURIComponent(product.subcategory)}`} className="hover:text-mjs-red transition-colors">
-              {product.subcategory}
-            </a>
+            {subcategoryFilter ? (
+              <a href={`/category/${categorySlug}/${filterSlug(subcategoryFilter.label)}`} className="hover:text-mjs-red transition-colors">
+                {product.subcategory}
+              </a>
+            ) : (
+              <span>{product.subcategory}</span>
+            )}
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-mjs-gray-700 font-medium truncate max-w-[200px]">
               {product.sku}
@@ -989,12 +1000,14 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
           {/* ── RIGHT: Product Info ── */}
           <div>
             {/* Brand */}
-            <a
-              href="#"
-              className="inline-flex items-center text-sm font-semibold text-mjs-blue hover:underline mb-2"
-            >
-              {product.brand}
-            </a>
+            {product.brand && (
+              <a
+                href={`/search?q=${encodeURIComponent(product.brand)}`}
+                className="inline-flex items-center text-sm font-semibold text-mjs-blue hover:underline mb-2"
+              >
+                {product.brand}
+              </a>
+            )}
 
             {/* Title */}
             <h1 className="text-2xl md:text-3xl font-extrabold text-mjs-dark leading-tight tracking-tight mb-3">
@@ -1321,7 +1334,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 <RotateCcw className="w-4 h-4 text-mjs-green" />
               </div>
               <div>
-                <div className="text-xs font-bold text-mjs-gray-800">Free 30-Day Returns</div>
+                <div className="text-xs font-bold text-mjs-gray-800">{RETURNS.badge}</div>
                 <div className="text-[10px] text-mjs-blue font-semibold">Return Policy</div>
               </div>
             </div>
@@ -1719,7 +1732,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
       {/* ═══════ 5. REVIEWS — DESKTOP ONLY (mobile uses tab) ═══════ */}
       <div className="hidden md:block">
-        <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} />
+        <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} initialReviews={initialReviews} />
       </div>
 
       {/* ═══════ CLOSING: TRUST + CONTACT ═══════ */}
@@ -1737,7 +1750,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
             </div>
             <div className="flex items-center gap-2">
               <RotateCcw className="w-5 h-5 text-amber-600" />
-              <span className="text-xs font-semibold text-mjs-gray-600">30-Day Returns</span>
+              <span className="text-xs font-semibold text-mjs-gray-600">{RETURNS.badge}</span>
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-violet-600" />

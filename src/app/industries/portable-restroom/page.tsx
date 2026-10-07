@@ -3,6 +3,8 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import PortableRestroomPage from "@/components/industries/PortableRestroomPage";
+import { FEATURED_SKUS } from "@/components/industries/portable-restroom-data";
+import { fetchProductsBySkus } from "@/lib/products-api";
 import Footer from "@/components/Footer";
 
 const SITE_URL = "https://www.mobilejanitorialsupply.com";
@@ -48,14 +50,17 @@ const jsonLd = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  let initialProducts: Awaited<ReturnType<typeof fetchProductsBySkus>> = [];
+  try { initialProducts = await fetchProductsBySkus(FEATURED_SKUS); } catch (err) { console.error("[portable-restroom] product fetch failed:", err); }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <TopBar />
       <Header />
       <CategoryNav />
-      <main><PortableRestroomPage /></main>
+      <main><PortableRestroomPage initialProducts={initialProducts} /></main>
       <Footer />
     </>
   );
