@@ -19,18 +19,18 @@ export async function sendPasswordResetEmail(to: string, firstName: string, rese
 
 <tr><td style="background-color:#1a1a2e;border-radius:14px 14px 0 0;padding:28px 32px;text-align:center;">
 <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;margin-bottom:8px;">Mobile Janitorial Supply</div>
-<div style="font-size:24px;font-weight:900;color:#ffffff;line-height:1.25;">Reset your password</div>
+<div style="font-size:24px;font-weight:900;color:#ffffff;line-height:30px;">Reset your password</div>
 </td></tr>
 
 <tr><td style="background-color:#ffffff;padding:28px 32px;">
-<p style="margin:0 0 16px;font-size:14px;color:#374151;line-height:1.6;">Hi ${firstName || "there"},</p>
-<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6;">We received a request to reset the password for your account. Click the button below to choose a new one. This link works for <strong>1 hour</strong>.</p>
+<p style="margin:0 0 16px;font-size:14px;color:#374151;line-height:22px;">Hi ${firstName || "there"},</p>
+<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:22px;">We received a request to reset the password for your account. Click the button below to choose a new one. This link works for <strong>1 hour</strong>.</p>
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:4px 0 20px;">
 <a href="${resetUrl}" style="display:inline-block;background:#dc2626;color:#ffffff;font-weight:700;font-size:15px;padding:14px 40px;border-radius:8px;text-decoration:none;">Choose a New Password</a>
 </td></tr></table>
-<p style="margin:0 0 8px;font-size:12px;color:#6b7280;line-height:1.6;">If the button doesn't work, copy this link into your browser:</p>
+<p style="margin:0 0 8px;font-size:12px;color:#6b7280;line-height:19px;">If the button doesn't work, copy this link into your browser:</p>
 <p style="margin:0 0 20px;font-size:11px;color:#9ca3af;word-break:break-all;">${resetUrl}</p>
-<p style="margin:0;font-size:12px;color:#6b7280;line-height:1.6;">If you didn't request this, you can ignore this email — your password won't change. Questions? Call us at (714) 779-2640.</p>
+<p style="margin:0;font-size:12px;color:#6b7280;line-height:19px;">If you didn't request this, you can ignore this email — your password won't change. Questions? Call us at (714) 779-2640.</p>
 </td></tr>
 
 <tr><td style="background-color:#1a1a2e;border-radius:0 0 14px 14px;padding:16px 32px;text-align:center;">
@@ -74,9 +74,9 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
     </tr>
     <tr><td style="padding:34px 40px 40px 40px;">
       <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;margin-bottom:14px;">WELCOME TO THE FAMILY</div>
-      <div style="${font}font-size:62px;line-height:0.98;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Good things.<br>Fully stocked.</div>
+      <div style="${font}font-size:62px;line-height:61px;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Good things.<br>Fully stocked.</div>
       <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:26px;">Welcome, ${firstName}. Your account is ready.</div>
-      <div style="${font}font-size:16px;color:#6b7280;line-height:1.45;margin-top:6px;max-width:440px;">Wholesale pricing, order tracking, and fast reordering&mdash;all in one place.</div>
+      <div style="${font}font-size:16px;color:#6b7280;line-height:23px;margin-top:6px;max-width:440px;">Wholesale pricing, order tracking, and fast reordering&mdash;all in one place.</div>
       <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:26px;"><tr>
         <td bgcolor="#e4282f" style="border-radius:4px;"><a href="${site}/shop" style="display:inline-block;${font}font-size:18px;font-weight:700;color:#ffffff;text-decoration:none;padding:15px 30px;">Start shopping &rarr;</a></td>
       </tr></table>
@@ -94,7 +94,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
     <td style="vertical-align:middle;">
       <div style="${font}font-size:12px;font-weight:800;letter-spacing:2px;color:#e4282f;">ACCOUNT CONFIRMED</div>
-      <div style="${font}font-size:34px;font-weight:900;letter-spacing:-1px;color:#1a2340;line-height:1.05;margin-top:4px;">${firstName} ${lastName}</div>
+      <div style="${font}font-size:34px;font-weight:900;letter-spacing:-1px;color:#1a2340;line-height:36px;margin-top:4px;">${firstName} ${lastName}</div>
       <div style="${font}font-size:15px;color:#1a2340;margin-top:2px;">${email}</div>
     </td>
     <td align="right" style="vertical-align:middle;white-space:nowrap;${font}font-size:18px;font-weight:700;color:#16a34a;">&#10004;&nbsp; Active</td>
@@ -105,7 +105,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 <tr><td bgcolor="#1a2340" style="background:#1a2340;padding:34px 40px;">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
     <td width="46%" style="vertical-align:middle;border-right:1px solid #3a4461;padding-right:20px;">
-      <div style="${font}font-size:52px;line-height:0.98;font-weight:900;letter-spacing:-2px;color:#ffffff;">More than<br>supplies.</div>
+      <div style="${font}font-size:52px;line-height:51px;font-weight:900;letter-spacing:-2px;color:#ffffff;">More than<br>supplies.</div>
     </td>
     <td style="vertical-align:middle;padding-left:34px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
@@ -128,7 +128,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 
 <!-- MAKE YOURSELF AT HOME -->
 <tr><td style="padding:34px 40px 30px 40px;">
-  <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1;">Make yourself at home.</div>
+  <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:40px;">Make yourself at home.</div>
   <div style="${font}font-size:17px;color:#6b7280;margin-top:8px;">Three quick steps to get started.</div>
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:22px;"><tr>
     ${[
@@ -137,9 +137,9 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
       ["03", "Place your first order", "Explore the catalog and start saving.", ""],
     ].map(([n, t, d, link]) => `
     <td width="33%" style="vertical-align:top;padding-right:18px;">
-      <div style="${font}font-size:58px;font-weight:900;letter-spacing:-2px;color:#f6c4c6;line-height:1;">${n}</div>
+      <div style="${font}font-size:58px;font-weight:900;letter-spacing:-2px;color:#f6c4c6;line-height:58px;">${n}</div>
       <div style="${font}font-size:17px;font-weight:700;color:#1a2340;margin-top:6px;">${t}</div>
-      <div style="${font}font-size:14px;color:#6b7280;line-height:1.45;margin-top:4px;">${d}</div>
+      <div style="${font}font-size:14px;color:#6b7280;line-height:20px;margin-top:4px;">${d}</div>
       ${link ? `<div style="margin-top:14px;">${link}</div>` : ""}
     </td>`).join("")}
   </tr></table>
@@ -147,7 +147,7 @@ export async function sendWelcomeEmail(to: string, firstName: string, lastName: 
 
 <!-- TEAM -->
 <tr><td bgcolor="#f3f4f6" style="background:#f3f4f6;padding:30px 40px 28px 40px;">
-  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1;">You have a team here.</div>
+  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:38px;">You have a team here.</div>
   <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">Real people. One call away.</div>
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:18px;"><tr>
     ${[["Ryan Bergman", "ryan@mobilejanitorialsupply.com"], ["Zack Bergman", "zack@mobilejanitorialsupply.com"], ["Nick Bergman", "nick@mobilejanitorialsupply.com"]].map(([n, e], i) => `
@@ -234,7 +234,7 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
       <a href="${site}/product/${esc(it.slug)}"><img src="${esc(it.image)}" width="130" alt="${esc(it.name)}" style="display:block;width:130px;height:auto;border:0;border-radius:4px;background:#f3f4f6;"></a>
     </td>
     <td style="vertical-align:middle;padding-right:16px;">
-      <div style="${font}font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#1a2340;line-height:1.2;">${esc(it.name)}</div>
+      <div style="${font}font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#1a2340;line-height:19px;">${esc(it.name)}</div>
       ${it.detail ? `<div style="${font}font-size:13px;color:#4a6ea0;margin-top:3px;">${esc(it.detail)}</div>` : ""}
       <div style="${font}font-size:13px;color:#6b7280;margin-top:6px;">Last ordered: <span style="font-weight:800;color:#1a2340;">${esc(plural(it.qty, it.unit))}</span></div>
     </td>
@@ -260,9 +260,9 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
     <tr><td style="padding:22px 28px 0 0;text-align:right;${font}font-size:12px;font-weight:800;letter-spacing:2px;color:#ffffff;">TIME TO RESTOCK?</td></tr>
     <tr><td style="padding:14px 40px 34px 40px;">
       <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;margin-bottom:10px;">YOUR NEXT ORDER, MADE EASY</div>
-      <div style="${font}font-size:66px;line-height:0.96;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Ready for<br>a refill?</div>
-      <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:22px;max-width:430px;line-height:1.2;">Hi ${esc(d.firstName)}, how&rsquo;s your supply holding up?</div>
-      <div style="${font}font-size:16px;color:#6b7280;line-height:1.45;margin-top:6px;max-width:440px;">It&rsquo;s been ${d.daysSince} days since your last order.<br>Here&rsquo;s what you stocked up on.</div>
+      <div style="${font}font-size:66px;line-height:63px;font-weight:900;letter-spacing:-2.5px;color:#1a2340;">Ready for<br>a refill?</div>
+      <div style="${font}font-size:22px;font-weight:700;color:#1a2340;margin-top:22px;max-width:430px;line-height:26px;">Hi ${esc(d.firstName)}, how&rsquo;s your supply holding up?</div>
+      <div style="${font}font-size:16px;color:#6b7280;line-height:23px;margin-top:6px;max-width:440px;">It&rsquo;s been ${d.daysSince} days since your last order.<br>Here&rsquo;s what you stocked up on.</div>
     </td></tr>
   </table>
 </td></tr>
@@ -271,7 +271,7 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
 <tr><td style="padding:0 40px;">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#1a2340" style="background:#1a2340;"><tr>
     <td width="50%" style="padding:22px 28px;border-right:1px solid #3a4461;">
-      <div style="${font}font-size:46px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:1;">${d.daysSince} DAYS</div>
+      <div style="${font}font-size:46px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:46px;">${d.daysSince} DAYS</div>
       <div style="${font}font-size:18px;color:#ffffff;margin-top:4px;">since your last order</div>
     </td>
     <td style="padding:22px 28px;">
@@ -287,7 +287,7 @@ export function renderReplenishmentEmail(d: ReplenishmentEmailData): { subject: 
 
 <!-- LAST ORDER -->
 <tr><td style="padding:30px 40px 6px 40px;">
-  <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1;">Your last order.</div>
+  <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:40px;">Your last order.</div>
   <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">A familiar lineup. Ready when you are.</div>
 </td></tr>
 ${itemRows}
@@ -295,7 +295,7 @@ ${itemRows}
 <!-- KEEP STOCKED -->
 <tr><td style="height:14px;line-height:14px;font-size:0;">&nbsp;</td></tr>
 <tr><td bgcolor="#1a2340" style="background:#1a2340;padding:32px 40px;">
-  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:1;">Keep your business stocked.</div>
+  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#ffffff;line-height:38px;">Keep your business stocked.</div>
   <div style="${font}font-size:17px;color:#ffffff;margin-top:8px;">Bring your previous items into a new order and update what you need.</div>
   <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:18px;"><tr>
     <td bgcolor="#e4282f" style="border-radius:3px;"><a href="${d.reorderUrl}" style="display:inline-block;${font}font-size:18px;font-weight:700;color:#ffffff;text-decoration:none;padding:12px 30px;">Review &amp; reorder &rarr;</a></td>
@@ -305,7 +305,7 @@ ${itemRows}
 
 <!-- NEED A HAND -->
 <tr><td style="padding:26px 40px 18px 40px;">
-  <div style="${font}font-size:34px;font-weight:900;letter-spacing:-1.2px;color:#1a2340;line-height:1;">Need a hand with your next order?</div>
+  <div style="${font}font-size:34px;font-weight:900;letter-spacing:-1.2px;color:#1a2340;line-height:34px;">Need a hand with your next order?</div>
   <div style="${font}font-size:17px;color:#6b7280;margin-top:6px;">Your team is one call away.</div>
 </td></tr>
 <tr><td bgcolor="#e4282f" style="background:#e4282f;padding:16px 40px;">
@@ -364,9 +364,9 @@ export function renderReviewRequestEmail(d: ReviewRequestEmailData): { subject: 
 <!-- INTRO -->
 <tr><td align="center" style="padding:34px 40px 30px 40px;text-align:center;">
   <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;">THANK YOU FOR YOUR ORDER</div>
-  <div style="${font}font-size:62px;line-height:1;font-weight:900;letter-spacing:-2.5px;color:#1a2340;margin-top:14px;">How did we do?</div>
+  <div style="${font}font-size:62px;line-height:62px;font-weight:900;letter-spacing:-2.5px;color:#1a2340;margin-top:14px;">How did we do?</div>
   <div style="${font}font-size:24px;font-weight:800;color:#1a2340;margin-top:18px;">Hi ${esc(d.firstName)},</div>
-  <div style="${font}font-size:18px;color:#374151;line-height:1.5;margin-top:8px;">Thanks for choosing Mobile Janitorial Supply.<br>We&rsquo;d love to hear about your recent experience.</div>
+  <div style="${font}font-size:18px;color:#374151;line-height:27px;margin-top:8px;">Thanks for choosing Mobile Janitorial Supply.<br>We&rsquo;d love to hear about your recent experience.</div>
 </td></tr>
 
 <!-- GOOGLE CARD on navy band -->
@@ -374,9 +374,9 @@ export function renderReviewRequestEmail(d: ReviewRequestEmailData): { subject: 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#ffffff" style="background:#ffffff;border-radius:10px;">
     <tr><td align="center" style="padding:36px 36px 34px 36px;text-align:center;">
       <img src="${site}/images/email-google-logo.png" width="240" alt="Google" style="display:block;width:240px;height:auto;border:0;margin:0 auto;">
-      <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1.05;margin-top:16px;">Your experience matters.</div>
+      <div style="${font}font-size:40px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:42px;margin-top:16px;">Your experience matters.</div>
       <img src="${site}/images/email-review-stars.png" width="376" alt="" style="display:block;width:376px;max-width:100%;height:auto;border:0;margin:18px auto 0 auto;">
-      <div style="${font}font-size:18px;color:#374151;line-height:1.45;margin-top:16px;">Share an honest review and help other local<br>businesses get to know us.</div>
+      <div style="${font}font-size:18px;color:#374151;line-height:26px;margin-top:16px;">Share an honest review and help other local<br>businesses get to know us.</div>
       <table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:22px auto 0 auto;"><tr>
         <td bgcolor="#e4282f" style="border-radius:6px;"><a href="${esc(d.reviewUrl)}" style="display:inline-block;${font}font-size:20px;font-weight:800;color:#ffffff;text-decoration:none;padding:16px 34px;">Write a Google review &rarr;</a></td>
       </tr></table>
@@ -388,8 +388,8 @@ export function renderReviewRequestEmail(d: ReviewRequestEmailData): { subject: 
 <!-- FAMILY NOTE -->
 <tr><td style="padding:30px 40px 0 40px;">
   <div style="${font}font-size:13px;font-weight:800;letter-spacing:2.5px;color:#e4282f;">FROM OUR FAMILY TO YOUR BUSINESS</div>
-  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:1.05;margin-top:10px;">Thanks for being part of our story.</div>
-  <div style="${font}font-size:18px;color:#374151;line-height:1.45;margin-top:10px;">Your feedback helps our family business improve<br>and means a great deal to our team.</div>
+  <div style="${font}font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#1a2340;line-height:40px;margin-top:10px;">Thanks for being part of our story.</div>
+  <div style="${font}font-size:18px;color:#374151;line-height:26px;margin-top:10px;">Your feedback helps our family business improve<br>and means a great deal to our team.</div>
   <div style="${font}font-size:18px;font-style:italic;color:#1a2340;margin-top:12px;">&mdash; Ryan, Zack &amp; Nick</div>
 </td></tr>
 
