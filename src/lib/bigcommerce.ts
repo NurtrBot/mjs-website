@@ -422,6 +422,27 @@ export async function addConsignment(cartId: string, address: ShippingAddress, l
   return res.data;
 }
 
+/**
+ * Re-read a checkout's consignments with their shipping options.
+ *
+ * Delivery rates for California come from ShipperHQ, layered over the native
+ * zone — which on its own offers only in-store pickup. When ShipperHQ is slow
+ * or errors, the consignment comes back carrying pickup alone, and a delivery
+ * order would otherwise be filed as a store pickup. Re-reading gives those
+ * rates a second chance before the checkout gives up.
+ */
+export async function refetchShippingOptions(cartId: string) {
+  // Deliberately not bcFetch: that caches for 300s, so a retry would be handed
+  // the same rate-less response it is trying to get past.
+  const res = await fetch(
+    `${BASE_URL}/checkouts/${cartId}?include=consignments.available_shipping_options`,
+    { headers: AUTH_HEADERS, cache: "no-store" }
+  );
+  if (!res.ok) throw new Error(`BigCommerce API error: ${res.status} ${res.statusText}`);
+  const json = await res.json();
+  return json.data;
+}
+
 /* ── Step 3b: Apply Coupon Code to Checkout ── */
 export async function applyCouponToCheckout(cartId: string, couponCode: string) {
   try {

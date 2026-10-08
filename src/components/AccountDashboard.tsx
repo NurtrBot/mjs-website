@@ -290,7 +290,8 @@ export default function AccountDashboard() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [orderStep, setOrderStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("bill");
-  const [fulfillment, setFulfillment] = useState("");
+  // Orders are shipped unless the customer says otherwise, so delivery starts selected
+  const [fulfillment, setFulfillment] = useState("delivery");
   const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
   const [customShipTo, setCustomShipTo] = useState({ name: "", address: "", city: "", state: "", zip: "" });
   const [editBillTo, setEditBillTo] = useState(false);
@@ -639,8 +640,10 @@ export default function AccountDashboard() {
   const openOrderModal = () => {
     setOrderStep(1);
     setPaymentMethod("bill");
-    setFulfillment("");
-    setSelectedAddress(null);
+    // Default to delivery with the first saved address already chosen; picking
+    // "Will Call" is an explicit choice the customer makes, never a fallback.
+    setFulfillment("delivery");
+    setSelectedAddress(addresses.length > 0 ? addresses[0].id : null);
     setShowOrderModal(true);
   };
 

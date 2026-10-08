@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createCart,
   addConsignment,
+  refetchShippingOptions,
   selectShippingOption,
   setBillingAddress,
   createOrderFromCheckout,
@@ -17,7 +18,8 @@ import {
   updateOrder,
   type ShippingAddress,
 } from "@/lib/bigcommerce";
-import { getFreeDeliveryMinimum, isExtendedMinimumZip } from "@/lib/delivery-zones";
+import { getFreeDeliveryMinimum } from "@/lib/delivery-zones";
+import { chooseShippingOption, hasDeliveryRate } from "@/lib/shipping-selection";
 
 /*
   Full order pipeline:
@@ -252,9 +254,31 @@ export async function POST(req: NextRequest) {
     }));
 
     const checkoutWithConsignment = await addConsignment(cartId, shipAddr, physicalItems);
-    const consignment = checkoutWithConsignment.consignments?.[0];
+    let consignment = checkoutWithConsignment.consignments?.[0];
     if (!consignment) {
       return NextResponse.json({ error: "Failed to create shipping consignment" }, { status: 500 });
+    }
+
+    // California delivery rates come from ShipperHQ on top of the native zone, which
+    // by itself offers only in-store pickup. A slow or failed ShipperHQ call therefore
+    // looks exactly like "this address can only be picked up" — so for a delivery order
+    // that came back pickup-only, read the rates again before trusting that.
+    if (fulfillment === "delivery" && !hasDeliveryRate(consignment?.available_shipping_options)) {
+      for (let attempt = 1; attempt <= 2 && !hasDeliveryRate(consignment?.available_shipping_options); attempt++) {
+        await new Promise((r) => setTimeout(r, 1200 * attempt));
+        try {
+          const retried = await refetchShippingOptions(cartId);
+          const fresh = retried?.consignments?.[0];
+          if (fresh) consignment = fresh;
+        } catch {
+          // keep whatever we already have and fall through to the check below
+        }
+      }
+      if (!hasDeliveryRate(consignment?.available_shipping_options)) {
+        console.error(
+          `[ORDER] No delivery rate after retries for ${shippingAddress.city} ${shippingAddress.zip} — ShipperHQ returned pickup only`
+        );
+      }
     }
 
     // 5. Determine if order qualifies for free local delivery
@@ -268,26 +292,19 @@ export async function POST(req: NextRequest) {
 
     // 6. Select shipping option
     const shippingOptions = consignment.available_shipping_options || [];
-    let selectedOption;
-
-    if (fulfillment === "pickup") {
-      selectedOption = shippingOptions.find((o: { type: string }) => o.type === "pickupinstore" || o.type === "pickup");
-      if (!selectedOption) selectedOption = shippingOptions.find((o: { description: string }) => o.description.toLowerCase().includes("pick up"));
-    } else {
-      const deliveryOptions = shippingOptions.filter((o: { type: string }) => o.type !== "pickupinstore" && o.type !== "pickup");
-      // $699-minimum zips pay the UPS rate when under the minimum, not a local delivery rate
-      const cartSubtotalBeforeTax = Number(checkoutWithConsignment.subtotal_ex_tax) || 0;
-      const underExtendedMinimum =
-        isExtendedMinimumZip(shippingAddress.zip || "") && freeDeliveryMinimum !== null && cartSubtotalBeforeTax < freeDeliveryMinimum;
-      const upsOptions = deliveryOptions.filter((o: { description: string }) => /ups/i.test(o.description || ""));
-      const eligibleOptions = underExtendedMinimum && upsOptions.length > 0 ? upsOptions : deliveryOptions;
-      selectedOption = eligibleOptions.sort((a: { cost: number }, b: { cost: number }) => a.cost - b.cost)[0];
-    }
-
-    if (!selectedOption) selectedOption = shippingOptions[0];
+    const { option: selectedOption, error: selectionError } = chooseShippingOption({
+      options: shippingOptions,
+      fulfillment,
+      zip: shippingAddress.zip || "",
+      subtotalExTax: Number(checkoutWithConsignment.subtotal_ex_tax) || 0,
+    });
 
     if (!selectedOption) {
-      return NextResponse.json({ error: "No shipping options available for this address" }, { status: 400 });
+      console.error(
+        `[ORDER] No ${fulfillment} option for ${shippingAddress.city} ${shippingAddress.zip}; carrier offered:`,
+        shippingOptions.map((o: { type?: string; description?: string }) => `${o.type}:${o.description}`)
+      );
+      return NextResponse.json({ error: selectionError }, { status: 400 });
     }
 
     await selectShippingOption(cartId, String(consignment.id), selectedOption.id);
