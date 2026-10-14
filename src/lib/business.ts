@@ -43,8 +43,8 @@ export const yearsInBusinessClaim = () => `${Math.floor(yearsInBusiness() / 5) *
 /* ── Delivery ── */
 export const DELIVERY = {
   localMinimum: LOCAL_FREE_DELIVERY_MINIMUM,      // OC, LA, Inland Empire
-  extendedMinimum: EXTENDED_FREE_DELIVERY_MINIMUM, // San Diego County + zips 92404, 92880
-  extendedZips: ["92404", "92880"],
+  extendedMinimum: EXTENDED_FREE_DELIVERY_MINIMUM, // San Diego County + the zips below
+  extendedZips: ["92404", "92880", "91352"],
   leadTime: "1–3 business days",
   localZones: "Orange County, Los Angeles County and the Inland Empire",
   extendedZones: "San Diego County",
@@ -53,6 +53,13 @@ export const DELIVERY = {
   minimumBasis: "Minimums are on the order subtotal before tax.",
   fuelSurcharge: "A fuel surcharge may apply to local deliveries when fuel prices are elevated.",
 } as const;
+
+// Reads as "92404 and 92880" at two, "92404, 92880 and 91352" at three — so copy
+// stays correct as the list grows instead of each page spelling the zips out.
+export const extendedZipsLabel =
+  DELIVERY.extendedZips.length > 1
+    ? `${DELIVERY.extendedZips.slice(0, -1).join(", ")} and ${DELIVERY.extendedZips[DELIVERY.extendedZips.length - 1]}`
+    : DELIVERY.extendedZips[0] ?? "";
 
 // Short banner line used in the top bar / hero
 export const DELIVERY_BANNER = `FREE 1–3 Day Delivery on Subtotals $${DELIVERY.localMinimum}+ (OC · LA · IE) · $${DELIVERY.extendedMinimum}+ San Diego`;

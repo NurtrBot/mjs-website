@@ -1,4 +1,4 @@
-import { BUSINESS, DELIVERY, RETURNS, PAYMENT, GOOGLE_REVIEWS, yearsInBusinessClaim } from "@/lib/business";
+import { BUSINESS, DELIVERY, RETURNS, PAYMENT, GOOGLE_REVIEWS, yearsInBusinessClaim, extendedZipsLabel } from "@/lib/business";
 import { SITE_CATEGORY_NAMES } from "@/lib/category-map";
 import { getQuickFilters, filterSlug } from "@/lib/category-filters";
 
@@ -35,7 +35,7 @@ Phone: ${BUSINESS.phone} · Email: ${BUSINESS.email} · Hours: ${BUSINESS.hours}
 ## Delivery and shipping
 
 - Free local delivery (${DELIVERY.leadTime}) on subtotals of $${DELIVERY.localMinimum}+ to ${DELIVERY.localZones}.
-- Free delivery on subtotals of $${DELIVERY.extendedMinimum}+ to ${DELIVERY.extendedZones} and to zip codes ${DELIVERY.extendedZips.join(" and ")}.
+- Free delivery on subtotals of $${DELIVERY.extendedMinimum}+ to ${DELIVERY.extendedZones} and to zip codes ${extendedZipsLabel}.
 - ${DELIVERY.minimumBasis}
 - ${DELIVERY.underMinimum}
 - ${DELIVERY.outsideArea}

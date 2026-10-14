@@ -8,8 +8,9 @@ const SD_ZIPS = ["919", "930", "931", "932", "933", "934", "935"];
 export const LOCAL_FREE_DELIVERY_MINIMUM = 399;
 export const EXTENDED_FREE_DELIVERY_MINIMUM = 699;
 
-// Zips inside a local zone that require the higher free-delivery minimum
-const EXTENDED_MINIMUM_ZIPS = ["92404", "92880"];
+// Zips inside a local zone that require the higher free-delivery minimum.
+// 91352 is Sun Valley: an LA-prefix zip, but far enough out to bill at $699.
+const EXTENDED_MINIMUM_ZIPS = ["92404", "92880", "91352"];
 
 export function getDeliveryZone(zip: string): DeliveryZone {
   const prefix = (zip || "").trim().slice(0, 3);

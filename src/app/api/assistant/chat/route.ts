@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { searchProducts } from "@/lib/products-api";
+import { DELIVERY, extendedZipsLabel } from "@/lib/business";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
@@ -20,7 +21,7 @@ const SYSTEM_PROMPT = `You are the MJS Supply Advisor — a friendly, knowledgea
 
 ═══ DELIVERY & SHIPPING ═══
 - Service areas: Orange County, Los Angeles, Riverside, San Bernardino, San Diego, and surrounding counties. We also ship out of state via UPS Ground.
-- Free delivery minimums: OC, LA, Inland Empire = $399. San Diego = $699. Exception: zip codes 92404 and 92880 = $699.
+- Free delivery minimums: OC, LA, Inland Empire = $${DELIVERY.localMinimum}. San Diego = $${DELIVERY.extendedMinimum}. Exception: zip codes ${extendedZipsLabel} = $${DELIVERY.extendedMinimum}.
 - Delivery time: 1–3 business days for local. UPS Ground for out-of-area.
 - MJS does NOT offer same-day delivery. Never say we do.
 - Fuel surcharge: If CA diesel exceeds $5.00/gal, a $6.95 fuel surcharge applies per delivery.
@@ -149,7 +150,7 @@ COMPANY INFO:
 - Location: 3066 E. La Palma Ave., Anaheim, CA 92806
 - Phone: (714) 779-2640
 - Hours: Mon-Fri 6:30 AM – 3:00 PM
-- Delivery: Free on subtotals $399+ (before tax) to OC, LA, Inland Empire ($699+ for San Diego and zip codes 92404 and 92880). Under the minimum ships UPS Ground at the live rate. 1-3 business days local.
+- Delivery: Free on subtotals $${DELIVERY.localMinimum}+ (before tax) to OC, LA, Inland Empire ($${DELIVERY.extendedMinimum}+ for San Diego and zip codes ${extendedZipsLabel}). Under the minimum ships UPS Ground at the live rate. 1-3 business days local.
 - Payment: Net-30 billing for qualified accounts, credit card, or cash on pickup
 - Returns: within 7 days of receipt; 15% restocking charge on customer-error returns
 - MJS does NOT offer same-day delivery.
