@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { MapPin, Phone, Mail, Send, CheckCircle, FileText, Truck, DollarSign } from "lucide-react";
 import { trackContactForm } from "@/lib/analytics";
@@ -17,9 +17,13 @@ export default function QuotePage() {
 
   const submitted = formState.succeeded;
 
+  // Count the lead once, only after Formspree confirms the submission
+  useEffect(() => {
+    if (submitted) trackContactForm("quote");
+  }, [submitted]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     handleFormspree(e);
-    trackContactForm("quote");
   };
 
   const inputClass =

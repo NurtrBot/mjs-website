@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
 import { trackContactForm } from "@/lib/analytics";
@@ -16,9 +16,13 @@ export default function ContactPage() {
 
   const submitted = formState.succeeded;
 
+  // Count the lead once, only after Formspree confirms the submission
+  useEffect(() => {
+    if (submitted) trackContactForm("contact");
+  }, [submitted]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     handleFormspree(e);
-    trackContactForm("contact");
   };
 
   const inputClass =

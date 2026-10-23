@@ -175,11 +175,6 @@ export default function RootLayout({
                 gtag('event', 'email_click', { email: m.getAttribute('href').replace('mailto:', '') });
               }
             });
-            document.addEventListener('submit', function (e) {
-              if (typeof gtag === 'function') {
-                gtag('event', 'generate_lead', { form_id: e.target.id || e.target.getAttribute('name') || 'form' });
-              }
-            }, true);
           `}
         </Script>
         <Script id="microsoft-clarity" strategy="afterInteractive">
