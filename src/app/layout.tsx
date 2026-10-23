@@ -160,6 +160,28 @@ export default function RootLayout({
             });
           `}
         </Script>
+        <Script id="ga4-click-tracking" strategy="afterInteractive">
+          {`
+            document.addEventListener('click', function (e) {
+              var a = e.target.closest('a[href^="tel:"]');
+              if (a && typeof gtag === 'function') {
+                gtag('event', 'phone_click', {
+                  phone_number: a.getAttribute('href').replace('tel:', ''),
+                  link_text: (a.innerText || '').trim()
+                });
+              }
+              var m = e.target.closest('a[href^="mailto:"]');
+              if (m && typeof gtag === 'function') {
+                gtag('event', 'email_click', { email: m.getAttribute('href').replace('mailto:', '') });
+              }
+            });
+            document.addEventListener('submit', function (e) {
+              if (typeof gtag === 'function') {
+                gtag('event', 'generate_lead', { form_id: e.target.id || e.target.getAttribute('name') || 'form' });
+              }
+            }, true);
+          `}
+        </Script>
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
