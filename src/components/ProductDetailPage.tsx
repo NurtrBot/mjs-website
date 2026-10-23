@@ -37,7 +37,7 @@ import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
-import { trackViewProduct, trackAddToCart } from "@/lib/analytics";
+import { trackViewProduct } from "@/lib/analytics";
 import { RETURNS } from "@/lib/business";
 import { getCategorySlug } from "@/data/products";
 import { findFilterForSubcategory, filterSlug } from "@/lib/category-filters";
@@ -509,8 +509,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
             price: unitPrice,
             image: product.images[0],
             pack: product.pack,
-          }, qty);
-          trackAddToCart({ sku: product.sku, name: product.name, price: unitPrice, quantity: qty, category: product.category, brand: product.brand });
+          }, qty, product.category);
 
           // Track upsell shown
           try {
@@ -556,8 +555,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
       price: unitPrice,
       image: product.images[0],
       pack: product.pack,
-    }, qty);
-    trackAddToCart({ sku: product.sku, name: product.name, price: unitPrice, quantity: qty, category: product.category, brand: product.brand });
+    }, qty, product.category);
   };
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);

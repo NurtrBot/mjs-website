@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { trackAddToCart } from "@/lib/analytics";
 import { SALE_CONFIG, isSaleActive, getDaysRemaining } from "@/lib/active-sale";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
@@ -77,8 +76,7 @@ export default function SalePage() {
     addItem({
       slug: item.slug, sku: item.sku, name: item.name,
       brand: "", price: item.salePrice, image: item.image, pack: "Each",
-    }, 1);
-    trackAddToCart({ sku: item.sku, name: item.name, price: item.salePrice, quantity: 1, category: "Sale", brand: "" });
+    }, 1, "Sale");
     setAddedSkus((prev) => new Set(prev).add(item.sku));
     setTimeout(() => setAddedSkus((prev) => { const n = new Set(prev); n.delete(item.sku); return n; }), 2000);
   };

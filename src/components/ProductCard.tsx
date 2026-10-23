@@ -6,7 +6,6 @@ import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
-import { trackAddToCart } from "@/lib/analytics";
 import { getTierPrice } from "@/lib/tier-pricing";
 import ProductImage from "@/components/ProductImage";
 
@@ -43,8 +42,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
       price: tierPrice,
       image: product.images[0],
       pack: product.pack,
-    }, qty);
-    trackAddToCart({ sku: product.sku, name: product.cardTitle, price: tierPrice, quantity: qty, category: product.category, brand: product.brand });
+    }, qty, product.category);
     setQty(1);
   };
 

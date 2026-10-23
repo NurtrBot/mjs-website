@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { trackAddToCart } from "@/lib/analytics";
 
 /* ── Types ── */
 interface ChatProduct {
@@ -118,8 +117,7 @@ function InlineProductCard({ product }: { product: ChatProduct }) {
     addItem({
       slug: product.slug, sku: product.sku, name: product.cardTitle,
       brand: product.brand, price: product.price, image: product.image, pack: product.pack,
-    }, 1);
-    trackAddToCart({ sku: product.sku, name: product.cardTitle, price: product.price, quantity: 1, category: product.category || "", brand: product.brand });
+    }, 1, product.category || "");
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

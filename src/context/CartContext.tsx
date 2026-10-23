@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { CheckCircle, ShoppingCart } from "lucide-react";
+import { trackAddToCart } from "@/lib/analytics";
 
 export interface CartItem {
   slug: string;
@@ -29,7 +30,7 @@ interface CartContextType {
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
-  addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
+  addItem: (item: Omit<CartItem, "qty">, qty?: number, category?: string) => void;
   updateQty: (slug: string, qty: number, variantLabel?: string) => void;
   removeItem: (slug: string, variantLabel?: string) => void;
   clearCart: () => void;
@@ -95,7 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const toggleCart = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const addItem = useCallback(
-    (item: Omit<CartItem, "qty">, qty = 1) => {
+    (item: Omit<CartItem, "qty">, qty = 1, category?: string) => {
       setItems((prev) => {
         const matchKey = (i: CartItem) => i.slug === item.slug && (i.variantLabel || "") === (item.variantLabel || "");
         const existing = prev.find(matchKey);
@@ -107,6 +108,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return [...prev, { ...item, qty }];
       });
       setToast({ name: item.name, image: item.image, id: Date.now() });
+      // Every add-to-cart in the site goes through here, so GA4 sees them all
+      trackAddToCart({ sku: item.sku || "", name: item.name, price: item.price, quantity: qty, category, brand: item.brand });
     },
     []
   );

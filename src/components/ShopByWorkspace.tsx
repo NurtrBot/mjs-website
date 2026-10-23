@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { X, Loader2, ArrowRight, Minus, Plus, ShoppingCart, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { trackAddToCart } from "@/lib/analytics";
 import { getTierPrice } from "@/lib/tier-pricing";
 import ProductCard from "@/components/ProductCard";
 import type { ProductData } from "@/data/products";
@@ -133,8 +132,7 @@ export default function ShopByWorkspace() {
       price: tierPrice,
       image: product.images[0],
       pack: product.pack,
-    }, qty);
-    trackAddToCart({ sku: product.sku, name: product.cardTitle, price: tierPrice, quantity: qty, category: product.category, brand: product.brand });
+    }, qty, product.category);
     setAddedSkus((prev) => new Set(prev).add(product.sku));
     setTimeout(() => setAddedSkus((prev) => { const next = new Set(prev); next.delete(product.sku); return next; }), 1800);
   };

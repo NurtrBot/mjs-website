@@ -7,7 +7,6 @@ import { getTierPrice } from "@/lib/tier-pricing";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
-import { trackAddToCart } from "@/lib/analytics";
 
 function getProductFamily(name: string): string {
   return name.toLowerCase()
@@ -67,7 +66,7 @@ function ShipCard({ product }: { product: ProductData }) {
             </button>
           </div>
           <button
-            onClick={() => { const tp = getTierPrice(product, qty); addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: tp, image: product.images[0], pack: product.pack }, qty); trackAddToCart({ sku: product.sku, name: product.cardTitle, price: tp, quantity: qty, brand: product.brand }); setQty(1); }}
+            onClick={() => { const tp = getTierPrice(product, qty); addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: tp, image: product.images[0], pack: product.pack }, qty); setQty(1); }}
             className="flex-1 bg-white border border-mjs-red text-mjs-red font-semibold py-1.5 rounded-lg text-[10px] hover:bg-mjs-red hover:text-white transition-all flex items-center justify-center gap-1"
           >
             <ShoppingCart className="w-3 h-3" />

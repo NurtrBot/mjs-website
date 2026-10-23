@@ -1330,6 +1330,8 @@ export default function CheckoutPage() {
                       orderShipping,
                       items.map(i => ({ sku: i.sku || "", name: i.name, price: i.price, quantity: i.qty }))
                     );
+                    // Tell the confirmation page this order is already tracked so it doesn't send it again
+                    try { sessionStorage.setItem(`mjs_purchase_fired_${data.orderNumber}`, "1"); } catch {}
 
                     // Success — clear cart and redirect
                     clearCart();
