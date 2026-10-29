@@ -106,6 +106,12 @@ export function trackPurchase(orderId: string, total: number, tax: number, shipp
       quantity: i.quantity,
     })),
   });
+  // Google Ads purchase conversion (event name from the Ads conversion setup)
+  gtag("event", "conversion_event_purchase", {
+    transaction_id: orderId,
+    value: total,
+    currency: "USD",
+  });
   oaiq("measure", "purchase", {
     type: "purchase",
     value: total,
