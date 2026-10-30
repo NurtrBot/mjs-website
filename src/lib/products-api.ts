@@ -137,13 +137,13 @@ export async function loadBrandMap(): Promise<void> {
 
 /**
  * True when the BigCommerce price is for one item rather than a case:
- * uom_individual "EA", or a duster (all of ours are sold individually; subcategory
- * can be "Dusters" or e.g. "Lambswool dusters").
+ * uom_individual "EA", or a duster (all of ours are sold individually; matched on
+ * subcategory, e.g. "Lambswool dusters", or name, since CWB01 is filed under "General").
  * Used to label Quick Select tiles "Each" / "12+ Each" instead of "1 Case".
  */
 export function isSoldSingly(bc: BCProduct, subcategory: string): boolean {
   const uomIndividual = bc.custom_fields?.find(f => f.name === "uom_individual")?.value.trim().toUpperCase();
-  return uomIndividual === "EA" || subcategory.toLowerCase().includes("duster");
+  return uomIndividual === "EA" || /duster/i.test(subcategory) || /duster/i.test(bc.name);
 }
 
 function transformProduct(bc: BCProduct): ProductData {

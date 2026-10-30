@@ -575,7 +575,7 @@ export const products: ProductData[] = [
 
 // Dusters are sold individually; the synced data labels their tiers "1 Case"
 const allProducts = [...products, ...importedProducts].map((p) =>
-  /duster/i.test(p.subcategory || "") ? { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) } : p
+  /duster/i.test(p.subcategory || "") || /duster/i.test(p.name) ? { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) } : p
 );
 
 export function getProductBySlug(slug: string): ProductData | undefined {
