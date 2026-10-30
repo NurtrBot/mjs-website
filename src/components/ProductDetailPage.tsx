@@ -685,7 +685,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
 
   // "Price each" / "Price per case" / "Price per gallon", matching the first Quick Select tile
   const baseTierLabel = product.quickBuy[0]?.label || "";
-  const priceUnitText = baseTierLabel === "Single"
+  const priceUnitText = baseTierLabel === "Each"
     ? "Price each"
     : /^1 [A-Za-z]+$/.test(baseTierLabel) ? `Price per ${baseTierLabel.slice(2).toLowerCase()}` : "Price per carton";
   const mobileSubtotal = Math.round(currentTierPrice * qty * 100) / 100;

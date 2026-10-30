@@ -137,12 +137,13 @@ export async function loadBrandMap(): Promise<void> {
 
 /**
  * True when the BigCommerce price is for one item rather than a case:
- * uom_individual "EA", or a duster (all of ours are sold individually).
- * Used to label Quick Select tiles "Single" / "12+ Units" instead of "1 Case".
+ * uom_individual "EA", or a duster (all of ours are sold individually; subcategory
+ * can be "Dusters" or e.g. "Lambswool dusters").
+ * Used to label Quick Select tiles "Each" / "12+ Each" instead of "1 Case".
  */
 export function isSoldSingly(bc: BCProduct, subcategory: string): boolean {
   const uomIndividual = bc.custom_fields?.find(f => f.name === "uom_individual")?.value.trim().toUpperCase();
-  return uomIndividual === "EA" || subcategory.toLowerCase() === "dusters";
+  return uomIndividual === "EA" || subcategory.toLowerCase().includes("duster");
 }
 
 function transformProduct(bc: BCProduct): ProductData {
@@ -283,7 +284,7 @@ function transformProduct(bc: BCProduct): ProductData {
       const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bc, subcategory);
       const plural = unit === "Box" ? "Boxes" : unit + "s";
       const tiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
-        { label: soldSingly ? "Single" : `1 ${unit}`, qty: 1, unitPrice: basePrice },
+        { label: soldSingly ? "Each" : `1 ${unit}`, qty: 1, unitPrice: basePrice },
       ];
       const rules = (bc as unknown as Record<string, unknown>).bulk_pricing_rules as { quantity_min: number; type: string; amount: number }[] | undefined;
       if (rules && Array.isArray(rules) && rules.length > 0) {
@@ -296,10 +297,10 @@ function transformProduct(bc: BCProduct): ProductData {
           tierPrice = Math.round(tierPrice * 100) / 100;
           const savings = Math.round((basePrice - tierPrice) * 100) / 100;
           tiers.push({
-            label: soldSingly ? `${rule.quantity_min}+ Units` : `${rule.quantity_min}+ ${plural}`,
+            label: soldSingly ? `${rule.quantity_min}+ Each` : `${rule.quantity_min}+ ${plural}`,
             qty: rule.quantity_min,
             unitPrice: tierPrice,
-            ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "unit" : unit.toLowerCase()}` } : {}),
+            ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "each" : unit.toLowerCase()}` } : {}),
           });
         }
       }

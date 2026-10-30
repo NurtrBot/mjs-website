@@ -221,7 +221,7 @@ export async function GET(req: NextRequest) {
 
           const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bestMatch, product.subcategory || "");
           const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
-            { label: soldSingly ? "Single" : `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
+            { label: soldSingly ? "Each" : `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
           ];
           const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
           for (const rule of sorted) {
@@ -236,10 +236,10 @@ export async function GET(req: NextRequest) {
             tierPrice = Math.round(tierPrice * 100) / 100;
             const savings = Math.round((basePrice - tierPrice) * 100) / 100;
             liveTiers.push({
-              label: soldSingly ? `${rule.quantity_min}+ Units` : `${rule.quantity_min}+ ${unit === "Box" ? "Boxes" : unit + "s"}`,
+              label: soldSingly ? `${rule.quantity_min}+ Each` : `${rule.quantity_min}+ ${unit === "Box" ? "Boxes" : unit + "s"}`,
               qty: rule.quantity_min,
               unitPrice: tierPrice,
-              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "unit" : unit.toLowerCase()}` } : {}),
+              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "each" : unit.toLowerCase()}` } : {}),
             });
           }
           product.quickBuy = liveTiers;
