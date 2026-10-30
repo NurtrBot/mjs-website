@@ -275,7 +275,8 @@ function transformProduct(bc: BCProduct): ProductData {
       const subLow = subcategory.toLowerCase();
       let unit = "Case";
       if (subLow.includes("liner") || subLow.includes("trash") || nameLow.includes("can liner") || nameLow.includes("trash bag")) unit = "Case";
-      else if (subLow.includes("glove") || nameLow.includes("glove")) unit = "Box";
+      // Gloves are priced per box, except the ones priced per case ("50/Bx, 10/Carton", 1243)
+      else if ((subLow.includes("glove") || nameLow.includes("glove")) && !nameLow.includes("dispenser")) unit = /\d+\s*\/\s*(carton|case|cs)\b/.test(nameLow) ? "Case" : "Box";
       else if (nameLow.includes("32 oz") || nameLow.includes("32oz") || /\bquarts?\b/.test(nameLow) || nameLow.includes("qt.") || nameLow.includes("qt ")) unit = "Quart";
       else if (nameLow.includes("gallon") || nameLow.includes("gal ") || nameLow.includes("gal.") || nameLow.includes("1 gal") || nameLow.includes(", gal")) unit = "Gallon";
       else if (subLow.includes("vacuum") || subLow.includes("machine") || subLow.includes("dispenser")) unit = "Unit";

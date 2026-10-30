@@ -15,6 +15,10 @@ export interface CaseBreakdown {
   unit: string;
   /** Pieces in each unit, e.g. 250 towels per pack (shown as "16 packs × 250") */
   each?: number;
+  /** Boxes in a case, for products priced per box (gloves) — lets tiles say "10+ Boxes (1 Case)" */
+  boxesPerCase?: number;
+  /** Shown under the price, e.g. "10 boxes (1,000 gloves) per case" */
+  caseNote?: string;
 }
 
 const UNIT_WORDS: Record<string, string> = {
@@ -34,6 +38,28 @@ const KNOWN_PACKS: Record<string, CaseBreakdown> = {
   "202310PLT": { count: 400, unit: "ream", each: 500 },  // same, "40 Cartons Per Pallet"
 };
 
+/**
+ * Disposable gloves: priced per box of 100 (or 50), 10 boxes per case.
+ * Every glove we carry is 10 boxes/case (BigCommerce descriptions "10 boxes per case" and
+ * uom "10/100"); 1243 is the one priced per case ("50/Bx, 10/Carton").
+ * Returns undefined for non-gloves so other rules can run.
+ */
+function getGloveBreakdown(product: { name: string; description?: string }): CaseBreakdown | null | undefined {
+  if (!/glove/i.test(product.name)) return undefined;
+  // Glove washers/sleeves (window tools), dispensers and cut-resistant work gloves aren't boxed gloves
+  if (/washer|sleeve|dispenser|holder|cut resistant/i.test(product.name)) return null;
+  const perBoxMatch = product.name.match(/\b(\d+)\s*(?:\/|per)\s*(?:bx|box)\b/i);
+  if (!perBoxMatch) return null;
+  const perBox = parseInt(perBoxMatch[1], 10);
+  const caseCount = product.name.match(/\b(\d+)\s*\/\s*(?:carton|case|cs)\b/i);
+  const descBoxes = (product.description || "").match(/\b(\d+)\s*boxes\s*(?:\/|per)\s*case\b/i);
+  const boxesPerCase = caseCount ? parseInt(caseCount[1], 10) : descBoxes ? parseInt(descBoxes[1], 10) : 10;
+  const caseNote = `${boxesPerCase} boxes (${(boxesPerCase * perBox).toLocaleString()} gloves) per case`;
+  // Priced per case (1243): break the case into boxes
+  if (caseCount) return { count: boxesPerCase, unit: "box", each: perBox, caseNote };
+  return { count: perBox, unit: "glove", boxesPerCase, caseNote };
+}
+
 const PAPER_NAME = /multi-?fold|single-?fold|c-?fold|center-?pull|facial tissue|seat covers?|copy paper|sanitary napkins?|tampons?/i;
 
 export function getCaseBreakdown(product: {
@@ -45,6 +71,9 @@ export function getCaseBreakdown(product: {
   if (bags) return { count: bags, unit: "bag" };
 
   if (product.sku && KNOWN_PACKS[product.sku]) return KNOWN_PACKS[product.sku];
+
+  const gloves = getGloveBreakdown(product);
+  if (gloves !== undefined) return gloves;
 
   const isPaper = product.category === "Paper Products" || product.category === "Paper & Restroom" || PAPER_NAME.test(product.name);
   // The synced catalog files gloves under Paper & Restroom

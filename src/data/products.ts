@@ -579,6 +579,14 @@ export const products: ProductData[] = [
 // aren't quarts, and trash bags are sold by the case (LD242710WD synced as "1 Gallon")
 const allProducts = [...products, ...importedProducts].map((p) => {
   if (/duster/i.test(p.subcategory || "") || /duster/i.test(p.name)) return { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) };
+  // Glove dispensers (90201–90204) were synced as "1 Box"
+  if (/glove/i.test(p.name) && /dispenser/i.test(p.name) && p.quickBuy.some((t) => /box/i.test(t.label))) {
+    return { ...p, quickBuy: p.quickBuy.map((t) => ({ ...t, label: t.label.replace(/boxes/i, "Units").replace(/box/i, "Unit") })) };
+  }
+  // Gloves priced per case ("50/Bx, 10/Carton", 1243) were synced as "1 Box"
+  if (/glove/i.test(p.name) && /\d+\s*\/\s*(carton|case|cs)\b/i.test(p.name) && p.quickBuy.some((t) => /box/i.test(t.label))) {
+    return { ...p, quickBuy: p.quickBuy.map((t) => ({ ...t, label: t.label.replace(/boxes/i, "Cases").replace(/box/i, "Case") })) };
+  }
   // "QUARTER FOLD" seat covers (4525) were synced as "1 Quart"
   if (/quarter/i.test(p.name) && p.quickBuy.some((t) => /quart/i.test(t.label))) {
     return { ...p, quickBuy: p.quickBuy.map((t) => ({ ...t, label: t.label.replace(/quarts/i, "Cases").replace(/quart/i, "Case") })) };

@@ -60,6 +60,70 @@ function findBestMatch(candidates: BCProduct[], slug: string): BCProduct | null 
   return null;
 }
 
+/** Transform a BigCommerce product and replace its tiers with the live bulk pricing rules. */
+async function withLiveTiers(bestMatch: BCProduct) {
+  const product = transformProduct(bestMatch);
+
+  // Fetch live bulk pricing from BC and override default tiers
+  try {
+    const rules = await getBulkPricingRules(bestMatch.id);
+    if (rules.length > 0) {
+      const basePrice = bestMatch.calculated_price || bestMatch.price;
+
+      // Determine unit label based on category/product type
+      const cat = (product.category || "").toLowerCase();
+      const subcat = (product.subcategory || "").toLowerCase();
+      const name = (product.name || "").toLowerCase();
+      let unit = "Case";
+      if (subcat.includes("liner") || subcat.includes("trash") || name.includes("can liner") || name.includes("trash bag")) {
+        unit = "Case";
+      } else if ((subcat.includes("glove") || name.includes("glove")) && !name.includes("dispenser")) {
+        // Gloves are priced per box, except the ones priced per case ("50/Bx, 10/Carton", 1243)
+        unit = /\d+\s*\/\s*(carton|case|cs)\b/.test(name) ? "Case" : "Box";
+      } else if (cat.includes("equipment") || subcat.includes("vacuum") || subcat.includes("machine") || subcat.includes("dispenser")) {
+        unit = "Unit";
+      } else if (name.includes("32 oz") || name.includes("32oz") || /\bquarts?\b/.test(name) || name.includes("qt.") || name.includes("qt ")) {
+        unit = "Quart";
+      } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal") || name.includes(", gal")) {
+        unit = "Gallon";
+      } else if (subcat.includes("roll towel") || subcat.includes("tissue")) {
+        unit = "Carton";
+      } else if (cat.includes("cleaning chemical") || cat.includes("floor care")) {
+        unit = "Gallon";
+      }
+
+      // Priced per pallet, e.g. 202310PLT "40 CARTONS/PALLET"
+      if (/\b\d+\s*cartons?\s*\/\s*pallet\b/i.test(name)) unit = "Pallet";
+      const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bestMatch, product.subcategory || "");
+      const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
+        { label: soldSingly ? "Each" : `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
+      ];
+      const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
+      for (const rule of sorted) {
+        let tierPrice = basePrice;
+        if (rule.type === "percent") {
+          tierPrice = basePrice * (1 - rule.amount / 100);
+        } else if (rule.type === "price") {
+          tierPrice = basePrice - rule.amount;
+        } else if (rule.type === "fixed") {
+          tierPrice = rule.amount;
+        }
+        tierPrice = Math.round(tierPrice * 100) / 100;
+        const savings = Math.round((basePrice - tierPrice) * 100) / 100;
+        liveTiers.push({
+          label: soldSingly ? `${rule.quantity_min}+ Each` : `${rule.quantity_min}+ ${unit === "Box" ? "Boxes" : unit + "s"}`,
+          qty: rule.quantity_min,
+          unitPrice: tierPrice,
+          ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "each" : unit.toLowerCase()}` } : {}),
+        });
+      }
+      product.quickBuy = liveTiers;
+    }
+  } catch {}
+
+  return product;
+}
+
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("slug") || "";
 
@@ -68,11 +132,36 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Check local synced data first — instant, no BC API call
+    // Local synced data has the curated name/description/labels, but its prices can be stale
+    // (synced 2026-08-04). Checkout charges the live BigCommerce price, so overlay live price
+    // and tier prices; fall back to the local copy if BigCommerce can't be reached.
     const { getProductBySlug: getLocal } = await import("@/data/products");
     const localProduct = getLocal(slug);
     if (localProduct) {
-      return NextResponse.json({ product: localProduct, bcProductId: null }, {
+      let product = localProduct;
+      let bcProductId: number | null = null;
+      try {
+        const bc = localProduct.sku ? await getProductBySku(localProduct.sku) : null;
+        if (bc && bc.price > 0) {
+          const live = await withLiveTiers(bc);
+          bcProductId = bc.id;
+          // Keep the local tier labels when the tiers line up; otherwise take the live tiers
+          const liveByQty = new Map(live.quickBuy.map((t) => [t.qty, t]));
+          const sameTiers = localProduct.quickBuy.length === live.quickBuy.length && localProduct.quickBuy.every((t) => liveByQty.has(t.qty));
+          const quickBuy = sameTiers
+            ? localProduct.quickBuy.map((t) => {
+                const unitPrice = liveByQty.get(t.qty)?.unitPrice ?? live.price;
+                const saved = Math.round((live.price - unitPrice) * 100) / 100;
+                const tier = { ...t, unitPrice };
+                if (saved > 0) tier.savings = (t.savings || "Save $0.00/case").replace(/\$[\d.]+/, `$${saved.toFixed(2)}`);
+                else delete tier.savings;
+                return tier;
+              })
+            : live.quickBuy;
+          product = { ...localProduct, price: live.price, originalPrice: live.originalPrice, inStock: live.inStock, quickBuy };
+        }
+      } catch {}
+      return NextResponse.json({ product, bcProductId }, {
         headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
       });
     }
@@ -190,64 +279,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (bestMatch && bestMatch.price > 0) {
-      const product = transformProduct(bestMatch);
-
-      // Fetch live bulk pricing from BC and override default tiers
-      try {
-        const rules = await getBulkPricingRules(bestMatch.id);
-        if (rules.length > 0) {
-          const basePrice = bestMatch.calculated_price || bestMatch.price;
-
-          // Determine unit label based on category/product type
-          const cat = (product.category || "").toLowerCase();
-          const subcat = (product.subcategory || "").toLowerCase();
-          const name = (product.name || "").toLowerCase();
-          let unit = "Case";
-          if (subcat.includes("liner") || subcat.includes("trash") || name.includes("can liner") || name.includes("trash bag")) {
-            unit = "Case";
-          } else if (subcat.includes("glove") || name.includes("glove")) {
-            unit = "Box";
-          } else if (cat.includes("equipment") || subcat.includes("vacuum") || subcat.includes("machine") || subcat.includes("dispenser")) {
-            unit = "Unit";
-          } else if (name.includes("32 oz") || name.includes("32oz") || /\bquarts?\b/.test(name) || name.includes("qt.") || name.includes("qt ")) {
-            unit = "Quart";
-          } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal") || name.includes(", gal")) {
-            unit = "Gallon";
-          } else if (subcat.includes("roll towel") || subcat.includes("tissue")) {
-            unit = "Carton";
-          } else if (cat.includes("cleaning chemical") || cat.includes("floor care")) {
-            unit = "Gallon";
-          }
-
-          // Priced per pallet, e.g. 202310PLT "40 CARTONS/PALLET"
-          if (/\b\d+\s*cartons?\s*\/\s*pallet\b/i.test(name)) unit = "Pallet";
-          const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bestMatch, product.subcategory || "");
-          const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
-            { label: soldSingly ? "Each" : `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
-          ];
-          const sorted = [...rules].sort((a, b) => a.quantity_min - b.quantity_min);
-          for (const rule of sorted) {
-            let tierPrice = basePrice;
-            if (rule.type === "percent") {
-              tierPrice = basePrice * (1 - rule.amount / 100);
-            } else if (rule.type === "price") {
-              tierPrice = basePrice - rule.amount;
-            } else if (rule.type === "fixed") {
-              tierPrice = rule.amount;
-            }
-            tierPrice = Math.round(tierPrice * 100) / 100;
-            const savings = Math.round((basePrice - tierPrice) * 100) / 100;
-            liveTiers.push({
-              label: soldSingly ? `${rule.quantity_min}+ Each` : `${rule.quantity_min}+ ${unit === "Box" ? "Boxes" : unit + "s"}`,
-              qty: rule.quantity_min,
-              unitPrice: tierPrice,
-              ...(savings > 0 ? { savings: `Save $${savings.toFixed(2)}/${soldSingly ? "each" : unit.toLowerCase()}` } : {}),
-            });
-          }
-          product.quickBuy = liveTiers;
-        }
-      } catch {}
-
+      const product = await withLiveTiers(bestMatch);
       return NextResponse.json({ product, bcProductId: bestMatch.id });
     }
 

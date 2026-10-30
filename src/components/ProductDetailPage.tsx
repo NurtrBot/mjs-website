@@ -678,6 +678,13 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
   // Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
   const hasVariantOptions = product.quickBuy.length > 1 && product.quickBuy.every(o => o.qty === 1);
   const unitBreakdown = hasVariantOptions ? null : getCaseBreakdown(product);
+  // Gloves priced per box: show whole cases on bulk tiles, e.g. "10+ Boxes (1 Case)"
+  const tierLabel = (opt: { label: string; qty: number }) => {
+    const perCase = unitBreakdown?.boxesPerCase;
+    if (!perCase || opt.qty < perCase || opt.qty % perCase !== 0) return opt.label;
+    const cases = opt.qty / perCase;
+    return `${opt.label} (${cases} Case${cases > 1 ? "s" : ""})`;
+  };
   const activeTier = customPrice
     ? undefined
     : [...product.quickBuy].filter(o => o.unitPrice && qty >= o.qty).sort((a, b) => b.qty - a.qty)[0];
@@ -899,7 +906,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               {unitBreakdown && (
                 <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="mb-2" />
               )}
-              <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}</p>
+              <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}{unitBreakdown?.caseNote && ` · ${unitBreakdown.caseNote}`}</p>
 
               {product.quickBuy.length > 0 && !customPrice && (
                 <div className="space-y-2">
@@ -915,7 +922,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                         }`}
                       >
                         <div>
-                          <span className="text-sm font-semibold text-mjs-dark">{opt.label}</span>
+                          <span className="text-sm font-semibold text-mjs-dark">{tierLabel(opt)}</span>
                           {opt.savings && <span className="ml-2 text-xs font-bold text-mjs-green">{opt.savings}</span>}
                         </div>
                         <span className="text-sm font-bold text-mjs-dark">${unitPrice.toFixed(2)}/ea</span>
@@ -1093,7 +1100,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                 )}
               </div>
               <p className="text-xs text-mjs-gray-600 mt-1">
-                {priceUnitText}{!customPrice && product.quickBuy.length > 1 && " · Bulk pricing available"}
+                {priceUnitText}{unitBreakdown?.caseNote && ` · ${unitBreakdown.caseNote}`}{!customPrice && product.quickBuy.length > 1 && " · Bulk pricing available"}
               </p>
             </div>
 
@@ -1133,7 +1140,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                         }`}
                       >
                         <span className={`text-sm font-semibold ${isSelected ? "text-mjs-red" : "text-mjs-gray-800"}`}>
-                          {opt.label}
+                          {tierLabel(opt)}
                         </span>
                         <span className={`text-base font-bold mt-1 ${isSelected ? "text-mjs-red" : "text-mjs-dark"}`}>
                           ${unitPrice.toFixed(2)}
