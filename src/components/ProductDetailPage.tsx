@@ -906,7 +906,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               {unitBreakdown && (
                 <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="mb-2" />
               )}
-              <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}{unitBreakdown?.caseNote && ` · ${unitBreakdown.caseNote}`}</p>
+              <p className="text-xs text-mjs-gray-500 mb-4">{unitBreakdown?.caseNote || product.pack}</p>
 
               {product.quickBuy.length > 0 && !customPrice && (
                 <div className="space-y-2">

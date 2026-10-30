@@ -60,6 +60,32 @@ function getGloveBreakdown(product: { name: string; description?: string }): Cas
   return { count: perBox, unit: "glove", boxesPerCase, caseNote };
 }
 
+// Cup counts that disagree between name and SKU — no per-cup price until confirmed.
+// DRINK24600: name says "50 Cups/Sleeve, 20 Sleeves/Carton" (1,000) but the SKU suffix says 600.
+const UNCONFIRMED_CUPS = new Set(["DRINK24600"]);
+
+/**
+ * Cups: price per cup from the cups in a case — "10 Cups/Sleeve, 100 Sleeves/Carton" → 1,000,
+ * or a plain total, "500/Carton", "500 ct", "5,000/carton".
+ * Returns undefined for non-cups so other rules can run.
+ */
+function getCupBreakdown(product: { sku?: string; name: string }): CaseBreakdown | null | undefined {
+  if (!/\bcups?\b/i.test(product.name)) return undefined;
+  // Carrier trays, lids and dispensers mention cups but aren't sold by the cup
+  if (/carrier|tray|lids?\b|dispenser|holder/i.test(product.name)) return null;
+  if (product.sku && UNCONFIRMED_CUPS.has(product.sku)) return null;
+  const name = product.name.replace(/(\d),(\d)/g, "$1$2");
+  const sleeved = name.match(/\b(\d+)\s*cups?\s*\/\s*sleeve\b.*?\b(\d+)\s*sleeves?\s*\/\s*(?:carton|case|cs|ctn|ct)\b/i);
+  if (sleeved) {
+    const perSleeve = parseInt(sleeved[1], 10), sleeves = parseInt(sleeved[2], 10);
+    const cups = perSleeve * sleeves;
+    return { count: cups, unit: "cup", caseNote: `${sleeves} sleeves × ${perSleeve} cups = ${cups.toLocaleString()} cups` };
+  }
+  const total = name.match(/\b(\d+)\s*(?:\/\s*(?:carton|case|cs|ctn|ct)\b|ct\b|count\b)/i);
+  const cups = total ? parseInt(total[1], 10) : NaN;
+  return cups >= 10 && cups <= 50000 ? { count: cups, unit: "cup" } : null;
+}
+
 const PAPER_NAME = /multi-?fold|single-?fold|c-?fold|center-?pull|facial tissue|seat covers?|copy paper|sanitary napkins?|tampons?/i;
 
 export function getCaseBreakdown(product: {
@@ -74,6 +100,9 @@ export function getCaseBreakdown(product: {
 
   const gloves = getGloveBreakdown(product);
   if (gloves !== undefined) return gloves;
+
+  const cups = getCupBreakdown(product);
+  if (cups !== undefined) return cups;
 
   const isPaper = product.category === "Paper Products" || product.category === "Paper & Restroom" || PAPER_NAME.test(product.name);
   // The synced catalog files gloves under Paper & Restroom
