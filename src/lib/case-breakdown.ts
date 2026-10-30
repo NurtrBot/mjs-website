@@ -61,8 +61,8 @@ function getGloveBreakdown(product: { name: string; description?: string }): Cas
 }
 
 // Cup counts that disagree between name and SKU — no per-cup price until confirmed.
-// DRINK24600: name says "50 Cups/Sleeve, 20 Sleeves/Carton" (1,000) but the SKU suffix says 600.
-const UNCONFIRMED_CUPS = new Set(["DRINK24600"]);
+// (DRINK24600's SKU suffix says 600, but the owner confirmed the name's 50 × 20 = 1,000.)
+const UNCONFIRMED_CUPS = new Set<string>();
 
 /**
  * Cups: price per cup from the cups in a case — "10 Cups/Sleeve, 100 Sleeves/Carton" → 1,000,
