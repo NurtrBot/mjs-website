@@ -1,5 +1,6 @@
 import { importedProducts } from "./imported-products";
 import { relabelTiersAsEach } from "@/lib/tier-pricing";
+import { getBagsPerCase } from "@/lib/per-bag";
 export type { ProductData } from "./product-types";
 import type { ProductData } from "./product-types";
 
@@ -573,10 +574,23 @@ export const products: ProductData[] = [
   // Platinum Knight products (PK-WF500, PK-BKT5G, PK-CGC500, PK-WS200, PK-CS500) removed — inactive in BigCommerce
 ];
 
-// Dusters are sold individually; the synced data labels their tiers "1 Case"
-const allProducts = [...products, ...importedProducts].map((p) =>
-  /duster/i.test(p.subcategory || "") || /duster/i.test(p.name) ? { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) } : p
-);
+// Fix tier labels the synced data gets wrong:
+// dusters are sold individually (synced as "1 Case"), and trash bags are sold by
+// the case (LD242710WD synced as "1 Gallon")
+const allProducts = [...products, ...importedProducts].map((p) => {
+  if (/duster/i.test(p.subcategory || "") || /duster/i.test(p.name)) return { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) };
+  if (getBagsPerCase(p) && p.quickBuy.some((t) => /gallon/i.test(t.label))) {
+    return {
+      ...p,
+      quickBuy: p.quickBuy.map((t) => ({
+        ...t,
+        label: t.label.replace(/gallons/i, "Cases").replace(/gallon/i, "Case"),
+        ...(t.savings ? { savings: t.savings.replace(/\/gallon$/i, "/case") } : {}),
+      })),
+    };
+  }
+  return p;
+});
 
 export function getProductBySlug(slug: string): ProductData | undefined {
   return allProducts.find((p) => p.slug === slug);

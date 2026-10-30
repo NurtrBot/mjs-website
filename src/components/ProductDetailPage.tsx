@@ -34,7 +34,8 @@ import { getProductBySlug, allProducts, type ProductData } from "@/data/products
 import { getSmartPairings, getFbtPairings } from "@/lib/product-pairings";
 import { getTierPrice } from "@/lib/tier-pricing";
 import { getRollsPerCase } from "@/lib/per-roll";
-import PerRollTag from "@/components/PerRollTag";
+import { getBagsPerCase } from "@/lib/per-bag";
+import PerUnitTag from "@/components/PerUnitTag";
 import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -674,14 +675,18 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
 
   const currentTierPrice = customPrice || getTierPrice(product, qty);
 
-  // Price-per-roll tag for paper products; follows the tier the current qty qualifies for.
-  // Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
+  // Price-per-roll (paper) / price-per-bag (trash liners) tag; follows the tier the current qty
+  // qualifies for. Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
   const hasVariantOptions = product.quickBuy.length > 1 && product.quickBuy.every(o => o.qty === 1);
   const rollsPerCase = hasVariantOptions ? null : getRollsPerCase(product);
+  const bagsPerCase = hasVariantOptions || rollsPerCase ? null : getBagsPerCase(product);
+  const unitBreakdown = rollsPerCase
+    ? { count: rollsPerCase, unit: "roll" }
+    : bagsPerCase ? { count: bagsPerCase, unit: "bag" } : null;
   const activeTier = customPrice
     ? undefined
     : [...product.quickBuy].filter(o => o.unitPrice && qty >= o.qty).sort((a, b) => b.qty - a.qty)[0];
-  const perRollTierLabel = activeTier && activeTier.qty > 1 ? activeTier.label : undefined;
+  const unitTierLabel = activeTier && activeTier.qty > 1 ? activeTier.label : undefined;
 
   // "Price each" / "Price per case" / "Price per gallon", matching the first Quick Select tile
   const baseTierLabel = product.quickBuy[0]?.label || "";
@@ -896,8 +901,8 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   </>
                 ) : null}
               </div>
-              {rollsPerCase && (
-                <PerRollTag price={currentTierPrice} rolls={rollsPerCase} tierLabel={perRollTierLabel} className="mb-2" />
+              {unitBreakdown && (
+                <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="mb-2" />
               )}
               <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}</p>
 
@@ -1087,8 +1092,8 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                     </span>
                   </>
                 )}
-                {rollsPerCase && (
-                  <PerRollTag price={currentTierPrice} rolls={rollsPerCase} tierLabel={perRollTierLabel} className="self-center" />
+                {unitBreakdown && (
+                  <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="self-center" />
                 )}
               </div>
               <p className="text-xs text-mjs-gray-600 mt-1">
@@ -1820,8 +1825,8 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
             <div>
               <span className="text-lg font-black text-mjs-dark">${currentTierPrice.toFixed(2)}</span>
               <span className="text-xs text-mjs-gray-400 ml-1">/ Price Each</span>
-              {rollsPerCase && (
-                <PerRollTag price={currentTierPrice} rolls={rollsPerCase} compact className="ml-1.5 align-middle" />
+              {unitBreakdown && (
+                <PerUnitTag price={currentTierPrice} {...unitBreakdown} compact className="ml-1.5 align-middle" />
               )}
             </div>
             <div className="text-xs text-mjs-gray-500">
