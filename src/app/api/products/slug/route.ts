@@ -219,6 +219,8 @@ export async function GET(req: NextRequest) {
             unit = "Gallon";
           }
 
+          // Priced per pallet, e.g. 202310PLT "40 CARTONS/PALLET"
+          if (/\b\d+\s*cartons?\s*\/\s*pallet\b/i.test(name)) unit = "Pallet";
           const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bestMatch, product.subcategory || "");
           const liveTiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [
             { label: soldSingly ? "Each" : `1 ${unit}`, qty: 1, unitPrice: Math.round(basePrice * 100) / 100 },
