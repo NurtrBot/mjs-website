@@ -1,6 +1,7 @@
 import { getProducts, getBrands, type BCProduct } from "./bigcommerce";
 import { getSiteCategory, getSiteCategoryName, BC_CATEGORY_MAP, SITE_CATEGORY_NAMES } from "./category-map";
 import type { ProductData } from "@/data/products";
+import { unitOverride } from "./tier-pricing";
 import { sdsIndex } from "@/data/sds-index";
 
 /* ── SDS lookup by SKU (case-insensitive) ── */
@@ -282,8 +283,8 @@ function transformProduct(bc: BCProduct): ProductData {
       else if (subLow.includes("vacuum") || subLow.includes("machine") || subLow.includes("dispenser")) unit = "Unit";
       else if (subLow.includes("roll towel") || subLow.includes("tissue")) unit = "Carton";
       else if (finalCategory === "Cleaning Chemicals" || finalCategory === "Floor Care") unit = "Gallon";
-      // Priced per pallet, e.g. 202310PLT "40 CARTONS/PALLET"
-      if (/\b\d+\s*cartons?\s*\/\s*pallet\b/i.test(bc.name)) unit = "Pallet";
+      // Pallets, cup carriers, food storage bags (see unitOverride)
+      unit = unitOverride(bc.name, bc.description) ?? unit;
       const soldSingly = (unit === "Case" || unit === "Unit") && isSoldSingly(bc, subcategory);
       const plural = unit === "Box" ? "Boxes" : unit + "s";
       const tiers: { label: string; qty: number; unitPrice: number; savings?: string }[] = [

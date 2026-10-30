@@ -36,3 +36,28 @@ export function relabelTiersAsEach<T extends { label: string; qty: number; savin
     ...(t.savings ? { savings: t.savings.replace(/\/[a-z]+$/i, "/each") } : {}),
   }));
 }
+
+/**
+ * Selling unit for products whose names trip the generic unit guess
+ * (which keys off words like "quart", "gallon", "32 oz"). Returns null when
+ * the generic guess should stand.
+ *   "40 CARTONS/PALLET", "84 Cases/pallet"   → Pallet (copy paper, bottled water)
+ *   cup carrier trays ("8 Oz To 32 Oz")      → Case
+ *   food storage bags ("Quart Size")         → Box when sold as one box ("50 CT"), else Case
+ */
+export function unitOverride(name: string, description = ""): string | null {
+  if (/\b\d+\s*(?:cartons?|cases?)\s*\/\s*pallet\b/i.test(name)) return "Pallet";
+  if (/cup carrier|carrier tray/i.test(name)) return "Case";
+  if (/storage bags?/i.test(name)) return /\b\d+\s*ct\b/i.test(description) ? "Box" : "Case";
+  return null;
+}
+
+/** Rewrite tier labels and savings for a different unit: "1 Quart" → "1 Box", "5+ Quarts" → "5+ Boxes". */
+export function relabelTiers<T extends { label: string; qty: number; savings?: string }>(tiers: T[], unit: string): T[] {
+  const plural = /(x|s|ch|sh)$/i.test(unit) ? `${unit}es` : `${unit}s`;
+  return tiers.map((t) => ({
+    ...t,
+    label: t.qty <= 1 ? `1 ${unit}` : `${t.qty}+ ${plural}`,
+    ...(t.savings ? { savings: t.savings.replace(/\/[a-z]+$/i, `/${unit.toLowerCase()}`) } : {}),
+  }));
+}

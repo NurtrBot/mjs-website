@@ -6,7 +6,8 @@ import { useCart } from "@/context/CartContext";
 import { usePurchases } from "@/context/PurchaseContext";
 import type { ProductData } from "@/data/products";
 import { useAuth } from "@/context/AuthContext";
-import { getTierPrice } from "@/lib/tier-pricing";
+import { getTierPrice, unitOverride } from "@/lib/tier-pricing";
+import { getCaseBreakdown } from "@/lib/case-breakdown";
 import ProductImage from "@/components/ProductImage";
 
 function formatCardName(name: string): string {
@@ -27,6 +28,23 @@ export default function ProductCard({ product }: { product: ProductData }) {
   const [qty, setQty] = useState(1);
   const customPrice = getCustomPrice(product.sku);
   const displayPrice = customPrice || product.price;
+  // Pack line: "Each" is only a fallback when the name has no pack size, so prefer what's
+  // actually sold — pallets ("Pallet (84 cases)"), boxed/cased bags, or a counted case ("1,000 cups")
+  const cardPack = (() => {
+    const unit = unitOverride(product.name, product.description);
+    if (unit === "Pallet") {
+      const m = product.name.match(/(\d+)\s*(cartons?|cases?)\s*\/\s*pallet/i);
+      return m ? `Pallet (${m[1]} ${m[2].toLowerCase().replace(/s?$/, "s")})` : "Pallet";
+    }
+    if (unit === "Box") {
+      const ct = (product.description || "").match(/\b(\d+)\s*ct\b/i);
+      return ct ? `Box of ${ct[1]}` : "Box";
+    }
+    if (unit === "Case" && (product.pack === "Each" || /^(gallon|quart)s?$/i.test(product.pack || ""))) return "Case";
+    const breakdown = product.pack === "Each" ? getCaseBreakdown(product) : null;
+    if (breakdown) return `${breakdown.count.toLocaleString()} ${/(x|s|ch|sh)$/.test(breakdown.unit) ? `${breakdown.unit}es` : `${breakdown.unit}s`}`;
+    return product.pack;
+  })();
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
@@ -145,10 +163,10 @@ export default function ProductCard({ product }: { product: ProductData }) {
                 </>
               ) : null}
             </div>
-            {product.pack && (
+            {cardPack && (
               <div className="flex justify-between sm:block text-[11px] font-medium text-mjs-gray-500 mt-0.5">
                 <span className="text-mjs-gray-400 font-semibold uppercase tracking-wide sm:hidden">Pack</span>
-                <span className="text-mjs-gray-700 sm:text-mjs-gray-500">{product.pack}</span>
+                <span className="text-mjs-gray-700 sm:text-mjs-gray-500">{cardPack}</span>
               </div>
             )}
 

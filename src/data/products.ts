@@ -1,5 +1,5 @@
 import { importedProducts } from "./imported-products";
-import { relabelTiersAsEach } from "@/lib/tier-pricing";
+import { relabelTiersAsEach, relabelTiers, unitOverride } from "@/lib/tier-pricing";
 import { getBagsPerCase } from "@/lib/per-bag";
 export type { ProductData } from "./product-types";
 import type { ProductData } from "./product-types";
@@ -578,7 +578,20 @@ export const products: ProductData[] = [
 // dusters are sold individually (synced as "1 Case"), quarter-fold seat covers
 // aren't quarts, and trash bags are sold by the case (LD242710WD synced as "1 Gallon")
 const allProducts = [...products, ...importedProducts].map((p) => {
+  // The sync dropped the leading digits of "1,000/Carton" → "000/Carton"; rebuild it from the name
+  if (/^0+\s*\//.test(p.pack || "")) {
+    const m = p.name.match(/([\d,]+)\s*\/\s*(carton|case|cs|ctn)\b/i);
+    if (m) p = { ...p, pack: `${m[1]}/${m[2]}` };
+  }
+  // "LUNCHEON NAPKINS, WHITE , 6000 , CARTON" (5940) synced with pack "Each"
+  if (p.pack === "Each") {
+    const m = p.name.match(/\b(\d{3,})\s*,\s*(carton|case)\b/i);
+    if (m) p = { ...p, pack: `${Number(m[1]).toLocaleString("en-US")}/Carton` };
+  }
   if (/duster/i.test(p.subcategory || "") || /duster/i.test(p.name)) return { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) };
+  // Pallets, cup carriers and food storage bags were synced as "1 Quart" / "1 Gallon" / "1 Case"
+  const unit = unitOverride(p.name, p.description);
+  if (unit && !p.quickBuy.every((t) => new RegExp(`\\b${unit}`, "i").test(t.label))) return { ...p, quickBuy: relabelTiers(p.quickBuy, unit) };
   // Glove dispensers (90201–90204) were synced as "1 Box"
   if (/glove/i.test(p.name) && /dispenser/i.test(p.name) && p.quickBuy.some((t) => /box/i.test(t.label))) {
     return { ...p, quickBuy: p.quickBuy.map((t) => ({ ...t, label: t.label.replace(/boxes/i, "Units").replace(/box/i, "Unit") })) };
