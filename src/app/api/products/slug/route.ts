@@ -209,7 +209,7 @@ export async function GET(req: NextRequest) {
             unit = "Box";
           } else if (cat.includes("equipment") || subcat.includes("vacuum") || subcat.includes("machine") || subcat.includes("dispenser")) {
             unit = "Unit";
-          } else if (name.includes("32 oz") || name.includes("32oz") || name.includes("quart") || name.includes("qt.") || name.includes("qt ")) {
+          } else if (name.includes("32 oz") || name.includes("32oz") || /\bquarts?\b/.test(name) || name.includes("qt.") || name.includes("qt ")) {
             unit = "Quart";
           } else if (name.includes("gallon") || name.includes("gal ") || name.includes("gal.") || name.includes("1 gal") || name.includes(", gal")) {
             unit = "Gallon";

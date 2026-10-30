@@ -33,8 +33,7 @@ import Image from "next/image";
 import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
 import { getSmartPairings, getFbtPairings } from "@/lib/product-pairings";
 import { getTierPrice } from "@/lib/tier-pricing";
-import { getRollsPerCase } from "@/lib/per-roll";
-import { getBagsPerCase } from "@/lib/per-bag";
+import { getCaseBreakdown } from "@/lib/case-breakdown";
 import PerUnitTag from "@/components/PerUnitTag";
 import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
@@ -675,14 +674,10 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
 
   const currentTierPrice = customPrice || getTierPrice(product, qty);
 
-  // Price-per-roll (paper) / price-per-bag (trash liners) tag; follows the tier the current qty
-  // qualifies for. Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
+  // Price-per-unit tag (per roll, bag, pack, box…); follows the tier the current qty qualifies for.
+  // Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
   const hasVariantOptions = product.quickBuy.length > 1 && product.quickBuy.every(o => o.qty === 1);
-  const rollsPerCase = hasVariantOptions ? null : getRollsPerCase(product);
-  const bagsPerCase = hasVariantOptions || rollsPerCase ? null : getBagsPerCase(product);
-  const unitBreakdown = rollsPerCase
-    ? { count: rollsPerCase, unit: "roll" }
-    : bagsPerCase ? { count: bagsPerCase, unit: "bag" } : null;
+  const unitBreakdown = hasVariantOptions ? null : getCaseBreakdown(product);
   const activeTier = customPrice
     ? undefined
     : [...product.quickBuy].filter(o => o.unitPrice && qty >= o.qty).sort((a, b) => b.qty - a.qty)[0];

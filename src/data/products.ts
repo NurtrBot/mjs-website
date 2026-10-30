@@ -575,10 +575,14 @@ export const products: ProductData[] = [
 ];
 
 // Fix tier labels the synced data gets wrong:
-// dusters are sold individually (synced as "1 Case"), and trash bags are sold by
-// the case (LD242710WD synced as "1 Gallon")
+// dusters are sold individually (synced as "1 Case"), quarter-fold seat covers
+// aren't quarts, and trash bags are sold by the case (LD242710WD synced as "1 Gallon")
 const allProducts = [...products, ...importedProducts].map((p) => {
   if (/duster/i.test(p.subcategory || "") || /duster/i.test(p.name)) return { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) };
+  // "QUARTER FOLD" seat covers (4525) were synced as "1 Quart"
+  if (/quarter/i.test(p.name) && p.quickBuy.some((t) => /quart/i.test(t.label))) {
+    return { ...p, quickBuy: p.quickBuy.map((t) => ({ ...t, label: t.label.replace(/quarts/i, "Cases").replace(/quart/i, "Case") })) };
+  }
   if (getBagsPerCase(p) && p.quickBuy.some((t) => /gallon/i.test(t.label))) {
     return {
       ...p,

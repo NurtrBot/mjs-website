@@ -276,7 +276,7 @@ function transformProduct(bc: BCProduct): ProductData {
       let unit = "Case";
       if (subLow.includes("liner") || subLow.includes("trash") || nameLow.includes("can liner") || nameLow.includes("trash bag")) unit = "Case";
       else if (subLow.includes("glove") || nameLow.includes("glove")) unit = "Box";
-      else if (nameLow.includes("32 oz") || nameLow.includes("32oz") || nameLow.includes("quart") || nameLow.includes("qt.") || nameLow.includes("qt ")) unit = "Quart";
+      else if (nameLow.includes("32 oz") || nameLow.includes("32oz") || /\bquarts?\b/.test(nameLow) || nameLow.includes("qt.") || nameLow.includes("qt ")) unit = "Quart";
       else if (nameLow.includes("gallon") || nameLow.includes("gal ") || nameLow.includes("gal.") || nameLow.includes("1 gal") || nameLow.includes(", gal")) unit = "Gallon";
       else if (subLow.includes("vacuum") || subLow.includes("machine") || subLow.includes("dispenser")) unit = "Unit";
       else if (subLow.includes("roll towel") || subLow.includes("tissue")) unit = "Carton";
