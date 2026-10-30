@@ -1,4 +1,5 @@
 import { importedProducts } from "./imported-products";
+import { relabelTiersAsEach } from "@/lib/tier-pricing";
 export type { ProductData } from "./product-types";
 import type { ProductData } from "./product-types";
 
@@ -572,7 +573,10 @@ export const products: ProductData[] = [
   // Platinum Knight products (PK-WF500, PK-BKT5G, PK-CGC500, PK-WS200, PK-CS500) removed — inactive in BigCommerce
 ];
 
-const allProducts = [...products, ...importedProducts];
+// Dusters are sold individually; the synced data labels their tiers "1 Case"
+const allProducts = [...products, ...importedProducts].map((p) =>
+  /duster/i.test(p.subcategory || "") ? { ...p, quickBuy: relabelTiersAsEach(p.quickBuy) } : p
+);
 
 export function getProductBySlug(slug: string): ProductData | undefined {
   return allProducts.find((p) => p.slug === slug);

@@ -24,3 +24,15 @@ export function getTierPrice(
 
   return qualifyingTier?.unitPrice || product.price;
 }
+
+/**
+ * Relabel Quick Select tiers for items sold individually:
+ * "1 Case" → "Each", "12+ Cases" → "12+ Each", "Save $2.00/case" → "Save $2.00/each".
+ */
+export function relabelTiersAsEach<T extends { label: string; qty: number; savings?: string }>(tiers: T[]): T[] {
+  return tiers.map((t) => ({
+    ...t,
+    label: t.qty <= 1 ? "Each" : `${t.qty}+ Each`,
+    ...(t.savings ? { savings: t.savings.replace(/\/[a-z]+$/i, "/each") } : {}),
+  }));
+}

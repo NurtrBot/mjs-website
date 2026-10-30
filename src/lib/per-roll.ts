@@ -12,7 +12,10 @@
  * so non-roll paper (multifold towels, facial tissue) gets no tag.
  */
 export function getRollsPerCase(product: { category: string; pack?: string; name: string }): number | null {
-  if (product.category !== "Paper Products") return null;
+  // Live BigCommerce data says "Paper Products"; the synced local catalog says "Paper & Restroom"
+  if (product.category !== "Paper Products" && product.category !== "Paper & Restroom") return null;
+  // Dispensers hold rolls but aren't sold by the roll (TD500's synced pack is "500 Roll")
+  if (/dispenser/i.test(product.name)) return null;
 
   const text = `${product.pack || ""} | ${product.name}`.replace(/(\d),(\d)/g, "$1$2");
 
