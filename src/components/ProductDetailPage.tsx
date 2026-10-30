@@ -33,6 +33,8 @@ import Image from "next/image";
 import { getProductBySlug, allProducts, type ProductData } from "@/data/products";
 import { getSmartPairings, getFbtPairings } from "@/lib/product-pairings";
 import { getTierPrice } from "@/lib/tier-pricing";
+import { getRollsPerCase } from "@/lib/per-roll";
+import PerRollTag from "@/components/PerRollTag";
 import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -671,6 +673,21 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
     : 0;
 
   const currentTierPrice = customPrice || getTierPrice(product, qty);
+
+  // Price-per-roll tag for paper products; follows the tier the current qty qualifies for.
+  // Skipped for variant pickers (all options qty 1), where tiers aren't case quantities.
+  const hasVariantOptions = product.quickBuy.length > 1 && product.quickBuy.every(o => o.qty === 1);
+  const rollsPerCase = hasVariantOptions ? null : getRollsPerCase(product);
+  const activeTier = customPrice
+    ? undefined
+    : [...product.quickBuy].filter(o => o.unitPrice && qty >= o.qty).sort((a, b) => b.qty - a.qty)[0];
+  const perRollTierLabel = activeTier && activeTier.qty > 1 ? activeTier.label : undefined;
+
+  // "Price each" / "Price per case" / "Price per gallon", matching the first Quick Select tile
+  const baseTierLabel = product.quickBuy[0]?.label || "";
+  const priceUnitText = baseTierLabel === "Single"
+    ? "Price each"
+    : /^1 [A-Za-z]+$/.test(baseTierLabel) ? `Price per ${baseTierLabel.slice(2).toLowerCase()}` : "Price per carton";
   const mobileSubtotal = Math.round(currentTierPrice * qty * 100) / 100;
 
   return (
@@ -879,6 +896,9 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   </>
                 ) : null}
               </div>
+              {rollsPerCase && (
+                <PerRollTag price={currentTierPrice} rolls={rollsPerCase} tierLabel={perRollTierLabel} className="mb-2" />
+              )}
               <p className="text-xs text-mjs-gray-500 mb-4">{product.pack}</p>
 
               {product.quickBuy.length > 0 && !customPrice && (
@@ -1067,9 +1087,12 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                     </span>
                   </>
                 )}
+                {rollsPerCase && (
+                  <PerRollTag price={currentTierPrice} rolls={rollsPerCase} tierLabel={perRollTierLabel} className="self-center" />
+                )}
               </div>
               <p className="text-xs text-mjs-gray-600 mt-1">
-                Price per carton{!customPrice && " · Bulk pricing available"}
+                {priceUnitText}{!customPrice && product.quickBuy.length > 1 && " · Bulk pricing available"}
               </p>
             </div>
 
@@ -1797,6 +1820,9 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
             <div>
               <span className="text-lg font-black text-mjs-dark">${currentTierPrice.toFixed(2)}</span>
               <span className="text-xs text-mjs-gray-400 ml-1">/ Price Each</span>
+              {rollsPerCase && (
+                <PerRollTag price={currentTierPrice} rolls={rollsPerCase} compact className="ml-1.5 align-middle" />
+              )}
             </div>
             <div className="text-xs text-mjs-gray-500">
               Subtotal: <span className="font-bold text-mjs-dark">${mobileSubtotal.toFixed(2)}</span>

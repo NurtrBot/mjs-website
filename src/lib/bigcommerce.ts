@@ -138,6 +138,7 @@ export interface BCProduct {
   images?: BCProductImage[];
   reviews_count?: number;
   reviews_rating_sum?: number;
+  custom_fields?: { name: string; value: string }[];
 }
 
 export interface BCProductImage {
@@ -162,7 +163,7 @@ export async function getProducts(params?: {
   const queryParams: Record<string, string> = {
     limit: String(params?.limit || 50),
     page: String(params?.page || 1),
-    include: "images,bulk_pricing_rules",
+    include: "images,bulk_pricing_rules,custom_fields",
   };
   if (params?.category_id) queryParams["categories:in"] = String(params.category_id);
   if (params?.is_visible !== undefined) queryParams.is_visible = String(params.is_visible);
@@ -174,13 +175,13 @@ export async function getProducts(params?: {
 }
 
 export async function getProductBySku(sku: string): Promise<BCProduct | null> {
-  const res = await bcFetch("/catalog/products", { sku, include: "images", is_visible: "true" });
+  const res = await bcFetch("/catalog/products", { sku, include: "images,custom_fields", is_visible: "true" });
   return res.data?.[0] || null;
 }
 
 export async function getProductById(id: number): Promise<BCProduct | null> {
   try {
-    const res = await bcFetch(`/catalog/products/${id}`, { include: "images" });
+    const res = await bcFetch(`/catalog/products/${id}`, { include: "images,custom_fields" });
     return res.data || null;
   } catch {
     return null;

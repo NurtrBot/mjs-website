@@ -67,6 +67,16 @@ html {
   }
 }
 
+/* Per-roll price tag: quick pop when the selected tier changes */
+@keyframes per-roll-pop {
+  from { opacity: 0.4; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.per-roll-pop {
+  display: inline-block;
+  animation: per-roll-pop 0.25s ease-out;
+}
+
 /* Pulse animation for sale badge */
 @keyframes pulse-sale {
   0%, 100% { transform: scale(1); }
