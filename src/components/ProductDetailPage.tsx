@@ -1074,14 +1074,15 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               )}
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl font-black text-mjs-dark">
-                  ${(customPrice || product.price).toFixed(2)}
+                  ${currentTierPrice.toFixed(2)}
                 </span>
-                {(customPrice && customPrice < product.price) ? (
+                {/* Custom price or a bulk tier: strike through the regular 1-unit price */}
+                {currentTierPrice < product.price ? (
                   <span className="text-lg text-mjs-gray-400 line-through">
                     ${product.price.toFixed(2)}
                   </span>
                 ) : null}
-                {product.originalPrice && !customPrice && (
+                {product.originalPrice && !customPrice && currentTierPrice >= product.price && (
                   <>
                     <span className="text-lg text-mjs-gray-400 line-through">
                       ${product.originalPrice.toFixed(2)}
