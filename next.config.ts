@@ -22,6 +22,9 @@ const nextConfig: NextConfig = {
         permanent: true,
       })),
       { source: "/catalogs", destination: "/resources", permanent: true },
+      // Old "Janitorial Supply" landing URL → the home page
+      { source: "/janitorial/supply", destination: "/", permanent: true },
+      { source: "/janitorial", destination: "/", permanent: true },
     ];
   },
   images: {
