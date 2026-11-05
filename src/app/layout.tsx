@@ -9,6 +9,7 @@ import { ShippingProvider } from "@/context/ShippingContext";
 import { PurchaseProvider } from "@/context/PurchaseContext";
 import CartPanel from "@/components/CartPanel";
 import ReturnVisitorSurvey from "@/components/ReturnVisitorSurvey";
+import AeroBroomPopup from "@/components/AeroBroomPopup";
 import VacationNotice from "@/components/VacationNotice";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 
@@ -206,6 +207,7 @@ export default function RootLayout({
                   {children}
                   <CartPanel />
                   <ReturnVisitorSurvey />
+                  <AeroBroomPopup />
                 </CartProvider>
               </ShippingProvider>
             </OrderProvider>

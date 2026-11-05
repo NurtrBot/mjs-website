@@ -46,6 +46,31 @@ import { findFilterForSubcategory, filterSlug } from "@/lib/category-filters";
 import { SITE_CATEGORY_NAMES } from "@/lib/category-map";
 import RedirectHome from "@/components/RedirectHome";
 
+// SKU → product video (shown in the description area; loads only when played)
+const PRODUCT_VIDEOS: Record<string, { src: string; poster: string; title: string }> = {
+  AEROPRO: {
+    src: "https://zmiyxgvujmdkirdl.public.blob.vercel-storage.com/email/aerobroom-pro.mp4",
+    poster: "https://zmiyxgvujmdkirdl.public.blob.vercel-storage.com/email/aerobroom-pro-poster.jpg",
+    title: "Watch the Aero Broom Pro in action",
+  },
+};
+
+function ProductVideo({ sku, className = "" }: { sku: string; className?: string }) {
+  const video = PRODUCT_VIDEOS[sku];
+  if (!video) return null;
+  return (
+    <video
+      className={`w-full rounded-xl border border-gray-100 bg-black aspect-video ${className}`}
+      src={video.src}
+      poster={video.poster}
+      controls
+      playsInline
+      preload="none"
+      aria-label={video.title}
+    />
+  );
+}
+
 // SKU → lifestyle image mapping (shown below product description)
 const LIFESTYLE_IMAGES: Record<string, string> = {
   "8036": "/images/product-lifestyle-8036.png",
@@ -783,6 +808,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               <p className="text-sm text-mjs-gray-600 leading-relaxed">
                 {product.description}
               </p>
+              <ProductVideo sku={product.sku} className="mt-4" />
               {product.highlights.length > 0 && (
                 <ul className="mt-4 space-y-2">
                   {product.highlights.map((h, i) => (
@@ -1400,6 +1426,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   {product.description}
                 </p>
               </div>
+              <ProductVideo sku={product.sku} className="mt-4" />
               {product.sdsSheet && (
                 <div className="flex items-center gap-2 mt-3 text-sm text-mjs-gray-500">
                   <FileText className="w-4 h-4 text-mjs-gray-400" />
