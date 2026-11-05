@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Loader2, Tag, Check, X, SlidersHorizontal } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+import RedirectHome from "@/components/RedirectHome";
 import type { ProductData } from "@/data/products";
 import { trackViewCategory } from "@/lib/analytics";
 import { categoryNames, quickFilters, filterSlug, matchesFilter } from "@/lib/category-filters";
@@ -153,19 +154,8 @@ export default function CategoryPage({ slug, initialProducts, initialFilter = nu
     }
   }, [loading, categoryName]);
 
-  if (!categoryName) {
-    return (
-      <section className="bg-mjs-gray-50 min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-mjs-dark">Category Not Found</h1>
-          <p className="text-mjs-gray-500 mt-2">The category you&apos;re looking for doesn&apos;t exist.</p>
-          <a href="/" className="inline-block mt-4 bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
-            Back to Home
-          </a>
-        </div>
-      </section>
-    );
-  }
+  // Unknown category — send the visitor to the home page instead of a dead end
+  if (!categoryName) return <RedirectHome />;
 
   // Count products per filter
   const filterCounts = filters.map((f) => products.filter((p) => matchesFilter(p, f.subcategories)).length);

@@ -44,6 +44,7 @@ import { RETURNS } from "@/lib/business";
 import { getCategorySlug } from "@/data/products";
 import { findFilterForSubcategory, filterSlug } from "@/lib/category-filters";
 import { SITE_CATEGORY_NAMES } from "@/lib/category-map";
+import RedirectHome from "@/components/RedirectHome";
 
 // SKU → lifestyle image mapping (shown below product description)
 const LIFESTYLE_IMAGES: Record<string, string> = {
@@ -647,21 +648,8 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
     );
   }
 
-  // Not found
-  if (!product) {
-    return (
-      <div className="bg-white min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-lg font-bold text-mjs-dark mb-2">Product Not Found</h2>
-          <p className="text-sm text-mjs-gray-400 mb-6">The product you&apos;re looking for couldn&apos;t be found.</p>
-          <a href="/" className="bg-mjs-red text-white font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors">
-            Back to Home
-          </a>
-        </div>
-      </div>
-    );
-  }
+  // Not found — send the visitor to the home page instead of a dead end
+  if (!product) return <RedirectHome />;
 
   const categorySlug = categorySlugMap[product.category] || getCategorySlug(product.category);
   const subcategoryFilter = findFilterForSubcategory(categorySlug, product.subcategory);
