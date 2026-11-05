@@ -249,7 +249,7 @@ export const products: ProductData[] = [
     cardTitle: "Mop Bucket/Wringer Combo",
     pack: "Each",
     brand: "MJS Supply",
-    price: 44.95,
+    price: 34,
     rating: 4.7,
     reviewCount: 86,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/12303/images/315195/8036__35778.1679339579.1280.1280.jpg?c=1"],
@@ -272,7 +272,7 @@ export const products: ProductData[] = [
     },
     category: "Equipment & Tools",
     subcategory: "Mop Buckets",
-    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":44.95}],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":34}],
   },
   {
     slug: "dribble-urinal-deodorizer-screen-ocean-mist-10-carton",
