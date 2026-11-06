@@ -107,11 +107,11 @@ export default function AeroBroomPopup() {
         </a>
 
         <div className="flex flex-col gap-3 px-5 py-4">
-          <div>
-            <p id="aero-popup-title" className="text-base font-bold text-white">
-              New: AeroBroom Pro
+          <div className="text-center">
+            <p id="aero-popup-title" className="text-base font-black tracking-wide text-white">
+              NEW ITEM ALERT!
             </p>
-            <p className="text-sm text-white/60">Push broom + cordless leaf blower in one tool.</p>
+            <p className="text-sm text-white/70">A cordless Broom + Blower</p>
           </div>
           <div className="flex items-center gap-3 whitespace-nowrap">
             <button
