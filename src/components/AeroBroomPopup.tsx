@@ -81,7 +81,10 @@ export default function AeroBroomPopup() {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => close("backdrop")} />
 
       {/* Card */}
-      <div className="relative w-full max-w-[720px] overflow-hidden rounded-2xl bg-[#0b0f17] shadow-2xl ring-1 ring-white/10 animate-[aeroRise_260ms_cubic-bezier(0.16,1,0.3,1)]">
+      <div
+        // Tall 1083×1452 image: size the card so image + footer always fit the screen
+        style={{ width: "min(540px, calc(100vw - 32px), calc((100dvh - 230px) * 0.746))" }}
+        className="relative overflow-hidden rounded-2xl bg-[#0b0f17] shadow-2xl ring-1 ring-white/10 animate-[aeroRise_260ms_cubic-bezier(0.16,1,0.3,1)]">
         <button
           ref={closeBtnRef}
           type="button"
@@ -94,34 +97,34 @@ export default function AeroBroomPopup() {
 
         <a href={PRODUCT_URL} onClick={() => track("promo_popup_clicked_image")} className="block">
           <Image
-            src="/images/aerobroom-pro-popup.webp"
-            alt="AeroBroom Pro — one tool, two ways to clean: sweep and blow"
+            src="/images/aerobroom-pro-popup-tall.webp"
+            alt="AeroBroom Pro — one tool, two ways to clean: sweep and blow, one-touch control, cordless, USB-C charging, up to 40 minutes runtime"
             width={1083}
-            height={540}
+            height={1452}
             priority
             className="block h-auto w-full"
           />
         </a>
 
-        <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="flex flex-col gap-3 px-5 py-4">
           <div>
             <p id="aero-popup-title" className="text-base font-bold text-white">
               New: AeroBroom Pro
             </p>
             <p className="text-sm text-white/60">Push broom + cordless leaf blower in one tool.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 whitespace-nowrap">
             <button
               type="button"
               onClick={() => close("no_thanks")}
-              className="text-sm font-medium text-white/60 transition hover:text-white"
+              className="px-3 py-2.5 text-sm font-medium text-white/60 transition hover:text-white"
             >
               No thanks
             </button>
             <a
               href={PRODUCT_URL}
               onClick={() => track("promo_popup_clicked_button")}
-              className="inline-flex items-center gap-2 rounded-xl bg-mjs-red px-5 py-2.5 text-sm font-bold text-white transition hover:bg-red-700"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-mjs-red px-5 py-2.5 text-sm font-bold text-white transition hover:bg-red-700"
             >
               Shop now
               <ArrowRight className="h-4 w-4" />
