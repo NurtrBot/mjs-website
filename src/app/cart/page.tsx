@@ -89,7 +89,7 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
             return (
               <div key={item.sku} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-2.5 flex flex-col group hover:shadow-md hover:border-red-200 transition-all">
                 <a href={`/product/${item.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white relative">
-                  <Image src={item.image} alt={item.name} fill sizes="33vw" unoptimized className="object-contain p-1" />
+                  <Image src={item.image} alt={item.name} fill sizes="33vw" className="object-contain p-1" />
                 </a>
                 <div className="flex-1 min-h-[36px]">
                   <div className="text-[9px] text-mjs-red font-bold uppercase">Save {discount}%</div>
@@ -138,7 +138,7 @@ function FrequentlyBoughtTogether({ cartItems, addItem }: { cartItems: CartItemT
             {pairings.map((product) => (
               <div key={product.slug} className="bg-mjs-gray-50 rounded-xl border border-gray-100 p-2.5 flex flex-col group hover:shadow-md hover:border-gray-200 transition-all">
                 <a href={`/product/${product.slug}`} className="block aspect-square mb-2 overflow-hidden rounded-lg bg-white relative">
-                  <Image src={product.images[0]} alt={product.cardTitle} fill sizes="33vw" unoptimized className="object-contain p-1" />
+                  <Image src={product.images[0]} alt={product.cardTitle} fill sizes="33vw" className="object-contain p-1" />
                 </a>
                 <div className="flex-1 min-h-[36px]">
                   <div className="text-[9px] text-mjs-gray-400 font-medium uppercase truncate">{product.brand}</div>

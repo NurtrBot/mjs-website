@@ -101,7 +101,9 @@ export default function AeroBroomPopup() {
             alt="AeroBroom Pro — one tool, two ways to clean: sweep and blow, one-touch control, cordless, USB-C charging, up to 40 minutes runtime"
             width={1083}
             height={1452}
-            priority
+            sizes="(max-width: 572px) calc(100vw - 32px), 540px"
+            quality={75}
+            preload
             className="block h-auto w-full"
           />
         </a>

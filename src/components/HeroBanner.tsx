@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star } from "lucide-react";
 import { DELIVERY_BANNER, GOOGLE_REVIEWS } from "@/lib/business";
 
@@ -15,8 +16,24 @@ const slides: {
   accent: string;
   image: string;
   isBanner?: boolean;
-  coverBanner?: boolean;
+  /** true = always crop to fill; "lg" = fill from 1024px up, letterbox below (keeps edge text visible on tablets) */
+  coverBanner?: boolean | "lg";
+  /** Fills any letterbox space around a contained banner (matches the banner's own background) */
+  bgColor?: string;
 }[] = [
+  {
+    id: 9,
+    headline: "",
+    sub: "",
+    cta: "Discover AeroBroom",
+    href: "/product/aero-broom-pro",
+    gradient: "from-[#2b2c2f] via-[#2b2c2f] to-[#2b2c2f]",
+    accent: "bg-mjs-red",
+    image: "/banner-aerobroom.jpg",
+    isBanner: true,
+    coverBanner: "lg",
+    bgColor: "#2b2c2f",
+  },
   {
     id: 1,
     headline: "",
@@ -128,9 +145,16 @@ export default function HeroBanner() {
             </div>
           </div>
           <a href="/product/janitors-finest-2-ply-toilet-tissue-4-3-x-3-5-500-sheets-per-roll-96-rolls-per-case-5602">
-            <img
+            {/* Mobile LCP: resized AVIF/WebP, fetched first */}
+            <Image
               src="/images/mobile-hero-star-seller.jpg"
               alt="Star Seller — Janitors Finest Premium Plus 96 Rolls as low as $39.99"
+              width={1200}
+              height={600}
+              sizes="100vw"
+              quality={85}
+              loading="eager"
+              fetchPriority="high"
               className="w-full h-auto block"
             />
           </a>
@@ -144,12 +168,16 @@ export default function HeroBanner() {
           )}
 
           {/* Background */}
-          <div className="absolute inset-0">
-            <img
-              src={slide.image}
-              alt=""
-              className={`w-full h-full ${slide.coverBanner ? "object-cover" : slide.isBanner ? "object-contain" : "object-cover"}`}
-            />
+          <div className="absolute inset-0" style={slide.bgColor ? { backgroundColor: slide.bgColor } : undefined}>
+            {/* Desktop-only carousel: phones get a 1×1 blank so they never download these banners */}
+            <picture>
+              <source media="(max-width: 767px)" srcSet="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+              <img
+                src={slide.image}
+                alt=""
+                className={`w-full h-full ${slide.coverBanner === "lg" ? "object-contain lg:object-cover" : slide.coverBanner ? "object-cover" : slide.isBanner ? "object-contain" : "object-cover"}`}
+              />
+            </picture>
             {!slide.isBanner && (
               <>
                 <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient} opacity-85`} />

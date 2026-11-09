@@ -110,14 +110,14 @@ export default function ProductCard({ product }: { product: ProductData }) {
 
       <div className="flex gap-3 sm:block">
         {/* Image + SKU */}
-        <div className="flex-shrink-0 w-[120px] sm:w-auto">
-          <a href={`/product/${product.slug}`} className="relative block w-[120px] h-[120px] sm:w-auto sm:h-[200px] bg-white rounded-lg sm:rounded-none overflow-hidden">
+        <div className="flex-shrink-0 w-[100px] sm:w-auto">
+          <a href={`/product/${product.slug}`} className="relative block w-[100px] h-[100px] sm:w-auto sm:h-[200px] bg-white rounded-lg sm:rounded-none overflow-hidden">
             <ProductImage
               src={product.images[0]}
               alt={product.cardTitle}
               sku={product.sku}
               imageFit={product.imageFit}
-              sizes="(max-width: 640px) 120px, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 100px, (max-width: 1024px) 50vw, 25vw"
             />
           </a>
           <div className="text-[10px] text-mjs-gray-400 text-center mt-1.5 font-medium sm:hidden">{product.sku}</div>

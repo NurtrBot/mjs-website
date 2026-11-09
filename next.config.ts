@@ -30,8 +30,13 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "inline",
-    minimumCacheTTL: 86400,
-    qualities: [85],
+    minimumCacheTTL: 2592000, // 30 days — product/category photos rarely change
+    // AVIF first (≈30–50% smaller than WebP on phones), WebP fallback
+    formats: ["image/avif", "image/webp"],
+    // 75 = default for thumbnails/cards; 85 = hero + main product photo
+    qualities: [75, 85],
+    // Drop the 3840/2048 widths — no phone or laptop needs them for this site
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     remotePatterns: [
       {
         protocol: "https",

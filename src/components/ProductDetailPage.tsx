@@ -729,7 +729,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
 
         {/* Product image */}
         <div
-          className="relative bg-white aspect-[4/3] max-h-[65vw] mx-auto w-full"
+          className="relative bg-white aspect-[4/3] max-h-[55vw] mx-auto w-full"
           onClick={() => {
             const httpImages = product.images.filter(img => img.startsWith("http"));
             if (httpImages.length > 1) setSelectedImage((selectedImage + 1) % httpImages.length);
@@ -741,9 +741,9 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               alt={product.name}
               fill
               sizes="100vw"
-              quality={100}
-              unoptimized
-              className="object-contain p-4"
+              quality={85}
+              preload={selectedImage === 0}
+              className="object-contain p-3"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -831,7 +831,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden">
                     {PHOTO_STRIPS[product.sku].map((photo, i) => (
                       <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                        <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" style={photo.position ? { objectPosition: photo.position } : undefined} />
+                        <Image src={photo.src} alt={photo.alt} fill sizes="50vw" quality={75} className="object-cover" style={photo.position ? { objectPosition: photo.position } : undefined} />
                       </div>
                     ))}
                   </div>
@@ -1005,8 +1005,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   alt={product.name}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  quality={100}
-                  unoptimized
+                  quality={85}
                   className="object-contain p-4"
                 />
               )}
@@ -1605,10 +1604,13 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
             <div className="grid grid-cols-4 gap-2 rounded-xl overflow-hidden">
               {PHOTO_STRIPS[product.sku].map((photo, i) => (
                 <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                  <img
+                  <Image
                     src={photo.src}
                     alt={photo.alt}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 1400px) 25vw, 350px"
+                    quality={75}
+                    className="object-cover"
                     style={photo.position ? { objectPosition: photo.position } : undefined}
                   />
                 </div>

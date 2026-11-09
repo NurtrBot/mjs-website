@@ -19,6 +19,8 @@ function gtag(...args: unknown[]) {
   }
 }
 
+import { rdt } from "@/lib/reddit-pixel";
+
 // OpenAI pixel helper
 function oaiq(action: string, event: string, params?: Record<string, unknown>) {
   if (typeof window !== "undefined") {
@@ -49,6 +51,9 @@ export function trackViewProduct(product: { sku: string; name: string; price: nu
       item_brand: product.brand || "",
     }],
   });
+  rdt("track", "ViewContent", {
+    products: [{ id: product.sku, name: product.name, category: product.category || "" }],
+  });
 }
 
 // Add to cart
@@ -64,6 +69,12 @@ export function trackAddToCart(product: { sku: string; name: string; price: numb
       item_category: product.category || "",
       item_brand: product.brand || "",
     }],
+  });
+  rdt("track", "AddToCart", {
+    itemCount: product.quantity,
+    value: product.price * product.quantity,
+    currency: "USD",
+    products: [{ id: product.sku, name: product.name, category: product.category || "" }],
   });
   oaiq("measure", "add_to_cart", {
     type: "product",
@@ -112,6 +123,13 @@ export function trackPurchase(orderId: string, total: number, tax: number, shipp
     value: total,
     currency: "USD",
   });
+  // conversionId = order number, so Reddit also de-duplicates if it ever fires twice
+  rdt("track", "Purchase", {
+    value: total,
+    currency: "USD",
+    itemCount: items.reduce((n, i) => n + i.quantity, 0),
+    conversionId: orderId,
+  });
   oaiq("measure", "purchase", {
     type: "purchase",
     value: total,
@@ -131,6 +149,7 @@ export function trackSearch(query: string, resultsCount: number) {
 // Sign up
 export function trackSignUp(method: string) {
   gtag("event", "sign_up", { method });
+  rdt("track", "SignUp");
 }
 
 // Login
@@ -163,6 +182,10 @@ export function trackContactForm(formType: string) {
     value: 0,
     form_type: formType,
   });
+  if (formType === "quote") {
+    const quoteId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `quote-${Date.now()}`;
+    rdt("track", "Lead", { conversionId: quoteId });
+  }
 }
 
 // Category viewed

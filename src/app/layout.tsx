@@ -11,6 +11,7 @@ import CartPanel from "@/components/CartPanel";
 import ReturnVisitorSurvey from "@/components/ReturnVisitorSurvey";
 import AeroBroomPopup from "@/components/AeroBroomPopup";
 import VacationNotice from "@/components/VacationNotice";
+import RedditPixel from "@/components/RedditPixel";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 
 const inter = Inter({
@@ -200,6 +201,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
         <div id="google_translate_element" style={{ display: "none" }} />
+        <RedditPixel />
         <AuthProvider>
           <PurchaseProvider>
             <FavoritesProvider>

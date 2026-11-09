@@ -24,8 +24,8 @@ export default function MobileCategoryGrid() {
             href={cat.href}
             className="flex flex-col items-center text-center"
           >
-            <div className="relative w-full aspect-square bg-mjs-gray-50 rounded-lg overflow-hidden mb-1">
-              <Image src={cat.image} alt={cat.name} fill sizes="33vw" className="object-contain p-2" />
+            <div className="relative w-full aspect-[4/3] bg-mjs-gray-50 rounded-lg overflow-hidden mb-1">
+              <Image src={cat.image} alt={cat.name} fill sizes="33vw" className="object-contain p-1.5" />
             </div>
             <span className="text-[10px] font-semibold text-mjs-gray-700 leading-tight">
               {cat.name}
