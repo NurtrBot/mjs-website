@@ -427,6 +427,53 @@ function ProductReviews({ sku, rating, reviewCount, initialReviews }: { sku: str
 
 /* ───────── main component ───────── */
 
+/* Product-specific coupon shown as a tap-to-copy tag beside the price.
+   The code itself is restricted to the product inside BigCommerce. */
+const PRODUCT_COUPONS: Record<string, { code: string; discount: string; note: string }> = {
+  "107310": { code: "PROTEAM5", discount: "5% off", note: "Enter the code at checkout. One use per customer." },
+};
+
+function CouponTag({ sku }: { sku: string }) {
+  const coupon = PRODUCT_COUPONS[sku];
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  if (!coupon) return null;
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(coupon.code); } catch {}
+    setCopied(true); setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="relative inline-block">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 rounded-full bg-[#f3e8ff] px-3 py-1.5 text-[12px] font-black uppercase tracking-wide text-[#6b21a8] hover:bg-[#ead7ff] transition-colors"
+      >
+        <BadgePercent className="w-3.5 h-3.5" />
+        Coupon · {coupon.discount}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden="true" />
+          <div className="absolute left-0 top-full z-40 mt-2 w-[280px] rounded-2xl bg-white p-4 shadow-[0_12px_40px_rgba(23,32,52,0.18)] ring-1 ring-black/5">
+            <p className="text-[11px] font-black uppercase tracking-[2px] text-[#6b21a8]">Coupon</p>
+            <p className="mt-1 text-[1.6rem] leading-none font-black text-mjs-dark">{coupon.discount}</p>
+            <p className="mt-1.5 text-[12.5px] text-mjs-gray-500">{coupon.note}</p>
+            <button
+              type="button"
+              onClick={copy}
+              className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${copied ? "bg-emerald-50 text-emerald-700 ring-2 ring-emerald-300" : "bg-mjs-dark text-white hover:bg-black"}`}
+            >
+              {copied ? <><Check className="w-4 h-4" /> Copied</> : <><span className="font-mono tracking-[0.25em]">{coupon.code}</span><span className="text-xs font-normal text-white/60">Copy</span></>}
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function ProductDetailPage({ slug, initialProduct, initialReviews }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[] }) {
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
@@ -935,6 +982,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                     <span className="text-xs font-bold text-mjs-green">Save ${(product.originalPrice - product.price).toFixed(2)}</span>
                   </>
                 ) : null}
+                <CouponTag sku={product.sku} />
               </div>
               {unitBreakdown && (
                 <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="mb-2" />
@@ -1130,6 +1178,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                 {unitBreakdown && (
                   <PerUnitTag price={currentTierPrice} {...unitBreakdown} tierLabel={unitTierLabel} className="self-center" />
                 )}
+                <CouponTag sku={product.sku} />
               </div>
               <p className="text-xs text-mjs-gray-600 mt-1">
                 {priceUnitText}{unitBreakdown?.caseNote && ` · ${unitBreakdown.caseNote}`}{!customPrice && product.quickBuy.length > 1 && " · Bulk pricing available"}
