@@ -3,23 +3,18 @@
 import { useEffect, useState, useRef } from "react";
 import { Gift, Star, ArrowRight, ShoppingCart, CheckCircle, Crown, Zap, CreditCard, Shield, Clock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { ACCOUNT_TIERS, REWARD_MIN_SPEND, REWARD_MAX_AMOUNT } from "@/lib/reward-tiers";
 
-// ── Tier definitions ──
-const GUEST_TIERS = [
-  { minSpend: 500, label: "Bronze", amount: 10, color: "from-amber-600 to-amber-800", icon: Star },
-  { minSpend: 1000, label: "Silver", amount: 20, color: "from-gray-400 to-gray-600", icon: Star },
-  { minSpend: 2500, label: "Gold", amount: 50, color: "from-yellow-400 to-amber-500", icon: Crown },
-  { minSpend: 3500, label: "Platinum", amount: 75, color: "from-indigo-500 to-purple-600", icon: Zap },
-  { minSpend: 5000, label: "Diamond", amount: 125, color: "from-mjs-red to-red-700", icon: Gift },
-];
-
-const CUSTOMER_TIERS = [
-  { minSpend: 700, label: "Bronze", amount: 10, color: "from-amber-600 to-amber-800", icon: Star },
-  { minSpend: 2000, label: "Silver", amount: 25, color: "from-gray-400 to-gray-600", icon: Star },
-  { minSpend: 3500, label: "Gold", amount: 50, color: "from-yellow-400 to-amber-500", icon: Crown },
-  { minSpend: 5000, label: "Platinum", amount: 75, color: "from-indigo-500 to-purple-600", icon: Zap },
-  { minSpend: 7500, label: "Diamond", amount: 100, color: "from-mjs-red to-red-700", icon: Gift },
-];
+// ── Tier display (amounts come from the shared table in src/lib/reward-tiers.ts) ──
+const TIER_STYLE: Record<string, { color: string; icon: typeof Star }> = {
+  Bronze: { color: "from-amber-600 to-amber-800", icon: Star },
+  Silver: { color: "from-gray-400 to-gray-600", icon: Star },
+  Gold: { color: "from-yellow-400 to-amber-500", icon: Crown },
+  Platinum: { color: "from-indigo-500 to-purple-600", icon: Zap },
+  Diamond: { color: "from-mjs-red to-red-700", icon: Gift },
+};
+const CUSTOMER_TIERS = ACCOUNT_TIERS.map((t) => ({ ...t, ...(TIER_STYLE[t.label] || TIER_STYLE.Bronze) }));
+const MIN_SPEND_LABEL = `$${REWARD_MIN_SPEND.toLocaleString()}`;
 
 // ── Hardcoded popular brands (always visible, no API wait) ──
 const POPULAR_BRANDS = [
@@ -135,8 +130,7 @@ function MarqueeRow({ brands, direction = "left", speed = 35 }: { brands: BrandC
 export default function RewardsPage() {
   const { isLoggedIn } = useAuth();
   const [brands, setBrands] = useState<BrandCard[]>([]);
-  const [showCustomerTiers, setShowCustomerTiers] = useState(false);
-  const tiers = showCustomerTiers ? CUSTOMER_TIERS : GUEST_TIERS;
+  const tiers = CUSTOMER_TIERS;
 
   // Fetch full brand catalog from Tremendous
   useEffect(() => {
@@ -200,7 +194,7 @@ export default function RewardsPage() {
               <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-5 py-3">
                 <Gift className="w-5 h-5 text-mjs-red" />
                 <div className="text-left">
-                  <div className="text-white font-bold text-sm">Up to $125</div>
+                  <div className="text-white font-bold text-sm">Up to ${REWARD_MAX_AMOUNT}</div>
                   <div className="text-[10px] text-gray-500">per order</div>
                 </div>
               </div>
@@ -215,7 +209,7 @@ export default function RewardsPage() {
                 <CheckCircle className="w-5 h-5 text-mjs-red" />
                 <div className="text-left">
                   <div className="text-white font-bold text-sm">Every Order</div>
-                  <div className="text-[10px] text-gray-500">qualifies at $500+</div>
+                  <div className="text-[10px] text-gray-500">account orders {MIN_SPEND_LABEL}+</div>
                 </div>
               </div>
             </div>
@@ -240,23 +234,19 @@ export default function RewardsPage() {
             <div className="text-[10px] font-bold uppercase tracking-[3px] text-mjs-red mb-2">Reward Tiers</div>
             <h2 className="text-3xl font-black text-mjs-dark">The More You Spend, The More You Earn</h2>
             <p className="text-sm text-mjs-gray-500 mt-2 max-w-lg mx-auto">
-              Higher order totals unlock bigger gift card values.<br />Pick any brand you love at checkout.
+              Higher order subtotals (before tax and delivery) unlock bigger gift cards.<br />Pick any brand you love after checkout.
             </p>
 
-            {/* Toggle: Guest vs Customer */}
-            <div className="mt-6 inline-flex items-center bg-gray-100 rounded-full p-1">
-              <button
-                onClick={() => setShowCustomerTiers(false)}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${!showCustomerTiers ? "bg-mjs-dark text-white shadow-md" : "text-mjs-gray-500 hover:text-mjs-dark"}`}
-              >
-                Guest Checkout
-              </button>
-              <button
-                onClick={() => setShowCustomerTiers(true)}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${showCustomerTiers ? "bg-mjs-dark text-white shadow-md" : "text-mjs-gray-500 hover:text-mjs-dark"}`}
-              >
-                Account Holders
-              </button>
+            {/* Account holders only */}
+            <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 bg-mjs-dark text-white rounded-full px-4 py-2 text-xs font-bold">
+                <Shield className="w-3.5 h-3.5 text-mjs-red" /> Account holders only
+              </span>
+              {!isLoggedIn && (
+                <a href="/auth" className="inline-flex items-center gap-1 rounded-full border border-mjs-red px-4 py-2 text-xs font-bold text-mjs-red hover:bg-red-50 transition-colors">
+                  Sign in or create a free account <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -443,11 +433,12 @@ export default function RewardsPage() {
           </div>
           <div className="space-y-3">
             {[
-              { q: "How do I earn a gift card?", a: "Place any order of $500 or more. At checkout, you'll be prompted to choose a gift card brand. It's automatic." },
+              { q: "How do I earn a gift card?", a: `Sign in to your MJS account and place an order with a merchandise subtotal of ${MIN_SPEND_LABEL} or more (before tax and delivery). Right after checkout, you'll be prompted to choose a gift card brand. It's automatic.` },
               { q: "When will I receive my gift card?", a: "Your digital gift card is delivered to your email within 72 hours of your order being placed." },
               { q: "Can I earn a gift card on every order?", a: "Yes! Every qualifying order earns a gift card. There's no limit to how many you can earn." },
               { q: "What brands can I choose from?", a: "We offer 2,500+ brands including Amazon, Apple, Starbucks, DoorDash, Southwest Airlines, Chipotle, and many more." },
-              { q: "Do I need an account?", a: "No. Guest orders of $500+ qualify. Creating a free account lets you track your rewards and order history." },
+              { q: "Do I need an account?", a: "Yes. Gift card rewards are for account holders only; guest checkouts don't earn rewards. Creating an account is free, takes a minute, and also lets you track orders and reorder in one tap." },
+              { q: "Does it matter how I pay?", a: "No. Card, bill-to-account and cash orders all qualify the same way." },
               { q: "Can I use my gift card immediately?", a: "Yes. Once delivered to your email, the gift card is ready to use online or in-store at the brand you selected." },
             ].map((faq, i) => (
               <div key={i} className="bg-gray-50 rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow">
@@ -473,7 +464,7 @@ export default function RewardsPage() {
             Your next order comes with a<br /><span className="text-mjs-red">free gift card.</span>
           </div>
           <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
-            Place an order of $500 or more and choose from {brands.length}+ top brands. It&apos;s that simple.
+            Sign in and place an order of {MIN_SPEND_LABEL} or more (before tax and delivery), then choose from {brands.length}+ top brands. It&apos;s that simple.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {isLoggedIn ? (

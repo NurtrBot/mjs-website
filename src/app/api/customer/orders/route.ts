@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
           date: order.date_created,
           status: order.status,
           subtotal: order.subtotal_inc_tax,
+          subtotalExTax: order.subtotal_ex_tax,
+          discount: order.discount_amount,
           tax: order.total_tax,
           shipping: order.shipping_cost_inc_tax,
           total: order.total_inc_tax,

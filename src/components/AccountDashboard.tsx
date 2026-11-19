@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { getRewardTier } from "@/lib/reward-tiers";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -15,6 +16,13 @@ import {
 } from "lucide-react";
 
 const tabs = ["Overview", "Orders", "Rewards", "Account Info"];
+const REWARD_TIER_COLORS: Record<string, string> = {
+  Bronze: "from-amber-600 to-amber-700",
+  Silver: "from-gray-400 to-gray-500",
+  Gold: "from-yellow-400 to-amber-500",
+  Platinum: "from-indigo-500 to-purple-600",
+  Diamond: "from-mjs-red to-red-700",
+};
 
 interface OrderLineItem {
   name: string;
@@ -29,6 +37,8 @@ interface OrderData {
   dateRaw: string;
   items: number;
   total: number;
+  /** merchandise before tax & delivery, after discounts — what rewards are graded on */
+  rewardSubtotal: number;
   status: string;
   statusColor: string;
   lineItems: OrderLineItem[];
@@ -333,6 +343,7 @@ export default function AccountDashboard() {
             dateRaw: o.date as string,
             items: (o.lineItems as Record<string, unknown>[])?.length || o.itemCount as number || 0,
             total: Number(o.total) || 0,
+            rewardSubtotal: Math.max(0, (Number(o.subtotalExTax) || 0) - (Number(o.discount) || 0)),
             status,
             statusColor,
             tax: Number(o.tax) || 0,
@@ -1100,19 +1111,15 @@ export default function AccountDashboard() {
               {/* Reward History */}
               <div>
                 <h3 className="text-sm font-bold text-mjs-dark mb-3">Reward History</h3>
-                {displayOrders.filter(o => o.total >= 700).length > 0 ? (
+                {displayOrders.filter(o => getRewardTier(o.rewardSubtotal, true)).length > 0 ? (
                   <div className="space-y-3">
                     {displayOrders
-                      .filter(o => o.total >= 700)
+                      .filter(o => getRewardTier(o.rewardSubtotal, true))
                       .map(order => {
-                        let rewardAmount = 0;
-                        let tierLabel = "";
-                        let tierColor = "from-amber-600 to-amber-700";
-                        if (order.total >= 7500) { rewardAmount = 100; tierLabel = "Diamond"; tierColor = "from-mjs-red to-red-700"; }
-                        else if (order.total >= 5000) { rewardAmount = 75; tierLabel = "Platinum"; tierColor = "from-indigo-500 to-purple-600"; }
-                        else if (order.total >= 3500) { rewardAmount = 50; tierLabel = "Gold"; tierColor = "from-yellow-400 to-amber-500"; }
-                        else if (order.total >= 2000) { rewardAmount = 25; tierLabel = "Silver"; tierColor = "from-gray-400 to-gray-500"; }
-                        else if (order.total >= 700) { rewardAmount = 10; tierLabel = "Bronze"; tierColor = "from-amber-600 to-amber-700"; }
+                        const earned = getRewardTier(order.rewardSubtotal, true)!;
+                        const rewardAmount = earned.amount;
+                        const tierLabel = earned.label;
+                        const tierColor = REWARD_TIER_COLORS[earned.label] || "from-amber-600 to-amber-700";
 
                         // Extract gift card brand from order notes if available
                         const staffNotes = (order as unknown as Record<string, unknown>).staffNotes as string || "";

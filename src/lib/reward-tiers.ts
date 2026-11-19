@@ -9,6 +9,9 @@
    Qualifying amount = merchandise subtotal before tax and shipping, minus
    any promo-code discount. Payment method does not matter: bill-to-account,
    card and cash orders all qualify.
+
+   ACCOUNT HOLDERS ONLY (since 2026-11-19): guest checkouts earn nothing and
+   are never shown a reward.
    ───────────────────────────────────────────────────────────── */
 
 export interface GiftCard {
@@ -39,15 +42,6 @@ export const GIFT_CARDS: GiftCard[] = [
   { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://api.tremendous.com/product_images/L9SW3VT4MLW4/card" },
 ];
 
-// Guest checkout (not signed in)
-export const GUEST_TIERS: RewardTier[] = [
-  { minSpend: 500, label: "Bronze", type: "giftcard", amount: 10, gifts: GIFT_CARDS },
-  { minSpend: 1000, label: "Silver", type: "giftcard", amount: 20, gifts: GIFT_CARDS },
-  { minSpend: 2500, label: "Gold", type: "giftcard", amount: 50, gifts: GIFT_CARDS },
-  { minSpend: 3500, label: "Platinum", type: "giftcard", amount: 75, gifts: GIFT_CARDS },
-  { minSpend: 5000, label: "Diamond", type: "giftcard", amount: 125, gifts: GIFT_CARDS },
-];
-
 // Account holders (signed in)
 export const ACCOUNT_TIERS: RewardTier[] = [
   { minSpend: 700, label: "Bronze", type: "giftcard", amount: 10, gifts: GIFT_CARDS },
@@ -57,9 +51,13 @@ export const ACCOUNT_TIERS: RewardTier[] = [
   { minSpend: 7500, label: "Diamond", type: "giftcard", amount: 100, gifts: GIFT_CARDS },
 ];
 
+/** Guests get an empty ladder: nothing to show, nothing to earn */
 export function getRewardTiers(isAccountHolder: boolean): RewardTier[] {
-  return isAccountHolder ? ACCOUNT_TIERS : GUEST_TIERS;
+  return isAccountHolder ? ACCOUNT_TIERS : [];
 }
+
+export const REWARD_MIN_SPEND = ACCOUNT_TIERS[0].minSpend;
+export const REWARD_MAX_AMOUNT = ACCOUNT_TIERS[ACCOUNT_TIERS.length - 1].amount;
 
 /** Highest tier the qualifying subtotal reaches, or null if it reaches none */
 export function getRewardTier(qualifyingSubtotal: number, isAccountHolder: boolean): RewardTier | null {
