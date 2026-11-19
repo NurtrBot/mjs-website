@@ -48,6 +48,7 @@ interface GiftCardResult {
   amount: number;
   name: string;
   rewardId: string;
+  email?: string;
   image: string;
 }
 
@@ -66,6 +67,7 @@ function ConfirmationContent() {
   const [giftCardResult, setGiftCardResult] = useState<GiftCardResult | null>(null);
   const [giftFlipped, setGiftFlipped] = useState(false);
   const [giftClaimed, setGiftClaimed] = useState(false);
+  const [giftError, setGiftError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -128,29 +130,33 @@ function ConfirmationContent() {
     const tier = orderDetails.rewardTier;
 
     if (tier.type === "giftcard") {
+      setGiftError(null);
       try {
-        const email = user?.email || orderDetails?.shippingAddress?.name || "";
+        // The server works out the tier and the recipient from the real order;
+        // we only tell it which card the customer picked.
         const res = await fetch("/api/rewards/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            recipientName: orderDetails.customerName || "Valued Customer",
-            recipientEmail: email,
-            productId: gift.id,
-            amount: tier.amount,
-            orderId: orderId,
-          }),
+          body: JSON.stringify({ productId: gift.id, orderId }),
         });
         const data = await res.json();
+        if (!res.ok || !data.success) {
+          setGiftError(data.error || "We couldn't reserve your gift card. Please call us and we'll take care of it.");
+          setGiftLoading(false);
+          return;
+        }
         setGiftCardResult({
           redeemLink: data.redeemLink || "",
-          amount: tier.amount,
-          name: gift.name,
+          amount: Number(data.amount) || tier.amount,
+          name: data.name || gift.name,
           rewardId: data.rewardId || "",
+          email: data.recipientEmail || "",
           image: gift.image,
         });
       } catch {
-        setGiftCardResult({ redeemLink: "", amount: tier.amount, name: gift.name, rewardId: "", image: gift.image });
+        setGiftError("We couldn't reserve your gift card right now. Please call us and we'll take care of it.");
+        setGiftLoading(false);
+        return;
       }
     }
     // For physical gifts, just record the selection
@@ -469,6 +475,11 @@ function ConfirmationContent() {
                 </div>
               ) : (
                 <div>
+                  {giftError && (
+                    <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-center text-sm font-semibold text-red-700">
+                      {giftError}
+                    </div>
+                  )}
                   <div className="text-[10px] font-bold text-mjs-gray-400 uppercase tracking-wider text-center mb-5">Choose One</div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {orderDetails.rewardTier.gifts.map((gift, idx) => (
@@ -527,7 +538,7 @@ function ConfirmationContent() {
                 </p>
                 <div className="mt-3 flex items-center justify-center gap-2">
                   <div className="text-[10px] text-mjs-gray-400">Delivering to:</div>
-                  <div className="text-[11px] font-semibold text-mjs-dark">{user?.email || orderDetails?.shippingAddress?.name || ""}</div>
+                  <div className="text-[11px] font-semibold text-mjs-dark">{giftCardResult.email || user?.email || ""}</div>
                 </div>
               </div>
 

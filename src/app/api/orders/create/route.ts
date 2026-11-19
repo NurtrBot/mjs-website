@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getRewardTier, isGiftCardId, GIFT_CARDS, rewardSentNote } from "@/lib/reward-tiers";
 import {
   createCart,
   addConsignment,
@@ -368,9 +369,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 9. Add order notes
+    const staffNotes = `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`;
     try {
       await updateOrder(orderId, {
-        staff_notes: `[New Website] Payment: ${paymentMethod}. Fulfillment: ${fulfillment}.${notes ? ` ${notes}` : ""}`,
+        staff_notes: staffNotes,
         customer_message: notes || "",
       });
     } catch {
@@ -416,9 +418,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 11. Send gift card via Tremendous if selected
+    // 11. Gift-card reward. The SERVER decides the tier from the real BC order:
+    //     merchandise subtotal before tax & shipping, minus promo discount.
+    //     Bill-to-account, card and cash orders all qualify. The browser only
+    //     chooses which brand of card; its "amount" is ignored.
     let rewardResult: { redeemLink?: string; amount?: number; name?: string } | null = null;
-    if (reward?.type === "giftcard" && reward.id && reward.amount) {
+    const earnedTier = subtotalBeforeTax > 0
+      ? getRewardTier(Math.max(0, subtotalBeforeTax - bcTotals.discount), !!customerId && customerId > 0)
+      : null;
+    if (reward?.type === "giftcard" && earnedTier && isGiftCardId(reward.id)) {
+      const cardName = GIFT_CARDS.find((g) => g.id === reward.id)?.name || reward.name;
       try {
         const tremendousKey = process.env.TREMENDOUS_API_KEY;
         const campaignId = process.env.TREMENDOUS_CAMPAIGN_ID;
@@ -428,7 +437,7 @@ export async function POST(req: NextRequest) {
           : "https://api.tremendous.com";
 
         if (tremendousKey) {
-          console.log("[Tremendous] Sending gift card:", { amount: reward.amount, name: reward.name, productId: reward.id, recipient: shippingAddress.email });
+          console.log("[Tremendous] Sending gift card:", { orderId, tier: earnedTier.label, amount: earnedTier.amount, name: cardName, productId: reward.id, recipient: shippingAddress.email });
           const tRes = await fetch(`${baseUrl}/api/v2/orders`, {
             method: "POST",
             headers: {
@@ -437,8 +446,9 @@ export async function POST(req: NextRequest) {
             },
             body: JSON.stringify({
               payment: { funding_source_id: fundingSourceId || "BALANCE" },
+              external_id: `mjs-order-${orderId}`,
               rewards: [{
-                value: { denomination: reward.amount, currency_code: "USD" },
+                value: { denomination: earnedTier.amount, currency_code: "USD" },
                 delivery: { method: "LINK" },
                 recipient: {
                   name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
@@ -455,10 +465,18 @@ export async function POST(req: NextRequest) {
             const tReward = tData.order?.rewards?.[0];
             rewardResult = {
               redeemLink: tReward?.delivery?.link || "",
-              amount: reward.amount,
-              name: reward.name,
+              amount: earnedTier.amount,
+              name: cardName,
             };
             console.log("[Tremendous] Gift card created successfully:", tReward?.id);
+            // Mark the order so the confirmation page can't claim a second card
+            try {
+              await updateOrder(orderId, {
+                staff_notes: `${staffNotes} ${rewardSentNote(earnedTier.amount, tReward?.id || "")}`,
+              });
+            } catch {
+              console.error(`[Order ${orderId}] Failed to write reward marker`);
+            }
           } else {
             const errText = await tRes.text();
             console.error("[Tremendous] API error:", tRes.status, errText);
@@ -469,6 +487,8 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error("[Tremendous] Exception:", err);
       }
+    } else if (reward?.type === "giftcard") {
+      console.warn(`[Order ${orderId}] Gift card requested but not earned (qualifying subtotal ${subtotalBeforeTax - bcTotals.discount}, customer ${customerId || "guest"}, product ${reward.id})`);
     }
 
     return NextResponse.json({

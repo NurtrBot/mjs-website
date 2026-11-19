@@ -29,43 +29,7 @@ import {
   Phone,
 } from "lucide-react";
 import { trackPromoCode, trackPurchase } from "@/lib/analytics";
-
-// Digital gift cards (from Tremendous production campaign)
-const GIFT_CARDS = [
-  { id: "OKMHM2X2OHYV", name: "Amazon", image: "https://api.tremendous.com/product_images/OKMHM2X2OHYV/card" },
-  { id: "DC82VBYLI4CC", name: "Apple", image: "https://api.tremendous.com/product_images/DC82VBYLI4CC/card" },
-  { id: "2XG0FLQXBDCZ", name: "Starbucks", image: "https://api.tremendous.com/product_images/2XG0FLQXBDCZ/card" },
-  { id: "GL3Y4RNQJAQ1", name: "Southwest Airlines", image: "https://api.tremendous.com/product_images/GL3Y4RNQJAQ1/card" },
-  { id: "9OEIQ5EWBWT9", name: "DoorDash", image: "https://api.tremendous.com/product_images/9OEIQ5EWBWT9/card" },
-  { id: "CRN0ID07Y2XD", name: "Chipotle", image: "https://api.tremendous.com/product_images/CRN0ID07Y2XD/card" },
-  { id: "HNFP6TMSPA9W", name: "Airbnb", image: "https://api.tremendous.com/product_images/HNFP6TMSPA9W/card" },
-  { id: "DYHLA54LEX11", name: "AMC Theatres", image: "https://api.tremendous.com/product_images/DYHLA54LEX11/card" },
-  { id: "4SAT90Q41D60", name: "Chevron", image: "https://api.tremendous.com/product_images/4SAT90Q41D60/card" },
-  { id: "L9SW3VT4MLW4", name: "Dick's Sporting Goods", image: "https://api.tremendous.com/product_images/L9SW3VT4MLW4/card" },
-];
-
-// Guest tiers (not signed in)
-const GUEST_TIERS = [
-  { minSpend: 500, label: "Bronze", type: "giftcard" as const, amount: 10, gifts: GIFT_CARDS },
-  { minSpend: 1000, label: "Silver", type: "giftcard" as const, amount: 20, gifts: GIFT_CARDS },
-  { minSpend: 2500, label: "Gold", type: "giftcard" as const, amount: 50, gifts: GIFT_CARDS },
-  { minSpend: 3500, label: "Platinum", type: "giftcard" as const, amount: 75, gifts: GIFT_CARDS },
-  { minSpend: 5000, label: "Diamond", type: "giftcard" as const, amount: 125, gifts: GIFT_CARDS },
-];
-
-// Customer account tiers (signed in)
-const CUSTOMER_TIERS = [
-  { minSpend: 700, label: "Bronze", type: "giftcard" as const, amount: 10, gifts: GIFT_CARDS },
-  { minSpend: 2000, label: "Silver", type: "giftcard" as const, amount: 25, gifts: GIFT_CARDS },
-  { minSpend: 3500, label: "Gold", type: "giftcard" as const, amount: 50, gifts: GIFT_CARDS },
-  { minSpend: 5000, label: "Platinum", type: "giftcard" as const, amount: 75, gifts: GIFT_CARDS },
-  { minSpend: 7500, label: "Diamond", type: "giftcard" as const, amount: 100, gifts: GIFT_CARDS },
-];
-
-// Select tiers based on login status
-function getRewardTiers(isLoggedIn: boolean) {
-  return isLoggedIn ? CUSTOMER_TIERS : GUEST_TIERS;
-}
+import { getRewardTiers } from "@/lib/reward-tiers";
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, clearCart } = useCart();
