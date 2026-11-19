@@ -15,6 +15,18 @@ export default function QuotePage() {
   const [frequency, setFrequency] = useState("");
   const [message, setMessage] = useState("");
 
+  // Homepage promo cards link here with ?item=… to prefill the request
+  useEffect(() => {
+    try {
+      const item = new URLSearchParams(window.location.search).get("item");
+      const prefill: Record<string, string> = {
+        "5602-pallet": "I'd like the full-pallet price on Janitors Finest 2-ply bath tissue (SKU 5602): $39.99 per case, 25 cases per pallet. Please send delivery timing and a quote.",
+        "nitrile-case": "I'd like to order blue nitrile gloves by the case at $79.90 (10 boxes of 100). Size(s) and quantity: ",
+      };
+      if (item && prefill[item]) setMessage((m) => m || prefill[item]);
+    } catch {}
+  }, []);
+
   const submitted = formState.succeeded;
 
   // Count the lead once, only after Formspree confirms the submission

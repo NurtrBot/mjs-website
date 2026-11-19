@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import ProductShelf from "@/components/ProductShelf";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star } from "lucide-react";
 import { DELIVERY_BANNER, GOOGLE_REVIEWS } from "@/lib/business";
 
@@ -20,19 +21,24 @@ const slides: {
   coverBanner?: boolean | "lg";
   /** Fills any letterbox space around a contained banner (matches the banner's own background) */
   bgColor?: string;
+  /** Real HTML button drawn on top of a banner slide, positioned in % of the slide box */
+  ctaOverlay?: { left: string; top: string };
 }[] = [
   {
-    id: 9,
+    id: 10,
     headline: "",
     sub: "",
-    cta: "Discover AeroBroom",
-    href: "/product/aero-broom-pro",
-    gradient: "from-[#2b2c2f] via-[#2b2c2f] to-[#2b2c2f]",
+    cta: "Shop bath tissue",
+    href: "/product/janitors-finest-2-ply-toilet-tissue-4-3-x-3-5-500-sheets-per-roll-96-rolls-per-case-5602",
+    gradient: "from-[#f3f6f9] via-[#f3f6f9] to-[#f3f6f9]",
     accent: "bg-mjs-red",
-    image: "/banner-aerobroom.jpg",
+    image: "/banner-5602-tissue.jpg",
     isBanner: true,
-    coverBanner: "lg",
-    bgColor: "#2b2c2f",
+    // Art runs edge to edge, so never crop it: letterbox on the art's own background colour instead
+    bgColor: "#f6f7f9",
+    // Button sits under "the big pack." — positioned relative to the artwork's centre in units of
+    // its rendered height (--hh, set on the overlay button), so it tracks the art at every width.
+    ctaOverlay: { left: "calc(50% - 1.84 * var(--hh))", top: "calc(50% + 0.185 * var(--hh))" },
   },
   {
     id: 1,
@@ -114,12 +120,20 @@ const dealTabs = [
 ];
 
 
+/*
+ * Desktop slide carousel is HIDDEN for now (2026-11-19) and the Local Delivery
+ * "Restock in 1–3 days" banner takes its slot. The slides, arrows and progress
+ * bars are all still here — flip this to true to bring the carousel back.
+ * The mobile hero and the industry tabs are unaffected.
+ */
+const SHOW_CAROUSEL = false;
+
 export default function HeroBanner() {
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || !SHOW_CAROUSEL) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
@@ -135,7 +149,7 @@ export default function HeroBanner() {
   const slide = slides[current];
 
   return (
-    <section className="bg-white md:bg-mjs-gray-50">
+    <section className="bg-white">
       <div className="max-w-[1400px] mx-auto px-0 md:px-4 pt-0 md:pt-4">
         {/* ═══ MOBILE: Delivery strip + Star Seller banner ═══ */}
         <div className="md:hidden">
@@ -160,7 +174,9 @@ export default function HeroBanner() {
           </a>
         </div>
 
-        {/* ═══ DESKTOP: Full Carousel ═══ */}
+        {/* ═══ DESKTOP: Local Delivery banner (in the carousel's slot while it's hidden) ═══ */}
+        {SHOW_CAROUSEL ? (
+          /* ═══ DESKTOP: Full Carousel ═══ */
         <div className="relative rounded-2xl overflow-hidden hidden md:block">
           {/* Clickable banner link */}
           {slide.isBanner && (
@@ -168,7 +184,7 @@ export default function HeroBanner() {
           )}
 
           {/* Background */}
-          <div className="absolute inset-0" style={slide.bgColor ? { backgroundColor: slide.bgColor } : undefined}>
+          <div className="absolute inset-0" style={{ containerType: "size", ...(slide.bgColor ? { backgroundColor: slide.bgColor } : {}) }}>
             {/* Desktop-only carousel: phones get a 1×1 blank so they never download these banners */}
             <picture>
               <source media="(max-width: 767px)" srcSet="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
@@ -178,6 +194,21 @@ export default function HeroBanner() {
                 className={`w-full h-full ${slide.coverBanner === "lg" ? "object-contain lg:object-cover" : slide.coverBanner ? "object-cover" : slide.isBanner ? "object-contain" : "object-cover"}`}
               />
             </picture>
+            {/* Real button on top of banner artwork that leaves space for one (sized in cqh = % of slide height) */}
+            {slide.isBanner && slide.ctaOverlay && (
+              <a
+                href={slide.href}
+                style={{ left: slide.ctaOverlay.left, top: slide.ctaOverlay.top, fontSize: "calc(0.06 * var(--hh))", padding: "calc(0.022 * var(--hh)) calc(0.048 * var(--hh))", gap: "calc(0.018 * var(--hh))" }}
+                // --hh = rendered height of the 2800×640 art: object-contain is width-bound (min), object-cover height-bound (max)
+                className={`absolute z-[6] inline-flex items-center whitespace-nowrap rounded-full bg-[#fecd02] text-[#1b1b1b] font-bold shadow-md hover:bg-[#ffd836] transition-colors ${
+                  slide.coverBanner === true ? "[--hh:max(100cqh,22.857cqw)]"
+                  : slide.coverBanner === "lg" ? "[--hh:min(100cqh,22.857cqw)] lg:[--hh:max(100cqh,22.857cqw)]"
+                  : "[--hh:min(100cqh,22.857cqw)]"}`}
+              >
+                {slide.cta}
+                <ArrowRight style={{ width: "1.1em", height: "1.1em" }} />
+              </a>
+            )}
             {!slide.isBanner && (
               <>
                 <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient} opacity-85`} />
@@ -257,32 +288,42 @@ export default function HeroBanner() {
             ))}
           </div>
         </div>
+        ) : (
+          <div className="hidden md:block overflow-hidden rounded-3xl">
+            <Image
+              src="/banner-local-delivery-v4.jpg"
+              alt="Local delivery: restock in 1–3 days across Orange, Riverside and Los Angeles counties. Free delivery on a $399+ subtotal; some ZIP codes excluded."
+              width={2800}
+              height={792}
+              sizes="(max-width: 1400px) 100vw, 1400px"
+              quality={85}
+              loading="eager"
+              fetchPriority="high"
+              className="block h-auto w-full"
+            />
+          </div>
+        )}
 
         {/* ═══ DEAL TABS (hidden on mobile, shown on md+) ═══ */}
-        <div className="hidden md:flex border border-gray-200 rounded-xl overflow-hidden mt-3 bg-white">
+        {/* Same navy as the top delivery bar (bg-mjs-dark) */}
+        <div className="hidden md:flex rounded-xl overflow-hidden mt-3 bg-mjs-dark">
           {dealTabs.map((tab, i) => (
             <a
               key={tab.label}
               href={tab.href}
-              className={`text-center py-1.5 px-1 md:py-2.5 md:px-2 transition-all hover:bg-gray-50 ${
+              className={`text-center py-1.5 px-1 md:py-3 md:px-2 transition-all hover:bg-white/10 ${
                 tab.featured ? "flex-[1.4]" : "flex-1"
               } ${
-                i < dealTabs.length - 1 ? "border-r border-gray-200" : ""
-              } ${tab.active ? "bg-red-50" : ""}`}
+                i < dealTabs.length - 1 ? "border-r border-white/15" : ""
+              } ${tab.active ? "bg-white/10" : ""}`}
             >
               <div
-                className={`text-[8px] md:text-[11px] font-bold ${
-                  tab.active ? "text-mjs-red" : "text-mjs-gray-700"
-                }`}
+                className="text-[9px] md:text-[13px] font-black tracking-wide text-white"
               >
                 {tab.label}
               </div>
               <div
-                className={`text-[7px] md:text-[10px] mt-0.5 ${
-                  tab.active
-                    ? "text-mjs-red font-semibold"
-                    : "text-mjs-gray-400"
-                }`}
+                className="text-[7px] md:text-[11px] mt-0.5 font-semibold text-white/75"
               >
                 {tab.sub}
               </div>
@@ -290,6 +331,8 @@ export default function HeroBanner() {
           ))}
         </div>
 
+        {/* ═══ Illustrated product shelf standing on the grey/white edge, same width as the tab bar ═══ */}
+        <ProductShelf />
       </div>
     </section>
   );

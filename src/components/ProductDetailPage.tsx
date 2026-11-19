@@ -588,6 +588,25 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
   const [selectedBrick, setSelectedBrick] = useState(0);
+
+  // ?qty=5 (from a promo card) pre-selects the matching quick-select tier.
+  // Re-runs when the live tiers arrive so the highlight lands on the right brick.
+  const tierKey = product ? product.quickBuy.map((o) => o.qty).join(",") : "";
+  useEffect(() => {
+    if (!product) return;
+    try {
+      const want = parseInt(new URLSearchParams(window.location.search).get("qty") || "", 10);
+      if (!want || want < 1) return;
+      const tiers = product.quickBuy;
+      const isVariant = tiers.length > 1 && tiers.every((o) => o.qty === 1);
+      if (isVariant) return;
+      let idx = 0;
+      tiers.forEach((o, i) => { if (o.qty <= want && o.qty >= tiers[idx].qty) idx = i; });
+      setSelectedBrick(idx);
+      setQty(want);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tierKey]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [upsell, setUpsell] = useState<{
     currentQty: number;

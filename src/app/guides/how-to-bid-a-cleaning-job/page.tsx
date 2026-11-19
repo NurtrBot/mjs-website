@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
+import { getGuideProducts } from "@/lib/guide-products";
+import { SUPPLY_SKUS } from "@/data/guides/bid";
 import CleaningBidGuide from "@/components/guides/CleaningBidGuide";
 import Footer from "@/components/Footer";
 
@@ -14,4 +16,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.mobilejanitorialsupply.com/guides/how-to-bid-a-cleaning-job" },
 };
 const jsonLd = { "@context": "https://schema.org", "@type": "Article", headline: "How to Bid a Cleaning Job: Janitorial Pricing Guide", author: { "@type": "Organization", name: "Mobile Janitorial Supply" }, publisher: { "@type": "Organization", name: "Mobile Janitorial Supply" }, datePublished: "2026-05-28", dateModified: "2026-05-28" };
-export default function Page() { return (<><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><TopBar /><Header /><CategoryNav /><main><CleaningBidGuide /></main><Footer /></>); }
+export const revalidate = 3600;
+
+export default async function Page() {
+  const products = await getGuideProducts(SUPPLY_SKUS);
+  return (<><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><TopBar /><Header /><CategoryNav /><main><CleaningBidGuide products={products} /></main><Footer /></>); }

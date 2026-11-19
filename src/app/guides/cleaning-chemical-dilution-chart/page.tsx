@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
+import { getGuideProducts } from "@/lib/guide-products";
+import { ALL_CHEM_SKUS } from "@/data/guides/dilution";
 import DilutionChartGuide from "@/components/DilutionChartGuide";
 import Footer from "@/components/Footer";
 
@@ -68,7 +70,10 @@ const jsonLd = {
   },
 };
 
-export default function DilutionChartGuidePage() {
+export const revalidate = 3600;
+
+export default async function DilutionChartGuidePage() {
+  const products = await getGuideProducts(ALL_CHEM_SKUS);
   return (
     <>
       <script
@@ -79,7 +84,7 @@ export default function DilutionChartGuidePage() {
       <Header />
       <CategoryNav />
       <main>
-        <DilutionChartGuide />
+        <DilutionChartGuide products={products} />
       </main>
       <Footer />
     </>

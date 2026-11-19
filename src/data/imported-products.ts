@@ -1,6 +1,6 @@
 import type { ProductData } from './product-types';
 
-// Auto-synced from BigCommerce on 2026-11-05
+// Auto-synced from BigCommerce on 2026-11-19
 // 781 products
 
 export const importedProducts: ProductData[] = [
@@ -10722,7 +10722,7 @@ export const importedProducts: ProductData[] = [
     price: 42.99,
     rating: 0,
     reviewCount: 0,
-    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/95106/images/371873/53649_2048x__73107.1580883385__70322.1793119768.1280.1280.webp?c=1"],
+    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/95106/images/371880/Supreme_Copy_Paper_Packaging_Display_1__12951.1794245246.1280.1280.png?c=1"],
     inStock: true,
     stockQty: 0,
     description: "Copy Paper The incredibly smooth surface of this multipurpose paper keeps your printers and copiers running efficiently for greater confidence in performance delivery. Its bright construction ensures high-quality results on both color and black/white printing and copying. Acid-free material prevents yellowing over time to maintain a uniform color for longer. Letter-size paper is perfect for reports, personal communication, newsletters and more. Copy Paper, 20lb, High Whiteness, 8-1/2\"x11\", White",
@@ -10932,7 +10932,7 @@ export const importedProducts: ProductData[] = [
     price: 548.5,
     rating: 0,
     reviewCount: 0,
-    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/95290/images/355128/1_107310_scp6_kit.jpg__94602.1714672037.1280.1280.jpg?c=1"],
+    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/95290/images/371882/Commercial_vacuum_and_accessories_on_white__20182.1795127400.1280.1280.png?c=1"],
     inStock: true,
     stockQty: 0,
     description: "Freedom of Movement - FlexFit articulating harness is responsive to the motion of the user's shoulders, back and hips - increasing comfort and reducing fatigue. Triangular Shape - Conforms to the back for a closer fit - reduces accidental contact with walls and doorways. Stay Cooler - Open weave harness allows any heat to dissipate. Productive - Cleans carpets and hard surfaces without stirring up dust. Easy Filter Bag Change - Quick-release, die cast latches improve filter compartment seal. Fil",
@@ -14079,10 +14079,10 @@ export const importedProducts: ProductData[] = [
     sku: "202310PLT",
     name: "SUPREME COPY PAPER, 20 LB, HIGH WHITENESS , 8.5 X 11, WHITE 5000 SHEETS, 40 CARTONS/PALLET (202310PLT)",
     brand: "MJS",
-    price: 1639.6,
+    price: 1580,
     rating: 0,
     reviewCount: 0,
-    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/188723/images/371874/53649_2048x__73107.1580883385__80746.1793119850.1280.1280.webp?c=1"],
+    images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/188723/images/371881/Shrink-Wrapped_Supreme_Paper_Pallet__66982.1794245284.1280.1280.png?c=1"],
     inStock: true,
     stockQty: 0,
     description: "COPY PAPER The incredibly smooth surface of this multipurpose paper keeps your printers and copiers running efficiently for greater confidence in performance delivery. Its bright construction ensures high-quality results on both color and black/white printing and copying. Acid-free material prevents yellowing over time to maintain a uniform color for longer. Letter-size paper is perfect for reports, personal communication, newsletters and more. Supreme Copy Paper, 20lb, High Whiteness, 8-1/2\"x11",
@@ -14093,7 +14093,7 @@ export const importedProducts: ProductData[] = [
     cardTitle: "SUPREME COPY PAPER, 20 LB, HIGH WHITENESS ...",
     pack: "40 CARTON",
     imageFit: 'contain',
-    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":1639.6}],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":1580}],
   },
   {
     slug: "janitors-finest-can-liners-black-33-x-39-2-0-mil-33-gallon-100-cs-ld333920k",
@@ -15423,7 +15423,7 @@ export const importedProducts: ProductData[] = [
     sku: "JCD250",
     name: "Johnnys Choice Sensory Grand Fragrance Discs 250 Pack",
     brand: "MJS",
-    price: 149.95,
+    price: 142.95,
     rating: 0,
     reviewCount: 0,
     images: ["https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/201021/images/371820/ChatGPT_Image_Jul_24_2026_10_24_43_AM__40028.1784914013.1280.1280.png?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/201021/images/371818/EC58E7DF-AB1A-4434-B353-3D08CDF46987__34746.1784914013.1280.1280.PNG?c=1","https://cdn11.bigcommerce.com/s-wujf5nuxy5/products/201021/images/371819/ChatGPT_Image_Jul_14_2026_08_16_41_AM__78515.1784914013.1280.1280.png?c=1"],
@@ -15437,7 +15437,7 @@ export const importedProducts: ProductData[] = [
     cardTitle: "Johnnys Choice Sensory Grand Fragrance Dis...",
     pack: "250 Pack",
     imageFit: 'contain',
-    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":149.95}],
+    quickBuy: [{"label":"1 Case","qty":1,"unitPrice":142.95}],
   },
   {
     slug: "platinum-knight-wash-foam-car-shampoo",

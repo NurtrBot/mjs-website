@@ -3,6 +3,8 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import TrashBagSizeGuide from "@/components/TrashBagSizeGuide";
+import { getGuideProducts } from "@/lib/guide-products";
+import { ALL_TRASH_SKUS } from "@/data/guides/trash-bag";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -68,7 +70,10 @@ const jsonLd = {
   },
 };
 
-export default function TrashBagSizeGuidePage() {
+export const revalidate = 3600;
+
+export default async function TrashBagSizeGuidePage() {
+  const products = await getGuideProducts(ALL_TRASH_SKUS);
   return (
     <>
       <script
@@ -79,7 +84,7 @@ export default function TrashBagSizeGuidePage() {
       <Header />
       <CategoryNav />
       <main>
-        <TrashBagSizeGuide />
+        <TrashBagSizeGuide products={products} />
       </main>
       <Footer />
     </>

@@ -7,8 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const { firstName, email } = await req.json();
 
-    if (!email || !firstName) {
-      return NextResponse.json({ error: "First name and email are required." }, { status: 400 });
+    // First name is optional (the homepage signup is email-only; the modal still sends it)
+    if (!email) {
+      return NextResponse.json({ error: "Email is required." }, { status: 400 });
     }
 
     // Validate email format
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           email,
-          first_name: firstName,
+          ...(firstName ? { first_name: String(firstName).trim() } : {}),
           source: "website-newsletter",
           channel_id: 1,
         }),

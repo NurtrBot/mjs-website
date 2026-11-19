@@ -10,7 +10,7 @@ const props = [
 
 export default function ValueProps() {
   return (
-    <section className="bg-white border-b border-gray-100">
+    <section className="bg-white">
       <div className="max-w-[1400px] mx-auto px-4 py-3">
         {/* Desktop: all 5 in a row */}
         <div className="hidden md:flex items-center justify-between gap-4">

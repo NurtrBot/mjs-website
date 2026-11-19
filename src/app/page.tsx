@@ -5,15 +5,13 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import HeroBanner from "@/components/HeroBanner";
-import DeliveryZone from "@/components/DeliveryZone";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import PromoBannerRow from "@/components/PromoBannerRow";
 import IndustrySection from "@/components/IndustrySection";
-import PromoCards from "@/components/PromoCards";
 import Testimonials from "@/components/Testimonials";
 import ValueProps from "@/components/ValueProps";
 import CTABanner from "@/components/CTABanner";
-import NewArrivals from "@/components/NewArrivals";
+import ResourceCards from "@/components/ResourceCards";
 import ReadyToShipAlt from "@/components/ReadyToShipAlt";
 import Footer from "@/components/Footer";
 import MobileCategoryGrid from "@/components/MobileCategoryGrid";
@@ -34,13 +32,11 @@ export default function Home() {
       <main>
         <HeroBanner />
         <MobileCategoryGrid />
-        <PromoCards />
-        <DeliveryZone />
         <FeaturedProducts key={`best-${refreshKey}`} />
         <IndustrySection />
         <ReadyToShipAlt key={`ready-${refreshKey}`} />
         <PromoBannerRow />
-        <NewArrivals key={`new-${refreshKey}`} />
+        <ResourceCards />
         <Testimonials />
         <CTABanner />
         <ValueProps />

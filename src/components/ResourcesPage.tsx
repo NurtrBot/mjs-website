@@ -1,212 +1,137 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { FileText, CreditCard, ClipboardList, UserPlus, FileCheck, Search, Loader2, Download, FlaskConical } from "lucide-react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
+import { Download, FileText, Search } from "lucide-react";
 import { sdsIndex, type SDSEntry } from "@/data/sds-index";
+import { GuideSection, Callout, GuideCta, Eyebrow } from "@/components/guides/GuideKit";
 
-const forms = [
-  { name: "Credit Application", file: "/forms/credit-application.pdf", icon: CreditCard, color: "bg-blue-500" },
-  { name: "Credit Card Authorization", file: "/forms/credit-card-authorization-form.pdf", icon: FileCheck, color: "bg-emerald-500" },
-  { name: "Customer Order Form", file: "/forms/customer-order-form.pdf", icon: ClipboardList, color: "bg-amber-500" },
-  { name: "New Customer Contact", file: "/forms/new-customer-contact-form.pdf", icon: UserPlus, color: "bg-purple-500" },
-  { name: "Resale Certificate (CA)", file: "/forms/Resale-certificate-california.pdf", icon: FileText, color: "bg-mjs-red" },
+const TINT = "#dae2fd";
+
+const FORMS = [
+  { name: "Credit application", file: "/forms/credit-application.pdf", blurb: "Apply for net-30 terms." },
+  { name: "Credit card authorization", file: "/forms/credit-card-authorization-form.pdf", blurb: "Keep a card on file for phone orders." },
+  { name: "Customer order form", file: "/forms/customer-order-form.pdf", blurb: "Fax or email a written order." },
+  { name: "New customer contact form", file: "/forms/new-customer-contact-form.pdf", blurb: "Set up a new account." },
+  { name: "California resale certificate", file: "/forms/Resale-certificate-california.pdf", blurb: "For tax-exempt resale purchases." },
 ];
 
+// One row per product name; some sheets exist as two files
+function groupSheets(list: SDSEntry[]) {
+  const map = new Map<string, { name: string; sku: string; files: string[] }>();
+  for (const s of list) {
+    const k = s.name.trim().toLowerCase();
+    const g = map.get(k) || { name: s.name, sku: s.sku, files: [] };
+    if (!g.files.includes(s.file)) g.files.push(s.file);
+    map.set(k, g);
+  }
+  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export default function ResourcesPage() {
-  const [query, setQuery] = useState("");
-  const [selectedSheet, setSelectedSheet] = useState<SDSEntry | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const filtered = query.length >= 2
-    ? sdsIndex.filter(
-        (s) =>
-          s.name.toLowerCase().includes(query.toLowerCase()) ||
-          s.sku.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 15)
-    : [];
-
-  const handleSelect = (sheet: SDSEntry) => {
-    setQuery(sheet.name);
-    setShowDropdown(false);
-    setLoading(true);
-    setSelectedSheet(null);
-    setTimeout(() => {
-      setLoading(false);
-      setSelectedSheet(sheet);
-    }, 800);
-  };
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
-          inputRef.current && !inputRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  const [q, setQ] = useState("");
+  const [letter, setLetter] = useState("");
+  const all = useMemo(() => groupSheets(sdsIndex), []);
+  const results = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    if (t.length < 2) return [];
+    return all.filter((s) => s.name.toLowerCase().includes(t) || s.sku.toLowerCase().includes(t)).slice(0, 24);
+  }, [q, all]);
+  const firstLetter = (n: string) => (/[A-Z]/i.test(n[0]) ? n[0].toUpperCase() : "#");
+  const letters = useMemo(() => Array.from(new Set(all.map((s) => firstLetter(s.name)))).sort(), [all]);
+  const byLetter = all.filter((s) => firstLetter(s.name) === letter);
+  const searching = q.trim().length >= 2;
 
   return (
-    <section className="bg-mjs-gray-50 min-h-screen">
-      {/* Hero */}
-      <div className="bg-mjs-dark">
-        <div className="max-w-[1400px] mx-auto px-4 py-16">
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-6">
-            <a href="/" className="hover:text-white transition-colors">Home</a>
-            <span>/</span>
-            <span className="text-gray-400">Forms &amp; SDS</span>
+    <article className="bg-white">
+      {/* ── Simple centred search ─────────────────────────────── */}
+      <header style={{ background: TINT }}>
+        <div className="max-w-[760px] mx-auto px-4 pt-10 pb-14 md:pt-14 md:pb-20 text-center">
+          <div className="relative mx-auto w-[120px] h-[90px] md:w-[150px] md:h-[112px]">
+            <Image src="/images/guides/sds-icon.webp" alt="" fill priority sizes="150px" className="object-contain" />
           </div>
-          <div className="text-center max-w-2xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Forms &amp; SDS Sheets</h1>
-            <p className="text-gray-400 mt-3">
-              Download new customer forms and search our library of {sdsIndex.length.toLocaleString()} Safety Data Sheets.
-            </p>
-          </div>
+          <h1 className="mt-4 text-[2.2rem] md:text-[3rem] leading-[1.02] font-black tracking-tight text-mjs-dark text-balance">Safety Data Sheets</h1>
+          <p className="mt-3 text-[16px] md:text-[17px] text-mjs-dark/70">Search {all.length} sheets by product name or the part number on the label.</p>
+
+          <label className="relative block mt-7 text-left">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-mjs-dark/40" />
+            <input
+              id="sds-search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="e.g. Strike Bac, 91101, degreaser"
+              autoComplete="off"
+              className="w-full rounded-full bg-white py-4 pr-5 text-[17px] font-semibold text-mjs-dark shadow-[0_6px_24px_rgba(23,32,52,0.10)] outline-none focus:ring-2 focus:ring-mjs-dark/30"
+              style={{ paddingLeft: 52 }}
+            />
+            {searching && (
+              <ul className="absolute left-0 right-0 top-full mt-2 z-20 max-h-[360px] overflow-y-auto rounded-2xl bg-white shadow-[0_12px_40px_rgba(23,32,52,0.18)] divide-y divide-mjs-dark/8 list-none m-0 p-0">
+                {results.map((s) => (
+                  <li key={s.name} className="flex flex-wrap items-center gap-3 px-4 py-3">
+                    <FileText className="w-5 h-5 text-mjs-dark/40 shrink-0" />
+                    <div className="min-w-0 flex-1"><p className="text-[14.5px] font-black text-mjs-dark leading-snug">{s.name}</p><p className="text-[12px] text-mjs-dark/55">Part # {s.sku}</p></div>
+                    {s.files.map((f, i) => <a key={f} href={f} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-mjs-dark px-3.5 py-1.5 text-[12.5px] font-black text-white hover:bg-black"><Download className="w-3.5 h-3.5" /> {s.files.length > 1 ? `PDF ${i + 1}` : "Download"}</a>)}
+                  </li>
+                ))}
+                {results.length === 0 && <li className="px-4 py-6 text-center text-[14.5px] text-mjs-dark/60">Nothing matches “{q}”. Try fewer words, or the part number from the label.</li>}
+                {results.length === 24 && <li className="px-4 py-2 text-[12px] text-mjs-dark/50 text-center">Showing the first 24. Keep typing to narrow it down.</li>}
+              </ul>
+            )}
+          </label>
+          <p className="mt-4 text-[13px] text-mjs-dark/55">Can&apos;t find one? Call (714) 779-2640 and we&apos;ll email it the same day.</p>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-[1100px] mx-auto px-4 -mt-8">
-        {/* ═══ NEW CUSTOMER FORMS ═══ */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
-          <div className="text-center mb-6">
-            <span className="inline-block bg-red-50 text-mjs-red text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2">
-              Downloads
-            </span>
-            <h2 className="text-xl font-bold text-mjs-dark">New Customer Forms</h2>
-            <p className="text-sm text-mjs-gray-400 mt-1">Download, print, fill out and submit to get started.</p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {forms.map((form) => (
-              <a
-                key={form.file}
-                href={form.file}
-                download
-                className="group flex flex-col items-center gap-3 bg-mjs-gray-50 rounded-xl p-5 hover:bg-white hover:shadow-lg hover:border-mjs-red/20 border border-transparent transition-all text-center"
-              >
-                <div className={`w-12 h-12 rounded-xl ${form.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                  <form.icon className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xs font-semibold text-mjs-dark group-hover:text-mjs-red transition-colors leading-tight">{form.name}</span>
-                <span className="text-[10px] text-mjs-gray-400 font-medium">PDF Download</span>
-              </a>
+      {/* ── Browse by letter (nothing listed until a letter is tapped) ── */}
+      <section id="browse" className="scroll-mt-14">
+        <div className="max-w-[1100px] mx-auto px-4 py-14 md:py-20 text-center">
+          <h2 className="text-[1.9rem] md:text-[2.4rem] font-black tracking-tight text-mjs-dark">Browse every sheet, A to Z</h2>
+          <p className="mt-3 mx-auto text-[16px] md:text-[17px] text-mjs-dark/70 leading-relaxed">
+            Cal/OSHA requires a current SDS for every hazardous chemical on site, where workers can reach it.<br className="hidden md:block" />
+            Print the sheets for what you stock and keep them in one binder.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
+            {letters.map((l) => (
+              <button key={l} type="button" onClick={() => setLetter(letter === l ? "" : l)} aria-pressed={letter === l}
+                className={`h-11 min-w-11 rounded-full px-4 text-[14px] font-black transition-colors ${letter === l ? "bg-mjs-dark text-white" : "bg-white text-mjs-dark shadow-[0_2px_10px_rgba(23,32,52,0.08)] hover:bg-mjs-gray-100"}`}>
+                {l}
+              </button>
             ))}
           </div>
-        </div>
-
-        {/* ═══ SDS SHEET FINDER ═══ */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-12">
-          <div className="text-center mb-8">
-            <span className="inline-block bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2">
-              {sdsIndex.length.toLocaleString()} Sheets Available
-            </span>
-            <h2 className="text-xl font-bold text-mjs-dark">SDS Sheet Finder</h2>
-            <p className="text-sm text-mjs-gray-400 mt-1">Search by product name or part number to find and download safety data sheets.</p>
-          </div>
-
-          {/* Search Bar */}
-          <div className="max-w-xl mx-auto relative">
-            <div className="relative">
-              <Search className="w-5 h-5 text-mjs-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); setSelectedSheet(null); }}
-                onFocus={() => query.length >= 2 && setShowDropdown(true)}
-                placeholder="Search by product name or part number..."
-                className="w-full pl-12 pr-4 py-4 text-sm bg-mjs-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-mjs-red/20 focus:border-mjs-red transition-all"
-              />
-            </div>
-
-            {/* Dropdown Suggestions */}
-            {showDropdown && filtered.length > 0 && (
-              <div ref={dropdownRef} className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-20 max-h-[350px] overflow-y-auto">
-                {filtered.map((sheet, i) => (
-                  <button
-                    key={`${sheet.sku}-${i}`}
-                    onClick={() => handleSelect(sheet)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left border-b border-gray-50 last:border-0"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                      <FlaskConical className="w-4 h-4 text-blue-500" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold text-mjs-dark truncate">{sheet.name}</div>
-                      <div className="text-[11px] text-mjs-gray-400">Part #: {sheet.sku}</div>
-                    </div>
-                  </button>
-                ))}
-                {filtered.length === 15 && (
-                  <div className="px-4 py-2 text-[10px] text-mjs-gray-400 text-center bg-mjs-gray-50">
-                    Showing top 15 results — type more to narrow down
-                  </div>
-                )}
-              </div>
-            )}
-
-            {showDropdown && query.length >= 2 && filtered.length === 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 p-6 text-center z-20">
-                <p className="text-sm text-mjs-gray-400">No matching SDS sheets found for &ldquo;{query}&rdquo;. Try a different search term or part number.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Loading State */}
-          {loading && (
-            <div className="flex items-center justify-center gap-3 mt-8">
-              <Loader2 className="w-5 h-5 text-mjs-red animate-spin" />
-              <span className="text-sm text-mjs-gray-500 font-medium">Loading SDS sheet...</span>
-            </div>
-          )}
-
-          {/* Result */}
-          {selectedSheet && !loading && (
-            <div className="max-w-xl mx-auto mt-8">
-              <div className="bg-mjs-gray-50 rounded-xl border border-gray-200 p-5 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-7 h-7 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-mjs-dark">{selectedSheet.name}</div>
-                  <div className="text-xs text-mjs-gray-400 mt-0.5">Part #: {selectedSheet.sku}</div>
-                </div>
-                <a
-                  href={selectedSheet.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-mjs-red text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-red-700 transition-colors flex-shrink-0"
-                >
-                  <Download className="w-4 h-4" />
-                  Download
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Full SDS index — in the HTML so every sheet is discoverable; collapsed for people */}
-          <details className="max-w-3xl mx-auto mt-10 group">
-            <summary className="cursor-pointer text-sm font-semibold text-mjs-dark hover:text-mjs-red transition-colors text-center">
-              Browse all {sdsIndex.length} Safety Data Sheets A–Z
-            </summary>
-            <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs">
-              {[...sdsIndex].sort((a, b) => a.name.localeCompare(b.name)).map((sheet) => (
-                <li key={sheet.sku + sheet.file} className="flex items-baseline justify-between gap-3 py-1 border-b border-gray-100">
-                  <a href={sheet.file} target="_blank" rel="noopener noreferrer" className="text-mjs-blue hover:text-mjs-red hover:underline truncate">
-                    {sheet.name}
+          {letter ? (
+            <ul className="mt-8 flex flex-wrap justify-center gap-2 list-none m-0 p-0">
+              {byLetter.map((s) => (
+                <li key={s.name}>
+                  <a href={s.files[0]} target="_blank" rel="noopener noreferrer" title={`Part # ${s.sku}`}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-[13.5px] font-bold text-mjs-dark shadow-[0_2px_10px_rgba(23,32,52,0.08)] hover:text-mjs-red hover:shadow-[0_4px_16px_rgba(23,32,52,0.14)] transition-shadow">
+                    <FileText className="w-3.5 h-3.5 text-mjs-dark/40" />
+                    <span className="max-w-[44ch] truncate">{s.name}</span>
                   </a>
-                  <span className="text-mjs-gray-400 flex-shrink-0">{sheet.sku}</span>
                 </li>
               ))}
             </ul>
-          </details>
+          ) : (
+            <p className="mt-6 text-[13px] text-mjs-dark/50">Tap a letter to see those sheets.</p>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ── Forms ─────────────────────────────────────────────── */}
+      <GuideSection id="forms" title="Customer forms" intro="Download, fill in, and email or bring them to the counter." tint="#f7f8fa">
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 list-none m-0 p-0">
+          {FORMS.map((f) => (
+            <li key={f.file}><a href={f.file} download className="group flex h-full flex-col rounded-3xl bg-white p-5">
+              <Eyebrow>PDF</Eyebrow>
+              <span className="text-[16px] font-black leading-snug text-mjs-dark group-hover:text-mjs-red">{f.name}</span>
+              <span className="mt-1 text-[13px] text-mjs-dark/60">{f.blurb}</span>
+              <span className="mt-auto pt-4 inline-flex items-center gap-1.5 text-[13px] font-black text-mjs-dark"><Download className="w-4 h-4" /> Download</span>
+            </a></li>
+          ))}
+        </ul>
+        <div className="mt-5"><Callout kind="tip" title="Need a sheet we don't list?">If a product you bought from us isn&apos;t here, call and we&apos;ll email the SDS the same day.</Callout></div>
+      </GuideSection>
+
+      <GuideCta title="Opening an account?" text="Send the credit application and resale certificate together and we'll set up net-30 terms and tax-exempt purchasing at the same time." href="/contact" label="Contact us" />
+    </article>
   );
 }

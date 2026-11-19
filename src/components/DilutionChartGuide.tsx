@@ -1,715 +1,180 @@
 "use client";
 
-import { useState } from "react";
-import {
-  ChevronRight,
-  ArrowRight,
-  AlertTriangle,
-  Info,
-  Beaker,
-  Droplets,
-  SprayCan,
-  ShieldAlert,
-  Sparkles,
-  Search,
-  Building2,
-  UtensilsCrossed,
-  Stethoscope,
-  School,
-  Warehouse,
-  Home,
-} from "lucide-react";
-import Link from "next/link";
+import { useMemo, useState } from "react";
+import Image from "next/image";
+import { ArrowRight, Search } from "lucide-react";
+import { CHEMICALS, CHEM_CATEGORIES, CONTAINERS, RATIO_TABLE, NEVER_MIX, SAFETY_HABITS, FACILITY_KITS, type ChemCategory } from "@/data/guides/dilution";
+import type { GuideProduct } from "@/lib/guide-products";
+import { pick } from "@/lib/guide-products";
+import { GuideHero, GuideNav, GuideSection, Callout, ProductTile, GuideCta, Eyebrow } from "@/components/guides/GuideKit";
 
-/* ─────────────────────────── Data ─────────────────────────── */
+const TINT = "#cbeafd";
+const PANEL = "#eaf4fd";
 
-type Category = "all" | "floor" | "glass" | "disinfectant" | "carpet" | "general";
+const ozPerGal = (parts: number | null) => (parts ? 128 / parts : null);
+const fmtOz = (oz: number) => (oz >= 10 ? Math.round(oz).toString() : oz >= 1 ? oz.toFixed(1).replace(/\.0$/, "") : oz.toFixed(2));
+const STRENGTH = { light: ["Mild", "#2f9e44"], medium: ["Medium", "#e8a000"], heavy: ["Strong", "#d42027"] } as const;
 
-interface ChemicalEntry {
-  product: string;
-  sku: string;
-  slug: string;
-  ratio: string;
-  ozPerGal: string;
-  category: Category;
-  use: string;
-  strength: "light" | "medium" | "heavy";
-  note?: string;
-}
+export default function DilutionChartGuide({ products }: { products: Record<string, GuideProduct> }) {
+  const [cat, setCat] = useState<ChemCategory | "all">("all");
+  const [q, setQ] = useState("");
+  const list = useMemo(() => CHEMICALS.filter((c) => (cat === "all" || c.category === cat) && (!q || (c.name + " " + c.use).toLowerCase().includes(q.toLowerCase()))), [cat, q]);
 
-const CHEMICALS: ChemicalEntry[] = [
-  // Floor care
-  {
-    product: "Lemon Neutral Floor Cleaner",
-    sku: "3158",
-    slug: "janitors-finest-3158-lemon-neutral-floor-cleaner",
-    ratio: "1:128",
-    ozPerGal: "1 oz",
-    category: "floor",
-    use: "Daily mopping — all hard floors",
-    strength: "light",
-    note: "Safe on waxed floors. Won't strip finish.",
-  },
-  {
-    product: "Wax Stripper Non-Ammoniated",
-    sku: "20501",
-    slug: "wax-stripper-non-ammoniated",
-    ratio: "1:4 to 1:8",
-    ozPerGal: "16-32 oz",
-    category: "floor",
-    use: "Stripping old floor finish",
-    strength: "heavy",
-    note: "1:4 for heavy buildup, 1:8 for light. Do not let dry on floor.",
-  },
-  {
-    product: "Super Stripper Ammoniated",
-    sku: "20701",
-    slug: "super-stripper-ammoniated",
-    ratio: "1:4 to 1:32",
-    ozPerGal: "4-32 oz",
-    category: "floor",
-    use: "Heavy-duty stripping",
-    strength: "heavy",
-    note: "Most aggressive stripper. 1:4 for toughest jobs, 1:32 for light scrub.",
-  },
-  {
-    product: "Neutralizer Rinse",
-    sku: "21001",
-    slug: "neutralizer-rinse",
-    ratio: "1:128",
-    ozPerGal: "1 oz",
-    category: "floor",
-    use: "Post-strip rinse to restore pH",
-    strength: "light",
-    note: "Required after stripping. Prevents new finish from peeling.",
-  },
-  {
-    product: "Spray Buff",
-    sku: "20301",
-    slug: "spray-buff",
-    ratio: "Ready to use",
-    ozPerGal: "RTU",
-    category: "floor",
-    use: "Spray & buff maintenance between recoats",
-    strength: "light",
-  },
-  // Glass
-  {
-    product: "Window Cleaner Concentrate 50:1",
-    sku: "82201",
-    slug: "window-cleaner-concentrate-50-1",
-    ratio: "1:50",
-    ozPerGal: "2.5 oz",
-    category: "glass",
-    use: "Windows, mirrors, glass surfaces",
-    strength: "light",
-    note: "Non-ammoniated. 1 gallon makes 50 gallons.",
-  },
-  {
-    product: "Squeegee Shine Window Cleaner",
-    sku: "81312",
-    slug: "squeegee-shine-32-oz",
-    ratio: "1:128",
-    ozPerGal: "1 oz",
-    category: "glass",
-    use: "Windows, mirrors, chrome, countertops",
-    strength: "light",
-    note: "32 oz bottle makes 32 gallons of solution.",
-  },
-  {
-    product: "Ammoniated Glass Cleaner",
-    sku: "3187",
-    slug: "janitors-finest-3187-ammoniated-glass-cleaner",
-    ratio: "Ready to use",
-    ozPerGal: "RTU",
-    category: "glass",
-    use: "Mirrors, windshields, display cases, porcelain",
-    strength: "medium",
-  },
-  // Disinfectants
-  {
-    product: "Strike Bac Disinfectant Cleaner",
-    sku: "91101",
-    slug: "strike-bac-lemon-odor-disinfectant-cleaner-gallon-91101ea",
-    ratio: "1:32",
-    ozPerGal: "4 oz",
-    category: "disinfectant",
-    use: "Hard surface disinfection — floors, walls, fixtures",
-    strength: "medium",
-    note: "EPA approved for COVID-19. Lemon scent.",
-  },
-  {
-    product: "Pine Disinfectant Neutral Cleaner",
-    sku: "91301",
-    slug: "pine-disinfectant",
-    ratio: "1:64",
-    ozPerGal: "2 oz",
-    category: "disinfectant",
-    use: "General disinfection and deodorizing",
-    strength: "medium",
-    note: "Kills influenza, herpes, salmonella, staph. EPA registered.",
-  },
-  {
-    product: "Sani 10% Quaternary Sanitizer",
-    sku: "91001",
-    slug: "sani-10-epa-sanitizer",
-    ratio: "1:256",
-    ozPerGal: "0.5 oz",
-    category: "disinfectant",
-    use: "Food contact surface sanitizing",
-    strength: "light",
-    note: "Meets USDA public health requirements. No rinse needed on food surfaces at proper dilution.",
-  },
-  {
-    product: "Pure Bright Liquid Bleach 6%",
-    sku: "52416",
-    slug: "pure-bright-liquid-bleach-6",
-    ratio: "1:21",
-    ozPerGal: "6 oz",
-    category: "disinfectant",
-    use: "Sanitizing, whitening, disinfecting",
-    strength: "heavy",
-    note: "6 oz per gallon for general cleaning. 1/3 cup per gallon for sanitizing.",
-  },
-  // Carpet
-  {
-    product: "Carpet Extraction Cleaner",
-    sku: "30401",
-    slug: "carpet-extraction-cleaner",
-    ratio: "1:16",
-    ozPerGal: "8 oz",
-    category: "carpet",
-    use: "Hot water extraction / steam cleaning",
-    strength: "heavy",
-    note: "For use in extraction machines. Great on oil-based stains.",
-  },
-  {
-    product: "Carpet Extraction Emulsifier",
-    sku: "30301",
-    slug: "carpet-extraction-emlsifier",
-    ratio: "1:64",
-    ozPerGal: "2 oz",
-    category: "carpet",
-    use: "Pre-spray and extraction booster",
-    strength: "medium",
-    note: "Spray on high-traffic areas before extraction for best results.",
-  },
-  {
-    product: "Dry Foam Carpet Shampoo",
-    sku: "30101",
-    slug: "dry-foam-carpet-shampoo",
-    ratio: "1:50",
-    ozPerGal: "2.5 oz",
-    category: "carpet",
-    use: "Dry foam and rotary carpet machines",
-    strength: "medium",
-    note: "Contains optical brighteners. Low moisture — carpets dry faster.",
-  },
-  {
-    product: "Carpet Defoamer",
-    sku: "30701",
-    slug: "carpet-defoamer",
-    ratio: "1:256",
-    ozPerGal: "0.5 oz",
-    category: "carpet",
-    use: "Kills foam in extraction machines and wet vacs",
-    strength: "light",
-    note: "Add to recovery tank. A little goes a very long way.",
-  },
-  {
-    product: "Traffic Lane Cleaner",
-    sku: "30901",
-    slug: "traffic-lane-cleaner",
-    ratio: "1:16",
-    ozPerGal: "8 oz",
-    category: "carpet",
-    use: "Pre-spray for heavy-traffic carpet areas",
-    strength: "heavy",
-  },
-  // General
-  {
-    product: "Orange X-treme Degreaser",
-    sku: "80601",
-    slug: "janitors-finest-orange-x-treme-heavy-duty-degreaser-gal-80601ea",
-    ratio: "1:10 to 1:64",
-    ozPerGal: "2-13 oz",
-    category: "general",
-    use: "Heavy-duty degreasing — kitchens, hoods, equipment",
-    strength: "heavy",
-    note: "1:10 for heavy grease. 1:64 for light cleaning. Citrus d-limonene based.",
-  },
-  {
-    product: "Clear Ammonia",
-    sku: "82901",
-    slug: "clear-ammonia",
-    ratio: "1:16 to 1:64",
-    ozPerGal: "2-8 oz",
-    category: "general",
-    use: "Floors, walls, kitchens, grease cutting",
-    strength: "heavy",
-    note: "Butyl-based. Strong degreaser. Ensure good ventilation.",
-  },
-  {
-    product: "Tile and Grout Cleaner",
-    sku: "41101",
-    slug: "tile-grout-cleaner",
-    ratio: "1:10 to 1:20",
-    ozPerGal: "6-13 oz",
-    category: "general",
-    use: "Tubs, showers, toilets, chrome, grout lines",
-    strength: "heavy",
-    note: "Acid-based. Do not use on marble or natural stone.",
-  },
-  {
-    product: "Green Lemon Dish Wash",
-    sku: "60001",
-    slug: "green-lemon-scented-dish-wash",
-    ratio: "1:256 to 1:512",
-    ozPerGal: "0.25-0.5 oz",
-    category: "general",
-    use: "Hand dishwashing — sinks and 3-compartment",
-    strength: "light",
-    note: "Highly concentrated. A small squeeze per sink basin.",
-  },
-  {
-    product: "Odorzyme Plus Odor Eliminator",
-    sku: "31801",
-    slug: "janitors-finest-odorzyme-plus-odor-eliminator-spotter-gallon-31801ea",
-    ratio: "Ready to use",
-    ozPerGal: "RTU",
-    category: "general",
-    use: "Urine, vomit, pet stains, grease, blood — odor elimination",
-    strength: "medium",
-    note: "Enzyme-based. Pour directly on source. Allow to dwell 15+ minutes.",
-  },
-];
-
-const RATIO_CONVERTER = [
-  { ratio: "1:4", ozPerGal: "32 oz (1 qt)", tbspPerQt: "8 tbsp" },
-  { ratio: "1:8", ozPerGal: "16 oz (1 pt)", tbspPerQt: "4 tbsp" },
-  { ratio: "1:10", ozPerGal: "12.8 oz", tbspPerQt: "~3 tbsp" },
-  { ratio: "1:16", ozPerGal: "8 oz (1 cup)", tbspPerQt: "2 tbsp" },
-  { ratio: "1:20", ozPerGal: "6.4 oz", tbspPerQt: "~1.5 tbsp" },
-  { ratio: "1:32", ozPerGal: "4 oz (1/2 cup)", tbspPerQt: "1 tbsp" },
-  { ratio: "1:50", ozPerGal: "2.5 oz", tbspPerQt: "~2 tsp" },
-  { ratio: "1:64", ozPerGal: "2 oz (1/4 cup)", tbspPerQt: "1.5 tsp" },
-  { ratio: "1:128", ozPerGal: "1 oz (2 tbsp)", tbspPerQt: "~1 tsp" },
-  { ratio: "1:256", ozPerGal: "0.5 oz (1 tbsp)", tbspPerQt: "~0.5 tsp" },
-];
-
-const CATEGORY_FILTERS: { id: Category; label: string; icon: React.ReactNode }[] = [
-  { id: "all", label: "All Products", icon: <Beaker className="w-3.5 h-3.5" /> },
-  { id: "floor", label: "Floor Care", icon: <Sparkles className="w-3.5 h-3.5" /> },
-  { id: "glass", label: "Glass", icon: <SprayCan className="w-3.5 h-3.5" /> },
-  { id: "disinfectant", label: "Disinfectants", icon: <ShieldAlert className="w-3.5 h-3.5" /> },
-  { id: "carpet", label: "Carpet", icon: <Droplets className="w-3.5 h-3.5" /> },
-  { id: "general", label: "General / Kitchen", icon: <UtensilsCrossed className="w-3.5 h-3.5" /> },
-];
-
-const SAFETY_RULES = [
-  { title: "Never mix bleach + ammonia", desc: "Creates toxic chloramine gas. Can cause serious lung damage or death.", severity: "critical" as const },
-  { title: "Never mix bleach + acids", desc: "Creates chlorine gas. This includes toilet bowl cleaners, vinegar, and rust removers.", severity: "critical" as const },
-  { title: "Never mix hydrogen peroxide + vinegar", desc: "Creates peracetic acid which can irritate skin, eyes, and lungs.", severity: "warning" as const },
-  { title: "Always dilute before mixing", desc: "Add chemical to water, not water to chemical. This prevents splashing of concentrated product.", severity: "warning" as const },
-  { title: "Label every spray bottle", desc: "Unmarked bottles lead to accidental misuse and dangerous cross-contamination.", severity: "warning" as const },
-  { title: "Wear PPE when diluting", desc: "Gloves and eye protection at minimum. Concentrates are much stronger than diluted product.", severity: "warning" as const },
-];
-
-const FACILITY_KITS = [
-  {
-    icon: <Building2 className="w-6 h-6" />,
-    facility: "Office Building",
-    chemicals: ["Neutral Floor Cleaner", "Glass Cleaner", "Disinfectant", "Hand Soap", "Dish Soap"],
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
-  },
-  {
-    icon: <UtensilsCrossed className="w-6 h-6" />,
-    facility: "Restaurant / Kitchen",
-    chemicals: ["Degreaser", "Sanitizer (Sani 10%)", "Dish Wash", "Neutral Floor Cleaner", "Bleach"],
-    color: "text-amber-600",
-    bgColor: "bg-amber-50",
-  },
-  {
-    icon: <Stethoscope className="w-6 h-6" />,
-    facility: "Healthcare",
-    chemicals: ["Disinfectant (EPA registered)", "Neutral Floor Cleaner", "Glass Cleaner", "Bleach", "Hand Soap"],
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50",
-  },
-  {
-    icon: <School className="w-6 h-6" />,
-    facility: "Schools",
-    chemicals: ["Disinfectant", "Neutral Floor Cleaner", "Carpet Extraction Cleaner", "Glass Cleaner", "Hand Soap"],
-    color: "text-violet-600",
-    bgColor: "bg-violet-50",
-  },
-  {
-    icon: <Warehouse className="w-6 h-6" />,
-    facility: "Warehouse / Industrial",
-    chemicals: ["Heavy-Duty Degreaser", "Floor Stripper", "Disinfectant", "Ammonia", "Absorbent"],
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
-  },
-  {
-    icon: <Home className="w-6 h-6" />,
-    facility: "Property Management",
-    chemicals: ["Neutral Floor Cleaner", "Glass Cleaner", "Disinfectant", "Carpet Spotter", "Odor Eliminator"],
-    color: "text-rose-600",
-    bgColor: "bg-rose-50",
-  },
-];
-
-/* ─────────────────────────── Component ─────────────────────────── */
-
-export default function DilutionChartGuide() {
-  const [activeFilter, setActiveFilter] = useState<Category>("all");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filtered = CHEMICALS.filter((c) => {
-    const matchesCategory = activeFilter === "all" || c.category === activeFilter;
-    const matchesSearch =
-      searchTerm === "" ||
-      c.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.use.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Mix calculator
+  const [mixSku, setMixSku] = useState(CHEMICALS[0].sku);
+  const [container, setContainer] = useState(CONTAINERS[1].id);
+  const [customOz, setCustomOz] = useState("");
+  const chem = CHEMICALS.find((c) => c.sku === mixSku)!;
+  const totalOz = customOz ? parseFloat(customOz) || 0 : CONTAINERS.find((c) => c.id === container)!.oz;
+  const conc = chem.parts ? totalOz / (chem.parts + 1) : null;
 
   return (
-    <section className="bg-white min-h-screen">
-      {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-mjs-dark via-mjs-charcoal to-mjs-dark">
-        <div className="max-w-[1400px] mx-auto px-4 py-12 md:py-20">
-          <nav className="flex items-center justify-center gap-2 text-xs text-mjs-gray-400 mb-6">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-white">Guides</span>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-mjs-red">Dilution Chart</span>
-          </nav>
+    <article className="bg-white">
+      <GuideHero eyebrow="Reference chart" title={<>Chemical<br />Dilution Chart</>} lede="The right mix for every concentrate we sell, straight from the label, plus a calculator that turns any ratio into ounces for the bottle or bucket in your hand." art="/images/guides/dilution.webp" tint={TINT} crumb="Dilution Chart">
+        <a href="#chart" className="inline-flex items-center gap-2 rounded-full bg-mjs-dark px-6 py-3.5 text-[15px] font-black text-white hover:bg-black transition-colors">Open the chart <ArrowRight className="w-4 h-4" /></a>
+        <a href="#mix" className="ml-3 inline-flex items-center gap-2 rounded-full border border-mjs-dark/30 px-6 py-3.5 text-[15px] font-bold text-mjs-dark hover:bg-white/60 transition-colors">Mix calculator</a>
+      </GuideHero>
+      <GuideNav items={[{ id: "chart", label: "The chart" }, { id: "mix", label: "Mix calculator" }, { id: "convert", label: "Ratio converter" }, { id: "safety", label: "Safety" }, { id: "facility", label: "By facility" }]} />
 
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-mjs-red/10 border border-mjs-red/20 text-mjs-red px-3 py-1.5 rounded-full text-xs font-semibold mb-4 uppercase tracking-wider">
-              <Beaker className="w-3.5 h-3.5" />
-              Reference Guide
-            </div>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
-              Cleaning Chemical<br />Dilution Chart
-            </h1>
-            <p className="text-lg md:text-xl text-mjs-gray-300 leading-relaxed max-w-2xl mx-auto">
-              The exact ratio for every chemical. Stop guessing, stop wasting product,
-              and stop mixing too strong or too weak.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Quick Jump ── */}
-      <div className="border-b border-gray-100 bg-mjs-gray-50 sticky top-0 z-20">
-        <div className="max-w-[1400px] mx-auto px-4">
-          <div className="flex items-center justify-center gap-1 py-3 overflow-x-auto scrollbar-hide">
-            <span className="text-xs font-semibold text-mjs-gray-400 mr-2 shrink-0 uppercase tracking-wider">Jump to:</span>
-            {["Product Chart", "Ratio Converter", "Safety Rules", "By Facility", "Shop All"].map((label) => (
-              <a
-                key={label}
-                href={`#${label.toLowerCase().replace(/ /g, "-")}`}
-                className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full bg-white border border-gray-200 text-mjs-gray-600 hover:border-mjs-red hover:text-mjs-red transition-all"
-              >
-                {label}
-              </a>
+      {/* 01 Chart */}
+      <GuideSection id="chart" n="01" title="Dilution ratios by product" intro="Every ratio below is from the manufacturer's label. Filter by job, or search by name.">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6">
+          <div className="flex flex-wrap gap-2">
+            {CHEM_CATEGORIES.map((c) => (
+              <button key={c.id} type="button" onClick={() => setCat(c.id)} className={`rounded-full px-4 py-2 text-[13.5px] font-bold transition-colors ${cat === c.id ? "bg-mjs-dark text-white" : "bg-mjs-gray-100 text-mjs-dark hover:bg-mjs-gray-200"}`}>{c.label}</button>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* ── Product Dilution Chart ── */}
-      <div id="product-chart" className="max-w-[1400px] mx-auto px-4 py-12 md:py-20">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-4xl font-extrabold text-mjs-dark mb-3">
-            Dilution Ratios by Product
-          </h2>
-          <p className="text-mjs-gray-500 text-base md:text-lg max-w-2xl mx-auto">
-            Filter by category or search by name. Every ratio is pulled directly from the manufacturer label.
-          </p>
+          <label className="md:ml-auto relative block w-full md:w-72">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-mjs-dark/40" />
+            <input id="chem-search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products or jobs" className="w-full rounded-full bg-mjs-gray-100 pl-10 pr-4 py-2.5 text-[14px] text-mjs-dark outline-none focus:ring-2 focus:ring-mjs-dark/30" />
+          </label>
         </div>
 
-        {/* Filters + Search */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 mb-6">
-          <div className="flex flex-wrap justify-center gap-2">
-            {CATEGORY_FILTERS.map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setActiveFilter(f.id)}
-                className={`
-                  flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all
-                  ${activeFilter === f.id
-                    ? "bg-mjs-red text-white"
-                    : "bg-mjs-gray-50 text-mjs-gray-600 hover:text-mjs-red border border-gray-200"
-                  }
-                `}
-              >
-                {f.icon}
-                {f.label}
-              </button>
-            ))}
-          </div>
-          <div className="relative w-full sm:w-auto sm:ml-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mjs-gray-400" />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64 pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-mjs-red focus:ring-1 focus:ring-mjs-red/20"
-            />
-          </div>
-        </div>
+        <ul className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 list-none m-0 p-0">
+          {list.map((c) => {
+            const p = pick(products, c.sku); const oz = ozPerGal(c.parts); const [sLabel, sColor] = STRENGTH[c.strength];
+            return (
+              <li key={c.sku} className="rounded-3xl p-5 flex gap-4" style={{ background: PANEL }}>
+                <div className="relative w-24 h-24 shrink-0 rounded-2xl bg-white overflow-hidden">{p?.image && <Image src={p.image} alt="" fill sizes="96px" className="object-contain p-2" />}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-[15.5px] font-black leading-snug text-mjs-dark">{c.name}</h3>
+                    <span className="shrink-0 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-mjs-dark/60"><span className="w-2 h-2 rounded-full" style={{ background: sColor }} />{sLabel}</span>
+                  </div>
+                  <div className="mt-2 flex items-baseline gap-3">
+                    <span className="text-[1.9rem] leading-none font-black tracking-tight text-mjs-dark tabular-nums">{c.parts ? c.ratio : "RTU"}</span>
+                    <span className="text-[13px] font-bold text-mjs-dark/60">{oz ? `${fmtOz(oz)} oz per gallon` : "Ready to use, no mixing"}</span>
+                  </div>
+                  <p className="mt-1.5 text-[13.5px] text-mjs-dark/75">{c.use}</p>
+                  {c.note && <p className="mt-1 text-[12.5px] text-mjs-dark/55">{c.note}</p>}
+                  {p && (
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <span className="text-[15px] font-black text-mjs-dark">${p.price.toFixed(2)} <span className="text-[12px] font-semibold text-mjs-dark/50">{p.pack}</span></span>
+                      <button type="button" onClick={() => { setMixSku(c.sku); document.getElementById("mix")?.scrollIntoView({ behavior: "smooth" }); }} className="text-[12.5px] font-bold text-mjs-red underline underline-offset-4">Mix this</button>
+                    </div>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        {list.length === 0 && <p className="text-center text-mjs-dark/60 py-10">Nothing matches that. Try another word or clear the filter.</p>}
+        <p className="mt-4 text-[13px] text-mjs-dark/50">{list.length} products shown. Always confirm the ratio on the label you&apos;re holding.</p>
+      </GuideSection>
 
-        {/* Chart table */}
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-mjs-dark text-white">
-                <th className="text-left px-4 py-3 font-semibold">Product</th>
-                <th className="text-center px-4 py-3 font-semibold">Ratio</th>
-                <th className="text-center px-4 py-3 font-semibold">Oz / Gallon</th>
-                <th className="text-left px-4 py-3 font-semibold hidden md:table-cell">Use</th>
-                <th className="text-center px-4 py-3 font-semibold">Strength</th>
-                <th className="text-center px-4 py-3 font-semibold">Shop</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((c) => (
-                <tr key={c.sku} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="font-semibold text-mjs-dark">{c.product}</div>
-                    {c.note && <div className="text-[11px] text-mjs-gray-400 mt-0.5 max-w-xs">{c.note}</div>}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="font-mono font-bold text-mjs-dark">{c.ratio}</span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="font-mono text-mjs-gray-600">{c.ozPerGal}</span>
-                  </td>
-                  <td className="px-4 py-3 text-mjs-gray-500 hidden md:table-cell text-xs">{c.use}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`
-                      inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
-                      ${c.strength === "light" ? "bg-green-50 text-green-700" :
-                        c.strength === "medium" ? "bg-amber-50 text-amber-700" :
-                        "bg-red-50 text-red-700"}
-                    `}>
-                      {c.strength}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <Link
-                      href={`/product/${c.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-mjs-red hover:underline"
-                    >
-                      View <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-mjs-gray-400">
-                    No products match your search. Try a different term or filter.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <p className="text-xs text-mjs-gray-400 mt-3 text-center">
-          {filtered.length} product{filtered.length !== 1 ? "s" : ""} shown. Always verify ratios on the product label.
-        </p>
-      </div>
-
-      {/* ── Universal Ratio Converter ── */}
-      <div id="ratio-converter" className="bg-mjs-gray-50 border-y border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-4 py-12 md:py-20">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-mjs-dark mb-3">
-              Universal Ratio Converter
-            </h2>
-            <p className="text-mjs-gray-500 max-w-2xl mx-auto">
-              Don&apos;t have a measuring cup? This chart converts any ratio to ounces per gallon
-              and tablespoons per quart. Bookmark this.
-            </p>
-          </div>
-
-          <div className="max-w-3xl mx-auto overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-mjs-dark text-white">
-                  <th className="text-center px-4 py-3 font-semibold">Ratio</th>
-                  <th className="text-center px-4 py-3 font-semibold">Oz per Gallon</th>
-                  <th className="text-center px-4 py-3 font-semibold">Per Quart</th>
-                  <th className="text-center px-4 py-3 font-semibold hidden sm:table-cell">Concentration</th>
-                </tr>
-              </thead>
-              <tbody>
-                {RATIO_CONVERTER.map((r, i) => (
-                  <tr key={r.ratio} className={`border-t border-gray-100 ${i < 3 ? "bg-red-50/30" : i < 6 ? "" : "bg-green-50/30"}`}>
-                    <td className="px-4 py-3 text-center font-mono font-bold text-mjs-dark">{r.ratio}</td>
-                    <td className="px-4 py-3 text-center font-mono text-mjs-gray-600">{r.ozPerGal}</td>
-                    <td className="px-4 py-3 text-center font-mono text-mjs-gray-600">{r.tbspPerQt}</td>
-                    <td className="px-4 py-3 text-center hidden sm:table-cell">
-                      <div className="flex justify-center">
-                        <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full"
-                            style={{ width: `${Math.min(100, (1 / parseInt(r.ratio.split(":")[1])) * 400 * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+      {/* 02 Mix calculator */}
+      <GuideSection id="mix" n="02" title="How much goes in the bottle?" intro="Pick the product and what you're filling. We'll tell you how much concentrate to add before topping up with water." tint="#f7f8fa">
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="rounded-3xl bg-white p-6 md:p-8">
+            <label className="block">
+              <span className="text-[12px] font-black uppercase tracking-wider text-mjs-dark/60">Product</span>
+              <select id="mix-product" value={mixSku} onChange={(e) => setMixSku(e.target.value)} className="mt-1.5 w-full rounded-xl bg-mjs-gray-100 px-4 py-3 text-[15px] font-bold text-mjs-dark outline-none focus:ring-2 focus:ring-mjs-dark/30">
+                {CHEMICALS.map((c) => <option key={c.sku} value={c.sku}>{c.name} ({c.parts ? c.ratio : "ready to use"})</option>)}
+              </select>
+            </label>
+            <div className="mt-5">
+              <span className="text-[12px] font-black uppercase tracking-wider text-mjs-dark/60">Filling</span>
+              <div className="mt-1.5 flex flex-wrap gap-2">
+                {CONTAINERS.map((c) => (
+                  <button key={c.id} type="button" onClick={() => { setContainer(c.id); setCustomOz(""); }} className={`rounded-full px-4 py-2 text-[13.5px] font-bold ${container === c.id && !customOz ? "bg-mjs-dark text-white" : "bg-mjs-gray-100 text-mjs-dark hover:bg-mjs-gray-200"}`}>{c.label}</button>
                 ))}
+              </div>
+              <div className="mt-3 flex items-center rounded-xl bg-mjs-gray-100 focus-within:ring-2 focus-within:ring-mjs-dark/30 max-w-xs">
+                <input id="mix-oz" inputMode="decimal" value={customOz} onChange={(e) => setCustomOz(e.target.value)} placeholder="or any size" className="w-full bg-transparent px-4 py-3 text-[15px] font-bold text-mjs-dark outline-none" /><span className="pr-4 text-[13px] font-bold text-mjs-dark/50">oz</span>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-3xl p-6 md:p-8" style={{ background: PANEL }}>
+            {conc === null ? (
+              <div><Eyebrow>{chem.name}</Eyebrow><p className="text-[1.6rem] font-black text-mjs-dark">Ready to use.</p><p className="mt-2 text-[15px] text-mjs-dark/70">Pour it straight in. No water, no mixing.</p></div>
+            ) : (
+              <div>
+                <Eyebrow>{chem.name} at {chem.ratio}</Eyebrow>
+                <p className="text-[2.6rem] leading-none font-black tracking-tight text-mjs-dark tabular-nums">{fmtOz(conc)} oz <span className="text-[1.2rem] text-mjs-dark/60">concentrate</span></p>
+                <p className="mt-2 text-[1.3rem] font-black text-mjs-dark/80 tabular-nums">+ {fmtOz(totalOz - conc)} oz water</p>
+                <p className="mt-1 text-[14px] text-mjs-dark/60">makes {fmtOz(totalOz)} oz ({(totalOz / 128).toFixed(2).replace(/\.?0+$/, "")} gal) of ready-to-use cleaner</p>
+                <div className="mt-6 h-5 w-full rounded-full bg-white overflow-hidden flex">
+                  <span className="h-full bg-mjs-red" style={{ width: `${Math.max(1.5, (conc / totalOz) * 100)}%` }} />
+                  <span className="h-full bg-[#9cc9f0] flex-1" />
+                </div>
+                <p className="mt-2 text-[12px] font-bold text-mjs-dark/55">Red = concentrate · Blue = water. Add the concentrate first, then fill with water.</p>
+                {conc < 0.5 && <p className="mt-3 text-[13px] text-mjs-dark/70">That&apos;s under half an ounce: about a teaspoon. Use a measuring spoon, not a pour.</p>}
+              </div>
+            )}
+          </div>
+        </div>
+      </GuideSection>
+
+      {/* 03 Converter */}
+      <GuideSection id="convert" n="03" title="Any ratio, in ounces" intro="No label handy? This converts the common ratios to ounces per gallon and spoons per quart.">
+        <div className="grid lg:grid-cols-[1fr_380px] gap-6 items-start">
+          <div className="overflow-x-auto rounded-3xl" style={{ background: PANEL }}>
+            <table className="w-full min-w-[520px] text-[15px]">
+              <thead><tr className="text-left text-[11px] font-black uppercase tracking-[2px] text-mjs-dark/55"><th className="px-5 py-4">Ratio</th><th className="px-5 py-4">Per gallon</th><th className="px-5 py-4">Per quart</th><th className="px-5 py-4 w-40">Strength</th></tr></thead>
+              <tbody>
+                {RATIO_TABLE.map(([r, gal, qt]) => { const parts = parseInt(r.split(":")[1]); const pct = Math.min(100, (4 / parts) * 100); return (
+                  <tr key={r} className="border-t border-mjs-dark/10"><td className="px-5 py-3 font-black tabular-nums text-mjs-dark">{r}</td><td className="px-5 py-3 font-semibold text-mjs-dark/80">{gal}</td><td className="px-5 py-3 text-mjs-dark/70">{qt}</td><td className="px-5 py-3"><span className="block h-2.5 rounded-full bg-white overflow-hidden"><span className="block h-full bg-mjs-red" style={{ width: `${pct}%` }} /></span></td></tr>
+                ); })}
               </tbody>
             </table>
           </div>
-
-          <div className="mt-6 max-w-3xl mx-auto bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4">
-            <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-bold text-blue-800 mb-1">How to Read Ratios</p>
-              <p className="text-sm text-blue-700">
-                <strong>1:32</strong> means 1 part chemical to 32 parts water. For a gallon (128 oz),
-                divide 128 by 32 = <strong>4 oz of chemical</strong>. Stronger ratios (1:4) use more
-                chemical; weaker ratios (1:256) use less.
-              </p>
-            </div>
-          </div>
+          <Callout kind="tip" title="How to read a ratio">1:32 means one part concentrate to 32 parts water. A gallon is 128 oz, so 128 ÷ 32 = <strong>4 oz</strong> of concentrate. Smaller second number, stronger mix.</Callout>
         </div>
-      </div>
+      </GuideSection>
 
-      {/* ── Safety Rules ── */}
-      <div id="safety-rules" className="max-w-[1400px] mx-auto px-4 py-12 md:py-20">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-mjs-dark mb-3">
-            Chemical Safety: Never Mix These
-          </h2>
-          <p className="text-mjs-gray-500 max-w-2xl mx-auto">
-            Mixing the wrong chemicals creates toxic fumes that can hospitalize or kill.
-            These rules are non-negotiable.
-          </p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {SAFETY_RULES.map((r) => (
-            <div
-              key={r.title}
-              className={`rounded-xl border p-5 ${
-                r.severity === "critical"
-                  ? "bg-red-50 border-red-200"
-                  : "bg-amber-50 border-amber-200"
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className={`w-4 h-4 ${r.severity === "critical" ? "text-red-600" : "text-amber-600"}`} />
-                <span className={`text-[10px] font-bold uppercase ${r.severity === "critical" ? "text-red-600" : "text-amber-600"}`}>
-                  {r.severity === "critical" ? "Danger" : "Caution"}
-                </span>
-              </div>
-              <h4 className={`text-sm font-bold mb-1 ${r.severity === "critical" ? "text-red-900" : "text-amber-900"}`}>
-                {r.title}
-              </h4>
-              <p className={`text-xs ${r.severity === "critical" ? "text-red-700" : "text-amber-700"}`}>
-                {r.desc}
-              </p>
-            </div>
+      {/* 04 Safety */}
+      <GuideSection id="safety" n="04" title="Never mix these" intro="Combining the wrong chemicals makes gases that put people in the hospital. These aren't tips. They're rules." tint="#f7f8fa">
+        <ul className="grid md:grid-cols-3 gap-4 list-none m-0 p-0">
+          {NEVER_MIX.map((m) => (
+            <li key={m.a + m.b} className={`rounded-3xl p-6 ${m.danger ? "bg-[#fde8e8]" : "bg-[#fff3cc]"}`}>
+              <p className="text-[11px] font-black uppercase tracking-[2px]" style={{ color: m.danger ? "#b01a20" : "#8a5a00" }}>{m.danger ? "Danger" : "Caution"}</p>
+              <p className="mt-2 text-[1.6rem] leading-tight font-black tracking-tight text-mjs-dark">{m.a} <span className="text-mjs-dark/40">+</span> {m.b}</p>
+              <p className="mt-2 text-[14.5px] text-mjs-dark/75">{m.result}</p>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+        <h3 className="mt-10 mb-4 text-[1.3rem] font-black text-mjs-dark">Six habits that keep a crew safe</h3>
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 list-none m-0 p-0">
+          {SAFETY_HABITS.map(([t, d]) => (<li key={t}><p className="text-[15px] font-black text-mjs-dark">{t}</p><p className="mt-1 text-[14px] text-mjs-dark/70">{d}</p></li>))}
+        </ul>
+      </GuideSection>
 
-      {/* ── Facility Chemical Kits ── */}
-      <div id="by-facility" className="bg-mjs-dark">
-        <div className="max-w-[1400px] mx-auto px-4 py-12 md:py-20">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
-              Essential Chemicals by Facility Type
-            </h2>
-            <p className="text-mjs-gray-400 max-w-2xl mx-auto">
-              Not sure what chemicals your facility needs? Here are the staples for each type.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FACILITY_KITS.map((k) => (
-              <div key={k.facility} className="bg-white/5 backdrop-blur border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-lg ${k.bgColor} ${k.color} flex items-center justify-center`}>
-                    {k.icon}
-                  </div>
-                  <h3 className="text-base font-bold text-white">{k.facility}</h3>
-                </div>
-                <ul className="space-y-1.5">
-                  {k.chemicals.map((c) => (
-                    <li key={c} className="flex items-center gap-2 text-xs text-mjs-gray-300">
-                      <div className="w-1.5 h-1.5 rounded-full bg-mjs-gold shrink-0" />
-                      {c}
-                    </li>
-                  ))}
-                </ul>
+      {/* 05 By facility */}
+      <GuideSection id="facility" n="05" title="The concentrates each building needs" intro="Not sure where to start? These four or five products cover 90% of the cleaning in each type of facility.">
+        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-5 list-none m-0 p-0">
+          {FACILITY_KITS.map((k) => (
+            <li key={k.name} className="rounded-3xl overflow-hidden" style={{ background: PANEL }}>
+              <div className="relative aspect-[16/7]"><Image src={k.photo} alt="" fill sizes="(max-width: 1280px) 50vw, 440px" className="object-cover" /></div>
+              <div className="p-5">
+                <h3 className="text-[17px] font-black text-mjs-dark mb-3">{k.name}</h3>
+                <div className="space-y-2">{k.skus.map((s) => <ProductTile key={s} p={pick(products, s)} compact />)}</div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Pro Tips ── */}
-      <div className="max-w-[1400px] mx-auto px-4 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-mjs-dark mb-8 text-center">
-          Dilution Pro Tips
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { title: "Stronger isn't better", desc: "Over-concentrated chemicals leave residue, damage surfaces, and waste money. The label ratio is the tested, effective concentration." },
-            { title: "Use warm water", desc: "Most concentrates dissolve and activate better in warm (not hot) water. Hot water can break down some active ingredients." },
-            { title: "Measure, don't pour", desc: "Use a measuring cup or chemical proportioner. Eyeballing leads to inconsistent results and wasted product." },
-            { title: "Gallon lasts longer than you think", desc: "One gallon of 1:128 concentrate makes 128 gallons of ready-to-use solution. A case lasts most facilities 6-12 months." },
-            { title: "Pre-label your bottles", desc: "Write the product name, dilution ratio, and date mixed on every spray bottle. OSHA requires it." },
-            { title: "Fresh mix weekly", desc: "Diluted chemicals lose potency over time. Mix fresh batches weekly for best results, especially disinfectants." },
-          ].map((t) => (
-            <div key={t.title} className="bg-mjs-gray-50 border border-gray-100 rounded-xl p-5">
-              <h4 className="text-sm font-bold text-mjs-dark mb-1">{t.title}</h4>
-              <p className="text-xs text-mjs-gray-500 leading-relaxed">{t.desc}</p>
-            </div>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </GuideSection>
 
-      {/* ── CTA ── */}
-      <div id="shop-all" className="bg-gradient-to-r from-mjs-red to-mjs-red-dark">
-        <div className="max-w-[1400px] mx-auto px-4 py-12 md:py-16 text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
-            Shop Professional Cleaning Chemicals
-          </h2>
-          <p className="text-white/80 mb-6 max-w-lg mx-auto">
-            Concentrated formulas at wholesale prices. One gallon goes further than you think.
-            Free local delivery on orders $399+.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/category/cleaning-chemicals"
-              className="inline-flex items-center gap-2 bg-white text-mjs-red font-bold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <Beaker className="w-4 h-4" />
-              Shop All Chemicals
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 bg-white/10 border border-white/30 text-white font-bold px-6 py-3 rounded-lg hover:bg-white/20 transition-colors"
-            >
-              Need Help Choosing? Contact Us
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
+      <GuideCta title="Concentrates go a long way." text="One gallon at 1:128 makes 128 gallons of cleaner. Shop professional concentrates at wholesale prices, with free local delivery on $399+ subtotals." href="/category/cleaning-chemicals" label="Shop cleaning chemicals" />
+    </article>
   );
 }

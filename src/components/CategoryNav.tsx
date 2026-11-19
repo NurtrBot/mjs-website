@@ -31,7 +31,7 @@ export default function CategoryNav() {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <nav className="hidden md:block bg-white border-b border-gray-200">
+    <nav className="hidden md:block bg-white">
       <div className="max-w-[1400px] mx-auto px-4">
         {/* Desktop: horizontal row (unchanged) */}
         <div className="hidden md:flex items-end justify-between overflow-x-auto scrollbar-hide">

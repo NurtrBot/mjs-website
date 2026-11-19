@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
+import { getGuideProducts } from "@/lib/guide-products";
+import { ALL_CHECKLIST_SKUS } from "@/data/guides/checklist";
 import JanitorialChecklist from "@/components/JanitorialChecklist";
 import Footer from "@/components/Footer";
 
@@ -40,14 +42,17 @@ const jsonLd = {
   mainEntityOfPage: { "@type": "WebPage", "@id": "https://www.mobilejanitorialsupply.com/guides/janitorial-supply-checklist" },
 };
 
-export default function JanitorialChecklistPage() {
+export const revalidate = 3600;
+
+export default async function JanitorialChecklistPage() {
+  const products = await getGuideProducts(ALL_CHECKLIST_SKUS);
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <TopBar />
       <Header />
       <CategoryNav />
-      <main><JanitorialChecklist /></main>
+      <main><JanitorialChecklist products={products} /></main>
       <Footer />
     </>
   );

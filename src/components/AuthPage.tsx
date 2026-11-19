@@ -11,6 +11,10 @@ export default function AuthPage() {
   const { login } = useAuth();
   const { applyCustomPrices } = useCart();
   const [mode, setMode] = useState<"login" | "signup">("login");
+  // /auth?mode=signup opens straight on the Create Account form
+  useEffect(() => {
+    try { if (new URLSearchParams(window.location.search).get("mode") === "signup") setMode("signup"); } catch {}
+  }, []);
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loginError, setLoginError] = useState("");

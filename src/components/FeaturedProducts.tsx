@@ -41,7 +41,7 @@ function FeaturedCard({ product }: { product: ProductData }) {
   const purchasedDate = getPurchaseDate(product.sku);
 
   return (
-    <div className="flex-shrink-0 w-[190px] bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-[0_0_12px_rgba(0,0,0,0.1)] transition-all group relative">
+    <div className="flex-shrink-0 w-[190px] md:w-[calc((100%-60px)/6)] bg-white rounded-xl overflow-hidden transition-all group relative">
       {purchasedDate && (
         <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
           <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
@@ -53,8 +53,8 @@ function FeaturedCard({ product }: { product: ProductData }) {
           {product.badge}
         </div>
       )}
-      <a href={`/product/${product.slug}`} className="block h-[160px] bg-white overflow-hidden relative">
-        <ProductImage src={product.images[0]} alt={product.cardTitle} sku={product.sku} imageFit={product.imageFit} sizes="(max-width: 768px) 50vw, 200px" />
+      <a href={`/product/${product.slug}`} className="block h-[160px] md:h-[190px] bg-white overflow-hidden relative">
+        <ProductImage src={product.images[0]} alt={product.cardTitle} sku={product.sku} imageFit={product.imageFit} sizes="(max-width: 768px) 50vw, 240px" />
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>
@@ -128,7 +128,7 @@ export default function FeaturedProducts() {
   if (items.length === 0) return null;
 
   return (
-    <section className="bg-white pt-6 pb-2 md:pb-6 border-t border-gray-100">
+    <section className="bg-white pt-6 pb-2 md:pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-mjs-dark">Best Sellers</h2>

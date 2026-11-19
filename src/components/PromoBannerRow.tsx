@@ -1,70 +1,125 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Mail, Users, Truck } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import NewsletterModal from "@/components/NewsletterModal";
+import { trackSignUp } from "@/lib/analytics";
+
+/*
+ * Two side-by-side panels under Ready to Ship (desktop/tablet only):
+ *   left  — Business Accounts: three illustrated perks + Create account / Sign in
+ *   right — Deals & Promotions: inline email signup (BigCommerce subscriber list)
+ * Replaces the old three dark strip cards (Deals / Business / Track).
+ */
+
+const PERKS = [
+  { img: "gift", w: 511, label: "Earn rewards" },
+  { img: "cart", w: 487, label: "Order online" },
+  { img: "truck", w: 739, label: "Track orders" },
+];
 
 export default function PromoBannerRow() {
   const { isLoggedIn } = useAuth();
-  const [showNewsletter, setShowNewsletter] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  async function subscribe(e: FormEvent) {
+    e.preventDefault();
+    const value = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setStatus("error"); setMessage("Please enter a valid email address."); return;
+    }
+    setStatus("sending"); setMessage("");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: value }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Unable to subscribe right now.");
+      setStatus("done");
+      setMessage(data.alreadySubscribed ? "You're already on the list." : "You're in! Watch your inbox for case specials.");
+      trackSignUp("newsletter_home");
+    } catch (err) {
+      setStatus("error"); setMessage(err instanceof Error ? err.message : "Unable to subscribe right now.");
+    }
+  }
 
   return (
-    <section className="hidden md:block bg-mjs-gray-50 py-4">
+    <section className="hidden md:block bg-white py-4">
       <div className="max-w-[1400px] mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Newsletter Signup */}
-          <button
-            onClick={() => setShowNewsletter(true)}
-            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-mjs-dark to-mjs-charcoal p-5 flex items-center gap-4 group hover:shadow-lg transition-all text-left cursor-pointer"
-          >
-            <div className="w-12 h-12 bg-mjs-red/20 group-hover:bg-mjs-red/30 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-              <Mail className="w-6 h-6 text-mjs-red-light" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-white">Deals & Promotions</div>
-              <div className="text-xs text-gray-400 mt-0.5">
-                Sign up for exclusive offers
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
-          </button>
+        <div className="grid grid-cols-2 gap-4">
 
-          <NewsletterModal isOpen={showNewsletter} onClose={() => setShowNewsletter(false)} />
+          {/* ── Business Accounts ── */}
+          <div className="rounded-2xl bg-[#dcefff] px-7 py-5 flex flex-col">
+            <h3 className="text-[2rem] leading-none font-black tracking-tight text-mjs-dark">Business Accounts</h3>
 
-          {/* Business Account → Contact Us */}
-          <a
-            href="/contact"
-            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
-          >
-            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Users className="w-6 h-6 text-blue-300" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-white">Business Accounts</div>
-              <div className="text-xs text-blue-200/70 mt-0.5">
-                Exclusive pricing &amp; net-30 terms
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-blue-400 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
-          </a>
+            <ul className="mt-3 grid grid-cols-3 gap-3 list-none m-0 p-0">
+              {PERKS.map((p) => (
+                <li key={p.img} className="flex flex-col items-center text-center">
+                  <div className="h-[88px] flex items-end justify-center">
+                    <Image src={`/images/promo/${p.img}.webp`} alt="" width={p.w} height={480} sizes="160px" className="h-full w-auto max-w-[160px] object-contain" />
+                  </div>
+                  <span className="mt-2 text-[15px] font-bold text-mjs-dark">{p.label}</span>
+                </li>
+              ))}
+            </ul>
 
-          {/* Track Order → Login or Account */}
-          <a
-            href={isLoggedIn ? "/account" : "/auth"}
-            className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-800 to-emerald-700 p-5 flex items-center gap-4 group hover:shadow-lg transition-all"
-          >
-            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Truck className="w-6 h-6 text-emerald-300" />
+            <div className="mt-auto pt-4 flex items-center gap-5">
+              {isLoggedIn ? (
+                <a href="/account" className="inline-flex items-center rounded-lg bg-mjs-dark px-6 py-3 text-sm font-bold text-white hover:bg-black transition-colors">
+                  My account
+                </a>
+              ) : (
+                <>
+                  <a href="/auth?mode=signup" className="inline-flex items-center rounded-lg bg-mjs-dark px-6 py-3 text-sm font-bold text-white hover:bg-black transition-colors">
+                    Create an account
+                  </a>
+                  <a href="/auth" className="text-sm font-bold text-mjs-dark underline underline-offset-4 hover:text-mjs-red transition-colors">
+                    Sign in
+                  </a>
+                </>
+              )}
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-white">Track Your Order</div>
-              <div className="text-xs text-emerald-200/70 mt-0.5">
-                Real-time delivery updates
+          </div>
+
+          {/* ── Deals & Promotions ── */}
+          <div className="rounded-2xl bg-[#fff2b8] px-7 py-5 flex flex-col">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <h3 className="text-[2rem] leading-none font-black tracking-tight text-mjs-dark whitespace-nowrap">Deals &amp; Promotions</h3>
+                <p className="mt-2 text-[15px] leading-snug text-mjs-dark/85 whitespace-nowrap">Get case specials and new arrivals in your inbox.</p>
               </div>
+              <Image src="/images/promo/coupon.webp" alt="" width={424} height={480} sizes="180px" className="h-[125px] w-auto flex-shrink-0 object-contain -mt-1" />
             </div>
-            <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
-          </a>
+
+            <form onSubmit={subscribe} className="mt-auto pt-4">
+              <label htmlFor="promo-email" className="block text-sm font-bold text-mjs-dark mb-2">Email address</label>
+              {status === "done" ? (
+                <div className="rounded-lg bg-white px-4 py-3 text-sm font-semibold text-emerald-700">{message}</div>
+              ) : (
+                <div className="flex rounded-lg overflow-hidden border border-mjs-dark/20 bg-white focus-within:border-mjs-dark">
+                  <input
+                    id="promo-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (status === "error") setStatus("idle"); }}
+                    className="min-w-0 flex-1 px-4 py-3 text-sm text-mjs-dark placeholder:text-gray-400 outline-none"
+                  />
+                  <button type="submit" disabled={status === "sending"} className="bg-mjs-dark px-6 text-sm font-bold text-white hover:bg-black transition-colors disabled:opacity-60 whitespace-nowrap">
+                    {status === "sending" ? "Sending…" : "Sign me up"}
+                  </button>
+                </div>
+              )}
+              {status === "error" && <p className="mt-2 text-xs font-semibold text-red-600">{message}</p>}
+            </form>
+          </div>
+
         </div>
       </div>
     </section>
