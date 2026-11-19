@@ -27,7 +27,7 @@ export const BUSINESS = {
 
 /* ── Google reviews (update count here; every page reads it) ── */
 export const GOOGLE_REVIEWS = {
-  count: 247,
+  count: 257,
   rating: 4.9,
   url: "https://www.google.com/search?q=Mobile+Janitorial+Supply+Anaheim+reviews",
   // Where the review-request email's button sends people. This share link opens our
