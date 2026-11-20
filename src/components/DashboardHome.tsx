@@ -456,7 +456,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
             { label: "SDS binder", sub: "Safety sheets", icon: <FileText className="w-5 h-5" />, on: () => p.go("My SDS Binder") },
             { label: "Browse", sub: "Full catalog", icon: <Store className="w-5 h-5" />, on: () => { window.location.href = "/"; } },
           ].map(a => (
-            <button key={a.label} onClick={a.on} className={`rounded-2xl px-4 py-4 text-left shadow-sm transition-colors ${a.primary ? "bg-mjs-red text-white hover:bg-mjs-red-dark" : "bg-white text-mjs-dark hover:bg-mjs-gray-50"}`}>
+            <button key={a.label} onClick={a.on} className={`flex flex-col items-center rounded-2xl px-4 py-5 text-center shadow-sm transition-colors ${a.primary ? "bg-mjs-red text-white hover:bg-mjs-red-dark" : "bg-white text-mjs-dark hover:bg-mjs-gray-50"}`}>
               <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${a.primary ? "bg-white/15" : "bg-red-50 text-mjs-red"}`}>{a.icon}</span>
               <span className="mt-3 block text-[13.5px] font-black">{a.label}</span>
               <span className={`block text-[11px] ${a.primary ? "text-white/75" : "text-mjs-gray-500"}`}>{a.sub}</span>
@@ -483,7 +483,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
               { label: "Card on file", sub: "Authorization · PDF", href: "/forms/credit-card-authorization-form.pdf", icon: <FileText className="w-5 h-5" /> },
               { label: "All forms & SDS", sub: "Browse the library", href: "/resources", icon: <Download className="w-5 h-5" /> },
             ].map(f => (
-              <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex aspect-square flex-col justify-between rounded-2xl bg-white p-3.5 shadow-sm hover:bg-mjs-gray-50 transition-colors">
+              <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl bg-white p-3 text-center shadow-sm hover:bg-mjs-gray-50 transition-colors">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-mjs-red">{f.icon}</span>
                 <span className="min-w-0">
                   <span className="block text-[12.5px] font-black leading-tight text-mjs-dark group-hover:text-mjs-red transition-colors">{f.label}</span>
