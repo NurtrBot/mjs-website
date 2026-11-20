@@ -41,7 +41,7 @@
     },
     {
       "path": "/api/sds/run",
-      "schedule": "*/15 * * * *"
+      "schedule": "*/5 * * * *"
     }
   ]
 }

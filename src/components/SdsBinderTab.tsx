@@ -58,7 +58,7 @@ export default function SdsBinderTab({ customerId, customer, initialBuilding, re
     try {
       await fetch("/api/sds/request", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sku: c.sku, productName: c.name, customerId, email: customer?.email, name: [customer?.firstName, customer?.lastName].filter(Boolean).join(" "), company: customer?.company }),
+        body: JSON.stringify({ sku: c.sku, productName: c.name, image: c.image, slug: c.slug, customerId, email: customer?.email, name: [customer?.firstName, customer?.lastName].filter(Boolean).join(" "), company: customer?.company }),
       });
       setRequested(prev => new Set(prev).add(c.sku));
     } finally { setRequesting(null); }

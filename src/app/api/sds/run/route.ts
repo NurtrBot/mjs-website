@@ -5,13 +5,13 @@ import { findSds, isChemical, buildingFromAddress, SITE } from "@/lib/sds";
 import { renderSdsEmail, sendSdsEmail, type SdsEmailData } from "@/lib/email";
 
 /*
- * GET /api/sds/run                       — cron every 15 min (Authorization: Bearer CRON_SECRET)
+ * GET /api/sds/run                       — cron every 5 min (Authorization: Bearer CRON_SECRET)
  * GET /api/sds/run?orderId=10482&secret=… — preview the email for one order (HTML, no send)
  * GET /api/sds/run?dryRun=1              — list what would be sent
  * GET /api/sds/run?sendTest=you@x.com&skus=3158EA,40112EA&secret=… — send a sample to one address
  *
  * One email per qualifying order (any order with a chemical on it), sent once
- * the order is at least 15 minutes old, retried on later runs until it is
+ * the order is at least 5 minutes old, retried on later runs until it is
  * 2 hours old. Cancelled / incomplete orders are skipped. A marker in the
  * order's staff notes stops duplicates.
  */
@@ -19,7 +19,7 @@ import { renderSdsEmail, sendSdsEmail, type SdsEmailData } from "@/lib/email";
 export const dynamic = "force-dynamic";
 const SKIP_STATUS = new Set([0, 1, 4, 5, 6, 13]);
 const MARK = "[sds-email sent]";
-const MIN_AGE_MS = 15 * 60 * 1000;
+const MIN_AGE_MS = 5 * 60 * 1000;
 const WINDOW_MS = 2 * 60 * 60 * 1000;
 
 type BCOrder = { id: number; date_created: string; status_id: number; items_total: number; staff_notes?: string; customer_id?: number; shipping_address_count?: number; billing_address?: { first_name?: string; email?: string } };
