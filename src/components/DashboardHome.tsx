@@ -477,12 +477,13 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
       </div>
     </div>
 
-    {/* Account team: one bar, names and emails in plain sight */}
-    <div className="rounded-2xl px-5 lg:px-6 py-4 shadow-[0_1px_2px_rgba(23,32,52,0.06)] flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6" style={{ background: "linear-gradient(180deg, #f9fafb 0%, #e9ecf0 100%)" }}>
-      <div className="lg:w-[190px] shrink-0">
-        <h2 className="text-sm font-black text-mjs-dark">Your account team</h2>
+    {/* Account team: heading above, then one bar with names and emails in plain sight */}
+    <div>
+      <div className="mb-3">
+        <h2 className="text-sm font-bold text-mjs-dark">Your account team</h2>
         <p className="text-[11.5px] text-mjs-gray-500 mt-0.5">Real people, Mon–Fri 6:30 AM – 3:00 PM</p>
       </div>
+    <div className="rounded-2xl px-5 lg:px-6 py-4 shadow-[0_1px_2px_rgba(23,32,52,0.06)] flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6" style={{ background: "linear-gradient(180deg, #f9fafb 0%, #e9ecf0 100%)" }}>
       <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 list-none m-0 p-0">
         {REPS.map(r => (
           <li key={r.email} className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(23,32,52,0.05)] min-w-0">
@@ -495,6 +496,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         ))}
       </ul>
       <a href="tel:7147792640" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-mjs-dark px-4 py-2.5 text-[13px] font-bold text-white hover:bg-black transition-colors whitespace-nowrap"><Phone className="w-4 h-4 text-[#fecd02]" /> (714) 779-2640</a>
+    </div>
     </div>
 
     {/* Forms & documents: three cards side by side */}
