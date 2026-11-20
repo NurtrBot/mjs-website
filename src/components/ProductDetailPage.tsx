@@ -7,7 +7,6 @@ import {
   Heart,
   Share2,
   Truck,
-  ShieldCheck,
   RotateCcw,
   Package,
   Check,
@@ -294,7 +293,7 @@ function QuantitySelector({
   );
 }
 
-/* ───────── reviews component ───────── */
+/* ───────── review data (used by the product page JSON-LD) ───────── */
 
 export interface ReviewData {
   id: number;
@@ -304,128 +303,6 @@ export interface ReviewData {
   name: string;
   date: string;
 }
-
-function ProductReviews({ sku, rating, reviewCount, initialReviews }: { sku: string; rating: number; reviewCount: number; initialReviews?: ReviewData[] }) {
-  const [reviews, setReviews] = useState<ReviewData[]>(initialReviews || []);
-  const [avgRating, setAvgRating] = useState(rating);
-  const [count, setCount] = useState(initialReviews?.length || reviewCount);
-
-  useEffect(() => {
-    if (initialReviews && initialReviews.length > 0) return; // already server-rendered
-    fetch(`/api/products/reviews?sku=${encodeURIComponent(sku)}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.reviews?.length > 0) {
-          setReviews(data.reviews);
-          setAvgRating(data.rating);
-          setCount(data.count);
-        }
-      })
-      .catch(() => {});
-  }, [sku, initialReviews]);
-
-  // Don't render section if no reviews
-  if (count === 0 && reviews.length === 0) return null;
-
-  // Build rating distribution
-  const dist = [0, 0, 0, 0, 0];
-  reviews.forEach(r => { if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1]++; });
-  const total = reviews.length || 1;
-
-  return (
-    <section id="reviews" className="bg-mjs-gray-50 md:border-t md:border-gray-200">
-      <div className="max-w-[1400px] mx-auto px-4 py-4 md:py-6">
-        {/* Review Header — compact on mobile, full on desktop */}
-        <div className="flex items-center gap-3 mb-4 md:bg-white md:rounded-xl md:border md:border-gray-200 md:p-5 md:mb-5">
-          {/* Mobile: compact inline */}
-          <div className="md:hidden flex items-center gap-3 w-full">
-            {avgRating > 0 && (
-              <>
-                <div className="text-2xl font-black text-mjs-dark leading-none">{avgRating.toFixed(1)}</div>
-                <StarRating rating={avgRating} size="sm" />
-              </>
-            )}
-            <span className="text-xs text-mjs-gray-500">{count} Review{count !== 1 ? "s" : ""}</span>
-          </div>
-
-          {/* Desktop: full layout */}
-          <div className="hidden md:flex items-center justify-center gap-0 divide-x divide-gray-200 w-full">
-            <div className="pr-6 text-left flex-shrink-0">
-              <h3 className="text-base font-bold text-mjs-dark mb-1">Customer Reviews</h3>
-              <div className="flex items-center gap-2">
-                {avgRating > 0 && (
-                  <span className="inline-flex items-center gap-0.5 bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">
-                    {avgRating.toFixed(1)} <Star className="w-3 h-3 fill-white" />
-                  </span>
-                )}
-                <span className="text-xs text-mjs-gray-500">{count} Review{count !== 1 ? "s" : ""}</span>
-              </div>
-            </div>
-
-            {avgRating > 0 && (
-              <div className="px-6 flex-shrink-0 text-center">
-                <div className="text-3xl font-black text-mjs-dark leading-none">{avgRating.toFixed(1)}</div>
-                <StarRating rating={avgRating} size="sm" />
-                <div className="text-[10px] text-mjs-gray-500 mt-0.5">{count} total</div>
-              </div>
-            )}
-
-            {reviews.length > 0 && (
-              <div className="pl-6 flex-shrink-0 w-auto">
-                <div className="space-y-1 w-[200px]">
-                  {[5, 4, 3, 2, 1].map((star) => {
-                    const pct = Math.round((dist[star - 1] / total) * 100);
-                    return (
-                      <div key={star} className="flex items-center gap-2">
-                        <span className="text-[11px] font-medium text-mjs-gray-500 w-2.5">{star}</span>
-                        <Star className="w-3 h-3 text-mjs-gold fill-mjs-gold" />
-                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-mjs-gold rounded-full" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="text-[10px] text-mjs-gray-500 w-7 text-right">{pct}%</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Review Cards */}
-        {reviews.length > 0 && (
-          <div className="grid md:grid-cols-3 gap-3">
-            {reviews.map((review) => (
-              <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-mjs-red/10 rounded-full flex items-center justify-center">
-                      <span className="text-mjs-red font-bold text-xs">{review.name.charAt(0).toUpperCase()}</span>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-mjs-gray-800">{review.name}</div>
-                      <div className="text-[10px] text-mjs-gray-500">
-                        {new Date(review.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-mjs-green bg-green-50 px-1.5 py-0.5 rounded">
-                    <Check className="w-2.5 h-2.5" /> Verified
-                  </span>
-                </div>
-                <StarRating rating={review.rating} />
-                {review.title && <div className="text-sm font-bold text-mjs-gray-800 mt-1.5">{review.title}</div>}
-                {review.text && <p className="text-xs text-mjs-gray-600 mt-1 leading-relaxed">{review.text}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/* ───────── main component ───────── */
 
 /* Product-specific coupon shown as a tap-to-copy tag beside the price.
    The code itself is restricted to the product inside BigCommerce. */
@@ -474,7 +351,7 @@ function CouponTag({ sku }: { sku: string }) {
   );
 }
 
-export default function ProductDetailPage({ slug, initialProduct, initialReviews }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[] }) {
+export default function ProductDetailPage({ slug, initialProduct }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[] }) {
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
   const [loading, setLoading] = useState(!localProduct);
@@ -666,7 +543,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
     nextTotal: number;
     productName: string;
   } | null>(null);
-  const [mobileTab, setMobileTab] = useState<"description" | "details" | "pricing" | "reviews">("description");
+  const [mobileTab, setMobileTab] = useState<"description" | "details" | "pricing">("description");
   const [shipZip, setShipZip] = useState("");
   const [shipOption, setShipOption] = useState<"pickup" | "delivery">("delivery");
   const [shipChecked, setShipChecked] = useState(false);
@@ -850,7 +727,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
 
         {/* Tabs */}
         <div className="flex border-y border-gray-200 bg-mjs-gray-50">
-          {(["description", "details", "pricing", "reviews"] as const).map(tab => (
+          {(["description", "details", "pricing"] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setMobileTab(tab)}
@@ -862,7 +739,7 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
                   : "text-mjs-gray-400"
               }`}
             >
-              {tab === "description" ? "Description" : tab === "details" ? "Details" : tab === "pricing" ? "Pricing" : `Reviews (${product.reviewCount})`}
+              {tab === "description" ? "Description" : tab === "details" ? "Details" : "Pricing"}
             </button>
           ))}
         </div>
@@ -1015,11 +892,6 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
             </>
           )}
 
-          {mobileTab === "reviews" && (
-            <div className="-mx-4 -mb-4">
-              <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} initialReviews={initialReviews} />
-            </div>
-          )}
         </div>
       </div>
 
@@ -1125,12 +997,9 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
               <span className="text-sm font-semibold text-mjs-gray-700">
                 {product.rating}
               </span>
-              <a
-                href="#reviews"
-                className="text-sm text-mjs-blue hover:underline"
-              >
+              <span className="text-sm text-mjs-gray-500">
                 {product.reviewCount} Reviews
-              </a>
+              </span>
               <span className="text-mjs-gray-300">|</span>
               <span className="text-sm text-mjs-gray-600">
                 SKU: {product.sku}
@@ -1843,68 +1712,6 @@ export default function ProductDetailPage({ slug, initialProduct, initialReviews
         </div>
       </section>
       )}
-
-      {/* ═══════ 5. REVIEWS — DESKTOP ONLY (mobile uses tab) ═══════ */}
-      <div className="hidden md:block">
-        <ProductReviews sku={product.sku} rating={product.rating} reviewCount={product.reviewCount} initialReviews={initialReviews} />
-      </div>
-
-      {/* ═══════ CLOSING: TRUST + CONTACT ═══════ */}
-      <section className="hidden md:block bg-white border-t border-gray-200">
-        <div className="max-w-[1400px] mx-auto px-4 py-6">
-          {/* Trust Icons */}
-          <div className="flex items-center justify-center gap-8 md:gap-14 mb-6 flex-wrap">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-mjs-green" />
-              <span className="text-xs font-semibold text-mjs-gray-600">Secure Checkout</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Truck className="w-5 h-5 text-mjs-blue" />
-              <span className="text-xs font-semibold text-mjs-gray-600">Ships Nationwide</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-amber-600" />
-              <span className="text-xs font-semibold text-mjs-gray-600">{RETURNS.badge}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-violet-600" />
-              <span className="text-xs font-semibold text-mjs-gray-600">Quality Guaranteed</span>
-            </div>
-          </div>
-
-          {/* Contact CTA */}
-          <div className="bg-mjs-gray-50 rounded-xl border border-gray-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-mjs-red/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <Headphones className="w-5 h-5 text-mjs-red" />
-              </div>
-              <div>
-                <div className="text-sm font-bold text-mjs-gray-800">
-                  Still have questions?
-                </div>
-                <div className="text-xs text-mjs-gray-500">
-                  Our Anaheim team is here to help Mon–Fri, 6:30am–3:00pm
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <a
-                href="tel:7147792640"
-                className="inline-flex items-center gap-2 bg-mjs-dark text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-mjs-charcoal transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                (714) 779-2640
-              </a>
-              <a
-                href="mailto:orders@mobilejanitorialsupply.com"
-                className="inline-flex items-center gap-2 border border-gray-300 text-mjs-gray-700 font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-white transition-colors"
-              >
-                Email Us
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ═══════ MOBILE STICKY BOTTOM BAR ═══════ */}
       {pricingLoaded && (
