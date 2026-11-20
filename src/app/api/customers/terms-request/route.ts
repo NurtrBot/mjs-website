@@ -3,7 +3,8 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { getCustomerById, updateCustomer } from "@/lib/bigcommerce";
 import { approvalSignature, isPendingTerms } from "@/lib/customer-terms";
-import { sendStaffEmail, staffEmailHtml } from "@/lib/staff-notify";
+import { sendStaffEmail } from "@/lib/staff-notify";
+import { creditApplicationEmail } from "@/lib/staff-emails";
 import { rateLimit } from "@/lib/rate-limit";
 import {
   applicationNotesSummary,
@@ -74,36 +75,10 @@ export async function POST(req: NextRequest) {
       console.error("[TERMS] PDF fill failed:", err);
     }
 
-    const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
     const approveUrl = `${SITE_URL}/api/customers/terms-approve?customerId=${customerId}&sig=${approvalSignature(customerId)}`;
     const taxId = notes.match(/\[TAX_ID_NUMBER:(.*?)\]/)?.[1];
-    const refs = app.refs.filter(r => r.name);
-
-    const emailed = await sendStaffEmail({
-      subject: `Credit application: ${app.legalName}`,
-      replyTo: app.email || customer.email,
-      attachments,
-      html: staffEmailHtml({
-        heading: "NET-30 CREDIT APPLICATION",
-        intro: "A website customer completed the credit application. The filled PDF is attached, and the full details are saved in the customer's notes in BigCommerce. Approving moves them out of the New Customer group so Bill to Account appears at checkout.",
-        rows: [
-          ["Legal name", app.legalName + (app.dba ? ` (DBA ${app.dba})` : "")],
-          ["Structure", app.structure],
-          ["EIN", app.ein],
-          ["Tax ID on file", taxId || "No"],
-          ["Contact", `${app.contact} · ${app.phone}`],
-          ["Email", app.email],
-          ["AP contact", `${app.apContact} · ${app.apEmail}`],
-          ["Requested limit", app.requestedLimit || "—"],
-          ["Initial order", app.initialOrder || "—"],
-          ...refs.map((r, i) => [`Reference ${i + 1}`, `${r.name} · ${r.contact} · ${r.phone || r.email}`] as [string, string]),
-          ["Signed by", `${app.signer}, ${app.signerTitle}`],
-          ["Customer ID", String(customerId)],
-        ],
-        button: { label: "Approve Net-30 Terms", url: approveUrl },
-        footnote: `To review first, open the customer in BigCommerce: https://store-${storeHash}.mybigcommerce.com/manage/customers/${customerId}/edit — or change their Customer Group there to approve manually.`,
-      }),
-    });
+    const { subject, html, replyTo } = creditApplicationEmail(app, customerId, approveUrl, !!taxId);
+    const emailed = await sendStaffEmail({ subject, replyTo: replyTo || customer.email, attachments, html });
 
     return NextResponse.json({ success: true, emailed });
   } catch (error: unknown) {

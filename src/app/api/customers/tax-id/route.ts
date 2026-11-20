@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendStaffEmail } from "@/lib/staff-notify";
+import { taxIdEmail } from "@/lib/staff-emails";
 
 // Avalara entity use code for resale exemptions
 const AVATAX_RESALE_CODE = "G";
 
-const escapeHtml = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
-// Email staff when a customer submits a Tax ID. Recipients come from TAX_ID_NOTIFY_EMAIL (comma-separated).
+// Email the office when a customer submits a Tax ID (recipients: STAFF_NOTIFY_EMAIL, falling back to TAX_ID_NOTIFY_EMAIL)
 async function sendTaxIdNotification(info: {
   customerId: number;
   customerName: string;
@@ -15,72 +14,8 @@ async function sendTaxIdNotification(info: {
   taxIdNumber: string;
   uploadDate: string;
 }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const recipients = (process.env.TAX_ID_NOTIFY_EMAIL || "").split(",").map(s => s.trim()).filter(Boolean);
-  if (!apiKey || recipients.length === 0) {
-    console.warn("[TAX_ID] Notification skipped — RESEND_API_KEY or TAX_ID_NOTIFY_EMAIL not set");
-    return;
-  }
-
-  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
-  const customerUrl = `https://store-${storeHash}.mybigcommerce.com/manage/customers/${info.customerId}/edit`;
-  const rows: [string, string][] = [
-    ["Company", info.companyName || "—"],
-    ["Customer", info.customerName],
-    ["Email", info.customerEmail || "—"],
-    ["Tax ID", info.taxIdNumber],
-    ["Submitted", info.uploadDate],
-    ["Customer ID", String(info.customerId)],
-  ];
-
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: "MJS Website <orders@updates.mobilejanitorialsupply.com>",
-        to: recipients,
-        reply_to: info.customerEmail || undefined,
-        subject: `Tax ID submitted: ${info.companyName || info.customerName}`,
-        html: `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;background:#ffffff;">
-    <tr>
-      <td style="background:#1a1a2e;padding:20px 32px;">
-        <h1 style="margin:0;color:#ffffff;font-size:16px;font-weight:800;letter-spacing:0.5px;">NEW TAX ID SUBMITTED</h1>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:28px 32px;">
-        <p style="margin:0 0 20px;color:#666;font-size:14px;line-height:1.6;">
-          A customer submitted a Tax ID on the website and has been marked tax exempt. Please verify the resale certificate.
-        </p>
-        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:10px;">
-          ${rows.map(([k, v]) => `<tr><td style="padding:8px 16px;font-size:13px;color:#6b7280;">${k}</td><td align="right" style="padding:8px 16px;font-size:13px;font-weight:700;color:#1a1a2e;">${escapeHtml(v)}</td></tr>`).join("")}
-        </table>
-        <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td style="text-align:center;padding:24px 0 0;">
-              <a href="${customerUrl}" style="display:inline-block;background:#dc2626;color:#ffffff;font-weight:700;font-size:14px;padding:12px 32px;border-radius:8px;text-decoration:none;">
-                Open Customer in BigCommerce
-              </a>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`,
-      }),
-    });
-    if (!res.ok) console.error(`[TAX_ID] Notification email failed: ${res.status} ${await res.text()}`);
-  } catch (err) {
-    console.error("[TAX_ID] Notification email error:", err);
-  }
+  const { subject, html, replyTo } = taxIdEmail(info);
+  await sendStaffEmail({ subject, html, replyTo });
 }
 
 // GET — check if customer has uploaded a tax ID
