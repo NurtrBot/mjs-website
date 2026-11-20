@@ -342,10 +342,10 @@ export async function createCustomerAddress(customerId: number, address: {
 }
 
 /* ── Orders (V2 API for reads) ── */
-export async function getOrdersByCustomerId(customerId: number) {
+export async function getOrdersByCustomerId(customerId: number, limit = 20) {
   const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
   try {
-    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders?customer_id=${customerId}&sort=date_created:desc&limit=20`);
+    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders?customer_id=${customerId}&sort=date_created:desc&limit=${limit}`);
     return Array.isArray(data) ? data : [];
   } catch {
     return [];

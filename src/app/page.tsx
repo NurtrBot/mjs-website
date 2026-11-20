@@ -13,6 +13,7 @@ import ValueProps from "@/components/ValueProps";
 import CTABanner from "@/components/CTABanner";
 import ResourceCards from "@/components/ResourceCards";
 import ReadyToShipAlt from "@/components/ReadyToShipAlt";
+import { BuyItAgain, DueForRestock, AlsoBuy } from "@/components/PersonalStrips";
 import Footer from "@/components/Footer";
 import MobileCategoryGrid from "@/components/MobileCategoryGrid";
 
@@ -32,9 +33,11 @@ export default function Home() {
       <main>
         <HeroBanner />
         <MobileCategoryGrid />
-        <FeaturedProducts key={`best-${refreshKey}`} />
+        {/* Signed-in customers with order history get their own strips; everyone else sees the defaults */}
+        <BuyItAgain fallback={<FeaturedProducts key={`best-${refreshKey}`} />} />
         <IndustrySection />
-        <ReadyToShipAlt key={`ready-${refreshKey}`} />
+        <DueForRestock fallback={<ReadyToShipAlt key={`ready-${refreshKey}`} />} />
+        <AlsoBuy />
         <PromoBannerRow />
         <ResourceCards />
         <ReviewsAndMap />
