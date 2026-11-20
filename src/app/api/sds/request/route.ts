@@ -78,18 +78,11 @@ function buildRequestEmail(b: Record<string, unknown>) {
   </tr></table>
 </td></tr>
 
-<!-- HOW TO CLOSE -->
+<!-- REPLY BAR -->
 <tr><td style="padding:6px 32px 26px 32px;">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#1a1a2e" style="background:#1a1a2e;border-radius:12px;"><tr>
-    <td style="padding:20px 22px;">
-      <div style="${font}font-size:17px;font-weight:800;color:#ffffff;letter-spacing:-0.3px;">How to close this out</div>
-      <table cellpadding="0" cellspacing="0" role="presentation" style="margin-top:10px;">
-        <tr><td style="${font}font-size:13px;color:#fecd02;font-weight:800;padding:3px 10px 3px 0;vertical-align:top;">1</td><td style="${font}font-size:13px;color:#c3c9d6;line-height:19px;padding:3px 0;">Reply to this email with the manufacturer&rsquo;s PDF so ${esc(firstName)} has it today.</td></tr>
-        <tr><td style="${font}font-size:13px;color:#fecd02;font-weight:800;padding:3px 10px 3px 0;vertical-align:top;">2</td><td style="${font}font-size:13px;color:#c3c9d6;line-height:19px;padding:3px 0;">Save it as <span style="color:#ffffff;font-weight:700;">public/sds/${esc(sku)}.PDF</span> and add it to the SDS index.</td></tr>
-        <tr><td style="${font}font-size:13px;color:#fecd02;font-weight:800;padding:3px 10px 3px 0;vertical-align:top;">3</td><td style="${font}font-size:13px;color:#c3c9d6;line-height:19px;padding:3px 0;">Deploy. It then shows in their SDS Binder and every future order email.</td></tr>
-      </table>
-    </td>
-    ${email ? `<td align="right" style="padding:20px 22px;white-space:nowrap;vertical-align:middle;"><table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr><td bgcolor="#fecd02" style="border-radius:8px;"><a href="mailto:${esc(email)}?subject=${encodeURIComponent(`Your SDS for ${productName}`)}" style="display:inline-block;${font}font-size:13.5px;font-weight:800;color:#1a1a2e;text-decoration:none;padding:11px 16px;">Reply to ${esc(firstName)}</a></td></tr></table></td>` : ""}
+    <td style="padding:14px 20px;${font}font-size:14px;font-weight:700;color:#ffffff;">Send ${esc(firstName)} the sheet${email ? ` at <span style="color:#c3c9d6;font-weight:400;">${esc(email)}</span>` : ""}</td>
+    ${email ? `<td align="right" style="padding:10px 12px 10px 0;white-space:nowrap;vertical-align:middle;"><table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr><td bgcolor="#fecd02" style="border-radius:8px;"><a href="mailto:${esc(email)}?subject=${encodeURIComponent(`Your SDS for ${productName}`)}" style="display:inline-block;${font}font-size:13.5px;font-weight:800;color:#1a1a2e;text-decoration:none;padding:9px 16px;">Reply to ${esc(firstName)}</a></td></tr></table></td>` : ""}
   </tr></table>
 </td></tr>
 
