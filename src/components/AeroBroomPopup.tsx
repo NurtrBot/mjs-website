@@ -82,9 +82,9 @@ export default function AeroBroomPopup() {
 
       {/* Card */}
       <div
-        // Tall 1083×1452 image: size the card so image + footer always fit the screen
-        style={{ width: "min(540px, calc(100vw - 32px), calc((100dvh - 230px) * 0.746))" }}
-        className="relative overflow-hidden rounded-2xl bg-[#0b0f17] shadow-2xl ring-1 ring-white/10 animate-[aeroRise_260ms_cubic-bezier(0.16,1,0.3,1)]">
+        // Tall 1083×1452 image: size the card so image + footer always fit the screen.
+        // Short viewports (a phone held sideways) switch to image-left / text-right.
+        className="relative flex flex-col overflow-hidden rounded-2xl bg-[#0b0f17] shadow-2xl ring-1 ring-white/10 animate-[aeroRise_260ms_cubic-bezier(0.16,1,0.3,1)] w-[min(540px,calc(100vw-32px),calc((100dvh-230px)*0.746))] [@media(max-height:560px)]:w-auto [@media(max-height:560px)]:max-w-[calc(100vw-32px)] [@media(max-height:560px)]:flex-row">
         <button
           ref={closeBtnRef}
           type="button"
@@ -95,7 +95,7 @@ export default function AeroBroomPopup() {
           <X className="h-5 w-5" />
         </button>
 
-        <a href={PRODUCT_URL} onClick={() => track("promo_popup_clicked_image")} className="block">
+        <a href={PRODUCT_URL} onClick={() => track("promo_popup_clicked_image")} className="block [@media(max-height:560px)]:h-[calc(100dvh-32px)] [@media(max-height:560px)]:shrink-0">
           <Image
             src="/images/aerobroom-pro-popup-tall.webp"
             alt="AeroBroom Pro — one tool, two ways to clean: sweep and blow, one-touch control, cordless, USB-C charging, up to 40 minutes runtime"
@@ -104,18 +104,18 @@ export default function AeroBroomPopup() {
             sizes="(max-width: 572px) calc(100vw - 32px), 540px"
             quality={75}
             preload
-            className="block h-auto w-full"
+            className="block h-auto w-full [@media(max-height:560px)]:h-full [@media(max-height:560px)]:w-auto"
           />
         </a>
 
-        <div className="flex flex-col gap-3 px-5 py-4">
+        <div className="flex flex-col gap-3 px-5 py-4 [@media(max-height:560px)]:w-[270px] [@media(max-height:560px)]:justify-center [@media(max-height:560px)]:gap-5 [@media(max-height:560px)]:px-6">
           <div className="text-center">
             <p id="aero-popup-title" className="text-base font-black tracking-wide text-white">
               NEW ITEM ALERT!
             </p>
             <p className="text-sm text-white/70">A cordless Broom + Blower</p>
           </div>
-          <div className="flex items-center gap-3 whitespace-nowrap">
+          <div className="flex items-center gap-3 whitespace-nowrap [@media(max-height:560px)]:flex-col-reverse [@media(max-height:560px)]:items-stretch [@media(max-height:560px)]:gap-1">
             <button
               type="button"
               onClick={() => close("no_thanks")}

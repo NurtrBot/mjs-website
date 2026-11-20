@@ -53,28 +53,28 @@ export default function PromoBannerRow() {
         <div className="grid grid-cols-2 gap-4">
 
           {/* ── Business Accounts ── */}
-          <div className="rounded-2xl bg-[#dcefff] px-7 py-5 flex flex-col">
-            <h3 className="text-[2rem] leading-none font-black tracking-tight text-mjs-dark">Business Accounts</h3>
+          <div className="rounded-2xl bg-[#dcefff] px-5 lg:px-7 py-5 flex flex-col min-w-0">
+            <h3 className="text-[1.5rem] lg:text-[2rem] leading-none font-black tracking-tight text-mjs-dark">Business Accounts</h3>
 
-            <ul className="mt-3 grid grid-cols-3 gap-3 list-none m-0 p-0">
+            <ul className="mt-3 grid grid-cols-3 gap-2 lg:gap-3 list-none m-0 p-0">
               {PERKS.map((p) => (
-                <li key={p.img} className="flex flex-col items-center text-center">
-                  <div className="h-[88px] flex items-end justify-center">
+                <li key={p.img} className="flex flex-col items-center text-center min-w-0">
+                  <div className="h-[64px] lg:h-[88px] flex items-end justify-center">
                     <Image src={`/images/promo/${p.img}.webp`} alt="" width={p.w} height={480} sizes="160px" className="h-full w-auto max-w-[160px] object-contain" />
                   </div>
-                  <span className="mt-2 text-[15px] font-bold text-mjs-dark">{p.label}</span>
+                  <span className="mt-2 text-[13px] lg:text-[15px] font-bold text-mjs-dark">{p.label}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-auto pt-4 flex items-center gap-5">
+            <div className="mt-auto pt-4 flex items-center gap-4 lg:gap-5">
               {isLoggedIn ? (
-                <a href="/account" className="inline-flex items-center rounded-lg bg-mjs-dark px-6 py-3 text-sm font-bold text-white hover:bg-black transition-colors">
+                <a href="/account" className="inline-flex items-center rounded-lg bg-mjs-dark px-5 lg:px-6 py-2.5 lg:py-3 text-sm font-bold text-white hover:bg-black transition-colors whitespace-nowrap">
                   My account
                 </a>
               ) : (
                 <>
-                  <a href="/auth?mode=signup" className="inline-flex items-center rounded-lg bg-mjs-dark px-6 py-3 text-sm font-bold text-white hover:bg-black transition-colors">
+                  <a href="/auth?mode=signup" className="inline-flex items-center rounded-lg bg-mjs-dark px-5 lg:px-6 py-2.5 lg:py-3 text-sm font-bold text-white hover:bg-black transition-colors whitespace-nowrap">
                     Create an account
                   </a>
                   <a href="/auth" className="text-sm font-bold text-mjs-dark underline underline-offset-4 hover:text-mjs-red transition-colors">
@@ -86,13 +86,13 @@ export default function PromoBannerRow() {
           </div>
 
           {/* ── Deals & Promotions ── */}
-          <div className="rounded-2xl bg-[#fff2b8] px-7 py-5 flex flex-col">
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <h3 className="text-[2rem] leading-none font-black tracking-tight text-mjs-dark whitespace-nowrap">Deals &amp; Promotions</h3>
-                <p className="mt-2 text-[15px] leading-snug text-mjs-dark/85 whitespace-nowrap">Get case specials and new arrivals in your inbox.</p>
+          <div className="rounded-2xl bg-[#fff2b8] px-5 lg:px-7 py-5 flex flex-col min-w-0 overflow-hidden">
+            <div className="flex items-start justify-between gap-4 lg:gap-6">
+              <div className="min-w-0">
+                <h3 className="text-[1.5rem] lg:text-[2rem] leading-none font-black tracking-tight text-mjs-dark lg:whitespace-nowrap">Deals &amp; Promotions</h3>
+                <p className="mt-2 text-[14px] lg:text-[15px] leading-snug text-mjs-dark/85 lg:whitespace-nowrap">Get case specials and new arrivals in your inbox.</p>
               </div>
-              <Image src="/images/promo/coupon.webp" alt="" width={424} height={480} sizes="180px" className="h-[125px] w-auto flex-shrink-0 object-contain -mt-1" />
+              <Image src="/images/promo/coupon.webp" alt="" width={424} height={480} sizes="180px" className="h-[84px] lg:h-[125px] w-auto flex-shrink-0 object-contain -mt-1" />
             </div>
 
             <form onSubmit={subscribe} className="mt-auto pt-4">

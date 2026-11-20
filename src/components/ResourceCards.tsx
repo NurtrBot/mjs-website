@@ -21,8 +21,8 @@ export default function ResourceCards() {
   return (
     <section className="hidden md:block bg-white py-8">
       <div className="max-w-[1400px] mx-auto px-4">
-        <h2 className="text-[26px] font-black tracking-tight text-mjs-dark mb-5 text-center">Guides &amp; Resources for Your Facility</h2>
-        <ul className="grid grid-cols-5 gap-4 list-none m-0 p-0">
+        <h2 className="text-[22px] lg:text-[26px] font-black tracking-tight text-mjs-dark mb-5 text-center">Guides &amp; Resources for Your Facility</h2>
+        <ul className="grid grid-cols-5 gap-3 lg:gap-4 list-none m-0 p-0">
           {CARDS.map((c) => (
             <li key={c.key} className="min-w-0">
               <a href={c.href} className="group flex h-full flex-col overflow-hidden rounded-2xl">
@@ -30,12 +30,12 @@ export default function ResourceCards() {
                   <Image src={`/images/guides/${c.key}.webp`} alt="" fill sizes="(max-width: 1400px) 20vw, 270px" quality={82} className="object-cover" />
                 </div>
                 {/* Text panel: soft grey gradient, no outlines, everything centred */}
-                <div className="flex flex-1 flex-col items-center px-5 pt-4 pb-5 text-center" style={{ background: "linear-gradient(180deg, #f7f8fa 0%, #e9ecf0 100%)" }}>
-                  <h3 className="text-[18px] font-black leading-snug tracking-tight text-mjs-dark">{c.title}</h3>
-                  <p className="mt-1 text-[14px] leading-snug text-mjs-gray-600">{c.blurb}</p>
-                  <div className="mt-auto pt-4 inline-flex items-center gap-2 text-[15px] font-bold text-mjs-red group-hover:text-mjs-red-dark">
+                <div className="flex flex-1 flex-col items-center px-3 lg:px-5 pt-3 lg:pt-4 pb-4 lg:pb-5 text-center" style={{ background: "linear-gradient(180deg, #f7f8fa 0%, #e9ecf0 100%)" }}>
+                  <h3 className="text-[15px] lg:text-[18px] font-black leading-snug tracking-tight text-mjs-dark text-balance">{c.title}</h3>
+                  <p className="mt-1 text-[13px] lg:text-[14px] leading-snug text-mjs-gray-600">{c.blurb}</p>
+                  <div className="mt-auto pt-3 lg:pt-4 inline-flex items-center gap-1.5 lg:gap-2 text-[14px] lg:text-[15px] font-bold text-mjs-red group-hover:text-mjs-red-dark whitespace-nowrap">
                     <span className="underline underline-offset-4 decoration-2">{c.cta}</span>
-                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4 lg:h-5 lg:w-5 shrink-0 transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </a>

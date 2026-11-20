@@ -110,7 +110,7 @@ export default function Footer() {
                 <div className="text-[10px] text-gray-500 mt-0.5">Google&apos;s #1 Rated &amp; Reviewed</div>
               </div>
             </div>
-            <div className="space-y-3 text-[13px]">
+            <div className="space-y-3 text-[12px] lg:text-[13px]">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 mt-0.5 text-mjs-red flex-shrink-0" />
                 <span>3066 E. La Palma Ave, Anaheim, CA 92806</span>
@@ -121,7 +121,7 @@ export default function Footer() {
               </a>
               <a href="mailto:orders@mobilejanitorialsupply.com" className="flex items-center gap-2.5 hover:text-white transition-colors">
                 <Mail className="w-4 h-4 text-mjs-red flex-shrink-0" />
-                orders@mobilejanitorialsupply.com
+                <span>orders@<wbr />mobilejanitorialsupply.com</span>
               </a>
               <div className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-mjs-red flex-shrink-0" />

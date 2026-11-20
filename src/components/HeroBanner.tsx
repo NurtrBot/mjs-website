@@ -318,12 +318,12 @@ export default function HeroBanner() {
               } ${tab.active ? "bg-white/10" : ""}`}
             >
               <div
-                className="text-[9px] md:text-[13px] font-black tracking-wide text-white"
+                className="text-[9px] md:text-[11.5px] lg:text-[13px] font-black tracking-wide text-white"
               >
                 {tab.label}
               </div>
               <div
-                className="text-[7px] md:text-[11px] mt-0.5 font-semibold text-white/75"
+                className="text-[7px] md:text-[10px] lg:text-[11px] mt-0.5 font-semibold text-white/75"
               >
                 {tab.sub}
               </div>
