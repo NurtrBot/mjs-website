@@ -358,6 +358,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
   const addAllDue = () => { for (const it of history?.due || []) add(it); };
 
   return (
+    <div className="space-y-6">
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">
         {/* Reorder */}
@@ -473,36 +474,49 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
           {firstTier && <div className="mt-1.5 text-[12px] text-white/70">Orders of ${firstTier.minSpend.toLocaleString()}+ earn a ${firstTier.amount} gift card. Bigger orders earn more.</div>}
         </button>
 
-        {/* Team */}
-        <div className="bg-white rounded-2xl shadow-sm px-5 py-4">
-          <h2 className="text-sm font-bold text-mjs-dark">Your account team</h2>
-          <p className="text-[11.5px] text-mjs-gray-400 mt-0.5">Real people, Mon–Fri 6:30 AM – 3:00 PM</p>
-          <ul className="mt-3 space-y-2.5 list-none m-0 p-0">
-            {REPS.map(r => (
-              <li key={r.email} className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-mjs-red text-[10px] font-black text-white">{r.initials}</span>
-                <span className="min-w-0 flex-1 text-[13px] font-semibold text-mjs-dark truncate">{r.name}</span>
-                <a href={`mailto:${r.email}`} className="text-mjs-gray-400 hover:text-mjs-red" aria-label={`Email ${r.name}`}><Mail className="w-4 h-4" /></a>
-              </li>
-            ))}
-          </ul>
-          <a href="tel:7147792640" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-mjs-gray-100 py-2.5 text-[13px] font-bold text-mjs-dark hover:bg-mjs-red hover:text-white transition-colors"><Phone className="w-4 h-4" /> (714) 779-2640</a>
-        </div>
-
-        {/* Forms */}
-        <div className="bg-white rounded-2xl shadow-sm px-5 py-4">
-          <h2 className="text-sm font-bold text-mjs-dark mb-2">Forms &amp; documents</h2>
-          {[
-            { label: "New customer contact form", href: "/forms/new-customer-contact-form.pdf" },
-            { label: "Credit card authorization form", href: "/forms/credit-card-authorization-form.pdf" },
-            { label: "All forms & SDS sheets", href: "/resources" },
-          ].map(f => (
-            <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="flex items-center gap-2.5 py-2 text-[13px] font-semibold text-mjs-dark hover:text-mjs-red">
-              <FileText className="w-4 h-4 text-mjs-red shrink-0" /> {f.label} <ChevronRight className="w-3.5 h-3.5 ml-auto text-mjs-gray-300" />
-            </a>
-          ))}
-        </div>
       </div>
+    </div>
+
+    {/* Account team: one bar, names and emails in plain sight */}
+    <div className="rounded-2xl px-5 lg:px-6 py-4 shadow-[0_1px_2px_rgba(23,32,52,0.06)] flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6" style={{ background: "linear-gradient(180deg, #f9fafb 0%, #e9ecf0 100%)" }}>
+      <div className="lg:w-[190px] shrink-0">
+        <h2 className="text-sm font-black text-mjs-dark">Your account team</h2>
+        <p className="text-[11.5px] text-mjs-gray-500 mt-0.5">Real people, Mon–Fri 6:30 AM – 3:00 PM</p>
+      </div>
+      <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 list-none m-0 p-0">
+        {REPS.map(r => (
+          <li key={r.email} className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(23,32,52,0.05)] min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mjs-red text-[11px] font-black text-white">{r.initials}</span>
+            <span className="min-w-0">
+              <span className="block text-[13px] font-bold text-mjs-dark leading-tight">{r.name}</span>
+              <a href={`mailto:${r.email}`} className="block text-[11.5px] text-mjs-gray-500 truncate hover:text-mjs-red">{r.email}</a>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <a href="tel:7147792640" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-mjs-dark px-4 py-2.5 text-[13px] font-bold text-white hover:bg-black transition-colors whitespace-nowrap"><Phone className="w-4 h-4 text-[#fecd02]" /> (714) 779-2640</a>
+    </div>
+
+    {/* Forms & documents: three cards side by side */}
+    <div>
+      <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms &amp; documents</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
+        {[
+          { label: "New customer contact form", sub: "PDF · fill out and send back", href: "/forms/new-customer-contact-form.pdf", icon: <FileText className="w-5 h-5" /> },
+          { label: "Credit card authorization", sub: "PDF · keep a card on file", href: "/forms/credit-card-authorization-form.pdf", icon: <FileText className="w-5 h-5" /> },
+          { label: "All forms & SDS sheets", sub: "Browse the full library", href: "/resources", icon: <Download className="w-5 h-5" /> },
+        ].map(f => (
+          <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex items-center gap-4 rounded-2xl bg-white px-5 py-4 shadow-sm hover:bg-mjs-gray-50 transition-colors">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-mjs-red">{f.icon}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] font-black text-mjs-dark group-hover:text-mjs-red transition-colors">{f.label}</span>
+              <span className="block text-[11.5px] text-mjs-gray-500">{f.sub}</span>
+            </span>
+            <ChevronRight className="w-4 h-4 shrink-0 text-mjs-gray-300" />
+          </a>
+        ))}
+      </div>
+    </div>
     </div>
   );
 }
