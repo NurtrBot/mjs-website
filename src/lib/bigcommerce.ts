@@ -686,3 +686,73 @@ export async function processCardPayment(
     req.end();
   });
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SDS binder + Supply Lists helpers
+   ══════════════════════════════════════════════════════════════════════ */
+
+export interface BCAddressLite { first_name?: string; last_name?: string; company?: string; street_1?: string; city?: string; state?: string; zip?: string; email?: string }
+
+export async function getOrderShippingAddresses(orderId: number): Promise<BCAddressLite[]> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}/shippingaddresses`);
+    return Array.isArray(data) ? (data as BCAddressLite[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Orders created on or after `since` (ISO), newest first
+export async function getOrdersSince(since: string, limit = 50) {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    const data = await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders?min_date_created=${encodeURIComponent(since)}&sort=date_created:desc&limit=${limit}`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getOrder(orderId: number): Promise<Record<string, unknown> | null> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    return (await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateOrderStaffNotes(orderId: number, staffNotes: string) {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  return nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v2/orders/${orderId}`, { staff_notes: staffNotes.slice(0, 65000) });
+}
+
+/* Customer metafields (v3): small JSON blobs keyed by namespace "mjs" */
+interface BCMetafield { id: number; key: string; namespace: string; value: string }
+
+export async function getCustomerMetafield(customerId: number, key: string): Promise<BCMetafield | null> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  try {
+    const res = (await nativeRequest("GET", `https://api.bigcommerce.com/stores/${storeHash}/v3/customers/${customerId}/metafields?namespace=mjs&key=${encodeURIComponent(key)}&limit=1`)) as { data?: BCMetafield[] };
+    return res?.data?.[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function setCustomerMetafield(customerId: number, key: string, value: string): Promise<boolean> {
+  const storeHash = process.env.BIGCOMMERCE_STORE_HASH!;
+  const existing = await getCustomerMetafield(customerId, key);
+  try {
+    if (existing) {
+      await nativeRequest("PUT", `https://api.bigcommerce.com/stores/${storeHash}/v3/customers/${customerId}/metafields/${existing.id}`, { value, namespace: "mjs", key, permission_set: "app_only" });
+    } else {
+      await nativeRequest("POST", `https://api.bigcommerce.com/stores/${storeHash}/v3/customers/${customerId}/metafields`, { value, namespace: "mjs", key, permission_set: "app_only", description: "MJS website data" });
+    }
+    return true;
+  } catch (e) {
+    console.error("[BC] setCustomerMetafield failed", e);
+    return false;
+  }
+}

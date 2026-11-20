@@ -38,6 +38,10 @@
     {
       "path": "/api/reviews/run",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/sds/run",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

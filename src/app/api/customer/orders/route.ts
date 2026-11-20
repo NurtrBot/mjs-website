@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOrdersByCustomerId, getOrderProducts } from "@/lib/bigcommerce";
+import { getOrdersByCustomerId, getOrderProducts, getOrderShippingAddresses } from "@/lib/bigcommerce";
+import { findSds, buildingFromAddress } from "@/lib/sds";
 
 export async function GET(req: NextRequest) {
   const customerId = Number(req.nextUrl.searchParams.get("customerId"));
@@ -13,9 +14,13 @@ export async function GET(req: NextRequest) {
     // Fetch line items for each order
     const enriched = await Promise.all(
       (orders || []).slice(0, 20).map(async (order: Record<string, unknown>) => {
-        const products = await getOrderProducts(order.id as number);
+        const [products, ships] = await Promise.all([
+          getOrderProducts(order.id as number),
+          order.shipping_address_count === 0 ? Promise.resolve([]) : getOrderShippingAddresses(order.id as number),
+        ]);
         return {
           id: order.id,
+          building: buildingFromAddress(ships[0]),
           date: order.date_created,
           status: order.status,
           subtotal: order.subtotal_inc_tax,
@@ -31,6 +36,7 @@ export async function GET(req: NextRequest) {
             qty: p.quantity,
             price: Number(p.base_price) || Number(p.price_inc_tax) || 0,
             lineTotal: Number(p.total_inc_tax) || 0,
+            sds: findSds(String(p.sku || ""))?.url || null,
           })),
         };
       })

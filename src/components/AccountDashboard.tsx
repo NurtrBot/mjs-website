@@ -8,14 +8,16 @@ import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useOrderSetup } from "@/context/OrderContext";
 import CreditApplicationModal from "@/components/CreditApplicationModal";
+import SdsBinderTab from "@/components/SdsBinderTab";
+import SupplyListsTab from "@/components/SupplyListsTab";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
   CreditCard, Phone, Mail, RefreshCw, Eye, Star, Shield,
-  ChevronLeft, ChevronRight, Store, BadgePercent, Plus, Minus, X, Upload, FileCheck, EyeOff, Lock, Gift,
+  ChevronLeft, ChevronRight, Store, BadgePercent, Plus, Minus, X, Upload, FileCheck, EyeOff, Lock, Gift, ClipboardList,
 } from "lucide-react";
 
-const tabs = ["Overview", "Orders", "Rewards", "Account Info"];
+const tabs = ["Overview", "Orders", "Supply Lists", "My SDS Binder", "Rewards", "Account Info"];
 const REWARD_TIER_COLORS: Record<string, string> = {
   Bronze: "from-amber-600 to-amber-700",
   Silver: "from-gray-400 to-gray-500",
@@ -30,6 +32,7 @@ interface OrderLineItem {
   qty: number;
   price: number;
   lineTotal?: number;
+  sds?: string | null;   // direct PDF link when a verified sheet is on file
 }
 interface OrderData {
   id: string;
@@ -44,6 +47,7 @@ interface OrderData {
   lineItems: OrderLineItem[];
   tax: number;
   shipping: number;
+  building?: string;     // ship-to company / street ("Unassigned" for pickup)
 }
 
 interface BuyAgainProduct {
@@ -297,6 +301,10 @@ export default function AccountDashboard() {
   const { addItem } = useCart();
   const { setOrderSetup } = useOrderSetup();
   const [activeTab, setActiveTab] = useState("Overview");
+  // Supply Lists ⇄ SDS Binder hand-offs
+  const [listSeed, setListSeed] = useState<{ name: string; building: string; items: { sku: string; qty: number }[] } | null>(null);
+  const [binderBuilding, setBinderBuilding] = useState<string | null>(null);
+  const [requestSku, setRequestSku] = useState<string | null>(null);
   // Signed-out visitors go to the Create Account form instead of a guest dashboard;
   // someone who signs out while on this page goes home instead
   const wasSignedIn = useRef(false);
@@ -305,12 +313,16 @@ export default function AccountDashboard() {
     if (!authReady) return;
     window.location.replace(wasSignedIn.current ? "/" : "/auth?mode=signup");
   }, [authReady, user]);
-  // /account?tab=orders|rewards|info opens straight on that tab
+  // /account?tab=orders|lists|sds|rewards|info opens straight on that tab;
+  // ?building= pre-filters the binder, ?request=SKU fires a Request SDS (from the email)
   useEffect(() => {
     try {
-      const tab = new URLSearchParams(window.location.search).get("tab");
-      const map: Record<string, string> = { orders: "Orders", rewards: "Rewards", info: "Account Info", overview: "Overview" };
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab");
+      const map: Record<string, string> = { orders: "Orders", lists: "Supply Lists", sds: "My SDS Binder", rewards: "Rewards", info: "Account Info", overview: "Overview" };
       if (tab && map[tab]) setActiveTab(map[tab]);
+      const b = params.get("building"); if (b) setBinderBuilding(b);
+      const r = params.get("request"); if (r) setRequestSku(r);
     } catch {}
   }, []);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -364,12 +376,14 @@ export default function AccountDashboard() {
             statusColor,
             tax: Number(o.tax) || 0,
             shipping: Number(o.shipping) || 0,
+            building: (o.building as string) || "Unassigned",
             lineItems: ((o.lineItems as Record<string, unknown>[]) || []).map(li => ({
               name: li.name as string,
               sku: li.sku as string,
               qty: li.qty as number,
               price: Number(li.price) || 0,
               lineTotal: Number(li.lineTotal) || 0,
+              sds: (li.sds as string) || null,
             })),
           };
         });
@@ -843,7 +857,7 @@ export default function AccountDashboard() {
 
         {/* Tabs */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-2 mb-6">
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -1044,6 +1058,13 @@ export default function AccountDashboard() {
                             <Download className="w-3.5 h-3.5" /> Invoice
                           </button>
                           <button
+                            onClick={() => { setListSeed({ name: `Order ${order.id.replace("MJS-", "")}`, building: order.building && order.building !== "Unassigned" ? order.building : "", items: order.lineItems.map(li => ({ sku: li.sku, qty: li.qty })) }); setActiveTab("Supply Lists"); }}
+                            className="text-xs text-mjs-gray-400 hover:text-mjs-dark font-medium flex items-center gap-1 whitespace-nowrap"
+                            title="Save this order as a reusable supply list"
+                          >
+                            <ClipboardList className="w-3.5 h-3.5" /> Save as list
+                          </button>
+                          <button
                             onClick={() => handleReorder(order)}
                             className="text-xs text-mjs-red font-semibold flex items-center gap-1 hover:underline"
                           >
@@ -1062,6 +1083,27 @@ export default function AccountDashboard() {
               )}
             </div>
           </div>
+        )}
+
+        {/* ═══ SUPPLY LISTS TAB ═══ */}
+        {activeTab === "Supply Lists" && user?.id && (
+          <SupplyListsTab
+            customerId={user.id}
+            buildings={[...new Set(bcOrders.map(o => o.building).filter((b): b is string => !!b && b !== "Unassigned"))]}
+            seed={listSeed}
+            onSeedConsumed={() => setListSeed(null)}
+            onViewBinder={(b) => { setBinderBuilding(b); setActiveTab("My SDS Binder"); }}
+          />
+        )}
+
+        {/* ═══ MY SDS BINDER TAB ═══ */}
+        {activeTab === "My SDS Binder" && user?.id && (
+          <SdsBinderTab
+            customerId={user.id}
+            customer={{ email: user.email, firstName: user.firstName, lastName: user.lastName, company: user.company }}
+            initialBuilding={binderBuilding}
+            requestSku={requestSku}
+          />
         )}
 
         {/* ═══ MY PRICING TAB ═══ */}
@@ -2228,7 +2270,14 @@ export default function AccountDashboard() {
                   {viewingOrder.lineItems.map((item, i) => (
                     <tr key={i}>
                       <td className="py-3 pr-3 text-sm font-medium text-mjs-dark truncate">{item.name}</td>
-                      <td className="py-3 text-xs text-mjs-gray-500">{item.sku}</td>
+                      <td className="py-3 text-xs text-mjs-gray-500 whitespace-nowrap">
+                        {item.sku}
+                        {item.sds && (
+                          <a href={item.sds} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-0.5 text-[11px] font-bold text-mjs-red hover:underline" title="Download safety data sheet">
+                            <FileText className="w-3 h-3" /> SDS
+                          </a>
+                        )}
+                      </td>
                       <td className="py-3 text-sm text-mjs-gray-600 text-center">{item.qty}</td>
                       <td className="py-3 text-sm text-mjs-gray-600 text-right whitespace-nowrap">${item.price.toFixed(2)}</td>
                       <td className="py-3 text-sm font-semibold text-mjs-dark text-right whitespace-nowrap">${(item.lineTotal || item.price * item.qty).toFixed(2)}</td>

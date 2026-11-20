@@ -469,3 +469,155 @@ export async function sendReplenishmentEmail(d: ReplenishmentEmailData): Promise
     return false;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Safety data sheets email — one per order that includes a chemical,
+   sent by /api/sds/run within the hour. Downloads work without signing in.
+   ───────────────────────────────────────────────────────────── */
+export interface SdsEmailItem {
+  sku: string;
+  name: string;
+  image: string;
+  slug: string | null;
+  qty: number;
+  sdsUrl: string | null;    // null → Request SDS
+  revised: string | null;   // "2023-09-13"
+}
+export interface SdsEmailData {
+  to: string;
+  firstName: string;
+  orderId: number;
+  orderDate: string;        // "November 20, 2026"
+  building: string;         // ship-to company / street, or "Unassigned"
+  items: SdsEmailItem[];
+  binderUrl: string;
+  requestUrl: (sku: string) => string;
+}
+
+const fmtRevised = (iso: string | null) => {
+  if (!iso) return "";
+  const d = new Date(`${iso}T12:00:00`);
+  return isNaN(d.getTime()) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
+export function renderSdsEmail(d: SdsEmailData): { subject: string; html: string } {
+  const site = "https://www.mobilejanitorialsupply.com";
+  const font = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;";
+  const subject = `Your safety data sheets for MJS order #${d.orderId}`;
+  const forBuilding = d.building && d.building !== "Unassigned" ? ` for ${d.building}` : "";
+  const preview = `Download the sheets for chemicals ordered${forBuilding}.`;
+  const missing = d.items.filter(i => !i.sdsUrl).length;
+
+  const rows = d.items.map((it, i, arr) => `
+<tr><td style="padding:14px 32px;${i < arr.length - 1 ? "border-bottom:1px solid #eceff3;" : ""}">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td width="88" style="vertical-align:middle;padding-right:16px;">
+      <div style="width:88px;height:88px;border-radius:10px;background:#f3f4f6;overflow:hidden;text-align:center;">
+        ${it.slug ? `<a href="${site}/product/${esc(it.slug)}">` : ""}<img src="${esc(it.image)}" width="88" height="88" alt="" style="display:block;width:88px;height:88px;object-fit:contain;border:0;">${it.slug ? "</a>" : ""}
+      </div>
+    </td>
+    <td style="vertical-align:middle;padding-right:16px;">
+      <div style="${font}font-size:15px;font-weight:800;letter-spacing:-0.2px;color:#1a1a2e;line-height:19px;">${esc(it.name)}</div>
+      <div style="${font}font-size:12.5px;color:#6b7280;margin-top:4px;">Item ${esc(it.sku)} &middot; Qty ${it.qty}${it.revised ? ` &middot; Sheet revised ${esc(fmtRevised(it.revised))}` : ""}</div>
+    </td>
+    <td width="140" align="right" style="vertical-align:middle;white-space:nowrap;">
+      ${it.sdsUrl
+        ? `<table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr><td bgcolor="#D42027" style="border-radius:8px;"><a href="${esc(it.sdsUrl)}" style="display:inline-block;${font}font-size:13px;font-weight:700;color:#ffffff;text-decoration:none;padding:9px 14px;">Download SDS</a></td></tr></table>`
+        : `<table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr><td style="border:1.5px solid #d1d5db;border-radius:8px;"><a href="${esc(d.requestUrl(it.sku))}" style="display:inline-block;${font}font-size:13px;font-weight:700;color:#1a1a2e;text-decoration:none;padding:8px 14px;">Request SDS</a></td></tr></table>`}
+    </td>
+  </tr></table>
+</td></tr>`).join("");
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${esc(subject)}</title></head>
+<body style="margin:0;padding:0;background-color:#eef0f3;${font}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${esc(preview)}</div>
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#eef0f3;">
+<tr><td align="center" style="padding:24px 12px;">
+<table width="640" cellpadding="0" cellspacing="0" role="presentation" style="max-width:640px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;">
+
+<!-- HEADER -->
+<tr><td style="padding:26px 32px 8px 32px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td style="vertical-align:middle;">
+      <a href="${site}"><img src="${site}/images/email-welcome-logo.png" width="118" alt="Mobile Janitorial Supply" style="display:block;width:118px;height:auto;border:0;"></a>
+    </td>
+    <td align="right" style="vertical-align:middle;${font}font-size:12px;color:#6b7280;line-height:18px;">
+      Order <span style="font-weight:800;color:#1a1a2e;">#${d.orderId}</span><br>${esc(d.orderDate)}
+    </td>
+  </tr></table>
+</td></tr>
+
+<tr><td style="padding:18px 32px 0 32px;">
+  <div style="${font}font-size:12px;font-weight:800;letter-spacing:2px;color:#D42027;">SAFETY DATA SHEETS</div>
+  <div style="${font}font-size:30px;line-height:34px;font-weight:900;letter-spacing:-1px;color:#1a1a2e;margin-top:8px;">Your sheets are ready, ${esc(d.firstName)}.</div>
+  <div style="${font}font-size:15px;color:#4b5563;line-height:23px;margin-top:10px;">Here are the safety data sheets for the chemicals on this order${forBuilding ? `, ordered for <span style="font-weight:800;color:#1a1a2e;">${esc(d.building)}</span>` : ""}. Each link opens the PDF directly. No sign-in needed.</div>
+</td></tr>
+
+<!-- BUILDING / COUNT BAND -->
+<tr><td style="padding:18px 32px 6px 32px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:linear-gradient(180deg,#f9fafb 0%,#eceff3 100%);background-color:#f3f4f6;border-radius:12px;"><tr>
+    <td style="padding:14px 18px;${font}font-size:13px;color:#4b5563;">
+      <span style="font-weight:800;color:#1a1a2e;">${d.items.length} chemical${d.items.length === 1 ? "" : "s"}</span> on this order
+      ${missing ? ` &middot; <span style="color:#B01A20;font-weight:700;">${missing} sheet${missing === 1 ? "" : "s"} pending</span>` : " &middot; all sheets available"}
+    </td>
+    <td align="right" style="padding:14px 18px;white-space:nowrap;${font}font-size:13px;color:#4b5563;">
+      ${d.building && d.building !== "Unassigned" ? `<span style="font-weight:800;color:#1a1a2e;">${esc(d.building)}</span>` : `Order #${d.orderId}`}
+    </td>
+  </tr></table>
+</td></tr>
+
+<!-- ITEMS -->
+<tr><td style="padding:8px 0 4px 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">${rows}</table>
+</td></tr>
+
+${missing ? `<tr><td style="padding:4px 32px 10px 32px;${font}font-size:12.5px;color:#6b7280;line-height:19px;">A verified sheet for ${missing === 1 ? "one item" : `${missing} items`} hasn&rsquo;t been linked yet. Tap <strong>Request SDS</strong> and we&rsquo;ll send it to you as soon as it&rsquo;s on file.</td></tr>` : ""}
+
+<!-- BINDER CTA -->
+<tr><td style="padding:14px 32px 26px 32px;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#1a1a2e" style="background:#1a1a2e;border-radius:12px;"><tr>
+    <td style="padding:20px 22px;">
+      <div style="${font}font-size:17px;font-weight:800;color:#ffffff;letter-spacing:-0.3px;">Every sheet, every building, one place.</div>
+      <div style="${font}font-size:13px;color:#c3c9d6;margin-top:4px;line-height:19px;">Your SDS Binder keeps the sheets for everything you&rsquo;ve bought, sorted by building, with purchase history.</div>
+    </td>
+    <td align="right" style="padding:20px 22px;white-space:nowrap;">
+      <table cellpadding="0" cellspacing="0" role="presentation" align="right"><tr><td bgcolor="#fecd02" style="border-radius:8px;"><a href="${esc(d.binderUrl)}" style="display:inline-block;${font}font-size:13.5px;font-weight:800;color:#1a1a2e;text-decoration:none;padding:11px 16px;">Open My SDS Binder</a></td></tr></table>
+    </td>
+  </tr></table>
+</td></tr>
+
+<!-- FOOTER (compact) -->
+<tr><td style="padding:18px 32px 22px 32px;border-top:1px solid #eceff3;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td style="vertical-align:middle;${font}font-size:12px;color:#6b7280;line-height:18px;">
+      <span style="font-weight:800;color:#1a1a2e;">Mobile Janitorial Supply</span> &middot; 3066 E. La Palma Ave, Anaheim, CA 92806<br>
+      <a href="tel:7147792640" style="color:#6b7280;text-decoration:none;">(714) 779-2640</a> &middot; Mon&ndash;Fri 6:30 AM &ndash; 3:00 PM PT &middot; <a href="${site}" style="color:#D42027;font-weight:700;text-decoration:none;">mobilejanitorialsupply.com</a>
+    </td>
+    <td align="right" style="vertical-align:middle;white-space:nowrap;${font}font-size:11px;color:#9ca3af;">
+      Sent for order #${d.orderId}
+    </td>
+  </tr></table>
+  <div style="${font}font-size:11px;color:#9ca3af;margin-top:10px;line-height:16px;">You&rsquo;re receiving this because chemicals on your order require safety data sheets under OSHA&rsquo;s Hazard Communication Standard. Keep them where the products are used.</div>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>`;
+  return { subject, html };
+}
+
+export async function sendSdsEmail(d: SdsEmailData): Promise<boolean> {
+  const { subject, html } = renderSdsEmail(d);
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const res = await resend.emails.send({ from: FROM_ADDRESS, to: d.to, replyTo: "orders@mobilejanitorialsupply.com", subject, html });
+    if (res.error) { console.error("[RESEND] SDS email failed:", res.error); return false; }
+    return true;
+  } catch (error) {
+    console.error("[RESEND] SDS email failed:", error);
+    return false;
+  }
+}
