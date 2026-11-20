@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Search, ShoppingCart, Check, Plus, Minus, ChevronRight, Package, ClipboardList, FileText, Gift,
-  Phone, Mail, Truck, AlertCircle, Clock, BadgeCheck, MapPin, ArrowRight, Sparkles, Download,
+  Search, ShoppingCart, Check, Plus, Minus, Package, ClipboardList, FileText,
+  Phone, Mail, Truck, ArrowRight, Sparkles, Download,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getTierPrice } from "@/lib/tier-pricing";
@@ -91,7 +91,7 @@ function useDashData(customerId?: number) {
 /* ═══════════════════════════ HERO ═══════════════════════════ */
 
 export function DashboardHero(p: Shared) {
-  const { history, lists, sdsPending } = useDashData(p.user.id);
+  const { history, lists } = useDashData(p.user.id);
   const firstName = p.user.firstName || "there";
 
   // Account facts
@@ -99,20 +99,17 @@ export function DashboardHero(p: Shared) {
   const since = dates.length ? new Date(dates[0]).getFullYear() : null;
   const gap = dates.length >= 3 ? median(dates.slice(1).map((d, i) => (d - dates[i]) / 86400000)) : null;
   const cadence = cadenceLabel(gap && gap >= 5 ? Math.min(gap, 180) : null);
-  const openOrders = p.orders.filter(isOnTheWay);
-  const rewardsOnWay = p.orders.filter(o => getRewardTier(o.rewardSubtotal, true) && Date.now() - new Date(o.dateRaw).getTime() < 72 * 3600 * 1000);
   const termsApproved = !p.termsPending && p.user.customerGroupId !== undefined && p.user.customerGroupId !== 708 && p.orders.length > 0;
 
-  // Attention chips: only the ones that are true
-  const chips: { key: string; icon: ReactNode; text: string; tone: "red" | "amber" | "green" | "blue" | "grey"; onClick: () => void }[] = [];
-  if (history?.due.length) chips.push({ key: "due", icon: <Clock className="w-3.5 h-3.5" />, text: `${history.due.length} item${history.due.length === 1 ? "" : "s"} due for a restock`, tone: "red", onClick: () => document.getElementById("dash-reorder")?.scrollIntoView({ behavior: "smooth", block: "start" }) });
-  if (openOrders.length) chips.push({ key: "open", icon: <Truck className="w-3.5 h-3.5" />, text: `${openOrders.length} order${openOrders.length === 1 ? "" : "s"} on the way`, tone: "blue", onClick: () => p.go("Orders") });
-  if (rewardsOnWay.length) chips.push({ key: "reward", icon: <Gift className="w-3.5 h-3.5" />, text: `Gift card on the way`, tone: "green", onClick: () => p.go("Rewards") });
-  if (sdsPending) chips.push({ key: "sds", icon: <AlertCircle className="w-3.5 h-3.5" />, text: `${sdsPending} SDS sheet${sdsPending === 1 ? "" : "s"} pending`, tone: "amber", onClick: () => p.go("My SDS Binder") });
-  if (p.termsPending) chips.push({ key: "terms", icon: <Clock className="w-3.5 h-3.5" />, text: "Net-30 application under review", tone: "grey", onClick: () => p.go("Account Info") });
-  if (!p.taxIdUploaded) chips.push({ key: "tax", icon: <BadgeCheck className="w-3.5 h-3.5" />, text: "Add your tax ID to buy tax-free", tone: "grey", onClick: p.addTaxId });
-  if (p.addressCount === 0) chips.push({ key: "addr", icon: <MapPin className="w-3.5 h-3.5" />, text: "Add a delivery address", tone: "grey", onClick: p.addAddress });
-  const tone = { red: "bg-red-50 text-mjs-red", amber: "bg-amber-50 text-amber-700", green: "bg-green-50 text-green-700", blue: "bg-blue-50 text-blue-700", grey: "bg-mjs-gray-100 text-mjs-gray-600" };
+  // Quiet example searches under the bar; the most useful one is a real item they buy
+  const sampleSku = history?.items[0]?.product.sku;
+  const tries: { label: string; q: string }[] = [
+    { label: "reorder", q: "reorder" },
+    ...(sampleSku ? [{ label: sampleSku, q: sampleSku }] : []),
+    ...(p.orders[0] ? [{ label: p.orders[0].id, q: p.orders[0].id.replace(/\D/g, "") }] : []),
+    { label: "invoice", q: "invoice" },
+  ];
+  const seed = (q: string) => window.dispatchEvent(new CustomEvent("mjs-dash-search", { detail: q }));
 
   return (
     <div className="rounded-2xl px-6 lg:px-8 py-6 lg:py-7 mb-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 lg:gap-8" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f1f3f6 100%)" }}>
@@ -120,15 +117,15 @@ export function DashboardHero(p: Shared) {
         <div className="text-[13px] font-semibold text-mjs-gray-500">{greeting()}, {firstName}.</div>
         <h1 className="mt-1 text-[26px] lg:text-[34px] leading-[1.05] font-black tracking-tight text-mjs-dark">What are you restocking today?</h1>
         <CommandBar history={history} lists={lists} orders={p.orders} go={p.go} openOrder={p.openOrder} />
-        {chips.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {chips.map(c => (
-              <button key={c.key} onClick={c.onClick} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-bold transition-opacity hover:opacity-80 ${tone[c.tone]}`}>
-                {c.icon} {c.text} <ChevronRight className="w-3 h-3 opacity-60" />
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] text-mjs-gray-400">
+          <span>Try</span>
+          {tries.map((t, i) => (
+            <span key={t.label} className="inline-flex items-center gap-1.5">
+              <button type="button" onClick={() => seed(t.q)} className="rounded-md bg-white/70 px-1.5 py-0.5 font-semibold text-mjs-gray-600 hover:bg-white hover:text-mjs-dark transition-colors">{t.label}</button>
+              {i < tries.length - 1 && <span aria-hidden>·</span>}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Account card */}
@@ -187,7 +184,10 @@ function CommandBar({ history, lists, orders, go, openOrder }: { history: Histor
     document.addEventListener("keydown", onKey);
     const onClick = (e: MouseEvent) => { if (!boxRef.current?.contains(e.target as Node)) setOpen(false); };
     document.addEventListener("mousedown", onClick);
-    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onClick); };
+    // "Try" shortcuts under the bar seed a query
+    const onSeed = (e: Event) => { const v = (e as CustomEvent<string>).detail; setQ(v); setOpen(true); inputRef.current?.focus(); };
+    window.addEventListener("mjs-dash-search", onSeed);
+    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onClick); window.removeEventListener("mjs-dash-search", onSeed); };
   }, []);
 
   // Catalog fallback (debounced)
