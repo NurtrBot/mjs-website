@@ -8,6 +8,7 @@ import { renderSdsEmail, sendSdsEmail, type SdsEmailData } from "@/lib/email";
  * GET /api/sds/run                       — cron every 15 min (Authorization: Bearer CRON_SECRET)
  * GET /api/sds/run?orderId=10482&secret=… — preview the email for one order (HTML, no send)
  * GET /api/sds/run?dryRun=1              — list what would be sent
+ * GET /api/sds/run?sendTest=you@x.com&skus=3158EA,40112EA&secret=… — send a sample to one address
  *
  * One email per qualifying order (any order with a chemical on it), sent once
  * the order is at least 15 minutes old, retried on later runs until it is
@@ -60,6 +61,26 @@ export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization") || "";
   const qsSecret = req.nextUrl.searchParams.get("secret");
   if (!secret || (auth !== `Bearer ${secret}` && qsSecret !== secret)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Send a sample to one address, built from real products (no order needed)
+  const sendTest = req.nextUrl.searchParams.get("sendTest");
+  if (sendTest) {
+    const skus = (req.nextUrl.searchParams.get("skus") || "3158EA,40112EA,41212EA").split(",").map(s => s.trim().toUpperCase()).filter(Boolean).slice(0, 10);
+    const products = await fetchProductsBySkus(skus);
+    const by = new Map(products.map(p => [p.sku.toUpperCase(), p]));
+    const items: SdsEmailData["items"] = skus.map((sku, i) => {
+      const p = by.get(sku); const sds = findSds(sku);
+      return { sku, name: p?.cardTitle || p?.name || sku, image: p?.images?.[0] || `${SITE}/images/placeholder-product.svg`, slug: p?.slug || null, qty: [2, 1, 4][i % 3], sdsUrl: sds?.url || null, revised: sds?.revised || null };
+    });
+    const data: SdsEmailData = {
+      to: sendTest, firstName: req.nextUrl.searchParams.get("firstName") || "Zack", orderId: 10482,
+      orderDate: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+      building: req.nextUrl.searchParams.get("building") || "Anaheim Warehouse", items,
+      binderUrl: `${SITE}/account?tab=sds`, requestUrl: (sku: string) => `${SITE}/account?tab=sds&request=${encodeURIComponent(sku)}`,
+    };
+    const sent = await sendSdsEmail(data);
+    return NextResponse.json({ sent, to: sendTest, items: items.map(i => ({ sku: i.sku, name: i.name, sheet: !!i.sdsUrl })) });
+  }
 
   // Preview one order
   const previewId = Number(req.nextUrl.searchParams.get("orderId"));
