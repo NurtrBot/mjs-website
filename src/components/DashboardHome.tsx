@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Search, ShoppingCart, Check, Plus, Minus, ChevronRight, Package, ClipboardList, FileText, Gift,
-  Phone, Mail, Truck, AlertCircle, Clock, BadgeCheck, MapPin, ArrowRight, Sparkles, Download, Store,
+  Phone, Mail, Truck, AlertCircle, Clock, BadgeCheck, MapPin, ArrowRight, Sparkles, Download,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getTierPrice } from "@/lib/tier-pricing";
@@ -48,12 +48,18 @@ interface Shared {
 const OPEN_STATUSES = new Set(["Awaiting Shipment", "Awaiting Pickup", "Awaiting Fulfillment", "Pending", "Partially Shipped", "Awaiting Payment"]);
 // Order statuses are not maintained in BigCommerce after fulfilment, so "on the way" means open AND recent
 const isOnTheWay = (o: DashOrder) => OPEN_STATUSES.has(o.status) && Date.now() - new Date(o.dateRaw).getTime() < 14 * 86400000;
+/* Account team shown in the team bar. ACCOUNT_REP is who every customer sees as their rep. */
 const REPS = [
   { initials: "ZB", name: "Zack Bergman", email: "zack@mobilejanitorialsupply.com" },
   { initials: "RB", name: "Ryan Bergman", email: "ryan@mobilejanitorialsupply.com" },
   { initials: "NB", name: "Nick Bergman", email: "nick@mobilejanitorialsupply.com" },
 ];
+const ACCOUNT_REP = REPS[2]; // Nick Bergman, always
 
+/* Custom dashboard glyphs (public/icons/dash/*.png, alpha-only) rendered as a CSS mask so they take currentColor. */
+const Glyph = ({ name, className = "w-7 h-7" }: { name: string; className?: string }) => (
+  <span aria-hidden className={`inline-block bg-current ${className}`} style={{ WebkitMaskImage: `url(/icons/dash/${name}.png)`, maskImage: `url(/icons/dash/${name}.png)`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat", WebkitMaskPosition: "center", maskPosition: "center" }} />
+);
 const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"; };
 const shortDate = (iso: string) => new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 const money = (n: number) => `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -140,13 +146,13 @@ export function DashboardHero(p: Shared) {
           <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-mjs-gray-300" />{since ? `Customer since ${since}` : "New customer"}{p.orders.length ? ` · ${p.orders.length} order${p.orders.length === 1 ? "" : "s"}` : ""}{cadence ? ` · ${cadence}` : ""}</li>
         </ul>
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mjs-red text-[11px] font-black text-white">{REPS[0].initials}</span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mjs-red text-[11px] font-black text-white">{ACCOUNT_REP.initials}</span>
           <div className="min-w-0 flex-1">
-            <div className="text-[12.5px] font-bold text-mjs-dark leading-tight">{REPS[0].name}</div>
+            <div className="text-[12.5px] font-bold text-mjs-dark leading-tight">{ACCOUNT_REP.name}</div>
             <div className="text-[11px] text-mjs-gray-500">Your account rep</div>
           </div>
           <a href="tel:7147792640" className="flex h-8 w-8 items-center justify-center rounded-full bg-mjs-gray-100 text-mjs-dark hover:bg-mjs-red hover:text-white transition-colors" aria-label="Call"><Phone className="w-3.5 h-3.5" /></a>
-          <a href={`mailto:${REPS[0].email}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-mjs-gray-100 text-mjs-dark hover:bg-mjs-red hover:text-white transition-colors" aria-label="Email"><Mail className="w-3.5 h-3.5" /></a>
+          <a href={`mailto:${ACCOUNT_REP.email}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-mjs-gray-100 text-mjs-dark hover:bg-mjs-red hover:text-white transition-colors" aria-label="Email"><Mail className="w-3.5 h-3.5" /></a>
         </div>
       </div>
     </div>
@@ -451,13 +457,13 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         {/* Quick actions */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: "New order", sub: "Start from scratch", icon: <ShoppingCart className="w-5 h-5" />, on: p.newOrder, primary: true },
-            { label: "Supply lists", sub: `${lists.length} saved`, icon: <ClipboardList className="w-5 h-5" />, on: () => p.go("Supply Lists") },
-            { label: "SDS binder", sub: "Safety sheets", icon: <FileText className="w-5 h-5" />, on: () => p.go("My SDS Binder") },
-            { label: "Browse", sub: "Full catalog", icon: <Store className="w-5 h-5" />, on: () => { window.location.href = "/"; } },
+            { label: "New order", sub: "Start from scratch", icon: <Glyph name="new-order" />, on: p.newOrder, primary: true },
+            { label: "Supply lists", sub: `${lists.length} saved`, icon: <Glyph name="supply-lists" />, on: () => p.go("Supply Lists") },
+            { label: "SDS binder", sub: "Safety sheets", icon: <Glyph name="sds-binder" />, on: () => p.go("My SDS Binder") },
+            { label: "Browse", sub: "Full catalog", icon: <Glyph name="browse" />, on: () => { window.location.href = "/"; } },
           ].map(a => (
             <button key={a.label} onClick={a.on} className={`flex flex-col items-center rounded-2xl px-4 py-5 text-center shadow-sm transition-colors ${a.primary ? "bg-mjs-red text-white hover:bg-mjs-red-dark" : "bg-white text-mjs-dark hover:bg-mjs-gray-50"}`}>
-              <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${a.primary ? "bg-white/15" : "bg-red-50 text-mjs-red"}`}>{a.icon}</span>
+              <span className={`flex h-9 w-9 items-center justify-center ${a.primary ? "text-white" : "text-mjs-red"}`}>{a.icon}</span>
               <span className="mt-3 block text-[13.5px] font-black">{a.label}</span>
               <span className={`block text-[11px] ${a.primary ? "text-white/75" : "text-mjs-gray-500"}`}>{a.sub}</span>
             </button>
@@ -467,7 +473,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         {/* Rewards */}
         <button onClick={() => p.go("Rewards")} className="w-full rounded-2xl bg-mjs-dark px-5 py-4 text-left text-white shadow-sm hover:bg-black transition-colors">
           <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#fecd02]"><Gift className="w-3.5 h-3.5" /> Rewards</span>
+            <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#fecd02]"><Glyph name="rewards" className="w-4 h-4" /> Rewards</span>
             <ChevronRight className="w-4 h-4 text-white/50" />
           </div>
           <div className="mt-2 text-[22px] font-black leading-none">{earned} gift card{earned === 1 ? "" : "s"} earned</div>
@@ -479,12 +485,12 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
           <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms &amp; documents</h2>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: "Contact form", sub: "New customer · PDF", href: "/forms/new-customer-contact-form.pdf", icon: <FileText className="w-5 h-5" /> },
-              { label: "Card on file", sub: "Authorization · PDF", href: "/forms/credit-card-authorization-form.pdf", icon: <FileText className="w-5 h-5" /> },
-              { label: "All forms & SDS", sub: "Browse the library", href: "/resources", icon: <Download className="w-5 h-5" /> },
+              { label: "Contact form", sub: "New customer · PDF", href: "/forms/new-customer-contact-form.pdf", icon: <Glyph name="contact-form" /> },
+              { label: "Card on file", sub: "Authorization · PDF", href: "/forms/credit-card-authorization-form.pdf", icon: <Glyph name="card-on-file" /> },
+              { label: "All forms & SDS", sub: "Browse the library", href: "/resources", icon: <Glyph name="all-forms" /> },
             ].map(f => (
               <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl bg-white p-3 text-center shadow-sm hover:bg-mjs-gray-50 transition-colors">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-mjs-red">{f.icon}</span>
+                <span className="flex h-9 w-9 items-center justify-center text-mjs-red">{f.icon}</span>
                 <span className="min-w-0">
                   <span className="block text-[12.5px] font-black leading-tight text-mjs-dark group-hover:text-mjs-red transition-colors">{f.label}</span>
                   <span className="mt-0.5 block text-[10.5px] leading-tight text-mjs-gray-500">{f.sub}</span>
