@@ -474,6 +474,26 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
           {firstTier && <div className="mt-1.5 text-[12px] text-white/70">Orders of ${firstTier.minSpend.toLocaleString()}+ earn a ${firstTier.amount} gift card. Bigger orders earn more.</div>}
         </button>
 
+        {/* Forms & documents: three square cards */}
+        <div>
+          <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms &amp; documents</h2>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: "Contact form", sub: "New customer · PDF", href: "/forms/new-customer-contact-form.pdf", icon: <FileText className="w-5 h-5" /> },
+              { label: "Card on file", sub: "Authorization · PDF", href: "/forms/credit-card-authorization-form.pdf", icon: <FileText className="w-5 h-5" /> },
+              { label: "All forms & SDS", sub: "Browse the library", href: "/resources", icon: <Download className="w-5 h-5" /> },
+            ].map(f => (
+              <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex aspect-square flex-col justify-between rounded-2xl bg-white p-3.5 shadow-sm hover:bg-mjs-gray-50 transition-colors">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-mjs-red">{f.icon}</span>
+                <span className="min-w-0">
+                  <span className="block text-[12.5px] font-black leading-tight text-mjs-dark group-hover:text-mjs-red transition-colors">{f.label}</span>
+                  <span className="mt-0.5 block text-[10.5px] leading-tight text-mjs-gray-500">{f.sub}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -499,26 +519,6 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
     </div>
     </div>
 
-    {/* Forms & documents: three cards side by side */}
-    <div>
-      <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms &amp; documents</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
-        {[
-          { label: "New customer contact form", sub: "PDF · fill out and send back", href: "/forms/new-customer-contact-form.pdf", icon: <FileText className="w-5 h-5" /> },
-          { label: "Credit card authorization", sub: "PDF · keep a card on file", href: "/forms/credit-card-authorization-form.pdf", icon: <FileText className="w-5 h-5" /> },
-          { label: "All forms & SDS sheets", sub: "Browse the full library", href: "/resources", icon: <Download className="w-5 h-5" /> },
-        ].map(f => (
-          <a key={f.href} href={f.href} target={f.href.endsWith(".pdf") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex items-center gap-4 rounded-2xl bg-white px-5 py-4 shadow-sm hover:bg-mjs-gray-50 transition-colors">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-mjs-red">{f.icon}</span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[13.5px] font-black text-mjs-dark group-hover:text-mjs-red transition-colors">{f.label}</span>
-              <span className="block text-[11.5px] text-mjs-gray-500">{f.sub}</span>
-            </span>
-            <ChevronRight className="w-4 h-4 shrink-0 text-mjs-gray-300" />
-          </a>
-        ))}
-      </div>
-    </div>
     </div>
   );
 }
