@@ -10,22 +10,9 @@ const props = [
 
 export default function ValueProps() {
   return (
-    <section className="bg-white">
+    // Mobile only: on tablet/desktop the pre-footer bar carries these promises
+    <section className="bg-white md:hidden">
       <div className="max-w-[1400px] mx-auto px-4 py-3">
-        {/* Desktop: all 5 in a row */}
-        <div className="hidden md:flex items-center justify-between gap-4">
-          {props.map((prop) => (
-            <div key={prop.text} className="flex items-center flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <prop.icon className="w-4 h-4 text-mjs-red flex-shrink-0" />
-                <span className="text-xs font-semibold text-mjs-gray-700 whitespace-nowrap">
-                  {prop.text}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* Mobile: 3 props in one centered row */}
         <div className="md:hidden flex items-center justify-center gap-3">
           {[props[0], props[2], props[1]].map((prop) => (

@@ -10,7 +10,7 @@ import PromoBannerRow from "@/components/PromoBannerRow";
 import IndustrySection from "@/components/IndustrySection";
 import ReviewsAndMap from "@/components/ReviewsAndMap";
 import ValueProps from "@/components/ValueProps";
-import CTABanner from "@/components/CTABanner";
+import PreFooterBar from "@/components/PreFooterBar";
 import ResourceCards from "@/components/ResourceCards";
 import ReadyToShipAlt from "@/components/ReadyToShipAlt";
 import { BuyItAgain, DueForRestock, AlsoBuy } from "@/components/PersonalStrips";
@@ -41,8 +41,8 @@ export default function Home() {
         <PromoBannerRow />
         <ResourceCards />
         <ReviewsAndMap />
-        <CTABanner />
         <ValueProps />
+        <PreFooterBar />
       </main>
       <Footer />
     </>
