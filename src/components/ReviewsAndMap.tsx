@@ -147,7 +147,7 @@ export default function ReviewsAndMap() {
                 className="group flex flex-col items-center focus:outline-none"
               >
                 <span className="relative block h-[58px] w-[58px] lg:h-[64px] lg:w-[64px] overflow-hidden rounded-2xl ring-[3px] ring-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] transition-transform group-hover:scale-105">
-                  <Image src="/images/mjs-storefront-card.webp" alt="" fill sizes="128px" quality={80} className="object-cover object-[50%_42%]" />
+                  <Image src="/images/mjs-storefront-v2.webp" alt="" fill sizes="128px" quality={80} className="object-cover" />
                 </span>
                 <span className="-mt-px h-0 w-0 border-x-[8px] border-t-[10px] border-x-transparent border-t-white drop-shadow" />
                 <span className="mt-1 h-3 w-3 rounded-full bg-mjs-red ring-4 ring-white shadow transition-transform group-hover:scale-110" />
@@ -156,14 +156,14 @@ export default function ReviewsAndMap() {
 
             {/* Place card, Apple-Maps style, anchored to the top-left of the map */}
             {cardOpen && (
-              <div className="absolute right-4 top-4 z-30 w-[224px] lg:w-[310px] overflow-hidden rounded-2xl bg-white shadow-[0_18px_50px_rgba(23,32,52,0.28)] animate-[pinCard_180ms_cubic-bezier(0.16,1,0.3,1)]">
+              <div className="absolute right-4 top-4 z-30 w-[310px] lg:w-[340px] overflow-hidden rounded-2xl bg-white shadow-[0_18px_50px_rgba(23,32,52,0.28)] animate-[pinCard_180ms_cubic-bezier(0.16,1,0.3,1)]">
                 <div className="relative aspect-[16/9] w-full">
-                  <Image src="/images/mjs-storefront-card.webp" alt={`${BUSINESS.name} showroom in Anaheim`} fill sizes="320px" quality={80} className="object-cover" />
+                  <Image src="/images/mjs-storefront-v2.webp" alt={`${BUSINESS.name} showroom in Anaheim`} fill sizes="340px" quality={80} className="object-cover" />
                   <button type="button" onClick={() => setCardOpen(false)} aria-label="Close" className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur hover:bg-black/75">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="px-3.5 lg:px-4 pt-3 pb-3.5 lg:pb-4">
+                <div className="px-4 pt-3 pb-4">
                   <div className="text-[15px] font-black leading-tight text-mjs-dark">{BUSINESS.name}</div>
                   <div className="mt-0.5 text-[12px] font-semibold text-mjs-dark/55">Showroom &amp; warehouse · Open to the public</div>
                   <ul className="mt-2.5 space-y-1.5 list-none m-0 p-0 text-[12.5px] text-mjs-dark/80">
@@ -181,7 +181,7 @@ export default function ReviewsAndMap() {
             <span className="absolute left-3 top-2 text-[10px] text-mjs-dark/45">© OpenStreetMap contributors</span>
 
             {/* Floating visit bar */}
-            <div className="absolute inset-x-4 bottom-4 flex items-center gap-4 rounded-xl bg-white/92 backdrop-blur px-4 lg:px-5 py-3 shadow-[0_10px_30px_rgba(23,32,52,0.14)]">
+            <div className="absolute inset-x-0 bottom-0 flex items-center gap-4 px-5 lg:px-6 py-3.5 shadow-[0_-8px_24px_rgba(23,32,52,0.10)]" style={{ background: "linear-gradient(180deg, #f9fafb 0%, #eceff3 100%)" }}>
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-mjs-red text-white"><MapPin className="w-5 h-5" strokeWidth={2.3} /></span>
               <div className="min-w-0 flex-1">
                 <div className="text-[16px] lg:text-[17px] font-black leading-tight text-mjs-dark whitespace-nowrap">Visit our Anaheim showroom</div>
