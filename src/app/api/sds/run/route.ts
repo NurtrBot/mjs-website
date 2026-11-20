@@ -78,6 +78,7 @@ export async function GET(req: NextRequest) {
       building: req.nextUrl.searchParams.get("building") || "Anaheim Warehouse", items,
       binderUrl: `${SITE}/account?tab=sds`, requestUrl: (sku: string) => `${SITE}/account?tab=sds&request=${encodeURIComponent(sku)}`,
     };
+    if (req.nextUrl.searchParams.get("preview") === "1") return new NextResponse(renderSdsEmail(data).html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
     const sent = await sendSdsEmail(data);
     return NextResponse.json({ sent, to: sendTest, items: items.map(i => ({ sku: i.sku, name: i.name, sheet: !!i.sdsUrl })) });
   }

@@ -588,18 +588,14 @@ ${missing ? `<tr><td style="padding:4px 32px 10px 32px;${font}font-size:12.5px;c
   </tr></table>
 </td></tr>
 
-<!-- FOOTER (compact) -->
-<tr><td style="padding:18px 32px 22px 32px;border-top:1px solid #eceff3;">
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
-    <td style="vertical-align:middle;${font}font-size:12px;color:#6b7280;line-height:18px;">
-      <span style="font-weight:800;color:#1a1a2e;">Mobile Janitorial Supply</span> &middot; 3066 E. La Palma Ave, Anaheim, CA 92806<br>
-      <a href="tel:7147792640" style="color:#6b7280;text-decoration:none;">(714) 779-2640</a> &middot; Mon&ndash;Fri 6:30 AM &ndash; 3:00 PM PT &middot; <a href="${site}" style="color:#D42027;font-weight:700;text-decoration:none;">mobilejanitorialsupply.com</a>
-    </td>
-    <td align="right" style="vertical-align:middle;white-space:nowrap;${font}font-size:11px;color:#9ca3af;">
-      Sent for order #${d.orderId}
-    </td>
-  </tr></table>
-  <div style="${font}font-size:11px;color:#9ca3af;margin-top:10px;line-height:16px;">You&rsquo;re receiving this because chemicals on your order require safety data sheets under OSHA&rsquo;s Hazard Communication Standard. Keep them where the products are used.</div>
+<!-- FOOTER (compact, centred) -->
+<tr><td style="padding:22px 32px 24px 32px;border-top:1px solid #eceff3;text-align:center;">
+  <a href="${site}"><img src="${site}/images/email-welcome-logo.png" width="96" alt="Mobile Janitorial Supply" style="display:block;width:96px;height:auto;border:0;margin:0 auto 10px auto;"></a>
+  <div style="${font}font-size:14px;font-weight:800;color:#1a1a2e;">Mobile Janitorial Supply</div>
+  <div style="${font}font-size:12.5px;color:#6b7280;margin-top:3px;">3066 E. La Palma Ave, Anaheim, CA 92806</div>
+  <div style="${font}font-size:12.5px;color:#6b7280;margin-top:3px;"><a href="tel:7147792640" style="color:#6b7280;text-decoration:none;">(714) 779-2640</a> &middot; <a href="${site}" style="color:#D42027;font-weight:700;text-decoration:none;">mobilejanitorialsupply.com</a></div>
+  <div style="${font}font-size:11px;color:#9ca3af;margin-top:16px;">Sent for order #${d.orderId}</div>
+  <div style="${font}font-size:11px;color:#9ca3af;margin-top:6px;line-height:16px;max-width:440px;margin-left:auto;margin-right:auto;">You&rsquo;re receiving this because chemicals on your order require safety data sheets under OSHA&rsquo;s Hazard Communication Standard. Keep them where the products are used.</div>
 </td></tr>
 
 </table>
