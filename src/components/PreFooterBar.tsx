@@ -1,19 +1,29 @@
+"use client";
+
 import { Truck, Tag } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 /*
  * Thin strip directly above the footer (desktop/tablet). Replaced the navy
  * "Ready to save on supplies?" panel and the desktop value-props row
  * (2026-11-20). Left: the two promises. Right: four quiet utility links.
+ *
+ * My Account and Order Status go to the account dashboard (Orders tab for
+ * the latter) when signed in, and straight to the Create Account form when
+ * signed out.
  */
 
-const LINKS = [
-  { label: "My Account", href: "/account" },
-  { label: "Order Status", href: "/track" },
-  { label: "Rewards", href: "/rewards" },
-  { label: "SDS Sheets", href: "/resources" },
-];
-
 export default function PreFooterBar() {
+  const { isLoggedIn } = useAuth();
+  const signup = "/auth?mode=signup";
+
+  const links = [
+    { label: "My Account", href: isLoggedIn ? "/account" : signup },
+    { label: "Order Status", href: isLoggedIn ? "/account?tab=orders" : signup },
+    { label: "Rewards", href: "/rewards" },
+    { label: "SDS Sheets", href: "/resources" },
+  ];
+
   return (
     <section className="hidden md:block bg-white pt-4 pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
@@ -35,8 +45,8 @@ export default function PreFooterBar() {
 
           <nav aria-label="Account and resources">
             <ul className="flex items-center gap-5 lg:gap-8 list-none m-0 p-0">
-              {LINKS.map((l) => (
-                <li key={l.href}>
+              {links.map((l) => (
+                <li key={l.label}>
                   <a href={l.href} className="text-[13px] lg:text-[13.5px] font-semibold text-mjs-dark/70 hover:text-mjs-red transition-colors whitespace-nowrap">
                     {l.label}
                   </a>

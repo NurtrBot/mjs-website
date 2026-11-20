@@ -279,7 +279,7 @@ function BuyAgainStrip({ orders, addItem }: { orders: OrderData[]; addItem: (ite
 }
 
 export default function AccountDashboard() {
-  const { user, login } = useAuth();
+  const { user, login, authReady } = useAuth();
 
   // Net-30 terms status — read live from BigCommerce so approvals show without re-login
   const [termsPending, setTermsPending] = useState(user?.customerGroupId === 708);
@@ -297,6 +297,22 @@ export default function AccountDashboard() {
   const { addItem } = useCart();
   const { setOrderSetup } = useOrderSetup();
   const [activeTab, setActiveTab] = useState("Overview");
+  // Signed-out visitors go to the Create Account form instead of a guest dashboard;
+  // someone who signs out while on this page goes home instead
+  const wasSignedIn = useRef(false);
+  useEffect(() => {
+    if (user) { wasSignedIn.current = true; return; }
+    if (!authReady) return;
+    window.location.replace(wasSignedIn.current ? "/" : "/auth?mode=signup");
+  }, [authReady, user]);
+  // /account?tab=orders|rewards|info opens straight on that tab
+  useEffect(() => {
+    try {
+      const tab = new URLSearchParams(window.location.search).get("tab");
+      const map: Record<string, string> = { orders: "Orders", rewards: "Rewards", info: "Account Info", overview: "Overview" };
+      if (tab && map[tab]) setActiveTab(map[tab]);
+    } catch {}
+  }, []);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [orderStep, setOrderStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("bill");

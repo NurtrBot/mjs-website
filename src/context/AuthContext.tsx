@@ -40,6 +40,7 @@ function sanitizeUser(user: UserData): UserData {
 interface AuthContextType {
   user: UserData | null;
   isLoggedIn: boolean;
+  authReady: boolean; // true once the stored session has been checked on mount
   login: (user: UserData) => void;
   logout: () => void;
   getCustomPrice: (sku: string) => number | null;
@@ -49,6 +50,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
+  const [authReady, setAuthReady] = useState(false);
 
   // Restore session from localStorage on mount — check expiry
   useEffect(() => {
@@ -79,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch {}
+    setAuthReady(true);
   }, []);
 
   const login = useCallback((userData: UserData) => {
@@ -111,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, getCustomPrice }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: !!user, authReady, login, logout, getCustomPrice }}>
       {children}
     </AuthContext.Provider>
   );
