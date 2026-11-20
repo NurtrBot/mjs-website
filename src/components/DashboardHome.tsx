@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getTierPrice } from "@/lib/tier-pricing";
-import { getRewardTier, getRewardTiers } from "@/lib/reward-tiers";
+import { getRewardTier } from "@/lib/reward-tiers";
 import { loadHistory, type History } from "@/components/PersonalStrips";
 import type { HistoryItem } from "@/app/api/customers/history/route";
 import type { SupplyList } from "@/app/api/customers/lists/route";
@@ -362,7 +362,7 @@ function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loadi
 
   if (loading) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="flex-1 rounded-2xl bg-white p-5 shadow-sm">
         <div className="h-3.5 w-28 rounded bg-mjs-gray-100 animate-pulse" />
         <div className="mt-2 h-3 w-40 rounded bg-mjs-gray-100 animate-pulse" />
         <div className="mt-5 flex h-32 items-end gap-[3px]">
@@ -373,7 +373,7 @@ function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loadi
   }
   if (live.length < 2) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="flex-1 rounded-2xl bg-white p-5 shadow-sm">
         <h2 className="text-sm font-bold text-mjs-dark">Order history</h2>
         <p className="mt-1 text-[12px] text-mjs-gray-500">Your order chart fills in after your first few orders. Each bar is one order, sized by its total.</p>
       </div>
@@ -381,7 +381,7 @@ function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loadi
   }
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
+    <div className="flex flex-1 flex-col rounded-2xl bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-bold text-mjs-dark">Order history</h2>
@@ -407,7 +407,7 @@ function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loadi
       </div>
 
       {/* Bars */}
-      <div className="relative mt-4 h-32" onMouseLeave={() => setHover(null)}>
+      <div className="relative mt-4 min-h-32 flex-1" onMouseLeave={() => setHover(null)}>
         {/* average line */}
         <div className="pointer-events-none absolute inset-x-0 z-10 flex items-center gap-1.5" style={{ bottom: `${(avg / max) * 100}%` }}>
           <div className="h-px flex-1 border-t border-dashed border-mjs-gray-300" />
@@ -471,9 +471,6 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
 
   const open = p.orders.filter(isOnTheWay);
   const recent = (open.length ? open : p.orders).slice(0, 4);
-  const tiers = getRewardTiers(true);
-  const earned = p.orders.filter(o => getRewardTier(o.rewardSubtotal, true)).length;
-  const firstTier = tiers[0];
 
   const add = (it: HistoryItem) => {
     const q = qtys[it.product.sku] || it.usualQty;
@@ -485,7 +482,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
   return (
     <div className="space-y-6">
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-2 flex flex-col gap-6">
         {/* Reorder */}
         <div id="dash-reorder" className="bg-white rounded-2xl shadow-sm overflow-hidden scroll-mt-24">
           <div className="px-6 py-4 flex items-center justify-between gap-3">
@@ -540,7 +537,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         </div>
 
         {/* Orders */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="flex-1 bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold text-mjs-dark">{open.length ? "On the way" : "Recent orders"}</h2>
@@ -572,7 +569,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
       </div>
 
       {/* Side */}
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
         {/* Quick actions */}
         <div className="grid grid-cols-2 gap-3">
           {[
@@ -588,16 +585,6 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
             </button>
           ))}
         </div>
-
-        {/* Rewards */}
-        <button onClick={() => p.go("Rewards")} className="w-full rounded-2xl bg-mjs-dark px-5 py-4 text-left text-white shadow-sm hover:bg-black transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#fecd02]"><Glyph name="rewards" className="w-4 h-4" /> Rewards</span>
-            <ChevronRight className="w-4 h-4 text-white/50" />
-          </div>
-          <div className="mt-2 text-[22px] font-black leading-none">{earned} gift card{earned === 1 ? "" : "s"} earned</div>
-          {firstTier && <div className="mt-1.5 text-[12px] text-white/70">Orders of ${firstTier.minSpend.toLocaleString()}+ earn a ${firstTier.amount} gift card. Bigger orders earn more.</div>}
-        </button>
 
         {/* Forms & documents: three square cards */}
         <div>
