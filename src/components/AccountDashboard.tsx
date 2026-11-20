@@ -10,6 +10,7 @@ import { useOrderSetup } from "@/context/OrderContext";
 import CreditApplicationModal from "@/components/CreditApplicationModal";
 import SdsBinderTab from "@/components/SdsBinderTab";
 import SupplyListsTab from "@/components/SupplyListsTab";
+import { DashboardHero, DashboardOverview } from "@/components/DashboardHome";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
@@ -692,6 +693,21 @@ export default function AccountDashboard() {
   const pricingTier = "Standard";
   const discountRate = 0;
 
+  // Attention-chip targets (same behaviour the old "Complete your account" checklist had)
+  const goAddAddress = () => {
+    setActiveTab("Account Info");
+    setTimeout(() => {
+      setAddressForm({ label: "", company: companyInfo.company, address: "", city: "", state: "CA", zip: "" });
+      setEditingAddressId(null);
+      setShowAddressForm(true);
+      document.getElementById("delivery-addresses")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  };
+  const goAddTaxId = () => {
+    setActiveTab("Account Info");
+    setTimeout(() => document.getElementById("tax-id-section")?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+  };
+
   return (
     <section className="bg-mjs-gray-50 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 py-6">
@@ -702,161 +718,24 @@ export default function AccountDashboard() {
           <span className="text-mjs-dark font-medium">My Account</span>
         </div>
 
-        {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-mjs-dark to-gray-800 rounded-2xl p-8 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-white/5 rounded-full translate-y-1/2" />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-mjs-gold text-mjs-dark text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                {pricingTier}
-              </span>
-              <span className="bg-white/10 text-white/60 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                Active Account
-              </span>
-            </div>
-            <h1 className="text-3xl font-extrabold text-white mb-1">
-              Welcome, {mockUser.company}!
-            </h1>
-            <p className="text-gray-400 text-sm">Manage your orders, view your custom pricing, and place new orders.</p>
-          </div>
-        </div>
-
-        {/* Account Completion Progress */}
-        {(() => {
-          const steps = [
-            { label: "Create Account", done: true, action: "" },
-            { label: "Add Shipping Address", done: addresses.length > 0, action: "account-info" },
-            { label: "Upload Tax ID", done: taxIdUploaded, action: "account-info" },
-            { label: "Place First Order", done: displayOrders.length > 0, action: "order" },
-          ];
-          const completed = steps.filter(s => s.done).length;
-          const total = steps.length;
-          const pct = Math.round((completed / total) * 100);
-
-          if (pct >= 100) return null;
-
-          return (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 overflow-hidden">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="text-sm font-bold text-mjs-dark">Complete Your Account</div>
-                  <div className="text-xs text-mjs-gray-400 mt-0.5">{completed} of {total} steps done — {pct}% complete</div>
-                </div>
-                <div className="text-xs font-bold text-mjs-red">{pct}%</div>
-              </div>
-              {/* Progress bar */}
-              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
-                <div
-                  className="h-full bg-gradient-to-r from-mjs-red to-red-400 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-              {/* Steps */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {steps.map((step, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      if (step.done || !step.action) return;
-                      if (step.action === "account-info" && step.label === "Add Shipping Address") {
-                        setActiveTab("Account Info");
-                        setTimeout(() => {
-                          setAddressForm({ label: "", company: companyInfo.company, address: "", city: "", state: "CA", zip: "" });
-                          setEditingAddressId(null);
-                          setShowAddressForm(true);
-                          // Scroll to address section
-                          document.getElementById("delivery-addresses")?.scrollIntoView({ behavior: "smooth", block: "center" });
-                        }, 100);
-                      } else if (step.action === "account-info" && step.label === "Upload Tax ID") {
-                        setActiveTab("Account Info");
-                        setTimeout(() => {
-                          document.getElementById("tax-id-section")?.scrollIntoView({ behavior: "smooth", block: "center" });
-                        }, 100);
-                      } else if (step.action === "order") {
-                        openOrderModal();
-                      }
-                    }}
-                    className={`flex-1 rounded-xl border p-3 text-left transition-all ${
-                      step.done
-                        ? "bg-emerald-50 border-emerald-200"
-                        : "bg-white border-gray-200 hover:border-mjs-red hover:bg-red-50 cursor-pointer"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      {step.done ? (
-                        <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <CheckCircle className="w-3 h-3 text-white" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-[10px] font-bold text-mjs-gray-400">{i + 1}</span>
-                        </div>
-                      )}
-                      <span className={`text-[11px] font-semibold ${step.done ? "text-emerald-700" : "text-mjs-dark"}`}>
-                        {step.label}
-                      </span>
-                    </div>
-                    {!step.done && (
-                      <div className="text-[9px] text-mjs-red font-semibold ml-7">Set up &rarr;</div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
-                <Package className="w-5 h-5 text-mjs-red" />
-              </div>
-              <div>
-                <div className="text-2xl font-black text-mjs-dark">{displayOrders.length}</div>
-                <div className="text-xs text-mjs-gray-400">Total Orders</div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              </div>
-              <div>
-                <div className="text-2xl font-black text-mjs-dark">Active</div>
-                <div className="text-xs text-mjs-gray-400">Account Status</div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-                <BadgePercent className="w-5 h-5 text-amber-500" />
-              </div>
-              <div>
-                <div className="text-2xl font-black text-mjs-dark">{(discountRate * 100).toFixed(0)}%</div>
-                <div className="text-xs text-mjs-gray-400">Your Discount</div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-3 sm:p-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <div className="text-2xl font-black text-mjs-dark">${displayOrders.reduce((sum, o) => sum + o.total, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                <div className="text-xs text-mjs-gray-400">Total Spent</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Hero: greeting, command bar, attention chips, account card (DashboardHome.tsx) */}
+        <DashboardHero
+          user={{ id: user?.id, firstName: user?.firstName, lastName: user?.lastName, company: user?.company, email: user?.email, customerGroupId: user?.customerGroupId }}
+          orders={displayOrders}
+          ordersLoading={ordersLoading}
+          termsPending={termsPending}
+          taxIdUploaded={taxIdUploaded}
+          addressCount={addresses.length}
+          pricingTier={pricingTier}
+          go={setActiveTab}
+          openOrder={(o) => setViewingOrder(o as OrderData)}
+          newOrder={openOrderModal}
+          addAddress={goAddAddress}
+          addTaxId={goAddTaxId}
+        />
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-2 mb-6">
+        <div className="bg-white rounded-xl shadow-sm px-4 py-2 mb-6">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button
@@ -876,141 +755,23 @@ export default function AccountDashboard() {
 
         {/* ═══ OVERVIEW TAB ═══ */}
         {activeTab === "Overview" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recent Orders */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                  <h2 className="text-sm font-bold text-mjs-dark">Recent Orders</h2>
-                  <button onClick={() => setActiveTab("Orders")} className="text-xs text-mjs-red font-semibold hover:underline">View All</button>
-                </div>
-                <div className="divide-y divide-gray-50">
-                  {ordersLoading ? (
-                    <div className="px-6 py-10 text-center">
-                      <div className="w-6 h-6 border-2 border-gray-200 border-t-mjs-red rounded-full animate-spin mx-auto" />
-                      <p className="text-xs text-mjs-gray-400 mt-2">Loading orders...</p>
-                    </div>
-                  ) : displayOrders.length === 0 ? (
-                    <div className="px-6 py-10 text-center">
-                      <Package className="w-10 h-10 text-gray-200 mx-auto mb-2" />
-                      <p className="text-sm font-semibold text-mjs-gray-600">No orders yet</p>
-                      <p className="text-xs text-mjs-gray-400 mt-1">Your order history will appear here once you place your first order.</p>
-                      <a href="/" className="inline-block mt-3 text-xs text-mjs-red font-semibold hover:underline">Start Shopping</a>
-                    </div>
-                  ) : displayOrders.slice(0, 4).map((order) => (
-                    <button key={order.id} onClick={() => setViewingOrder(order)} className="w-full px-6 py-4 flex items-center justify-between hover:bg-mjs-gray-50/50 transition-colors text-left">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-mjs-gray-50 rounded-lg flex items-center justify-center">
-                          <Package className="w-4 h-4 text-mjs-gray-400" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-mjs-dark">{order.id}</div>
-                          <div className="text-xs text-mjs-gray-400">{order.date} &middot; {order.items} items</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-mjs-dark">${order.total.toFixed(2)}</div>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.statusColor}`}>{order.status}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-mjs-gray-300" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 className="text-sm font-bold text-mjs-dark mb-4">Quick Actions</h2>
-                <div className="space-y-2">
-                  <button
-                    onClick={openOrderModal}
-                    className="w-full flex items-center gap-3 bg-mjs-red text-white rounded-xl px-4 py-3 hover:bg-red-700 transition-colors"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    <span className="text-sm font-semibold">Place New Order</span>
-                    <ChevronRight className="w-4 h-4 ml-auto" />
-                  </button>
-                  <a href="/" className="w-full flex items-center gap-3 bg-mjs-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition-colors">
-                    <Store className="w-5 h-5 text-mjs-gray-500" />
-                    <span className="text-sm font-semibold text-mjs-dark">Browse Products</span>
-                    <ChevronRight className="w-4 h-4 ml-auto text-mjs-gray-400" />
-                  </a>
-                  <a href="/quote" className="w-full flex items-center gap-3 bg-mjs-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition-colors">
-                    <FileText className="w-5 h-5 text-mjs-gray-500" />
-                    <span className="text-sm font-semibold text-mjs-dark">Get a Quote</span>
-                    <ChevronRight className="w-4 h-4 ml-auto text-mjs-gray-400" />
-                  </a>
-                  <a href="/resources" className="w-full flex items-center gap-3 bg-mjs-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition-colors">
-                    <Download className="w-5 h-5 text-mjs-gray-500" />
-                    <span className="text-sm font-semibold text-mjs-dark">Download Forms</span>
-                    <ChevronRight className="w-4 h-4 ml-auto text-mjs-gray-400" />
-                  </a>
-                </div>
-              </div>
-
-              {/* Account Reps */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 className="text-sm font-bold text-mjs-dark mb-4">Your Account Team</h2>
-                <div className="space-y-4">
-                  {[
-                    { initials: "RB", name: "Ryan Bergman", email: "ryan@mobilejanitorialsupply.com" },
-                    { initials: "ZB", name: "Zack Bergman", email: "zack@mobilejanitorialsupply.com" },
-                    { initials: "NB", name: "Nick Bergman", email: "nick@mobilejanitorialsupply.com" },
-                  ].map((rep) => (
-                    <div key={rep.email} className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-mjs-red rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-bold text-xs">{rep.initials}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-mjs-dark">{rep.name}</div>
-                        <a href={`mailto:${rep.email}`} className="text-xs text-mjs-gray-400 hover:text-mjs-red transition-colors">{rep.email}</a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 pt-3 border-t border-gray-100">
-                  <a href="tel:7147792640" className="flex items-center gap-2 text-xs text-mjs-gray-500 hover:text-mjs-red transition-colors">
-                    <Phone className="w-3.5 h-3.5" /> (714) 779-2640
-                  </a>
-                </div>
-              </div>
-
-              {/* Forms */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms & Documents</h2>
-                <div className="space-y-2">
-                  <a
-                    href="/forms/new-customer-contact-form.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 bg-mjs-gray-50 rounded-xl hover:bg-red-50 hover:border-mjs-red/20 border border-transparent transition-all group"
-                  >
-                    <FileText className="w-5 h-5 text-mjs-red flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="text-sm font-semibold text-mjs-dark group-hover:text-mjs-red transition-colors">New Customer Contact Form</div>
-                      <div className="text-[10px] text-mjs-gray-400">PDF Download</div>
-                    </div>
-                  </a>
-                  <a
-                    href="/forms/credit-card-authorization-form.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 bg-mjs-gray-50 rounded-xl hover:bg-red-50 hover:border-mjs-red/20 border border-transparent transition-all group"
-                  >
-                    <FileText className="w-5 h-5 text-mjs-red flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="text-sm font-semibold text-mjs-dark group-hover:text-mjs-red transition-colors">Credit Card Authorization Form</div>
-                      <div className="text-[10px] text-mjs-gray-400">PDF Download</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <DashboardOverview
+            user={{ id: user?.id, firstName: user?.firstName, lastName: user?.lastName, company: user?.company, email: user?.email, customerGroupId: user?.customerGroupId }}
+            orders={displayOrders}
+            ordersLoading={ordersLoading}
+            termsPending={termsPending}
+            taxIdUploaded={taxIdUploaded}
+            addressCount={addresses.length}
+            pricingTier={pricingTier}
+            go={setActiveTab}
+            openOrder={(o) => setViewingOrder(o as OrderData)}
+            newOrder={openOrderModal}
+            addAddress={goAddAddress}
+            addTaxId={goAddTaxId}
+            reordered={reordered}
+            reorder={(o) => handleReorder(o as OrderData)}
+            downloadInvoice={(o) => downloadInvoice(o as OrderData)}
+          />
         )}
 
         {/* ═══ ORDERS TAB ═══ */}

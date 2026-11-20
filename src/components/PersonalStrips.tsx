@@ -21,12 +21,12 @@ import type { HistoryItem } from "@/app/api/customers/history/route";
  * during the load so the page doesn't jump).
  */
 
-interface History { items: HistoryItem[]; due: HistoryItem[]; alsoBuy: ProductData[]; orderCount: number }
+export interface History { items: HistoryItem[]; due: HistoryItem[]; alsoBuy: ProductData[]; orderCount: number }
 
 const EMPTY: History = { items: [], due: [], alsoBuy: [], orderCount: 0 };
 const cache = new Map<number, Promise<History>>();
 
-function loadHistory(customerId: number): Promise<History> {
+export function loadHistory(customerId: number): Promise<History> {
   let p = cache.get(customerId);
   if (!p) {
     p = fetch(`/api/customers/history?customerId=${customerId}`)
