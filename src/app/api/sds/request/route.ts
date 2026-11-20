@@ -95,7 +95,6 @@ function buildRequestEmail(b: Record<string, unknown>) {
 
 <!-- FOOTER (compact, centred) -->
 <tr><td style="padding:22px 32px 24px 32px;border-top:1px solid #eceff3;text-align:center;">
-  <a href="${site}"><img src="${site}/images/email-welcome-logo.png" width="96" alt="Mobile Janitorial Supply" style="display:block;width:96px;height:auto;border:0;margin:0 auto 10px auto;"></a>
   <div style="${font}font-size:14px;font-weight:800;color:#1a1a2e;">Mobile Janitorial Supply</div>
   <div style="${font}font-size:12.5px;color:#6b7280;margin-top:3px;">3066 E. La Palma Ave, Anaheim, CA 92806</div>
   <div style="${font}font-size:12.5px;color:#6b7280;margin-top:3px;"><a href="tel:7147792640" style="color:#6b7280;text-decoration:none;">(714) 779-2640</a> &middot; <a href="${site}" style="color:#D42027;font-weight:700;text-decoration:none;">mobilejanitorialsupply.com</a></div>
