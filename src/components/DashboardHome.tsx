@@ -612,7 +612,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
 
     {/* Account team: heading above, then one bar with names and emails in plain sight */}
     <div>
-      <div className="mb-3">
+      <div className="mb-3 text-center">
         <h2 className="text-sm font-bold text-mjs-dark">Your account team</h2>
         <p className="text-[11.5px] text-mjs-gray-500 mt-0.5">Real people, Mon–Fri 6:30 AM – 3:00 PM</p>
       </div>
