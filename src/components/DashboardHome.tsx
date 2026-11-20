@@ -335,6 +335,125 @@ function ProductHit({ product, qty: initial, meta, added, onAdd }: { product: Pr
   );
 }
 
+/* ═══════════════════════════ ORDER CHART ═══════════════════════════ */
+
+const DEAD_STATUSES = new Set(["Cancelled", "Declined", "Refunded", "Disputed"]);
+const CHART_MAX = 24;
+
+/* One bar per order, oldest on the left. Hover or focus a bar and the readout
+ * above shows that order, its total and the change from the one before it. */
+function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loading: boolean; openOrder: (o: DashOrder) => void }) {
+  const [hover, setHover] = useState<number | null>(null);
+  const live = useMemo(() => {
+    const ok = orders.filter(o => !DEAD_STATUSES.has(o.status) && !isNaN(new Date(o.dateRaw).getTime()));
+    ok.sort((a, b) => new Date(a.dateRaw).getTime() - new Date(b.dateRaw).getTime());
+    return ok.slice(-CHART_MAX);
+  }, [orders]);
+  const max = Math.max(...live.map(o => o.total), 1);
+  const lifetime = live.reduce((s, o) => s + o.total, 0);
+  const avg = live.length ? lifetime / live.length : 0;
+  const idx = hover ?? live.length - 1;
+  const cur = live[idx];
+  const prev = idx > 0 ? live[idx - 1] : undefined;
+  const delta = cur && prev && prev.total > 0 ? (cur.total - prev.total) / prev.total : null;
+  const span = live.length > 1
+    ? `${new Date(live[0].dateRaw).toLocaleDateString("en-US", { month: "short", year: "numeric" })} – ${new Date(live[live.length - 1].dateRaw).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
+    : "";
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="h-3.5 w-28 rounded bg-mjs-gray-100 animate-pulse" />
+        <div className="mt-2 h-3 w-40 rounded bg-mjs-gray-100 animate-pulse" />
+        <div className="mt-5 flex h-32 items-end gap-[3px]">
+          {Array.from({ length: 16 }).map((_, i) => <div key={i} className="flex-1 rounded-t bg-mjs-gray-100 animate-pulse" style={{ height: `${20 + ((i * 37) % 70)}%` }} />)}
+        </div>
+      </div>
+    );
+  }
+  if (live.length < 2) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-bold text-mjs-dark">Order history</h2>
+        <p className="mt-1 text-[12px] text-mjs-gray-500">Your order chart fills in after your first few orders. Each bar is one order, sized by its total.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-bold text-mjs-dark">Order history</h2>
+          <p className="text-[11.5px] text-mjs-gray-500">Last {live.length} orders · {span}</p>
+        </div>
+      </div>
+
+      {/* Readout: the hovered order, or the latest */}
+      <div className="mt-4 flex items-end justify-between gap-3" aria-live="polite">
+        <div className="min-w-0">
+          <div className="text-[22px] font-black leading-none text-mjs-dark tabular-nums">{money(cur.total)}</div>
+          <div className="mt-1.5 text-[11.5px] leading-snug text-mjs-gray-500">
+            <span className="font-bold text-mjs-dark">{cur.id}</span> · {cur.date} · {cur.items} item{cur.items === 1 ? "" : "s"}
+          </div>
+        </div>
+        {delta !== null ? (
+          <span className={`shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${delta >= 0 ? "bg-green-50 text-green-700" : "bg-mjs-gray-100 text-mjs-gray-600"}`}>
+            {delta >= 0 ? "▲" : "▼"} {Math.abs(Math.round(delta * 100))}% <span className="font-medium text-mjs-gray-500">vs previous</span>
+          </span>
+        ) : (
+          <span className="shrink-0 rounded-full bg-mjs-gray-100 px-2 py-0.5 text-[11px] font-bold text-mjs-gray-600">First order</span>
+        )}
+      </div>
+
+      {/* Bars */}
+      <div className="relative mt-4 h-32" onMouseLeave={() => setHover(null)}>
+        {/* average line */}
+        <div className="pointer-events-none absolute inset-x-0 z-10 flex items-center gap-1.5" style={{ bottom: `${(avg / max) * 100}%` }}>
+          <div className="h-px flex-1 border-t border-dashed border-mjs-gray-300" />
+          <span className="w-[64px] text-[10px] font-semibold leading-none text-mjs-gray-500 tabular-nums">avg {money(avg)}</span>
+        </div>
+        <div className="absolute inset-y-0 left-0 right-[70px] flex items-end gap-[3px]">
+          {live.map((o, i) => {
+            const active = i === idx;
+            const h = Math.max((o.total / max) * 100, 2.5);
+            return (
+              <button
+                key={o.id}
+                type="button"
+                onMouseEnter={() => setHover(i)}
+                onFocus={() => setHover(i)}
+                onBlur={() => setHover(null)}
+                onClick={() => openOrder(o)}
+                aria-label={`${o.id}, ${o.date}, ${money(o.total)}`}
+                className="group relative flex h-full flex-1 items-end outline-none"
+              >
+                <span className={`block w-full rounded-t-[4px] transition-colors ${active ? "bg-mjs-red" : "bg-mjs-dark/80 group-hover:bg-mjs-dark"}`} style={{ height: `${h}%` }} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="mt-1.5 flex items-center justify-between pr-[70px] text-[10.5px] text-mjs-gray-400">
+        <span>Oldest</span>
+        <span className="text-mjs-gray-500">Tap a bar to open the order</span>
+        <span>Latest</span>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 border-t border-mjs-gray-100 pt-3">
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-mjs-gray-400">Total</div>
+          <div className="text-[14px] font-black text-mjs-dark tabular-nums">{money(lifetime)}</div>
+        </div>
+        <div>
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-mjs-gray-400">Average order</div>
+          <div className="text-[14px] font-black text-mjs-dark tabular-nums">{money(avg)}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════ OVERVIEW ═══════════════════════════ */
 
 export function DashboardOverview(p: Shared & { reordered: string | null; reorder: (o: DashOrder) => void; downloadInvoice: (o: DashOrder) => void }) {
@@ -500,6 +619,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
           </div>
         </div>
 
+        <OrderChart orders={p.orders} loading={p.ordersLoading} openOrder={p.openOrder} />
       </div>
     </div>
 
