@@ -37,22 +37,22 @@ function ShipCard({ product }: { product: ProductData }) {
   const purchasedDate = getPurchaseDate(product.sku);
 
   return (
-    <div className="flex-shrink-0 w-[190px] md:w-[calc((100%-60px)/6)] bg-white rounded-xl overflow-hidden transition-all group relative">
+    <div className="flex-shrink-0 w-[190px] md:w-[calc((100%-48px)/5)] bg-white rounded-xl overflow-hidden transition-all group relative">
       {purchasedDate && (
         <div className="absolute top-2 right-2 z-10 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
           <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
           Purchased {purchasedDate}
         </div>
       )}
-      <a href={`/product/${product.slug}`} className="block h-[160px] md:h-[190px] bg-white overflow-hidden relative">
-        <ProductImage src={product.images[0]} alt={product.cardTitle} sku={product.sku} imageFit={product.imageFit} sizes="(max-width: 768px) 50vw, 240px" />
+      <a href={`/product/${product.slug}`} className="block h-[160px] md:h-[230px] bg-white overflow-hidden relative">
+        <ProductImage src={product.images[0]} alt={product.cardTitle} sku={product.sku} imageFit={product.imageFit} sizes="(max-width: 768px) 50vw, 300px" />
       </a>
       <div className="p-3">
         <a href={`/product/${product.slug}`}>
-          <h3 className="text-xs font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors">{formatCardName(product.name)}</h3>
+          <h3 className="text-xs md:text-[13px] font-semibold text-mjs-gray-800 leading-snug line-clamp-2 group-hover:text-mjs-red transition-colors">{formatCardName(product.name)}</h3>
         </a>
         <div className="mt-1.5">
-          <span className="text-base font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
+          <span className="text-base md:text-lg font-bold text-mjs-dark">${product.price.toFixed(2)}</span>
         </div>
         <div className="text-[11px] font-medium text-mjs-gray-500 mt-0.5">{product.pack}</div>
         <div className="flex items-center gap-1.5 mt-2.5">
