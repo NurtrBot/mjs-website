@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import ProductShelf from "@/components/ProductShelf";
-import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Percent, Truck, Star, GraduationCap, Hotel, Toilet, Factory, HeartPulse, Store } from "lucide-react";
 import { DELIVERY_BANNER, GOOGLE_REVIEWS } from "@/lib/business";
 
 /* ── Carousel Slides ── */
@@ -112,11 +112,11 @@ const slides: {
 
 /* ── Deal Tabs (below carousel) ── */
 const dealTabs = [
-  { label: "SCHOOLS", sub: "Restroom & Classroom Supplies", active: false, href: "/industries/schools", featured: false },
-  { label: "HOSPITALITY", sub: "Hotels & Restaurants", active: false, href: "/category/breakroom", featured: false },
-  { label: "PORTABLE RESTROOM SUPPLIES", sub: "Deodorizers, Paper & More", active: true, href: "/industries/portable-restroom", featured: true },
-  { label: "MANUFACTURING", sub: "Industrial & Warehouse", active: false, href: "/category/packaging-film", featured: false },
-  { label: "HEALTHCARE", sub: "Medical & Facilities", active: false, href: "/category/gloves-safety", featured: false },
+  { label: "Schools", sub: "Restroom & Classroom Supplies", active: false, href: "/industries/schools", featured: false, Icon: GraduationCap },
+  { label: "Hospitality", sub: "Hotels & Restaurants", active: false, href: "/category/breakroom", featured: false, Icon: Hotel },
+  { label: "Portable Restrooms", sub: "Deodorizers, Paper & More", active: true, href: "/industries/portable-restroom", featured: true, Icon: Toilet },
+  { label: "Manufacturing", sub: "Industrial & Warehouse", active: false, href: "/category/packaging-film", featured: false, Icon: Factory },
+  { label: "Healthcare", sub: "Medical & Facilities", active: false, href: "/category/gloves-safety", featured: false, Icon: HeartPulse },
 ];
 
 
@@ -307,25 +307,26 @@ export default function HeroBanner() {
         {/* ═══ DEAL TABS (hidden on mobile, shown on md+) ═══ */}
         {/* Same navy as the top delivery bar (bg-mjs-dark) */}
         <div className="hidden md:flex rounded-xl overflow-hidden mt-3 bg-mjs-dark">
+          {/* Red cap: tells people what the bar is before they read the tabs */}
+          <div className="flex items-center gap-2.5 bg-mjs-red px-4 lg:px-5 shrink-0">
+            <Store className="w-5 h-5 lg:w-6 lg:h-6 text-white" strokeWidth={2.2} />
+            <div className="leading-none">
+              <div className="text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.18em] text-white/80">Shop by</div>
+              <div className="mt-1 text-[14px] lg:text-[17px] font-black text-white">Industry</div>
+            </div>
+          </div>
           {dealTabs.map((tab, i) => (
             <a
               key={tab.label}
               href={tab.href}
-              className={`text-center py-1.5 px-1 md:py-3 md:px-2 transition-all hover:bg-white/10 ${
-                tab.featured ? "flex-[1.4]" : "flex-1"
-              } ${
+              className={`flex flex-1 items-center justify-center gap-2.5 lg:gap-3 py-2.5 lg:py-3 px-2 lg:px-3 transition-colors hover:bg-white/10 ${
                 i < dealTabs.length - 1 ? "border-r border-white/15" : ""
               } ${tab.active ? "bg-white/10" : ""}`}
             >
-              <div
-                className="text-[9px] md:text-[11.5px] lg:text-[13px] font-black tracking-wide text-white"
-              >
-                {tab.label}
-              </div>
-              <div
-                className="text-[7px] md:text-[10px] lg:text-[11px] mt-0.5 font-semibold text-white/75"
-              >
-                {tab.sub}
+              <tab.Icon className="w-6 h-6 lg:w-7 lg:h-7 shrink-0 text-[#fecd02]" strokeWidth={2} />
+              <div className="min-w-0 leading-tight">
+                <div className="text-[13px] lg:text-[14px] font-black text-white whitespace-nowrap">{tab.label}</div>
+                <div className="hidden lg:block text-[11px] mt-0.5 font-semibold text-white/70 whitespace-nowrap">{tab.sub}</div>
               </div>
             </a>
           ))}

@@ -8,7 +8,7 @@ import HeroBanner from "@/components/HeroBanner";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import PromoBannerRow from "@/components/PromoBannerRow";
 import IndustrySection from "@/components/IndustrySection";
-import Testimonials from "@/components/Testimonials";
+import ReviewsAndMap from "@/components/ReviewsAndMap";
 import ValueProps from "@/components/ValueProps";
 import CTABanner from "@/components/CTABanner";
 import ResourceCards from "@/components/ResourceCards";
@@ -37,7 +37,7 @@ export default function Home() {
         <ReadyToShipAlt key={`ready-${refreshKey}`} />
         <PromoBannerRow />
         <ResourceCards />
-        <Testimonials />
+        <ReviewsAndMap />
         <CTABanner />
         <ValueProps />
       </main>
