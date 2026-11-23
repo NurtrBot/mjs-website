@@ -8,7 +8,7 @@ import { trackSearch } from "@/lib/analytics";
 
 // Results are fetched on the server (see app/search/page.tsx) so the page is readable
 // without JavaScript; this component only adds analytics and the interactive cards.
-export default function SearchResults({ query, results }: { query: string; results: ProductData[] }) {
+export default function SearchResults({ query, results, partial = false }: { query: string; results: ProductData[]; partial?: boolean }) {
   useEffect(() => {
     if (query.length >= 2) trackSearch(query, results.length);
   }, [query, results.length]);
@@ -26,7 +26,9 @@ export default function SearchResults({ query, results }: { query: string; resul
           </h1>
           {query && (
             <p className="text-sm text-mjs-gray-400 mt-1">
-              {results.length} product{results.length !== 1 ? "s" : ""} found
+              {partial
+                ? <>Nothing matches every word, so here are the closest {results.length} product{results.length !== 1 ? "s" : ""}</>
+                : <>{results.length} product{results.length !== 1 ? "s" : ""} found</>}
             </p>
           )}
         </div>

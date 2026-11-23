@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchResults from "@/components/SearchResults";
 import { searchProducts } from "@/lib/products-api";
+import { searchCatalog } from "@/lib/search";
 import type { ProductData } from "@/data/products";
 
 type SearchParams = Promise<{ q?: string | string[] }>;
@@ -27,11 +28,14 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   const query = (Array.isArray(q) ? q[0] : q || "").trim().slice(0, 100);
 
   let results: ProductData[] = [];
+  let partial = false;
   if (query.length >= 2) {
     try {
-      results = (await searchProducts(query, 250)).filter(hasRealImage);
+      const r = await searchCatalog(query, { limit: 250 });
+      results = r.results.filter(hasRealImage);
+      partial = r.partial;
     } catch {
-      results = [];
+      try { results = (await searchProducts(query, 250)).filter(hasRealImage); } catch { results = []; }
     }
   }
 
@@ -39,7 +43,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     <>
       <Header />
       <main className="bg-mjs-gray-50 min-h-screen">
-        <SearchResults query={query} results={results} />
+        <SearchResults query={query} results={results} partial={partial} />
       </main>
       <Footer />
     </>

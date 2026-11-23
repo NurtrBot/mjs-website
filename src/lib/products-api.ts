@@ -1218,7 +1218,7 @@ function splitQueryModifiers(query: string): { searchTerms: string; filters: str
   return { searchTerms: searchWords.join(" "), filters: filterWords };
 }
 
-const SEARCH_SYNONYMS: Record<string, string[]> = {
+export const SEARCH_SYNONYMS: Record<string, string[]> = {
   // Paper & Restroom
   "toilet paper": ["toilet tissue", "bath tissue", "bathroom tissue"],
   "bath tissue": ["toilet tissue", "toilet paper"],
@@ -1405,6 +1405,19 @@ async function fetchWithKeyword(keyword: string, seen: Set<number>, maxPages = 2
 }
 
 export async function searchProducts(keyword: string, limit = 250): Promise<ProductData[]> {
+  // In-memory catalog index (src/lib/search.ts); the BigCommerce keyword search below is
+  // only the fallback if the catalog cannot be loaded.
+  try {
+    const { searchCatalog } = await import("./search");
+    const { results } = await searchCatalog(keyword, { limit });
+    return results;
+  } catch (e) {
+    console.error("[search] catalog index failed, falling back to BigCommerce keyword search", e);
+  }
+  return searchProductsLegacy(keyword, limit);
+}
+
+async function searchProductsLegacy(keyword: string, limit = 250): Promise<ProductData[]> {
   await loadBrandMap();
   const seen = new Set<number>();
   const allResults: ProductData[] = [];
