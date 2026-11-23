@@ -308,6 +308,7 @@ export interface ReviewData {
    The code itself is restricted to the product inside BigCommerce. */
 const PRODUCT_COUPONS: Record<string, { code: string; discount: string; note: string }> = {
   "107310": { code: "PROTEAM5", discount: "5% off", note: "Enter the code at checkout. One use per customer." },
+  "AEROPRO": { code: "AERO35", discount: "$35 off", note: "Enter the code at checkout. One use per customer." },
 };
 
 function CouponTag({ sku }: { sku: string }) {
