@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, Download, FileText, ChevronDown, ChevronUp, Building2, Check, Loader2, AlertCircle } from "lucide-react";
 import type { Binder, BinderChemical } from "@/lib/sds";
+import { FirstVisitNote } from "@/components/DashboardTour";
 
 /*
  * My SDS Binder (account dashboard tab). One row per chemical the customer
@@ -75,6 +76,15 @@ export default function SdsBinderTab({ customerId, customer, initialBuilding, re
   const toggle = (sku: string) => setOpen(prev => { const n = new Set(prev); if (n.has(sku)) n.delete(sku); else n.add(sku); return n; });
 
   return (
+    <div>
+    <FirstVisitNote
+      id="sds-binder"
+      userId={customerId}
+      icon="sds-binder"
+      title="My SDS Binder fills itself"
+      body="Every chemical you order lands here with its Safety Data Sheet, matched to the exact product, so your binder is always current for an inspection. No printing, no chasing a supplier for a sheet."
+      points={["New sheets appear automatically after each order", "Filter by building to print one binder per site", "Missing a sheet? Request it here and we send it over"]}
+    />
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
         <div className="mr-auto">
@@ -180,6 +190,7 @@ export default function SdsBinderTab({ customerId, customer, initialBuilding, re
           })}
         </div>
       )}
+    </div>
     </div>
   );
 }

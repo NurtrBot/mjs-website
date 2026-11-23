@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ShoppingCart, Minus, Plus } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
+import StripBar from "@/components/StripBar";
 import { getTierPrice } from "@/lib/tier-pricing";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -130,22 +131,19 @@ export default function FeaturedProducts() {
   return (
     <section data-track="featured-products" className="bg-white pt-6 pb-2 md:pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-mjs-dark">Best Sellers</h2>
-          <div className="flex items-center gap-2">
-            <a href="/collection?type=best-sellers" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
-            <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-              <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-            <button onClick={() => scroll("right")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-              <ChevronRight className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-          </div>
-        </div>
-        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+        <div className="rounded-2xl bg-[#f6f7f9] overflow-hidden">
+        <StripBar
+          title="Best Sellers"
+          subtitle="What Southern California businesses order most"
+          action={<a href="/collection?type=best-sellers" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
+          onLeft={() => scroll("left")}
+          onRight={() => scroll("right")}
+        />
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">
           {items.map((product) => (
             <FeaturedCard key={product.slug} product={product} />
           ))}
+        </div>
         </div>
       </div>
     </section>

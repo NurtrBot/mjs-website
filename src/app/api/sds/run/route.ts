@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOrdersSince, getOrder, getOrderProducts, getOrderShippingAddresses, updateOrderStaffNotes } from "@/lib/bigcommerce";
+import { getOrdersSince, getOrder, getOrderProducts, getOrderShippingAddresses, updateOrderStaffNotes, getOrdersByCustomerId, getCustomerMetafield, setCustomerMetafield } from "@/lib/bigcommerce";
 import { fetchProductsBySkus } from "@/lib/products-api";
 import { findSds, isChemical, buildingFromAddress, SITE } from "@/lib/sds";
 import { renderSdsEmail, sendSdsEmail, type SdsEmailData } from "@/lib/email";
@@ -14,15 +14,46 @@ import { renderSdsEmail, sendSdsEmail, type SdsEmailData } from "@/lib/email";
  * the order is at least 5 minutes old, retried on later runs until it is
  * 2 hours old. Cancelled / incomplete orders are skipped. A marker in the
  * order's staff notes stops duplicates.
+ *
+ * Each chemical is emailed to a customer ONCE. The SKUs already sent live in
+ * the customer metafield mjs/sds_emailed_skus; a reorder of the same chemicals
+ * sends nothing, and an order that mixes old and new chemicals only lists the
+ * new ones. The first time a customer is seen, the list is seeded from any
+ * earlier orders that already carry the sent marker, so customers emailed
+ * before this rule existed are not emailed again for the same sheets.
  */
 
 export const dynamic = "force-dynamic";
 const SKIP_STATUS = new Set([0, 1, 4, 5, 6, 13]);
 const MARK = "[sds-email sent]";
+const MARK_SKIP = "[sds-email skipped: sheets already sent]";
+const SENT_KEY = "sds_emailed_skus";
 const MIN_AGE_MS = 5 * 60 * 1000;
 const WINDOW_MS = 2 * 60 * 60 * 1000;
 
 type BCOrder = { id: number; date_created: string; status_id: number; items_total: number; staff_notes?: string; customer_id?: number; shipping_address_count?: number; billing_address?: { first_name?: string; email?: string } };
+
+/* Chemicals this customer has already received a sheet email for */
+async function getSentSkus(customerId: number): Promise<{ skus: Set<string>; seeded: boolean }> {
+  const mf = await getCustomerMetafield(customerId, SENT_KEY);
+  if (mf) {
+    try { return { skus: new Set((JSON.parse(mf.value) as string[]).map(s => s.toUpperCase())), seeded: false }; } catch { /* fall through and rebuild */ }
+  }
+  // First time we see this customer: rebuild from orders that were emailed before the per-chemical rule
+  const skus = new Set<string>();
+  const past = (await getOrdersByCustomerId(customerId, 50)) as BCOrder[];
+  for (const o of past) {
+    if (!(o.staff_notes || "").includes(MARK)) continue;
+    const lines = (await getOrderProducts(o.id)) as { sku?: string; name?: string }[];
+    for (const l of lines) { const sku = (l.sku || "").toUpperCase(); if (sku && (findSds(sku) || isChemical({ name: l.name || "" }))) skus.add(sku); }
+  }
+  return { skus, seeded: true };
+}
+
+async function rememberSentSkus(customerId: number, prior: Set<string>, sent: string[]) {
+  const all = [...new Set([...prior, ...sent.map(s => s.toUpperCase())])].sort();
+  await setCustomerMetafield(customerId, SENT_KEY, JSON.stringify(all));
+}
 
 async function buildEmailData(order: BCOrder): Promise<SdsEmailData | null> {
   const [lines, ships] = await Promise.all([getOrderProducts(order.id), order.shipping_address_count === 0 ? Promise.resolve([]) : getOrderShippingAddresses(order.id)]);
@@ -83,6 +114,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ sent, to: sendTest, items: items.map(i => ({ sku: i.sku, name: i.name, sheet: !!i.sdsUrl })) });
   }
 
+  // Which chemicals a customer has already been sent (read only)
+  const sentFor = Number(req.nextUrl.searchParams.get("sentFor"));
+  if (sentFor) {
+    const got = await getSentSkus(sentFor);
+    return NextResponse.json({ customerId: sentFor, source: got.seeded ? "rebuilt from past orders" : "metafield", skus: [...got.skus].sort() });
+  }
+
   // Preview one order
   const previewId = Number(req.nextUrl.searchParams.get("orderId"));
   if (previewId) {
@@ -103,16 +141,35 @@ export async function GET(req: NextRequest) {
     const age = now - new Date(o.date_created).getTime();
     if (SKIP_STATUS.has(o.status_id) || o.items_total < 1) { results.push({ orderId: o.id, action: "skip:status" }); continue; }
     if (age < MIN_AGE_MS) { results.push({ orderId: o.id, action: "wait" }); continue; }
-    if ((o.staff_notes || "").includes(MARK)) { results.push({ orderId: o.id, action: "skip:sent" }); continue; }
+    if ((o.staff_notes || "").includes("[sds-email")) { results.push({ orderId: o.id, action: "skip:sent" }); continue; }
     // Re-read the order so a cancellation in the last few minutes is respected
     const fresh = (await getOrder(o.id)) as BCOrder | null;
     if (!fresh || SKIP_STATUS.has(fresh.status_id)) { results.push({ orderId: o.id, action: "skip:cancelled" }); continue; }
     const data = await buildEmailData(fresh);
     if (!data) { results.push({ orderId: o.id, action: "skip:no-chemicals" }); continue; }
+
+    // Once per chemical per customer: drop anything this customer has already been sent
+    const customerId = Number(fresh.customer_id) || 0;
+    let prior = new Set<string>();
+    if (customerId) {
+      const got = await getSentSkus(customerId);
+      prior = got.skus;
+      const before = data.items.length;
+      data.items = data.items.filter(i => !prior.has(i.sku.toUpperCase()));
+      if (data.items.length === 0) {
+        if (!dryRun) { try { await updateOrderStaffNotes(o.id, `${fresh.staff_notes || ""}${fresh.staff_notes ? "\n" : ""}${MARK_SKIP} ${new Date().toISOString()}`); } catch {} }
+        if (got.seeded && !dryRun) await rememberSentSkus(customerId, prior, []);
+        results.push({ orderId: o.id, action: `skip:already-sent (${before} chemical${before === 1 ? "" : "s"} on file)` });
+        continue;
+      }
+      if (before !== data.items.length) results.push({ orderId: o.id, action: `trimmed:${before - data.items.length} already sent` });
+    }
+
     if (dryRun) { results.push({ orderId: o.id, action: `would-send:${data.items.length} items → ${data.to}` }); continue; }
     const sent = await sendSdsEmail(data);
     if (sent) {
       try { await updateOrderStaffNotes(o.id, `${fresh.staff_notes || ""}${fresh.staff_notes ? "\n" : ""}${MARK} ${new Date().toISOString()}`); } catch {}
+      if (customerId) await rememberSentSkus(customerId, prior, data.items.map(i => i.sku));
       results.push({ orderId: o.id, action: `sent:${data.items.length} items` });
     } else {
       results.push({ orderId: o.id, action: "failed (will retry)" });

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus, RotateCcw, Check } from "lucide-react";
+import { ShoppingCart, Minus, Plus, RotateCcw, Check } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
+import StripBar from "@/components/StripBar";
 import { getTierPrice } from "@/lib/tier-pricing";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -168,22 +169,10 @@ function Strip({ title, subtitle, action, track, children }: { title: ReactNode;
   return (
     <section data-track={track} className="bg-white pt-6 pb-2 md:pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-4 gap-4">
-          <div className="min-w-0">
-            <h2 className="text-lg font-bold text-mjs-dark flex items-center gap-2">{title}</h2>
-            {subtitle && <p className="text-xs text-mjs-gray-500 mt-0.5 truncate">{subtitle}</p>}
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {action}
-            <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll left">
-              <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-            <button onClick={() => scroll("right")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Scroll right">
-              <ChevronRight className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-          </div>
+        <div className="rounded-2xl bg-[#f6f7f9] overflow-hidden">
+          <StripBar title={title} subtitle={subtitle} action={action} onLeft={() => scroll("left")} onRight={() => scroll("right")} />
+          <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">{children}</div>
         </div>
-        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">{children}</div>
       </div>
     </section>
   );

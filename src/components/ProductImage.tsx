@@ -93,7 +93,7 @@ export default function ProductImage({ src, alt, sku, imageFit = "contain", size
           alt={alt}
           fill
           sizes={sizes}
-          className={imageFit === "contain" ? `object-contain ${noPadding ? "p-1 mix-blend-multiply" : "p-4"}` : "object-cover"}
+          className={imageFit === "contain" ? `object-contain img-whiten ${noPadding ? "p-1 mix-blend-multiply" : "p-4"}` : "object-cover"}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center">

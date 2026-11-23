@@ -11,6 +11,7 @@ import CreditApplicationModal from "@/components/CreditApplicationModal";
 import SdsBinderTab from "@/components/SdsBinderTab";
 import SupplyListsTab from "@/components/SupplyListsTab";
 import { DashboardHero, DashboardOverview } from "@/components/DashboardHome";
+import { DashboardTour } from "@/components/DashboardTour";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
@@ -734,6 +735,7 @@ export default function AccountDashboard() {
           addTaxId={goAddTaxId}
         />
 
+        <DashboardTour userId={user?.id} active={activeTab === "Overview"} />
         {/* Tabs */}
         <div data-track="tabs" className="bg-white rounded-xl shadow-sm px-4 py-2 mb-6">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">

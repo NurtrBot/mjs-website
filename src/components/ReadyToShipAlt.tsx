@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ShoppingCart, Minus, Plus } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
+import StripBar from "@/components/StripBar";
 import { getTierPrice } from "@/lib/tier-pricing";
 import type { ProductData } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -113,25 +114,19 @@ export default function ReadyToShipAlt() {
   return (
     <section data-track="ready-to-ship" className="hidden md:block bg-white py-6">
       <div className="max-w-[1400px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-lg font-bold text-mjs-dark">Ready to Ship</h2>
-            <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">IN STOCK</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <a href="/collection?type=ready-to-ship" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>
-            <button onClick={() => scroll("left")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-              <ChevronLeft className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-            <button onClick={() => scroll("right")} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-              <ChevronRight className="w-4 h-4 text-mjs-gray-600" />
-            </button>
-          </div>
-        </div>
-        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+        <div className="rounded-2xl bg-[#f6f7f9] overflow-hidden">
+        <StripBar
+          title={<>Ready to Ship <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">IN STOCK</span></>}
+          subtitle="In stock in our Anaheim warehouse"
+          action={<a href="/collection?type=ready-to-ship" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
+          onLeft={() => scroll("left")}
+          onRight={() => scroll("right")}
+        />
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">
           {items.map((product) => (
             <ShipCard key={product.slug} product={product} />
           ))}
+        </div>
         </div>
       </div>
     </section>

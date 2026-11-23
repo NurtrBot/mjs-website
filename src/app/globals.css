@@ -120,3 +120,10 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Product photos arrive on light-grey studio backgrounds; this lifts anything lighter
+   than ~#e6e6e6 to pure white so the shot sits on the card without a grey slab.
+   The filter is defined once in layout.tsx (#mjs-whiten). */
+.img-whiten {
+  filter: url(#mjs-whiten);
+}

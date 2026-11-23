@@ -58,7 +58,7 @@ const REPS = [
 const ACCOUNT_REP = REPS[2]; // Nick Bergman, always
 
 /* Custom dashboard glyphs (public/icons/dash/*.png, alpha-only) rendered as a CSS mask so they take currentColor. */
-const Glyph = ({ name, className = "w-7 h-7" }: { name: string; className?: string }) => (
+export const Glyph = ({ name, className = "w-7 h-7" }: { name: string; className?: string }) => (
   <span aria-hidden className={`inline-block bg-current ${className}`} style={{ WebkitMaskImage: `url(/icons/dash/${name}.png)`, maskImage: `url(/icons/dash/${name}.png)`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat", WebkitMaskPosition: "center", maskPosition: "center" }} />
 );
 const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"; };
@@ -140,7 +140,7 @@ export function DashboardHero(p: Shared) {
         <ul className="mt-3 space-y-1.5 text-[12.5px] text-mjs-gray-600 list-none m-0 p-0">
           <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full ${termsApproved ? "bg-mjs-green" : p.termsPending ? "bg-amber-400" : "bg-mjs-gray-300"}`} />{termsApproved ? "Net-30 account" : p.termsPending ? "Net-30 pending approval" : "Prepaid account"}</li>
           <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full ${p.taxIdUploaded ? "bg-mjs-green" : "bg-mjs-gray-300"}`} />{p.taxIdUploaded ? "Tax exempt" : "Sales tax applies"}</li>
-          <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-mjs-gray-300" />{since ? `Customer since ${since}` : "New customer"}{p.orders.length ? ` · ${p.orders.length} order${p.orders.length === 1 ? "" : "s"}` : ""}{cadence ? ` · ${cadence}` : ""}</li>
+          <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full `} />{since ? `Customer since ${since}` : "New customer"}{p.orders.length ? ` · ${p.orders.length} order${p.orders.length === 1 ? "" : "s"}` : ""}{cadence ? ` · ${cadence}` : ""}</li>
         </ul>
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mjs-red text-[11px] font-black text-white">{ACCOUNT_REP.initials}</span>

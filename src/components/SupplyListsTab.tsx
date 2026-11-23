@@ -5,6 +5,7 @@ import { ClipboardList, Plus, Trash2, ShoppingCart, Check, Minus, Building2, Sav
 import { useCart } from "@/context/CartContext";
 import type { SupplyList, SupplyListItem } from "@/app/api/customers/lists/route";
 import type { ProductData } from "@/data/products";
+import { FirstVisitNote } from "@/components/DashboardTour";
 
 /*
  * Supply Lists (account dashboard tab). Named reorder lists tied to a building
@@ -123,6 +124,15 @@ export default function SupplyListsTab({ customerId, buildings, seed, onSeedCons
   const total = active ? active.items.reduce((s, i) => s + (i.price || 0) * (draftQty[i.sku] || i.qty), 0) : 0;
 
   return (
+    <div>
+    <FirstVisitNote
+      id="supply-lists"
+      userId={customerId}
+      icon="supply-lists"
+      title="Supply Lists: your standing order for every building"
+      body="Save the products each building needs with the quantities you usually order. Next time, open the list, adjust anything that changed, and send the whole thing to your cart in one click."
+      points={["Start a list from any past order or build one from scratch", "One list per building keeps multi-site ordering straight", "Each list links to that building’s SDS binder"]}
+    />
     <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
       {/* Lists */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden self-start">
@@ -265,6 +275,7 @@ export default function SupplyListsTab({ customerId, buildings, seed, onSeedCons
           </>
         )}
       </div>
+    </div>
     </div>
   );
 }
