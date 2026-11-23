@@ -135,11 +135,11 @@ export default function FeaturedProducts() {
         <StripBar
           title="Best Sellers"
           subtitle="What Southern California businesses order most"
-          action={<a href="/collection?type=best-sellers" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
+          action={<a href="/collection?type=best-sellers" className="text-[13px] font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
           onLeft={() => scroll("left")}
           onRight={() => scroll("right")}
         />
-        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pt-2 pb-3 [mask-image:linear-gradient(to_right,black_calc(100%-16px),transparent)]">
           {items.map((product) => (
             <FeaturedCard key={product.slug} product={product} />
           ))}

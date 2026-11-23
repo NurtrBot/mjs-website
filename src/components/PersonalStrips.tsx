@@ -171,7 +171,7 @@ function Strip({ title, subtitle, action, track, children }: { title: ReactNode;
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="rounded-2xl bg-[#f6f7f9] overflow-hidden">
           <StripBar title={title} subtitle={subtitle} action={action} onLeft={() => scroll("left")} onRight={() => scroll("right")} />
-          <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">{children}</div>
+          <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pt-2 pb-3 [mask-image:linear-gradient(to_right,black_calc(100%-16px),transparent)]">{children}</div>
         </div>
       </div>
     </section>
@@ -217,7 +217,7 @@ export function BuyItAgain({ fallback }: { fallback: ReactNode }) {
       track="buy-it-again"
       title={<><RotateCcw className="w-4 h-4 text-mjs-red" /> Buy it again</>}
       subtitle="Your usual products, with your usual quantities filled in"
-      action={<a href="/account?tab=orders" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">Order history &rarr;</a>}
+      action={<a href="/account?tab=orders" className="text-[13px] font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">Order history &rarr;</a>}
     >
       {items.slice(0, 20).map(item => <HistoryCard key={item.product.sku} item={item} showDue />)}
     </Strip>

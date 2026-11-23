@@ -37,8 +37,8 @@ export default function Home() {
         <BuyItAgain fallback={<FeaturedProducts key={`best-${refreshKey}`} />} />
         <IndustrySection />
         <DueForRestock fallback={<ReadyToShipAlt key={`ready-${refreshKey}`} />} />
-        <AlsoBuy />
         <PromoBannerRow />
+        <AlsoBuy />
         <ResourceCards />
         <ReviewsAndMap />
         <ValueProps />

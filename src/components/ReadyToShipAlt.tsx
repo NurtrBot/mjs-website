@@ -118,11 +118,11 @@ export default function ReadyToShipAlt() {
         <StripBar
           title={<>Ready to Ship <span className="bg-mjs-red text-white text-[9px] font-bold px-2 py-0.5 rounded tracking-wide">IN STOCK</span></>}
           subtitle="In stock in our Anaheim warehouse"
-          action={<a href="/collection?type=ready-to-ship" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
+          action={<a href="/collection?type=ready-to-ship" className="text-[13px] font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">View All &rarr;</a>}
           onLeft={() => scroll("left")}
           onRight={() => scroll("right")}
         />
-        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide p-4 pb-3">
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pt-2 pb-3 [mask-image:linear-gradient(to_right,black_calc(100%-16px),transparent)]">
           {items.map((product) => (
             <ShipCard key={product.slug} product={product} />
           ))}
