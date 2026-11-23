@@ -11,7 +11,7 @@ import CreditApplicationModal from "@/components/CreditApplicationModal";
 import SdsBinderTab from "@/components/SdsBinderTab";
 import SupplyListsTab from "@/components/SupplyListsTab";
 import { DashboardHero, DashboardOverview } from "@/components/DashboardHome";
-import { DashboardTour } from "@/components/DashboardTour";
+import { FirstVisitNote } from "@/components/DashboardTour";
 import {
   Package, ShoppingCart, FileText, DollarSign, Clock, Truck,
   CheckCircle, ArrowRight, Download, User, Building2, MapPin,
@@ -735,7 +735,6 @@ export default function AccountDashboard() {
           addTaxId={goAddTaxId}
         />
 
-        <DashboardTour userId={user?.id} active={activeTab === "Overview"} />
         {/* Tabs */}
         <div data-track="tabs" className="bg-white rounded-xl shadow-sm px-4 py-2 mb-6">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">
@@ -757,6 +756,15 @@ export default function AccountDashboard() {
 
         {/* ═══ OVERVIEW TAB ═══ */}
         {activeTab === "Overview" && (
+          <>
+          <FirstVisitNote
+            id="overview"
+            userId={user?.id}
+            icon="new-order"
+            title="Your new dashboard"
+            body="Everything you need to restock is on one screen now. The search bar at the top finds products, item numbers, orders, supply lists and invoices. Try typing “reorder”, or press / from anywhere on the page."
+            points={["Due for a restock: we track what you buy and how often, and flag what is overdue with your usual quantity filled in", "Order history: every order as a bar, side by side, so you can see how each one compares and stay on track", "Supply Lists and My SDS Binder live in the tabs above, each with its own quick intro"]}
+          />
           <DashboardOverview
             user={{ id: user?.id, firstName: user?.firstName, lastName: user?.lastName, company: user?.company, email: user?.email, customerGroupId: user?.customerGroupId }}
             orders={displayOrders}
@@ -774,6 +782,7 @@ export default function AccountDashboard() {
             reorder={(o) => handleReorder(o as OrderData)}
             downloadInvoice={(o) => downloadInvoice(o as OrderData)}
           />
+          </>
         )}
 
         {/* ═══ ORDERS TAB ═══ */}
