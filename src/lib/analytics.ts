@@ -204,3 +204,10 @@ export function trackClickCTA(buttonName: string, location: string) {
     creative_slot: location,
   });
 }
+
+// Generic UI event (used by the site-wide ClickTracker and dashboard search)
+export function trackEvent(name: string, params: Record<string, unknown> = {}) {
+  const clean: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== "") clean[k] = v;
+  gtag("event", name, clean);
+}

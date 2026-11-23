@@ -735,7 +735,7 @@ export default function AccountDashboard() {
         />
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm px-4 py-2 mb-6">
+        <div data-track="tabs" className="bg-white rounded-xl shadow-sm px-4 py-2 mb-6">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button

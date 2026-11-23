@@ -8,6 +8,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import { getTierPrice } from "@/lib/tier-pricing";
 import { getRewardTier } from "@/lib/reward-tiers";
+import { trackEvent } from "@/lib/analytics";
 import { loadHistory, type History } from "@/components/PersonalStrips";
 import type { HistoryItem } from "@/app/api/customers/history/route";
 import type { SupplyList } from "@/app/api/customers/lists/route";
@@ -112,12 +113,12 @@ export function DashboardHero(p: Shared) {
   const seed = (q: string) => window.dispatchEvent(new CustomEvent("mjs-dash-search", { detail: q }));
 
   return (
-    <div className="rounded-2xl px-6 lg:px-8 py-6 lg:py-7 mb-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 lg:gap-8" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f1f3f6 100%)" }}>
+    <div data-track="hero" className="rounded-2xl px-6 lg:px-8 py-6 lg:py-7 mb-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 lg:gap-8" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f1f3f6 100%)" }}>
       <div className="min-w-0">
         <div className="text-[13px] font-semibold text-mjs-gray-500">{greeting()}, {firstName}.</div>
         <h1 className="mt-1 text-[26px] lg:text-[34px] leading-[1.05] font-black tracking-tight text-mjs-dark">What are you restocking today?</h1>
         <CommandBar history={history} lists={lists} orders={p.orders} go={p.go} openOrder={p.openOrder} />
-        <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] text-mjs-gray-400">
+        <div data-track="search-shortcuts" className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] text-mjs-gray-400">
           <span>Try</span>
           {tries.map((t, i) => (
             <span key={t.label} className="inline-flex items-center gap-1.5">
@@ -129,13 +130,12 @@ export function DashboardHero(p: Shared) {
       </div>
 
       {/* Account card */}
-      <div className="rounded-xl bg-white px-5 py-4 shadow-[0_1px_2px_rgba(23,32,52,0.06)] self-start">
+      <div data-track="account-card" className="rounded-xl bg-white px-5 py-4 shadow-[0_1px_2px_rgba(23,32,52,0.06)] self-start">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="text-[15px] font-black text-mjs-dark truncate">{p.user.company || `${p.user.firstName || ""} ${p.user.lastName || ""}`.trim() || "Your account"}</div>
             <div className="mt-0.5 text-[11.5px] text-mjs-gray-500 truncate">{p.user.email}</div>
           </div>
-          <span className="shrink-0 rounded-full bg-[#fecd02] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-mjs-dark">{p.pricingTier}</span>
         </div>
         <ul className="mt-3 space-y-1.5 text-[12.5px] text-mjs-gray-600 list-none m-0 p-0">
           <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full ${termsApproved ? "bg-mjs-green" : p.termsPending ? "bg-amber-400" : "bg-mjs-gray-300"}`} />{termsApproved ? "Net-30 account" : p.termsPending ? "Net-30 pending approval" : "Prepaid account"}</li>
@@ -240,6 +240,14 @@ function CommandBar({ history, lists, orders, go, openOrder }: { history: Histor
   };
 
   const group = (label: string, nodes: unknown[]) => nodes.length ? <li className="px-4 pt-2.5 pb-1 text-[10.5px] font-bold uppercase tracking-wider text-mjs-gray-400">{label}</li> : null;
+  // Report what people type into the bar (debounced so each keystroke is not an event)
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 2) return;
+    const t = setTimeout(() => trackEvent("dashboard_search", { search_term: term.slice(0, 100), results_count: hits.length, page_area: "dashboard" }), 900);
+    return () => clearTimeout(t);
+  }, [q, hits.length]);
+
   const products = hits.filter(h => h.kind === "product") as Extract<Hit, { kind: "product" }>[];
   const actions = hits.filter(h => h.kind === "action") as Extract<Hit, { kind: "action" }>[];
   const orderHits = hits.filter(h => h.kind === "order") as Extract<Hit, { kind: "order" }>[];
@@ -248,7 +256,7 @@ function CommandBar({ history, lists, orders, go, openOrder }: { history: Histor
   const catalogHits = hits.filter(h => h.kind === "catalog") as Extract<Hit, { kind: "catalog" }>[];
 
   return (
-    <div ref={boxRef} className="relative mt-4 max-w-[720px]">
+    <div ref={boxRef} data-track="search" className="relative mt-4 max-w-[720px]">
       <div className="flex items-center rounded-xl bg-white shadow-[0_1px_2px_rgba(23,32,52,0.08),0_8px_24px_rgba(23,32,52,0.06)] focus-within:shadow-[0_0_0_2px_#D42027,0_8px_24px_rgba(23,32,52,0.08)] transition-shadow">
         <Search className="ml-4 w-5 h-5 shrink-0 text-mjs-gray-400" />
         <input
@@ -381,7 +389,7 @@ function OrderChart({ orders, loading, openOrder }: { orders: DashOrder[]; loadi
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-2xl bg-white p-5 shadow-sm">
+    <div data-track="order-chart" className="flex flex-1 flex-col rounded-2xl bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-bold text-mjs-dark">Order history</h2>
@@ -484,7 +492,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 flex flex-col gap-6">
         {/* Reorder */}
-        <div id="dash-reorder" className="bg-white rounded-2xl shadow-sm overflow-hidden scroll-mt-24">
+        <div id="dash-reorder" data-track="restock" className="bg-white rounded-2xl shadow-sm overflow-hidden scroll-mt-24">
           <div className="px-6 py-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-bold text-mjs-dark">{history?.due.length ? "Due for a restock" : "Your usual products"}</h2>
@@ -537,7 +545,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         </div>
 
         {/* Orders */}
-        <div className="flex-1 bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div data-track="recent-orders" className="flex-1 bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold text-mjs-dark">{open.length ? "On the way" : "Recent orders"}</h2>
@@ -571,7 +579,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
       {/* Side */}
       <div className="flex flex-col gap-6">
         {/* Quick actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div data-track="quick-actions" className="grid grid-cols-2 gap-3">
           {[
             { label: "New order", sub: "Start from scratch", icon: <Glyph name="new-order" />, on: p.newOrder, primary: true },
             { label: "Supply lists", sub: `${lists.length} saved`, icon: <Glyph name="supply-lists" />, on: () => p.go("Supply Lists") },
@@ -587,7 +595,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
         </div>
 
         {/* Forms & documents: three square cards */}
-        <div>
+        <div data-track="forms">
           <h2 className="text-sm font-bold text-mjs-dark mb-3">Forms &amp; documents</h2>
           <div className="grid grid-cols-3 gap-3">
             {[
@@ -611,7 +619,7 @@ export function DashboardOverview(p: Shared & { reordered: string | null; reorde
     </div>
 
     {/* Account team: heading above, then one bar with names and emails in plain sight */}
-    <div>
+    <div data-track="account-team">
       <div className="mb-3 text-center">
         <h2 className="text-sm font-bold text-mjs-dark">Your account team</h2>
         <p className="text-[11.5px] text-mjs-gray-500 mt-0.5">Real people, Mon–Fri 6:30 AM – 3:00 PM</p>

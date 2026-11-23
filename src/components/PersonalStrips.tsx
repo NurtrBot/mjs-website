@@ -162,11 +162,11 @@ function ProductCard({ product }: { product: ProductData }) {
 
 /* ── strip chrome ── */
 
-function Strip({ title, subtitle, action, children }: { title: ReactNode; subtitle?: string; action?: ReactNode; children: ReactNode }) {
+function Strip({ title, subtitle, action, track, children }: { title: ReactNode; subtitle?: string; action?: ReactNode; track: string; children: ReactNode }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scroll = (dir: "left" | "right") => scrollRef.current?.scrollBy({ left: dir === "left" ? -400 : 400, behavior: "smooth" });
   return (
-    <section className="bg-white pt-6 pb-2 md:pb-6">
+    <section data-track={track} className="bg-white pt-6 pb-2 md:pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4 gap-4">
           <div className="min-w-0">
@@ -225,6 +225,7 @@ export function BuyItAgain({ fallback }: { fallback: ReactNode }) {
   if (items.length === 0) return <>{fallback}</>;
   return (
     <Strip
+      track="buy-it-again"
       title={<><RotateCcw className="w-4 h-4 text-mjs-red" /> Buy it again</>}
       subtitle="Your usual products, with your usual quantities filled in"
       action={<a href="/account?tab=orders" className="text-xs font-semibold text-mjs-red hover:text-mjs-red-dark transition-colors mr-2">Order history &rarr;</a>}
@@ -253,6 +254,7 @@ export function DueForRestock({ fallback }: { fallback: ReactNode }) {
 
   return (
     <Strip
+      track="due-for-restock"
       title={<>Due for a restock <span className="rounded-full bg-mjs-red px-2 py-0.5 text-[10px] font-bold text-white">{due.length}</span></>}
       subtitle="Based on how often you usually reorder these"
       action={
@@ -272,7 +274,7 @@ export function AlsoBuy() {
   const { alsoBuy } = state.data;
   if (alsoBuy.length < 3) return null;
   return (
-    <Strip title="Customers like you also buy" subtitle="Picked from what other businesses order alongside your products">
+    <Strip track="also-buy" title="Customers like you also buy" subtitle="Picked from what other businesses order alongside your products">
       {alsoBuy.map(p => <ProductCard key={p.sku} product={p} />)}
     </Strip>
   );

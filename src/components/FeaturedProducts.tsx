@@ -128,7 +128,7 @@ export default function FeaturedProducts() {
   if (items.length === 0) return null;
 
   return (
-    <section className="bg-white pt-6 pb-2 md:pb-6">
+    <section data-track="featured-products" className="bg-white pt-6 pb-2 md:pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-mjs-dark">Best Sellers</h2>

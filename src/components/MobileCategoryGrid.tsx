@@ -16,7 +16,7 @@ const categories = [
 
 export default function MobileCategoryGrid() {
   return (
-    <div className="md:hidden bg-white px-3 py-4">
+    <div data-track="mobile-categories" className="md:hidden bg-white px-3 py-4">
       <div className="grid grid-cols-3 gap-2">
         {categories.map((cat) => (
           <a

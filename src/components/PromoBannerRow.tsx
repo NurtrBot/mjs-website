@@ -48,7 +48,7 @@ export default function PromoBannerRow() {
   }
 
   return (
-    <section className="hidden md:block bg-white py-4">
+    <section data-track="promo-banners" className="hidden md:block bg-white py-4">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-2 gap-4">
 

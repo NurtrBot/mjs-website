@@ -149,7 +149,7 @@ export default function HeroBanner() {
   const slide = slides[current];
 
   return (
-    <section className="bg-white">
+    <section data-track="hero" className="bg-white">
       <div className="max-w-[1400px] mx-auto px-0 md:px-4 pt-0 md:pt-4">
         {/* ═══ MOBILE: Delivery strip + Star Seller banner ═══ */}
         <div className="md:hidden">

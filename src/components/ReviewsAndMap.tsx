@@ -85,7 +85,7 @@ export default function ReviewsAndMap() {
   }, [cardOpen]);
 
   return (
-    <section className="hidden md:block bg-white py-6">
+    <section data-track="reviews-map" className="hidden md:block bg-white py-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-4 h-[440px] lg:h-[480px]">
 

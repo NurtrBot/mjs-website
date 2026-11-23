@@ -19,7 +19,7 @@ const CARDS = [
 
 export default function ResourceCards() {
   return (
-    <section className="hidden md:block bg-white py-8">
+    <section data-track="resources" className="hidden md:block bg-white py-8">
       <div className="max-w-[1400px] mx-auto px-4">
         <h2 className="text-[22px] lg:text-[26px] font-black tracking-tight text-mjs-dark mb-5 text-center">Guides &amp; Resources for Your Facility</h2>
         <ul className="grid grid-cols-5 gap-3 lg:gap-4 list-none m-0 p-0">

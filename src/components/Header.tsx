@@ -152,7 +152,7 @@ export default function Header() {
   const showSuggestions = searchFocused && filteredProducts.length > 0;
 
   return (
-    <header className="bg-white sticky top-0 z-50 shadow-sm">
+    <header data-track="header" className="bg-white sticky top-0 z-50 shadow-sm">
       {/* Main Header Row */}
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center h-[60px] gap-4">

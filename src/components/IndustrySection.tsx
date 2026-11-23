@@ -16,7 +16,7 @@ const CARDS = [
 
 export default function IndustrySection() {
   return (
-    <section className="hidden md:block bg-white py-6">
+    <section data-track="industries" className="hidden md:block bg-white py-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <ul className="grid grid-cols-5 gap-4 list-none m-0 p-0">
           {CARDS.map((c) => (

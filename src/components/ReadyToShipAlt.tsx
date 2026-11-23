@@ -111,7 +111,7 @@ export default function ReadyToShipAlt() {
   if (items.length === 0) return null;
 
   return (
-    <section className="hidden md:block bg-white py-6">
+    <section data-track="ready-to-ship" className="hidden md:block bg-white py-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">

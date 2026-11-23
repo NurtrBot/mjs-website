@@ -25,7 +25,7 @@ export default function PreFooterBar() {
   ];
 
   return (
-    <section className="hidden md:block bg-white pt-4 pb-6">
+    <section data-track="pre-footer" className="hidden md:block bg-white pt-4 pb-6">
       <div className="max-w-[1400px] mx-auto px-4">
         <div
           className="flex items-center justify-between gap-6 rounded-2xl px-6 lg:px-8 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"

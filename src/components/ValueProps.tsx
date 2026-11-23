@@ -11,7 +11,7 @@ const props = [
 export default function ValueProps() {
   return (
     // Mobile only: on tablet/desktop the pre-footer bar carries these promises
-    <section className="bg-white md:hidden">
+    <section data-track="value-props" className="bg-white md:hidden">
       <div className="max-w-[1400px] mx-auto px-4 py-3">
         {/* Mobile: 3 props in one centered row */}
         <div className="md:hidden flex items-center justify-center gap-3">
