@@ -33,7 +33,10 @@ export const metadata: Metadata = {
     url: "https://www.mobilejanitorialsupply.com/es/restaurantes",
     siteName: "Mobile Janitorial Supply",
   },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/es/restaurantes" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/es/restaurantes",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/restaurants", es: "https://www.mobilejanitorialsupply.com/es/restaurantes", "x-default": "https://www.mobilejanitorialsupply.com/industries/restaurants" },
+  },
 };
 
 const jsonLd = {

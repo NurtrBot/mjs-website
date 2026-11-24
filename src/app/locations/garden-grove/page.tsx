@@ -11,7 +11,10 @@ export const metadata: Metadata = {
     "Wholesale janitorial supplies for Garden Grove businesses. Just 5 minutes from our Anaheim warehouse. Serving Little Saigon restaurants, shopping centers, and local businesses. Free delivery on $399+.",
   keywords:
     "janitorial supply Garden Grove, cleaning products Garden Grove CA, janitorial distributor Garden Grove",
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/locations/garden-grove" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/locations/garden-grove",
+    languages: { en: "https://www.mobilejanitorialsupply.com/locations/garden-grove", es: "https://www.mobilejanitorialsupply.com/es/garden-grove", "x-default": "https://www.mobilejanitorialsupply.com/locations/garden-grove" },
+  },
   openGraph: {
     title: "Janitorial Supply Garden Grove | Your Neighbor in Anaheim",
     description:

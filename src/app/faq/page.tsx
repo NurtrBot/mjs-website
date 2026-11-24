@@ -14,6 +14,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.mobilejanitorialsupply.com/faq",
   },
+  openGraph: {
+    type: "website",
+    title: "FAQ | Frequently Asked Questions | Mobile Janitorial Supply",
+    description: "Answers about ordering, free local delivery, wholesale pricing, returns, and business accounts at Mobile Janitorial Supply.",
+    url: "https://www.mobilejanitorialsupply.com/faq",
+    siteName: "Mobile Janitorial Supply",
+  },
+  twitter: { card: "summary_large_image", title: "FAQ | Frequently Asked Questions | Mobile Janitorial Supply", description: "Answers about ordering, free local delivery, wholesale pricing, returns, and business accounts at Mobile Janitorial Supply." },
 };
 
 /**

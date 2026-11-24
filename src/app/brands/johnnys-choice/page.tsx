@@ -11,7 +11,7 @@ const OG_IMAGE = `${SITE}/images/johnnys-choice-grand-disks-250.png`;
 
 export const metadata: Metadata = {
   title:
-    "Johnny's Choice Toss-Ins & Sensory Grand Disks | Portable Restroom Deodorizer | Mobile Janitorial Supply",
+    "Johnny's Choice Toss-Ins & Sensory Grand Disks | Portable Restroom Deodorizer",
   description:
     "Buy Johnny's Choice Toss-Ins and Sensory Grand Disks at wholesale prices. Professional-grade holding tank deodorizer and extra-fragrance disks for portable restroom operators. In stock in Anaheim, CA — free local delivery across Southern California.",
   keywords:

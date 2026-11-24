@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.mobilejanitorialsupply.com/locations/santa-ana",
       es: "https://www.mobilejanitorialsupply.com/es/santa-ana",
+      "x-default": "https://www.mobilejanitorialsupply.com/locations/santa-ana",
     },
   },
   openGraph: {

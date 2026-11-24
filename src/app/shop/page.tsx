@@ -10,7 +10,7 @@ import { getQuickFilters, filterSlug } from "@/lib/category-filters";
 const SITE_URL = "https://www.mobilejanitorialsupply.com";
 
 export const metadata: Metadata = {
-  title: "Shop All Categories | Mobile Janitorial Supply",
+  title: "Shop All Categories",
   description:
     "Browse every janitorial supply category: paper products, cleaning chemicals, trash liners, gloves & safety, packaging, breakroom, equipment, floor care and car detailing. Wholesale prices, free local delivery in Southern California.",
   alternates: { canonical: `${SITE_URL}/shop` },

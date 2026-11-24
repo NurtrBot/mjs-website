@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   keywords: "office cleaning supplies, commercial building janitorial, office paper products, corporate restroom supplies, office breakroom supplies, building maintenance supplies",
   openGraph: { type: "article", title: "Office & Commercial Building Cleaning Supplies | Wholesale", description: "Complete janitorial program for offices and commercial buildings at wholesale prices.", url: "https://www.mobilejanitorialsupply.com/industries/offices", siteName: "Mobile Janitorial Supply" },
   twitter: { card: "summary_large_image", title: "Office & Commercial Building Cleaning Supplies" },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/industries/offices" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/industries/offices",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/offices", es: "https://www.mobilejanitorialsupply.com/es/oficinas", "x-default": "https://www.mobilejanitorialsupply.com/industries/offices" },
+  },
 };
 
 const jsonLd = {

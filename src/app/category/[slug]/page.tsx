@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
@@ -22,13 +23,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const seo = categorySeo[slug];
 
-  if (!seo) {
-    const fallbackName = slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    return {
-      title: `${fallbackName} | Mobile Janitorial Supply`,
-      description: `Shop ${fallbackName} at wholesale prices. Free 1-3 day local delivery in Southern California.`,
-    };
-  }
+  // Unknown category: a real 404 instead of a placeholder page
+  if (!seo) notFound();
 
   return {
     title: seo.title,
@@ -133,6 +129,7 @@ export default async function CategoryRoute({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (!categorySeo[slug]) notFound();
 
   // Pre-fetch products server-side so first paint has real content (no spinner)
   let initialProducts: Awaited<ReturnType<typeof fetchProductsByCategory>>["products"] = [];

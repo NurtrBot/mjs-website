@@ -35,7 +35,10 @@ export const metadata: Metadata = {
     url: "https://www.mobilejanitorialsupply.com/es/escuelas",
     siteName: "Mobile Janitorial Supply",
   },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/es/escuelas" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/es/escuelas",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/schools", es: "https://www.mobilejanitorialsupply.com/es/escuelas", "x-default": "https://www.mobilejanitorialsupply.com/industries/schools" },
+  },
 };
 
 const jsonLd = {

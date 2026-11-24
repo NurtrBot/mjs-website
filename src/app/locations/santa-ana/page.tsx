@@ -11,7 +11,10 @@ export const metadata: Metadata = {
     "Wholesale janitorial supplies for Santa Ana businesses. Adjacent to our Anaheim warehouse — get next-day delivery on 10,000+ cleaning products. Free shipping on $399+ orders.",
   keywords:
     "janitorial supply Santa Ana, cleaning products Santa Ana CA, wholesale cleaning Santa Ana",
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/locations/santa-ana" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/locations/santa-ana",
+    languages: { en: "https://www.mobilejanitorialsupply.com/locations/santa-ana", es: "https://www.mobilejanitorialsupply.com/es/santa-ana", "x-default": "https://www.mobilejanitorialsupply.com/locations/santa-ana" },
+  },
   openGraph: {
     title: "Janitorial Supply Santa Ana | Next-Day Delivery from Anaheim",
     description:

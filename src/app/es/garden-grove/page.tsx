@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.mobilejanitorialsupply.com/locations/garden-grove",
       es: "https://www.mobilejanitorialsupply.com/es/garden-grove",
+      "x-default": "https://www.mobilejanitorialsupply.com/locations/garden-grove",
     },
   },
   openGraph: {

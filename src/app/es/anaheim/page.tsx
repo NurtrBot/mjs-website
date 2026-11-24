@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.mobilejanitorialsupply.com/locations/anaheim",
       es: "https://www.mobilejanitorialsupply.com/es/anaheim",
+      "x-default": "https://www.mobilejanitorialsupply.com/locations/anaheim",
     },
   },
   openGraph: {

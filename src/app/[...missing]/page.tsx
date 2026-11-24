@@ -1,4 +1,4 @@
-import { permanentRedirect, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { getProductBySlug } from "@/data/products";
 import { fetchProductForSeo } from "@/lib/fetch-product-for-seo";
 
@@ -9,8 +9,11 @@ import { fetchProductForSeo } from "@/lib/fetch-product-for-seo";
  *
  * - Old BigCommerce storefront product URLs lived at the site root
  *   (e.g. /suma-suma-oven-d9-6-oven-cleaner-unscented-1gal-bottle-dvo957278280/).
- *   If the slug still resolves to a visible product, send the visitor there.
- * - Anything else goes to the home page instead of a 404 screen.
+ *   If the slug still resolves to a visible product, 308 the visitor there.
+ * - Known legacy BigCommerce paths (products.php, cart.php, ...) are 308'd in
+ *   next.config.ts before this route is reached.
+ * - Anything else is a real HTTP 404 (app/not-found.tsx) so search engines drop
+ *   the dead URL instead of indexing the home page under it.
  */
 
 // Cache each lookup for a day so repeat hits (and bots) don't re-query BigCommerce.
@@ -35,5 +38,5 @@ export default async function MissingPage({
     }
   }
 
-  redirect("/");
+  notFound();
 }

@@ -35,7 +35,10 @@ export const metadata: Metadata = {
     url: "https://www.mobilejanitorialsupply.com/es/oficinas",
     siteName: "Mobile Janitorial Supply",
   },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/es/oficinas" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/es/oficinas",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/offices", es: "https://www.mobilejanitorialsupply.com/es/oficinas", "x-default": "https://www.mobilejanitorialsupply.com/industries/offices" },
+  },
 };
 
 const jsonLd = {

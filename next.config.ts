@@ -22,6 +22,18 @@ const nextConfig: NextConfig = {
         permanent: true,
       })),
       { source: "/catalogs", destination: "/resources", permanent: true },
+      // Old BigCommerce storefront URLs (still in Google and in bookmarks) → their new homes.
+      // Unknown leftovers fall through to a real 404; nothing redirects to the home page.
+      { source: "/products.php", destination: "/shop", permanent: true },
+      { source: "/categories", destination: "/shop", permanent: true },
+      { source: "/cart.php", destination: "/cart", permanent: true },
+      { source: "/login.php", destination: "/auth", permanent: true },
+      { source: "/account.php", destination: "/account", permanent: true },
+      { source: "/search.php", has: [{ type: "query", key: "search_query", value: "(?<q>.+)" }], destination: "/search?q=:q", permanent: true },
+      { source: "/search.php", destination: "/search", permanent: true },
+      { source: "/xmlsitemap.php", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap-index.xml", destination: "/sitemap.xml", permanent: true },
       // Old "Janitorial Supply" landing URL → the home page
       { source: "/janitorial/supply", destination: "/", permanent: true },
       { source: "/janitorial", destination: "/", permanent: true },

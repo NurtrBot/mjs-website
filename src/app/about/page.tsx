@@ -10,6 +10,14 @@ export const metadata: Metadata = {
   description: "Mobile Janitorial Supply is a wholesale distributor based in Anaheim, CA serving Orange County, Los Angeles, Inland Empire, and San Diego. 10,000+ products, free local delivery, and unbeatable pricing since day one.",
   keywords: "about Mobile Janitorial Supply, wholesale janitorial distributor, Anaheim janitorial supply, SoCal cleaning supply company, janitorial distributor Orange County",
   alternates: { canonical: "https://www.mobilejanitorialsupply.com/about" },
+  openGraph: {
+    type: "website",
+    title: "About Us | Southern California's #1 Wholesale Janitorial Supplier | Mobile Janitorial Supply",
+    description: "Wholesale janitorial distributor in Anaheim, CA serving Orange County, Los Angeles, Inland Empire, and San Diego. 10,000+ products, free local delivery, and unbeatable pricing.",
+    url: "https://www.mobilejanitorialsupply.com/about",
+    siteName: "Mobile Janitorial Supply",
+  },
+  twitter: { card: "summary_large_image", title: "About Us | Southern California's #1 Wholesale Janitorial Supplier | Mobile Janitorial Supply", description: "Wholesale janitorial distributor in Anaheim, CA serving Orange County, Los Angeles, Inland Empire, and San Diego. 10,000+ products, free local delivery, and unbeatable pricing." },
 };
 
 export default function About() {

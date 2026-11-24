@@ -14,7 +14,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
   const { q } = await searchParams;
   const query = (Array.isArray(q) ? q[0] : q || "").trim();
   return {
-    title: query ? `"${query}" — Search Results | Mobile Janitorial Supply` : "Search Products | Mobile Janitorial Supply",
+    title: query ? `"${query}" — Search Results` : "Search Products",
     description: query
       ? `Products matching "${query}" at Mobile Janitorial Supply. Wholesale janitorial supplies with free local delivery in Southern California.`
       : "Search 10,000+ janitorial, cleaning, and facility supplies. Find products by name, SKU, brand, or category.",

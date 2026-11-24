@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.mobilejanitorialsupply.com",
       es: "https://www.mobilejanitorialsupply.com/es",
+      "x-default": "https://www.mobilejanitorialsupply.com",
     },
   },
 };

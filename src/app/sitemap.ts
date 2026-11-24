@@ -9,7 +9,7 @@ const SITE_URL = "https://www.mobilejanitorialsupply.com";
 export const revalidate = 86400;
 
 // Bump this when static page content changes; it's the lastmod for hand-written pages
-const STATIC_CONTENT_DATE = "2026-10-05";
+const STATIC_CONTENT_DATE = "2026-11-24";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = STATIC_CONTENT_DATE;
@@ -23,7 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/quote`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/resources`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/privacy-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/return-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
@@ -102,11 +101,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages: MetadataRoute.Sitemap = [];
   try {
     const seen = new Set<number>();
+    let catalogTotal = 0;
     let page = 1;
     const maxPages = 30; // Up to 7,500 products
 
     while (page <= maxPages) {
       const res = await getProducts({ page, limit: 250, is_visible: true });
+      catalogTotal = res.meta.pagination.total;
 
       for (const p of res.data) {
         if (seen.has(p.id) || !p.price || p.price <= 0) continue;
@@ -137,6 +138,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (page >= res.meta.pagination.total_pages) break;
       page++;
     }
+    // Visible products without a price are deliberately left out; any other gap is a bug.
+    console.log(`[sitemap] ${catalogTotal} visible products in BigCommerce → ${productPages.length} product URLs`);
   } catch {
     // If product fetch fails, sitemap still works with static + category pages
   }

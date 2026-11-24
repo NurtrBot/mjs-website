@@ -12,13 +12,8 @@ export const metadata: Metadata = {
     "Productos de limpieza profesional en Fountain Valley, CA. Químicos, guantes, toallas, bolsas de basura y equipo de limpieza al por mayor. Entrega gratis en pedidos de $399+. Hablamos Español.",
   keywords:
     "suministros de limpieza Fountain Valley, productos de limpieza Fountain Valley, tienda janitorial Fountain Valley",
-  alternates: {
-    canonical: "https://www.mobilejanitorialsupply.com/es/fountain-valley",
-    languages: {
-      en: "https://www.mobilejanitorialsupply.com/locations/fountain-valley",
-      es: "https://www.mobilejanitorialsupply.com/es/fountain-valley",
-    },
-  },
+  // No English Fountain Valley page exists, so no hreflang pair here
+  alternates: { canonical: "https://www.mobilejanitorialsupply.com/es/fountain-valley" },
   openGraph: {
     title: "Suministros de Limpieza en Fountain Valley | Precios al por Mayor | Hablamos Español",
     description:

@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     siteName: "Mobile Janitorial Supply",
   },
   alternates: { canonical: "https://www.mobilejanitorialsupply.com/blog" },
+  // Posts load client-side from Soro, so the server HTML has no articles yet.
+  // Keep the page out of the index until posts render server-side.
+  robots: { index: false, follow: true },
 };
 
 export default function BlogPage() {

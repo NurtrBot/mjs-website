@@ -11,7 +11,10 @@ export const metadata: Metadata = {
     "Wholesale janitorial supplies for Fullerton businesses. Just 10 minutes from our Anaheim warehouse. Serving Cal State Fullerton, downtown dining, and local businesses with free delivery on $399+.",
   keywords:
     "janitorial supply Fullerton, cleaning products Fullerton CA, wholesale janitorial Fullerton",
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/locations/fullerton" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/locations/fullerton",
+    languages: { en: "https://www.mobilejanitorialsupply.com/locations/fullerton", es: "https://www.mobilejanitorialsupply.com/es/fullerton", "x-default": "https://www.mobilejanitorialsupply.com/locations/fullerton" },
+  },
   openGraph: {
     title: "Janitorial Supply Fullerton | Fast Delivery from Our Anaheim Warehouse",
     description:

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
@@ -118,17 +119,9 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await getProduct(slug);
 
-  if (!product) {
-    // Final fallback — product truly not found anywhere
-    const titleFromSlug = slug
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-    return {
-      title: titleFromSlug,
-      description: `Shop ${titleFromSlug} at wholesale prices from Mobile Janitorial Supply. Free 1-3 day local delivery in Southern California.`,
-      alternates: { canonical: `${SITE_URL}/product/${slug}` },
-    };
-  }
+  // Unknown slug: a real 404 (no placeholder title, no self-canonical) so Google
+  // doesn't index junk product URLs as soft 404s.
+  if (!product) notFound();
 
   return buildMetadataFromProduct(product, slug);
 }
@@ -283,6 +276,7 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
   const initialProduct = await getProduct(slug);
+  if (!initialProduct) notFound();
   const initialReviews = await getReviews(initialProduct);
 
   return (

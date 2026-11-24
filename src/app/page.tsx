@@ -1,50 +1,32 @@
-"use client";
+import type { Metadata } from "next";
+import HomePage from "@/components/HomePage";
 
-import { useState, useEffect } from "react";
-import TopBar from "@/components/TopBar";
-import Header from "@/components/Header";
-import CategoryNav from "@/components/CategoryNav";
-import HeroBanner from "@/components/HeroBanner";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import PromoBannerRow from "@/components/PromoBannerRow";
-import IndustrySection from "@/components/IndustrySection";
-import ReviewsAndMap from "@/components/ReviewsAndMap";
-import ValueProps from "@/components/ValueProps";
-import PreFooterBar from "@/components/PreFooterBar";
-import ResourceCards from "@/components/ResourceCards";
-import ReadyToShipAlt from "@/components/ReadyToShipAlt";
-import { BuyItAgain, DueForRestock, AlsoBuy } from "@/components/PersonalStrips";
-import Footer from "@/components/Footer";
-import MobileCategoryGrid from "@/components/MobileCategoryGrid";
+const SITE_URL = "https://www.mobilejanitorialsupply.com";
+
+// Home page metadata lives here (a server component) so the canonical, hreflang
+// and Open Graph tags are in the HTML; the interactive page is components/HomePage.
+export const metadata: Metadata = {
+  title: { absolute: "Mobile Janitorial Supply | #1 Rated Cleaning Products in SoCal" },
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      en: SITE_URL,
+      es: `${SITE_URL}/es`,
+      "x-default": SITE_URL,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Mobile Janitorial Supply",
+    title: "Mobile Janitorial Supply | #1 Rated Cleaning Products in SoCal",
+    description:
+      "Southern California's highest-rated janitorial supply company. 10,000+ products at wholesale prices. Free 1-3 day local delivery on orders $399+ (OC, LA, Inland Empire) and $699+ (San Diego).",
+    images: [{ url: "/banner-03.jpg", width: 1200, height: 630, alt: "Mobile Janitorial Supply — Wholesale Cleaning Products" }],
+  },
+};
 
 export default function Home() {
-  // Unique key forces all strips to re-mount and re-shuffle on every visit
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  useEffect(() => {
-    setRefreshKey(Date.now());
-  }, []);
-
-  return (
-    <>
-      <TopBar />
-      <Header />
-      <CategoryNav />
-      <main>
-        <HeroBanner />
-        <MobileCategoryGrid />
-        {/* Signed-in customers with order history get their own strips; everyone else sees the defaults */}
-        <BuyItAgain fallback={<FeaturedProducts key={`best-${refreshKey}`} />} />
-        <IndustrySection />
-        <DueForRestock fallback={<ReadyToShipAlt key={`ready-${refreshKey}`} />} />
-        <PromoBannerRow />
-        <AlsoBuy />
-        <ResourceCards />
-        <ReviewsAndMap />
-        <ValueProps />
-        <PreFooterBar />
-      </main>
-      <Footer />
-    </>
-  );
+  return <HomePage />;
 }

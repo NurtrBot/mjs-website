@@ -22,9 +22,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug, sub } = await params;
   const seo = categorySeo[slug];
   const found = findQuickFilter(slug, sub);
-  if (!seo || !found) return { title: "Not Found" };
+  if (!seo || !found) notFound();
 
-  const title = `${found.filter.label} | ${seo.h1} | Mobile Janitorial Supply`;
+  const title = `${found.filter.label} | ${seo.h1}`;
   const description = `Shop ${found.filter.label.toLowerCase()} in our ${seo.h1.toLowerCase()} department at wholesale prices. Free 1-3 day local delivery on qualifying orders in Southern California.`;
   const url = `${SITE_URL}/category/${slug}/${sub}`;
   return {

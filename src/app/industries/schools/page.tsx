@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   keywords: "school janitorial supplies, custodial supplies for schools, school cleaning products, education facility supplies, daycare cleaning supplies, school paper products wholesale",
   openGraph: { type: "article", title: "School & Education Janitorial Supplies | Budget-Friendly Wholesale", description: "Janitorial supplies for schools, universities, and daycares at wholesale prices.", url: "https://www.mobilejanitorialsupply.com/industries/schools", siteName: "Mobile Janitorial Supply" },
   twitter: { card: "summary_large_image", title: "School & Education Janitorial Supplies" },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/industries/schools" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/industries/schools",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/schools", es: "https://www.mobilejanitorialsupply.com/es/escuelas", "x-default": "https://www.mobilejanitorialsupply.com/industries/schools" },
+  },
 };
 
 const jsonLd = {

@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import ResetPasswordPage from "@/components/ResetPasswordPage";
 import Footer from "@/components/Footer";
 
-export const metadata = { title: "Reset Password | Mobile Janitorial Supply", robots: { index: false } };
+export const metadata = { title: "Reset Password", robots: { index: false } };
 
 export default function Reset() {
   return (

@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   keywords: "restaurant cleaning supplies, food service janitorial, kitchen degreaser, restaurant sanitizer, food service disposables, commercial kitchen cleaning, restaurant paper products",
   openGraph: { type: "article", title: "Restaurant & Food Service Cleaning Supplies | Wholesale Pricing", description: "Complete janitorial supply program for restaurants, cafeterias, and food service at wholesale prices.", url: "https://www.mobilejanitorialsupply.com/industries/restaurants", siteName: "Mobile Janitorial Supply" },
   twitter: { card: "summary_large_image", title: "Restaurant & Food Service Cleaning Supplies" },
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/industries/restaurants" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/industries/restaurants",
+    languages: { en: "https://www.mobilejanitorialsupply.com/industries/restaurants", es: "https://www.mobilejanitorialsupply.com/es/restaurantes", "x-default": "https://www.mobilejanitorialsupply.com/industries/restaurants" },
+  },
 };
 
 const jsonLd = {

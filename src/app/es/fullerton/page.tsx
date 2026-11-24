@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.mobilejanitorialsupply.com/locations/fullerton",
       es: "https://www.mobilejanitorialsupply.com/es/fullerton",
+      "x-default": "https://www.mobilejanitorialsupply.com/locations/fullerton",
     },
   },
   openGraph: {

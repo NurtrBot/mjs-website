@@ -11,7 +11,10 @@ export const metadata: Metadata = {
     "Anaheim's local janitorial supply warehouse. Walk in for same-day pickup or get free delivery on $399+ orders. 10,000+ cleaning products at wholesale prices — right on La Palma Ave.",
   keywords:
     "janitorial supply Anaheim, cleaning products Anaheim CA, janitorial distributor Anaheim, cleaning supply store Anaheim",
-  alternates: { canonical: "https://www.mobilejanitorialsupply.com/locations/anaheim" },
+  alternates: {
+    canonical: "https://www.mobilejanitorialsupply.com/locations/anaheim",
+    languages: { en: "https://www.mobilejanitorialsupply.com/locations/anaheim", es: "https://www.mobilejanitorialsupply.com/es/anaheim", "x-default": "https://www.mobilejanitorialsupply.com/locations/anaheim" },
+  },
   openGraph: {
     title: "Janitorial Supply Anaheim | Visit Our Warehouse or Get Free Delivery",
     description:
