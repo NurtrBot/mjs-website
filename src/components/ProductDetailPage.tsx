@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Star,
   ShoppingCart,
@@ -38,7 +38,8 @@ import { getDeliveryZone, getFreeDeliveryMinimum } from "@/lib/delivery-zones";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/context/FavoritesContext";
-import { trackViewProduct } from "@/lib/analytics";
+import { trackViewProduct, trackEvent } from "@/lib/analytics";
+import { variantForSku, hideVariants, type ProductFamily } from "@/lib/product-families";
 import { RETURNS } from "@/lib/business";
 import { getCategorySlug } from "@/data/products";
 import { findFilterForSubcategory, filterSlug } from "@/lib/category-filters";
@@ -352,18 +353,64 @@ function CouponTag({ sku }: { sku: string }) {
   );
 }
 
-export default function ProductDetailPage({ slug, initialProduct }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[] }) {
+/* Size strip for product families (e.g. nitrile gloves S–XL): one listing, the chosen size's own SKU */
+function SizeStrip({ family, variants, product, onSelect }: { family: ProductFamily; variants: ProductData[]; product: ProductData; onSelect: (sku: string) => void }) {
+  const current = variantForSku(product.sku);
+  return (
+    <div className="mb-4" data-track="size-strip">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-semibold text-mjs-gray-500 uppercase tracking-wide">{family.option}</span>
+        <span className="text-xs text-mjs-gray-500">
+          <span className="font-semibold text-mjs-dark">{current?.name ?? product.sku}</span> · Item #{product.sku}
+        </span>
+      </div>
+      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${family.variants.length}, minmax(0, 1fr))` }}>
+        {family.variants.map((v) => {
+          const data = variants.find((d) => d.sku === v.sku);
+          const selected = v.sku === product.sku;
+          const available = !!data && data.inStock;
+          return (
+            <button
+              key={v.sku}
+              type="button"
+              disabled={!data}
+              aria-pressed={selected}
+              data-track-label={`Size ${v.name}`}
+              onClick={() => onSelect(v.sku)}
+              className={`flex flex-col items-center px-3 py-2.5 rounded-lg border transition-all ${
+                selected
+                  ? "border-mjs-red bg-red-50"
+                  : data
+                    ? "border-gray-200 bg-white hover:border-mjs-red/40 hover:bg-red-50/50"
+                    : "border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed"
+              }`}
+            >
+              <span className={`text-sm font-bold ${selected ? "text-mjs-red" : "text-mjs-gray-800"}`}>{v.label}</span>
+              <span className={`text-[10px] mt-0.5 ${selected ? "text-mjs-red" : "text-mjs-gray-500"}`}>
+                {!data ? "Unavailable" : available ? v.name : "Out of stock"}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default function ProductDetailPage({ slug, initialProduct, family = null, variants = [] }: { slug: string; initialProduct?: ProductData | null; initialReviews?: ReviewData[]; family?: ProductFamily | null; variants?: ProductData[] }) {
   const localProduct = initialProduct ?? getProductBySlug(slug) ?? null;
   const [product, setProduct] = useState<ProductData | null>(localProduct);
+  // SKU currently shown; a size picked before the slug fetch resolves must not be overwritten by it
+  const currentSkuRef = useRef<string | undefined>(localProduct?.sku);
   const [loading, setLoading] = useState(!localProduct);
   const [pricingLoaded, setPricingLoaded] = useState(!!initialProduct);
   const [relatedProducts, setRelatedProducts] = useState<ProductData[]>(
-    localProduct ? getSmartPairings(localProduct, allProducts, 6) : []
+    localProduct ? getSmartPairings(localProduct, hideVariants(allProducts), 6) : []
   );
   // Frequently bought together — real co-purchase data via /api/products/recommend,
   // seeded with the rulebook so there's no empty flash before the fetch returns.
   const [fbtProducts, setFbtProducts] = useState<ProductData[]>(
-    localProduct ? getFbtPairings(localProduct, allProducts, 3) : []
+    localProduct ? getFbtPairings(localProduct, hideVariants(allProducts), 3) : []
   );
   const fbtSku = product?.sku || localProduct?.sku || "";
   useEffect(() => {
@@ -388,6 +435,12 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
     fetch(`/api/products/slug?slug=${encodeURIComponent(slug)}`)
       .then((res) => res.json())
       .then((data) => {
+        // Family pages: if the shopper already switched size, keep their choice
+        if (data.product && family && data.product.sku !== currentSkuRef.current) {
+          setPricingLoaded(true);
+          setLoading(false);
+          return;
+        }
         if (data.product) {
           const bcProduct = data.product;
           if (!localProduct) {
@@ -513,6 +566,34 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
   const [selectedBrick, setSelectedBrick] = useState(0);
+
+  // Product families: swap the whole product for the chosen size (its own SKU, price, tiers, stock, photo)
+  const selectVariant = (sku: string) => {
+    const next = variants.find((v) => v.sku === sku);
+    if (!next || !product || next.sku === product.sku) return;
+    currentSkuRef.current = next.sku;
+    setProduct(next);
+    setSelectedImage(0);
+    // Quantity carries over; the tiers match across sizes, so the selected tile stays valid
+    if (selectedBrick >= next.quickBuy.length) setSelectedBrick(0);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(window.history.state, "", `/product/${next.slug}${window.location.search}`);
+    }
+    trackViewProduct({ sku: next.sku, name: next.name, price: next.price, category: next.category, brand: next.brand });
+    trackEvent("select_size", { sku: next.sku, size: variantForSku(next.sku)?.name, family: family?.id });
+  };
+
+  // ?size=xl (or ?size=x-large) preselects a size on a family page
+  useEffect(() => {
+    if (!family || variants.length === 0) return;
+    const want = new URLSearchParams(window.location.search).get("size")?.toLowerCase().replace(/\s+/g, "-");
+    if (!want) return;
+    const v = family.variants.find((x) => x.label.toLowerCase() === want || x.name.toLowerCase() === want);
+    if (!v) return;
+    const t = setTimeout(() => selectVariant(v.sku), 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ?qty=5 (from a promo card) pre-selects the matching quick-select tier.
   // Re-runs when the live tiers arrive so the highlight lands on the right brick.
@@ -668,7 +749,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
         {/* Product name */}
         <p className="text-[15px] font-bold text-mjs-dark text-center px-6 py-3 border-b border-gray-100">
-          {product.name}
+          {family ? family.name : product.name}
         </p>
 
         {/* Product image */}
@@ -723,6 +804,13 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 className={`rounded-full transition-all ${selectedImage === i ? "w-5 h-2 bg-mjs-dark" : "w-2 h-2 bg-gray-300"}`}
               />
             ))}
+          </div>
+        )}
+
+        {/* Size strip (product families) — always visible, not tucked inside a tab */}
+        {family && variants.length > 0 && (
+          <div className="bg-white px-4 pt-3 [&>div]:mb-3">
+            <SizeStrip family={family} variants={variants} product={product} onSelect={selectVariant} />
           </div>
         )}
 
@@ -989,7 +1077,7 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
 
             {/* Title */}
             <h1 className="text-2xl md:text-3xl font-extrabold text-mjs-dark leading-tight tracking-tight mb-3">
-              {product.name}
+              {family ? family.name : product.name}
             </h1>
 
             {/* Rating row */}
@@ -1065,6 +1153,10 @@ export default function ProductDetailPage({ slug, initialProduct }: { slug: stri
                 Usually ships in 1-2 days
               </span>
             </div>
+
+            {family && variants.length > 0 && (
+              <SizeStrip family={family} variants={variants} product={product} onSelect={selectVariant} />
+            )}
 
             {/* Quick Buy Options — hidden when customer has custom pricing */}
             {product.quickBuy.length > 0 && !customPrice && (

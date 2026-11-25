@@ -8,7 +8,8 @@ import Footer from "@/components/Footer";
 import { getProductBySlug, getCategorySlug } from "@/data/products";
 import type { ProductData } from "@/data/product-types";
 import { fetchProductForSeo } from "@/lib/fetch-product-for-seo";
-import { findProductBySlug } from "@/lib/search";
+import { findProductBySlug, findProductsBySkus } from "@/lib/search";
+import { familyForSku, variantForSku, type ProductFamily } from "@/lib/product-families";
 import { getProductBySku, getProductReviews } from "@/lib/bigcommerce";
 import { transformProduct, loadBrandMap } from "@/lib/products-api";
 import { DELIVERY, RETURNS } from "@/lib/business";
@@ -126,7 +127,29 @@ export async function generateMetadata({
   // doesn't index junk product URLs as soft 404s.
   if (!product) notFound();
 
-  return buildMetadataFromProduct(product, slug);
+  const meta = buildMetadataFromProduct(product, slug);
+  const family = familyForSku(product.sku);
+  if (family) {
+    // One listing per family: every size's URL canonicalises to the canonical size's URL
+    const variant = variantForSku(product.sku);
+    const isCanonical = family.canonicalSku === product.sku;
+    const canonicalSlug = isCanonical ? slug : (await findProductsBySkus([family.canonicalSku]))[0]?.slug ?? slug;
+    const sizes = `${family.variants[0].label}–${family.variants[family.variants.length - 1].label}`;
+    meta.title = isCanonical ? `${family.name} | Sizes ${sizes}` : `${family.name} (${variant?.name ?? product.sku})`;
+    meta.alternates = { canonical: `${SITE_URL}/product/${canonicalSlug}` };
+  }
+  return meta;
+}
+
+// Sibling sizes for the size strip, with the page's own product data kept for its SKU
+async function loadVariants(family: ProductFamily | null, product: ProductData): Promise<ProductData[]> {
+  if (!family) return [];
+  try {
+    const live = await findProductsBySkus(family.variants.map((v) => v.sku));
+    return live.map((p) => (p.sku === product.sku ? product : p));
+  } catch {
+    return [product];
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -280,7 +303,8 @@ export default async function ProductPage({
   const { slug } = await params;
   const initialProduct = await getProduct(slug);
   if (!initialProduct) notFound();
-  const initialReviews = await getReviews(initialProduct);
+  const family = familyForSku(initialProduct.sku);
+  const [initialReviews, variants] = await Promise.all([getReviews(initialProduct), loadVariants(family, initialProduct)]);
 
   return (
     <>
@@ -289,7 +313,7 @@ export default async function ProductPage({
       <Header />
       <CategoryNav />
       <main>
-        <ProductDetailPage slug={slug} initialProduct={initialProduct} initialReviews={initialReviews} />
+        <ProductDetailPage slug={slug} initialProduct={initialProduct} initialReviews={initialReviews} family={family} variants={variants} />
       </main>
       <Footer />
     </>

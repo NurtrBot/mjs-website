@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/bigcommerce";
 import { SKIP_SKUS } from "@/lib/products-api";
+import { isHiddenVariant } from "@/lib/product-families";
 import { SITE_CATEGORY_NAMES, BC_CATEGORY_MAP } from "@/lib/category-map";
 import { getQuickFilters, filterSlug } from "@/lib/category-filters";
 
@@ -115,6 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const p of res.data) {
         if (seen.has(p.id) || !p.price || p.price <= 0) continue;
         if (SKIP_SKUS.has(p.sku)) { skipped++; continue; } // product pages 404 these on purpose
+        if (isHiddenVariant(p.sku)) continue; // sizes of a family canonicalise to the family's listing
         seen.add(p.id);
 
         const slug = p.custom_url?.url

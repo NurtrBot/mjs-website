@@ -2,6 +2,7 @@ import { getProducts, getBrands, type BCProduct } from "./bigcommerce";
 import { getSiteCategory, getSiteCategoryName, BC_CATEGORY_MAP, SITE_CATEGORY_NAMES } from "./category-map";
 import type { ProductData } from "@/data/products";
 import { unitOverride } from "./tier-pricing";
+import { isHiddenVariant } from "./product-families";
 import { sdsIndex } from "@/data/sds-index";
 
 /* ── SDS lookup by SKU (case-insensitive) ── */
@@ -785,7 +786,7 @@ export async function fetchProductsByCategory(
         if (!seen.has(p.id) && p.price > 0) {
           seen.add(p.id);
           const transformed = transformProduct(p);
-          if (transformed) allFetched.push(transformed);
+          if (transformed && !isHiddenVariant(transformed.sku)) allFetched.push(transformed);
         }
       }
     }
@@ -1169,7 +1170,7 @@ export async function fetchProductBySlug(slug: string): Promise<ProductData | nu
 export async function fetchAllProducts(page = 1, limit = 50): Promise<{ products: ProductData[]; total: number; totalPages: number }> {
   await loadBrandMap();
   const res = await getProducts({ page, limit, is_visible: true });
-  const products = res.data.filter((p) => p.price > 0).map(transformProduct).filter(Boolean) as ProductData[];
+  const products = (res.data.filter((p) => p.price > 0).map(transformProduct).filter(Boolean) as ProductData[]).filter((p) => !isHiddenVariant(p.sku));
   return {
     products,
     total: res.meta.pagination.total,
@@ -1398,7 +1399,7 @@ async function fetchWithKeyword(keyword: string, seen: Set<number>, maxPages = 2
       if (!seen.has(p.id) && p.price > 0) {
         seen.add(p.id);
         const transformed = transformProduct(p);
-        if (transformed) results.push(transformed);
+        if (transformed && !isHiddenVariant(transformed.sku)) results.push(transformed);
       }
     }
     if (page >= res.meta.pagination.total_pages) break;

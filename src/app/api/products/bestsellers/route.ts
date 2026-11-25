@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getProducts } from "@/lib/bigcommerce";
 import { transformProduct } from "@/lib/products-api";
+import { isHiddenVariant } from "@/lib/product-families";
 
 export async function GET() {
   try {
@@ -15,7 +16,8 @@ export async function GET() {
     const products = res.data
       .filter((p) => p.price > 0 && p.images && p.images.length > 0)
       .map(transformProduct)
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter((p) => !isHiddenVariant(p.sku));
 
     return NextResponse.json({ products }, {
       headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },

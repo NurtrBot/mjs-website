@@ -25,6 +25,7 @@
 
 import { getProducts, getCategories, type BCProduct, type BCCategory } from "./bigcommerce";
 import { loadBrandMap, transformProduct, SEARCH_SYNONYMS } from "./products-api";
+import { isHiddenVariant } from "./product-families";
 import type { ProductData } from "@/data/products";
 
 /* ── Query-side aliases: manufacturers, models and shopper words that never appear in a name ── */
@@ -148,6 +149,8 @@ const STRONG: Field[] = ["sku", "name", "brand", "category"];
 
 interface Doc {
   product: ProductData;
+  /** Non-canonical size of a product family: resolvable by slug/SKU but left out of search results */
+  hidden: boolean;
   fields: Record<Field, Set<string>>;
   nameWords: string[];
   categoryText: string;
@@ -213,6 +216,7 @@ async function build(): Promise<Index> {
     const id = docs.length;
     docs.push({
       product: p, fields,
+      hidden: isHiddenVariant(p.sku),
       nameWords: words(p.name),
       categoryText: " " + words(catNames).join(" ") + " ",
       skuCompact: skuLower.replace(/[^a-z0-9]/g, ""),
@@ -383,6 +387,13 @@ export async function findProductBySlug(slug: string): Promise<ProductData | nul
   return idx.docs.find((d) => d.product.slug.toLowerCase() === wanted)?.product ?? null;
 }
 
+/** Live catalog data for a list of SKUs (hidden family sizes included), in the order asked for. */
+export async function findProductsBySkus(skus: string[]): Promise<ProductData[]> {
+  const idx = await getIndex();
+  const bySku = new Map(idx.docs.map((d) => [d.product.sku.toUpperCase(), d.product]));
+  return skus.map((s) => bySku.get(s.toUpperCase())).filter((p): p is ProductData => !!p);
+}
+
 export async function searchCatalog(query: string, opts: SearchOptions = {}): Promise<{ results: ProductData[]; partial: boolean; total: number }> {
   const q = query.trim();
   if (q.length < 2) return { results: [], partial: false, total: 0 };
@@ -391,7 +402,7 @@ export async function searchCatalog(query: string, opts: SearchOptions = {}): Pr
 
   // Exact / compact SKU wins outright
   const compact = q.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const skuHits = idx.docs.filter(d => d.skuCompact === compact).map(d => d.product);
+  const skuHits = idx.docs.filter(d => d.skuCompact === compact && !d.hidden).map(d => d.product);
 
   const { best } = merge(q, idx, opts.typing ?? true);
 
@@ -405,7 +416,7 @@ export async function searchCatalog(query: string, opts: SearchOptions = {}): Pr
   const results: ProductData[] = [...skuHits];
   for (const [id] of ids) {
     const p = idx.docs[id].product;
-    if (seen.has(p.sku)) continue;
+    if (idx.docs[id].hidden || seen.has(p.sku)) continue;
     seen.add(p.sku); results.push(p);
   }
   return { results: results.slice(0, limit), partial, total: results.length };
