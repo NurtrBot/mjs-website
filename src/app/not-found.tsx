@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   title: "Page not found",
   description: "That page isn't here. Search the catalog or browse by category to find what you need.",
   robots: { index: false, follow: true },
+  openGraph: { title: "Page not found | Mobile Janitorial Supply", description: "That page isn't here. Search the catalog or browse by category.", siteName: "Mobile Janitorial Supply", type: "website" },
+  twitter: { card: "summary", title: "Page not found | Mobile Janitorial Supply" },
 };
 
 export default function NotFound() {

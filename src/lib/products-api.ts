@@ -147,6 +147,10 @@ export function isSoldSingly(bc: BCProduct, subcategory: string): boolean {
   return uomIndividual === "EA" || /duster/i.test(subcategory) || /duster/i.test(bc.name);
 }
 
+// Visible in BigCommerce but deliberately not sold on the site (duplicates / bad listings).
+// transformProduct returns null for these, and the sitemap leaves them out so the URLs never 404.
+export const SKIP_SKUS = new Set(["10712", "143133", "143136", "1426410", "166778", "4385163EA", "1672", "9290", "315855", "83201"]);
+
 function transformProduct(bc: BCProduct): ProductData {
   const siteCategory = getSiteCategory(bc.categories);
   const siteCategoryName = getSiteCategoryName(siteCategory);
@@ -175,8 +179,7 @@ function transformProduct(bc: BCProduct): ProductData {
   // Determine subcategory from BC categories
   const subcategory = getSubcategory(bc);
 
-  // Skip known duplicate/bad products
-  const SKIP_SKUS = new Set(["10712", "143133", "143136", "1426410", "166778", "4385163EA", "1672", "9290", "315855", "83201"]);
+  // Skip known duplicate/bad products (the sitemap and search index honour the same list)
   if (SKIP_SKUS.has(bc.sku)) return null as unknown as ProductData;
 
   // Category overrides — move misplaced products to correct category

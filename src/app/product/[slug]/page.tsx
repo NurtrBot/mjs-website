@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { getProductBySlug, getCategorySlug } from "@/data/products";
 import type { ProductData } from "@/data/product-types";
 import { fetchProductForSeo } from "@/lib/fetch-product-for-seo";
+import { findProductBySlug } from "@/lib/search";
 import { getProductBySku, getProductReviews } from "@/lib/bigcommerce";
 import { transformProduct, loadBrandMap } from "@/lib/products-api";
 import { DELIVERY, RETURNS } from "@/lib/business";
@@ -37,6 +38,8 @@ async function getProduct(slug: string): Promise<ProductData | null> {
       const bc = await getProductBySku(local.sku);
       if (bc && bc.price > 0) live = transformProduct(bc);
     }
+    // Exact slug against the live visible catalog, then the older slug heuristics
+    if (!live) live = await findProductBySlug(slug);
     if (!live) live = await fetchProductForSeo(slug);
     if (live && (!local || live.sku === local.sku)) {
       // Keep the curated local images/name when they exist; take everything else live

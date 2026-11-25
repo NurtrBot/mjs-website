@@ -376,6 +376,13 @@ function merge(query: string, idx: Index, typing: boolean): { alts: Alt[]; best:
 
 export interface SearchOptions { limit?: number; typing?: boolean }
 
+/** Exact slug lookup against the live visible catalog (same source the sitemap and search use). */
+export async function findProductBySlug(slug: string): Promise<ProductData | null> {
+  const idx = await getIndex();
+  const wanted = slug.toLowerCase();
+  return idx.docs.find((d) => d.product.slug.toLowerCase() === wanted)?.product ?? null;
+}
+
 export async function searchCatalog(query: string, opts: SearchOptions = {}): Promise<{ results: ProductData[]; partial: boolean; total: number }> {
   const q = query.trim();
   if (q.length < 2) return { results: [], partial: false, total: 0 };

@@ -98,7 +98,7 @@ export default function SpanishHomePage() {
               <span className="text-xs text-white/70">We speak Spanish</span>
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-4">
-              Bienvenidos a<br />
+              Bienvenidos a{" "}<br />
               <span className="text-mjs-red">Mobile Janitorial Supply</span>
             </h1>
             <p className="text-lg md:text-xl text-mjs-gray-300 max-w-2xl mx-auto mb-8">

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/bigcommerce";
+import { SKIP_SKUS } from "@/lib/products-api";
 import { SITE_CATEGORY_NAMES, BC_CATEGORY_MAP } from "@/lib/category-map";
 import { getQuickFilters, filterSlug } from "@/lib/category-filters";
 
@@ -23,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/quote`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/resources`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE_URL}/assistant`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/privacy-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/return-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
@@ -102,6 +104,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const seen = new Set<number>();
     let catalogTotal = 0;
+    let skipped = 0;
     let page = 1;
     const maxPages = 30; // Up to 7,500 products
 
@@ -111,6 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       for (const p of res.data) {
         if (seen.has(p.id) || !p.price || p.price <= 0) continue;
+        if (SKIP_SKUS.has(p.sku)) { skipped++; continue; } // product pages 404 these on purpose
         seen.add(p.id);
 
         const slug = p.custom_url?.url
@@ -139,9 +143,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       page++;
     }
     // Visible products without a price are deliberately left out; any other gap is a bug.
-    console.log(`[sitemap] ${catalogTotal} visible products in BigCommerce → ${productPages.length} product URLs`);
-  } catch {
+    console.log(`[sitemap] ${catalogTotal} visible products in BigCommerce → ${productPages.length} product URLs (${skipped} on the skip list)`);
+  } catch (e) {
     // If product fetch fails, sitemap still works with static + category pages
+    console.error("[sitemap] product fetch failed; product URLs left out this build", e);
   }
 
   const categoryPages: MetadataRoute.Sitemap = categorySlugs.flatMap((slug) => {
