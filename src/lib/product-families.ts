@@ -28,9 +28,11 @@ export interface ProductFamily {
   variants: FamilyVariant[];
 }
 
-const SIZES: [string, string][] = [["S", "Small"], ["M", "Medium"], ["L", "Large"], ["XL", "X-Large"]];
+const SIZE_NAMES: Record<string, string> = { S: "Small", M: "Medium", L: "Large", XL: "X-Large" };
 
-const sized = (skus: string[]): FamilyVariant[] => skus.map((sku, i) => ({ sku, label: SIZES[i][0], name: SIZES[i][1] }));
+/** `{ S: "8601EA", M: "8602EA", ... }` in the order the strip shows them */
+const sized = (bySize: Record<string, string>): FamilyVariant[] =>
+  Object.entries(bySize).map(([label, sku]) => ({ sku, label, name: SIZE_NAMES[label] ?? label }));
 
 export const PRODUCT_FAMILIES: ProductFamily[] = [
   {
@@ -38,14 +40,42 @@ export const PRODUCT_FAMILIES: ProductFamily[] = [
     name: "Blue Nitrile Gloves, Powder-Free, 100/Box",
     option: "Size",
     canonicalSku: "8603EA",
-    variants: sized(["8601EA", "8602EA", "8603EA", "8604EA"]),
+    variants: sized({ S: "8601EA", M: "8602EA", L: "8603EA", XL: "8604EA" }),
   },
   {
     id: "black-nitrile-100",
     name: "Black Nitrile Exam Gloves, Powder-Free, 100/Box",
     option: "Size",
     canonicalSku: "8903EA",
-    variants: sized(["8901EA", "8902EA", "8903EA", "8904EA"]),
+    variants: sized({ S: "8901EA", M: "8902EA", L: "8903EA", XL: "8904EA" }),
+  },
+  {
+    id: "orange-diamond-nitrile-8mil",
+    name: "Orange Diamond-Textured Nitrile Gloves, 8 Mil, 100/Box",
+    option: "Size",
+    canonicalSku: "8303EA",
+    variants: sized({ M: "8302EA", L: "8303EA", XL: "8304EA" }),
+  },
+  {
+    id: "black-diamond-nitrile-8mil",
+    name: "Black Diamond-Textured Nitrile Gloves, 8 Mil, 100/Box",
+    option: "Size",
+    canonicalSku: "8403EA",
+    variants: sized({ M: "8402EA", L: "8403EA", XL: "8404EA" }),
+  },
+  {
+    id: "vinyl-general-purpose-100",
+    name: "Vinyl Powder-Free General Purpose Gloves, 100/Box",
+    option: "Size",
+    canonicalSku: "VCPF-48LEA",
+    variants: sized({ S: "VCPF-48SEA", M: "VCPF-48MEA", L: "VCPF-48LEA", XL: "VCPF-48XLEA" }),
+  },
+  {
+    id: "latex-industrial-100",
+    name: "Latex Powder-Free Industrial Grade Gloves, 100/Box",
+    option: "Size",
+    canonicalSku: "LPF-56LEA",
+    variants: sized({ S: "LPF-56SEA", M: "LPF-56MEA", L: "LPF-56LEA", XL: "LPF-56XLEA" }),
   },
 ];
 
@@ -59,6 +89,11 @@ export function familyForSku(sku?: string | null): ProductFamily | null {
 export function variantForSku(sku?: string | null): FamilyVariant | null {
   const f = familyForSku(sku);
   return f ? f.variants.find((v) => v.sku.toUpperCase() === sku!.toUpperCase()) ?? null : null;
+}
+
+/** "X-Large" for a family SKU, null for everything else. Cart and order lines use it to say which size was bought. */
+export function sizeNameForSku(sku?: string | null): string | null {
+  return variantForSku(sku)?.name ?? null;
 }
 
 /** A family member that is not the canonical SKU: left out of listings, search and the sitemap. */

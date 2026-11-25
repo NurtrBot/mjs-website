@@ -83,7 +83,7 @@ const MATERIALS: GloveMaterial[] = [
       { label: "Blue Nitrile 5 mil", sku: "6303EA", slug: "life-guard-blue-nitrile-exam-gloves-powder-free-medium-5-mil-100-bx", sizes: "S-XL" },
       { label: "Black Nitrile 5 mil", sku: "6343EA", slug: "life-guard-black-nitrile-exam-gloves-powder-free-medium-5-mil-100-bx", sizes: "S-XL" },
       { label: "Orange Diamond 8 mil", sku: "8303EA", slug: "sunnycare-orange-diamond-textured-nitrile-gloves-8-mil-100-per-box-large", sizes: "M-XL" },
-      { label: "Black Diamond 8 mil", sku: "8403EA", slug: "sunnycare-black-diamond-textured-nitrile-gloves-8-mil-100-per-box-large", sizes: "M-XL" },
+      { label: "Black Diamond 8 mil", sku: "8403EA", slug: "black-diamond-textured-nitrile-gloves-8-mil-100-per-box-large", sizes: "M-XL" },
     ],
   },
   {

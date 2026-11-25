@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
+import CartSizeTag from "@/components/CartSizeTag";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { getTierPrice } from "@/lib/tier-pricing";
 import TopBar from "@/components/TopBar";
@@ -345,6 +346,7 @@ export default function CartPage() {
                           <div className="min-w-0">
                             <Link href={`/product/${item.slug}`} className="text-sm font-semibold text-mjs-dark hover:text-mjs-red transition-colors line-clamp-2">{item.name}</Link>
                             <div className="text-xs text-mjs-gray-400 mt-1">{item.brand} &middot; {item.pack}</div>
+                            <CartSizeTag sku={item.sku} />
                           </div>
                         </div>
                         <div className="text-sm font-semibold text-mjs-gray-600 text-center">${item.price.toFixed(2)}</div>
@@ -371,6 +373,7 @@ export default function CartPage() {
                         <div className="flex-1 min-w-0">
                           <Link href={`/product/${item.slug}`} className="text-xs font-semibold text-mjs-dark line-clamp-1">{item.name}</Link>
                           <div className="text-[10px] text-mjs-gray-400">{item.brand} &middot; {item.pack}</div>
+                          <CartSizeTag sku={item.sku} className="mt-0.5" />
                           <div className="flex items-center justify-between mt-1.5">
                             <div className="flex items-center border border-gray-200 rounded overflow-hidden">
                               <button onClick={() => updateQty(item.slug, item.qty - 1, item.variantLabel)} className="w-7 h-7 flex items-center justify-center bg-gray-50"><Minus className="w-3 h-3 text-mjs-gray-600" /></button>

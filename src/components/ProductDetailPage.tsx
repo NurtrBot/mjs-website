@@ -510,7 +510,7 @@ export default function ProductDetailPage({ slug, initialProduct, family = null,
           addItem({
             slug: product.slug,
             sku: product.sku,
-            name: product.cardTitle,
+            name: family ? family.name : product.cardTitle,
             brand: product.brand,
             price: unitPrice,
             image: product.images[0],
@@ -551,7 +551,7 @@ export default function ProductDetailPage({ slug, initialProduct, family = null,
       }
     }
 
-    const cartName = variantLabel ? `${product.cardTitle} — ${variantLabel}` : product.cardTitle;
+    const cartName = variantLabel ? `${product.cardTitle} — ${variantLabel}` : family ? family.name : product.cardTitle;
     addItem({
       slug: product.slug,
       sku: product.sku,
@@ -1597,7 +1597,7 @@ export default function ProductDetailPage({ slug, initialProduct, family = null,
                 <div className="text-[9px] text-mjs-gray-400 mb-3">for {totalItems} item{totalItems !== 1 ? "s" : ""}</div>
                 <button
                   onClick={() => {
-                    addItem({ slug: product.slug, sku: product.sku, name: product.cardTitle, brand: product.brand, price: product.price, image: product.images[0], pack: product.pack });
+                    addItem({ slug: product.slug, sku: product.sku, name: family ? family.name : product.cardTitle, brand: product.brand, price: product.price, image: product.images[0], pack: product.pack });
                     for (const fbt of selectedFbt) {
                       addItem({ slug: fbt.slug, sku: fbt.sku, name: fbt.cardTitle, brand: fbt.brand, price: fbt.price, image: fbt.images[0], pack: fbt.pack });
                     }
@@ -1922,7 +1922,7 @@ export default function ProductDetailPage({ slug, initialProduct, family = null,
                   addItem({
                     slug: product.slug,
                     sku: product.sku,
-                    name: product.cardTitle,
+                    name: family ? family.name : product.cardTitle,
                     brand: product.brand,
                     price: upsell.nextTierPrice,
                     image: product.images[0],

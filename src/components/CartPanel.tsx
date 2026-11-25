@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { useOrderSetup } from "@/context/OrderContext";
+import CartSizeTag from "@/components/CartSizeTag";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
@@ -244,6 +245,7 @@ export default function CartPanel() {
                     <div className="text-[11px] text-mjs-gray-400 mt-0.5">
                       {item.brand} &middot; {item.pack}
                     </div>
+                    <CartSizeTag sku={item.sku} />
 
                     <div className="flex items-center justify-between mt-2">
                       {/* Qty Controls */}

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CartSizeTag from "@/components/CartSizeTag";
 import { useAuth } from "@/context/AuthContext";
 import { trackPurchase, trackSelectReward } from "@/lib/analytics";
 
@@ -281,6 +282,7 @@ function ConfirmationContent() {
                           <div className="text-[10px] text-mjs-gray-400 mt-0.5">
                             {item.pack} &middot; SKU {item.sku} &middot; Qty {item.qty}
                           </div>
+                          <CartSizeTag sku={item.sku} className="mt-0.5" />
                         </div>
                         <div className="text-right flex-shrink-0">
                           <div className="text-sm font-bold text-mjs-dark">${(item.price * item.qty).toFixed(2)}</div>

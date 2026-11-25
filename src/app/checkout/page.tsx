@@ -3,6 +3,7 @@
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useOrderSetup } from "@/context/OrderContext";
+import CartSizeTag from "@/components/CartSizeTag";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -1393,6 +1394,7 @@ export default function CheckoutPage() {
                           <div className="text-[10px] text-mjs-gray-400 mt-0.5">
                             {item.brand}
                           </div>
+                          <CartSizeTag sku={item.sku} className="mt-0.5" />
                         </div>
                         <div className="text-right flex-shrink-0">
                           <span className="text-xs font-bold text-mjs-dark">

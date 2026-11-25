@@ -133,7 +133,8 @@ export async function generateMetadata({
     // One listing per family: every size's URL canonicalises to the canonical size's URL
     const variant = variantForSku(product.sku);
     const isCanonical = family.canonicalSku === product.sku;
-    const canonicalSlug = isCanonical ? slug : (await findProductsBySkus([family.canonicalSku]))[0]?.slug ?? slug;
+    // Always the catalog's own slug for the canonical SKU, so alias URLs (old "sunnycare-" slugs) canonicalise too
+    const canonicalSlug = (await findProductsBySkus([family.canonicalSku]))[0]?.slug ?? (isCanonical ? product.slug : slug);
     const sizes = `${family.variants[0].label}–${family.variants[family.variants.length - 1].label}`;
     meta.title = isCanonical ? `${family.name} | Sizes ${sizes}` : `${family.name} (${variant?.name ?? product.sku})`;
     meta.alternates = { canonical: `${SITE_URL}/product/${canonicalSlug}` };
